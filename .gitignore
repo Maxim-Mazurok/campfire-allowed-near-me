@@ -1,0 +1,10 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+.vite/
+data/cache/forests-snapshot.json
+data/cache/geocode-cache.json
+data/cache/*.sqlite
+data/cache/*.sqlite-*
+.DS_Store

@@ -1,0 +1,60 @@
+{
+  "fetchedAt": "2026-02-21T10:00:00.000Z",
+  "stale": false,
+  "sourceName": "Forestry Corporation NSW",
+  "warnings": [],
+  "forests": [
+    {
+      "id": "sydney-sandstone-marramarra",
+      "source": "Forestry Corporation NSW",
+      "areaName": "Sydney Sandstone",
+      "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+      "forestName": "Marramarra",
+      "banStatus": "NOT_BANNED",
+      "banStatusText": "No Solid Fuel Fire Ban",
+      "latitude": -33.531,
+      "longitude": 151.113,
+      "geocodeName": "Marramarra National Park",
+      "geocodeConfidence": 0.6
+    },
+    {
+      "id": "sydney-sandstone-wattamolla",
+      "source": "Forestry Corporation NSW",
+      "areaName": "Sydney Sandstone",
+      "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+      "forestName": "Wattamolla",
+      "banStatus": "BANNED",
+      "banStatusText": "Solid Fuel Fire Ban",
+      "latitude": -34.133,
+      "longitude": 151.111,
+      "geocodeName": "Wattamolla",
+      "geocodeConfidence": 0.5
+    },
+    {
+      "id": "southern-highlands-belanglo",
+      "source": "Forestry Corporation NSW",
+      "areaName": "Southern Highlands",
+      "areaUrl": "https://www.forestrycorporation.com.au/visit/southern-highlands",
+      "forestName": "Belanglo",
+      "banStatus": "NOT_BANNED",
+      "banStatusText": "No Solid Fuel Fire Ban",
+      "latitude": -34.512,
+      "longitude": 150.361,
+      "geocodeName": "Belanglo State Forest",
+      "geocodeConfidence": 0.75
+    },
+    {
+      "id": "north-coast-jackadgery",
+      "source": "Forestry Corporation NSW",
+      "areaName": "North Coast",
+      "areaUrl": "https://www.forestrycorporation.com.au/visit/north-coast",
+      "forestName": "Jackadgery",
+      "banStatus": "BANNED",
+      "banStatusText": "Solid Fuel Fire Ban",
+      "latitude": -29.613,
+      "longitude": 152.705,
+      "geocodeName": "Jackadgery",
+      "geocodeConfidence": 0.49
+    }
+  ]
+}
