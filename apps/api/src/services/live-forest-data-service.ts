@@ -26,15 +26,21 @@ import type {
 } from "../types/domain.js";
 
 interface LiveForestDataServiceOptions {
-  snapshotPath?: string;
+  snapshotPath?: string | null;
   scrapeTtlMs?: number;
   sourceName?: string;
   scraper?: ForestryScraper;
   geocoder?: OSMGeocoder;
 }
 
-const DEFAULT_OPTIONS: Required<Omit<LiveForestDataServiceOptions, "scraper" | "geocoder">> = {
-  snapshotPath: "data/cache/forests-snapshot.json",
+interface LiveForestDataServiceResolvedOptions {
+  snapshotPath: string | null;
+  scrapeTtlMs: number;
+  sourceName: string;
+}
+
+const DEFAULT_OPTIONS: LiveForestDataServiceResolvedOptions = {
+  snapshotPath: null,
   scrapeTtlMs: 15 * 60 * 1000,
   sourceName: "Forestry Corporation NSW"
 };
@@ -54,9 +60,7 @@ interface FacilityMatchResult {
 }
 
 export class LiveForestDataService implements ForestDataService {
-  private readonly options: Required<
-    Omit<LiveForestDataServiceOptions, "scraper" | "geocoder">
-  >;
+  private readonly options: LiveForestDataServiceResolvedOptions;
 
   private readonly scraper: ForestryScraper;
 
@@ -73,7 +77,12 @@ export class LiveForestDataService implements ForestDataService {
           "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
         forestsDirectoryUrl:
           process.env.FORESTRY_DIRECTORY_URL ??
-          "https://www.forestrycorporation.com.au/visiting/forests"
+          "https://www.forestrycorporation.com.au/visiting/forests",
+        rawPageCachePath:
+          process.env.FORESTRY_RAW_CACHE_PATH ?? "data/cache/forestry-raw-pages.json",
+        rawPageCacheTtlMs: Number(
+          process.env.FORESTRY_RAW_CACHE_TTL_MS ?? `${60 * 60 * 1000}`
+        )
       });
     this.geocoder = options?.geocoder ??
       new OSMGeocoder({
@@ -206,13 +215,22 @@ export class LiveForestDataService implements ForestDataService {
   }
 
   private async loadPersistedSnapshot(): Promise<PersistedSnapshot | null> {
+    if (!this.options.snapshotPath) {
+      return null;
+    }
+
     const raw = await readJsonFile<PersistedSnapshot>(this.options.snapshotPath);
     return raw ? this.normalizeSnapshot(raw) : null;
   }
 
   private async persistSnapshot(snapshot: PersistedSnapshot): Promise<void> {
-    await writeJsonFile(this.options.snapshotPath, snapshot);
     this.memorySnapshot = snapshot;
+
+    if (!this.options.snapshotPath) {
+      return;
+    }
+
+    await writeJsonFile(this.options.snapshotPath, snapshot);
   }
 
   private isSnapshotFresh(snapshot: PersistedSnapshot): boolean {
@@ -270,13 +288,22 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     const persisted = await this.loadPersistedSnapshot();
-    if (
-      process.env.FORESTRY_SKIP_SCRAPE === "true" &&
-      persisted
-    ) {
-      this.memorySnapshot = persisted;
-      return persisted;
+    if (process.env.FORESTRY_SKIP_SCRAPE === "true") {
+      if (persisted) {
+        this.memorySnapshot = persisted;
+        return persisted;
+      }
+
+      if (this.memorySnapshot) {
+        return this.memorySnapshot;
+      }
+
+      throw new Error(
+        "FORESTRY_SKIP_SCRAPE=true but no processed snapshot is available."
+      );
     }
+
+    const staleFallbackSnapshot = persisted ?? this.memorySnapshot;
 
     if (
       !forceRefresh &&
@@ -313,15 +340,15 @@ export class LiveForestDataService implements ForestDataService {
 
       if (
         !this.hasAnyMappedForest(snapshot) &&
-        persisted &&
-        this.hasAnyMappedForest(persisted)
+        staleFallbackSnapshot &&
+        this.hasAnyMappedForest(staleFallbackSnapshot)
       ) {
         const fallbackSnapshot: PersistedSnapshot = {
-          ...persisted,
+          ...staleFallbackSnapshot,
           stale: true,
           warnings: [
             ...new Set([
-              ...(persisted.warnings ?? []),
+              ...(staleFallbackSnapshot.warnings ?? []),
               "Latest refresh had no mappable coordinates; using previous mapped snapshot."
             ])
           ]
@@ -333,16 +360,16 @@ export class LiveForestDataService implements ForestDataService {
       await this.persistSnapshot(snapshot);
       return snapshot;
     } catch (error) {
-      if (persisted) {
+      if (staleFallbackSnapshot) {
         const warning =
           error instanceof Error
             ? error.message
             : "Unknown scrape error while refreshing Forestry data.";
 
         const staleSnapshot: PersistedSnapshot = {
-          ...persisted,
+          ...staleFallbackSnapshot,
           stale: true,
-          warnings: [...new Set([...(persisted.warnings ?? []), warning])]
+          warnings: [...new Set([...(staleFallbackSnapshot.warnings ?? []), warning])]
         };
         this.memorySnapshot = staleSnapshot;
         return staleSnapshot;

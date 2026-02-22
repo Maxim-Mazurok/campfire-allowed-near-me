@@ -1,5 +1,5 @@
 import pLimit from "p-limit";
-import { chromium, type BrowserContext, type Page } from "playwright";
+import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
 import {
   isCloudflareChallengeHtml,
   parseAreaForestNames,
@@ -7,6 +7,7 @@ import {
   parseForestDirectoryForests,
   parseMainFireBanPage
 } from "./forestry-parser.js";
+import { RawPageCache } from "../utils/raw-page-cache.js";
 import type {
   ForestAreaWithForests,
   ForestDirectorySnapshot,
@@ -19,6 +20,12 @@ interface ForestryScraperOptions {
   timeoutMs: number;
   maxAreaConcurrency: number;
   maxFilterConcurrency: number;
+  rawPageCachePath: string;
+  rawPageCacheTtlMs: number;
+}
+
+interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptions> {
+  rawPageCache?: RawPageCache;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
@@ -26,7 +33,9 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
   timeoutMs: 60_000,
   maxAreaConcurrency: 3,
-  maxFilterConcurrency: 4
+  maxFilterConcurrency: 4,
+  rawPageCachePath: "data/cache/forestry-raw-pages.json",
+  rawPageCacheTtlMs: 60 * 60 * 1000
 };
 
 const waitForReadyContent = async (
@@ -57,69 +66,114 @@ const waitForReadyContent = async (
 export class ForestryScraper {
   private readonly options: ForestryScraperOptions;
 
-  constructor(options?: Partial<ForestryScraperOptions>) {
+  private readonly rawPageCache: RawPageCache;
+
+  constructor(options?: ForestryScraperConstructorOptions) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
+    this.rawPageCache = options?.rawPageCache ??
+      new RawPageCache({
+        filePath: this.options.rawPageCachePath,
+        ttlMs: this.options.rawPageCacheTtlMs
+      });
   }
 
-  private async scrapeAreas(context: BrowserContext): Promise<ForestAreaWithForests[]> {
-    const mainPage = await context.newPage();
+  private async fetchHtml(
+    getContext: () => Promise<BrowserContext>,
+    url: string,
+    expectedPattern: RegExp | null
+  ): Promise<{ html: string; url: string }> {
+    let cached: Awaited<ReturnType<RawPageCache["get"]>> = null;
     try {
-      await mainPage.goto(this.options.entryUrl, {
+      cached = await this.rawPageCache.get(url);
+    } catch {
+      cached = null;
+    }
+
+    if (cached && !isCloudflareChallengeHtml(cached.html)) {
+      return {
+        html: cached.html,
+        url: cached.finalUrl
+      };
+    }
+
+    const context = await getContext();
+    const page = await context.newPage();
+    try {
+      await page.goto(url, {
         waitUntil: "domcontentloaded",
         timeout: this.options.timeoutMs
       });
 
-      const mainHtml = await waitForReadyContent(
-        mainPage,
-        /solid fuel fire ban/i,
+      const html = await waitForReadyContent(
+        page,
+        expectedPattern,
         this.options.timeoutMs
       );
+      const finalUrl = page.url();
 
-      if (isCloudflareChallengeHtml(mainHtml)) {
-        throw new Error(
-          "Forestry site anti-bot verification blocked scraping. Try again shortly."
-        );
+      if (!isCloudflareChallengeHtml(html)) {
+        try {
+          await this.rawPageCache.set(url, {
+            finalUrl,
+            html
+          });
+        } catch {
+          // Keep scrape success even if cache write fails.
+        }
       }
 
-      const areas = parseMainFireBanPage(mainHtml, this.options.entryUrl);
-      if (!areas.length) {
-        throw new Error("No fire ban areas were found on the main Forestry page.");
-      }
-
-      const limit = pLimit(this.options.maxAreaConcurrency);
-      const areasWithForests = await Promise.all(
-        areas.map((area) =>
-          limit(async () => {
-            const page = await context.newPage();
-            try {
-              await page.goto(area.areaUrl, {
-                waitUntil: "domcontentloaded",
-                timeout: this.options.timeoutMs
-              });
-
-              const areaHtml = await waitForReadyContent(
-                page,
-                null,
-                this.options.timeoutMs
-              );
-
-              const forests = parseAreaForestNames(areaHtml);
-
-              return {
-                ...area,
-                forests
-              };
-            } finally {
-              await page.close();
-            }
-          })
-        )
-      );
-
-      return areasWithForests;
+      return {
+        html,
+        url: finalUrl
+      };
     } finally {
-      await mainPage.close();
+      await page.close();
     }
+  }
+
+  private async scrapeAreas(
+    getContext: () => Promise<BrowserContext>
+  ): Promise<ForestAreaWithForests[]> {
+    const main = await this.fetchHtml(
+      getContext,
+      this.options.entryUrl,
+      /solid fuel fire ban/i
+    );
+    const mainHtml = main.html;
+
+    if (isCloudflareChallengeHtml(mainHtml)) {
+      throw new Error(
+        "Forestry site anti-bot verification blocked scraping. Try again shortly."
+      );
+    }
+
+    const areas = parseMainFireBanPage(mainHtml, main.url);
+    if (!areas.length) {
+      throw new Error("No fire ban areas were found on the main Forestry page.");
+    }
+
+    const limit = pLimit(this.options.maxAreaConcurrency);
+    const areasWithForests = await Promise.all(
+      areas.map((area) =>
+        limit(async () => {
+          const areaHtml = (
+            await this.fetchHtml(
+              getContext,
+              area.areaUrl,
+              null
+            )
+          ).html;
+          const forests = parseAreaForestNames(areaHtml);
+
+          return {
+            ...area,
+            forests
+          };
+        })
+      )
+    );
+
+    return areasWithForests;
   }
 
   private buildEmptyDirectorySnapshot(warning?: string): ForestDirectorySnapshot {
@@ -131,7 +185,7 @@ export class ForestryScraper {
   }
 
   private async loadDirectoryBasePage(
-    context: BrowserContext
+    getContext: () => Promise<BrowserContext>
   ): Promise<{ html: string; url: string } | null> {
     const urls = [
       this.options.forestsDirectoryUrl,
@@ -140,37 +194,26 @@ export class ForestryScraper {
     ].filter((value, index, list) => list.indexOf(value) === index);
 
     for (const url of urls) {
-      const page = await context.newPage();
-      try {
-        await page.goto(url, {
-          waitUntil: "domcontentloaded",
-          timeout: this.options.timeoutMs
-        });
+      const response = await this.fetchHtml(
+        getContext,
+        url,
+        /facilit|state forests list|showing \d+ results/i
+      );
 
-        const html = await waitForReadyContent(
-          page,
-          /facilit|state forests list|showing \d+ results/i,
-          this.options.timeoutMs
-        );
-
-        if (isCloudflareChallengeHtml(html)) {
-          continue;
-        }
-
-        return {
-          html,
-          url: page.url()
-        };
-      } finally {
-        await page.close();
+      if (isCloudflareChallengeHtml(response.html)) {
+        continue;
       }
+
+      return response;
     }
 
     return null;
   }
 
-  private async scrapeDirectory(context: BrowserContext): Promise<ForestDirectorySnapshot> {
-    const base = await this.loadDirectoryBasePage(context);
+  private async scrapeDirectory(
+    getContext: () => Promise<BrowserContext>
+  ): Promise<ForestDirectorySnapshot> {
+    const base = await this.loadDirectoryBasePage(getContext);
     if (!base) {
       return this.buildEmptyDirectorySnapshot(
         "Could not load Forestry forests facilities page; facilities filters are temporarily unavailable."
@@ -224,37 +267,29 @@ export class ForestryScraper {
     await Promise.all(
       filters.map((filter) =>
         limit(async () => {
-          const page = await context.newPage();
-          try {
-            const filterUrl = new URL(base.url);
-            filterUrl.search = "";
-            filterUrl.searchParams.set(filter.paramName, "Yes");
+          const filterUrl = new URL(base.url);
+          filterUrl.search = "";
+          filterUrl.searchParams.set(filter.paramName, "Yes");
 
-            await page.goto(filterUrl.toString(), {
-              waitUntil: "domcontentloaded",
-              timeout: this.options.timeoutMs
-            });
+          const filteredHtml = (
+            await this.fetchHtml(
+              getContext,
+              filterUrl.toString(),
+              /state forest|showing \d+ results/i
+            )
+          ).html;
 
-            const filteredHtml = await waitForReadyContent(
-              page,
-              /state forest|showing \d+ results/i,
-              this.options.timeoutMs
+          if (isCloudflareChallengeHtml(filteredHtml)) {
+            warnings.add(
+              `Facilities filter "${filter.label}" could not be loaded due to anti-bot verification.`
             );
+            return;
+          }
 
-            if (isCloudflareChallengeHtml(filteredHtml)) {
-              warnings.add(
-                `Facilities filter "${filter.label}" could not be loaded due to anti-bot verification.`
-              );
-              return;
-            }
-
-            const forestsWithFacility = parseForestDirectoryForests(filteredHtml);
-            for (const entry of forestsWithFacility) {
-              const row = ensureForest(entry.forestName, entry.forestUrl);
-              row.facilities[filter.key] = true;
-            }
-          } finally {
-            await page.close();
+          const forestsWithFacility = parseForestDirectoryForests(filteredHtml);
+          for (const entry of forestsWithFacility) {
+            const row = ensureForest(entry.forestName, entry.forestUrl);
+            row.facilities[filter.key] = true;
           }
         })
       )
@@ -276,17 +311,30 @@ export class ForestryScraper {
   }
 
   async scrape(): Promise<ForestryScrapeResult> {
-    const browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({
-      userAgent:
-        "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
-      locale: "en-AU"
-    });
+    const runtime: { browser: Browser | null; context: BrowserContext | null } = {
+      browser: null,
+      context: null
+    };
+
+    const getContext = async (): Promise<BrowserContext> => {
+      if (runtime.context) {
+        return runtime.context;
+      }
+
+      runtime.browser = await chromium.launch({ headless: true });
+      runtime.context = await runtime.browser.newContext({
+        userAgent:
+          "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
+        locale: "en-AU"
+      });
+
+      return runtime.context;
+    };
 
     try {
       const [areas, directory] = await Promise.all([
-        this.scrapeAreas(context),
-        this.scrapeDirectory(context)
+        this.scrapeAreas(getContext),
+        this.scrapeDirectory(getContext)
       ]);
 
       return {
@@ -295,8 +343,15 @@ export class ForestryScraper {
         warnings: [...directory.warnings]
       };
     } finally {
-      await context.close();
-      await browser.close();
+      const activeContext = runtime.context;
+      if (activeContext) {
+        await activeContext.close();
+      }
+
+      const activeBrowser = runtime.browser;
+      if (activeBrowser) {
+        await activeBrowser.close();
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ playwright-report/
 test-results/
 .vite/
 data/cache/forests-snapshot.json
+data/cache/forestry-raw-pages.json
 data/cache/geocode-cache.json
 data/cache/*.sqlite
 data/cache/*.sqlite-*

@@ -12,7 +12,8 @@ export const createApp = (service?: ForestDataService) => {
 
   const resolvedService = service ??
     new LiveForestDataService({
-      scrapeTtlMs: Number(process.env.SCRAPE_TTL_MS ?? `${15 * 60 * 1000}`)
+      scrapeTtlMs: Number(process.env.SCRAPE_TTL_MS ?? `${15 * 60 * 1000}`),
+      snapshotPath: process.env.FORESTRY_SNAPSHOT_PATH ?? null
     });
 
   app.get("/api/health", (_, res) => {
