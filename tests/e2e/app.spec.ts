@@ -116,6 +116,13 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     "href",
     "https://www.forestrycorporation.com.au/visit/forests"
   );
+  await expect(page.getByTestId("settings-btn")).toBeVisible();
+  await page.getByTestId("settings-btn").click();
+  const settingsDialog = page.getByTestId("settings-dialog");
+  await expect(settingsDialog).toBeVisible();
+  await expect(page.getByTestId("settings-tolls-avoid")).toBeChecked();
+  await expect(settingsDialog).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await settingsDialog.getByRole("button", { name: "Close" }).click();
   await expect(page.getByTestId("forest-row").first()).toBeVisible();
 
   const firstForestRow = page.getByTestId("forest-row").first();
@@ -312,9 +319,11 @@ test("shows stale warning in warnings dialog when upstream scrape falls back to 
   await page.goto("/");
   await expect(page.getByTestId("warnings-btn")).toContainText("1");
   await page.getByTestId("warnings-btn").click();
-  await expect(page.getByTestId("warnings-dialog")).toContainText(
+  const warningsDialog = page.getByTestId("warnings-dialog");
+  await expect(warningsDialog).toContainText(
     "anti-bot verification blocked scraping"
   );
+  await expect(warningsDialog).toHaveCSS("background-color", "rgb(255, 255, 255)");
 });
 
 test("does not request geolocation on page load when permission is not granted", async ({
@@ -347,6 +356,110 @@ test("does not request geolocation on page load when permission is not granted",
     "Enable location to find the closest legal campfire spot near you."
   );
   await expect(page.getByTestId("nearest-spot")).toHaveCount(0);
+});
+
+test("shows refresh progress status text when refresh task is running", async ({ page }) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: []
+      })
+    });
+  });
+
+  await page.route("**/api/refresh/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        taskId: "refresh-1",
+        status: "RUNNING",
+        phase: "GEOCODE_FORESTS",
+        message: "Resolving forest coordinates (13/541).",
+        startedAt: "2026-02-21T10:00:00.000Z",
+        updatedAt: "2026-02-21T10:00:02.000Z",
+        completedAt: null,
+        error: null,
+        progress: {
+          phase: "GEOCODE_FORESTS",
+          message: "Resolving forest coordinates (13/541).",
+          completed: 13,
+          total: 541
+        }
+      })
+    });
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Refresh from source" }).click();
+  await expect(page.getByTestId("refresh-task-status")).toContainText(
+    "Refresh in progress:"
+  );
+  await expect(page.getByTestId("refresh-progress-bar")).toBeVisible();
+});
+
+test("opens websocket handshakes for refresh and forests progress endpoints", async ({ page }) => {
+  await page.goto("/");
+
+  const websocketHandshakeResult = await page.evaluate(async () => {
+    const openWebSocket = async (path: string): Promise<string> =>
+      new Promise((resolve) => {
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const webSocket = new WebSocket(`${protocol}://${window.location.host}${path}`);
+        let settled = false;
+
+        const settle = (value: string) => {
+          if (settled) {
+            return;
+          }
+
+          settled = true;
+          resolve(value);
+        };
+
+        webSocket.addEventListener("open", () => {
+          webSocket.close();
+          settle("open");
+        });
+
+        webSocket.addEventListener("error", () => {
+          settle("error");
+        });
+
+        webSocket.addEventListener("close", () => {
+          if (!settled) {
+            settle("close");
+          }
+        });
+
+        setTimeout(() => {
+          settle("timeout");
+        }, 4000);
+      });
+
+    const refreshWebSocketStatus = await openWebSocket("/api/refresh/ws");
+    const forestsWebSocketStatus = await openWebSocket("/api/forests/ws");
+
+    return {
+      refreshWebSocketStatus,
+      forestsWebSocketStatus
+    };
+  });
+
+  expect(websocketHandshakeResult.refreshWebSocketStatus).toBe("open");
+  expect(websocketHandshakeResult.forestsWebSocketStatus).toBe("open");
 });
 
 test("uses current location on page load when permission is already granted", async ({

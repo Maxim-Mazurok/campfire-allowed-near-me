@@ -11,6 +11,38 @@ import type { ForestPoint } from "../lib/api";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
 
+const formatDriveDuration = (durationMinutes: number | null): string => {
+  if (durationMinutes === null || !Number.isFinite(durationMinutes)) {
+    return "Drive time unavailable";
+  }
+
+  const rounded = Math.max(1, Math.round(durationMinutes));
+  const hours = Math.floor(rounded / 60);
+  const minutes = rounded % 60;
+
+  if (hours === 0) {
+    return `${minutes}m`;
+  }
+
+  if (minutes === 0) {
+    return `${hours}h`;
+  }
+
+  return `${hours}h ${minutes}m`;
+};
+
+const formatDriveSummary = (forest: ForestPoint): string => {
+  if (forest.distanceKm === null) {
+    return "Drive distance unavailable";
+  }
+
+  if (forest.travelDurationMinutes === null) {
+    return `${forest.distanceKm.toFixed(1)} km`;
+  }
+
+  return `${forest.distanceKm.toFixed(1)} km, ${formatDriveDuration(forest.travelDurationMinutes)}`;
+};
+
 const FitToUser = ({
   latitude,
   longitude
@@ -115,12 +147,8 @@ export const MapView = ({
               Total Fire Ban: {forest.totalFireBanStatusText}
               <br />
               Matches filters: No
-              {forest.distanceKm !== null ? (
-                <>
-                  <br />
-                  Distance: {forest.distanceKm.toFixed(1)} km
-                </>
-              ) : null}
+              <br />
+              Drive: {formatDriveSummary(forest)}
             </Popup>
           </CircleMarker>
         ))}
@@ -150,12 +178,8 @@ export const MapView = ({
               Total Fire Ban: {forest.totalFireBanStatusText}
               <br />
               Matches filters: Yes
-              {forest.distanceKm !== null ? (
-                <>
-                  <br />
-                  Distance: {forest.distanceKm.toFixed(1)} km
-                </>
-              ) : null}
+              <br />
+              Drive: {formatDriveSummary(forest)}
             </Popup>
           </CircleMarker>
         ))}

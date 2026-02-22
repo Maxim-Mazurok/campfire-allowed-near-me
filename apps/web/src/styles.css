@@ -55,7 +55,7 @@ body {
 }
 
 .warnings-btn {
-  margin-left: auto;
+  margin-left: 0;
   min-width: 64px;
   display: inline-flex;
   align-items: center;
@@ -63,6 +63,32 @@ body {
   gap: 6px;
   border-color: #d59f2f;
   background: #fff9e8;
+}
+
+.settings-btn {
+  margin-left: auto;
+  border-color: #7e9ab5;
+  background: #f2f7fc;
+}
+
+.refresh-task-status {
+  margin: 8px 0 0;
+}
+
+.refresh-progress {
+  margin-top: 6px;
+}
+
+.refresh-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.refresh-progress-bar {
+  width: 100%;
+  height: 8px;
 }
 
 .warnings-btn:disabled {
@@ -465,6 +491,12 @@ a.status-pill {
   overflow: auto;
 }
 
+.warnings-dialog,
+.fire-ban-forest-table-dialog,
+.settings-dialog {
+  background: #fff;
+}
+
 .warnings-dialog-header {
   display: flex;
   align-items: center;
@@ -513,6 +545,39 @@ a.status-pill {
 
 .fire-ban-forest-table-dialog {
   width: min(860px, 100%);
+}
+
+.settings-overlay {
+  z-index: 1450;
+}
+
+.settings-dialog {
+  width: min(560px, 100%);
+  max-height: min(82dvh, 540px);
+  overflow: auto;
+}
+
+.settings-options {
+  border: 1px solid #d8e0d8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.settings-options legend {
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.settings-option:first-of-type {
+  margin-top: 0;
 }
 
 .fire-ban-forest-table-hint {

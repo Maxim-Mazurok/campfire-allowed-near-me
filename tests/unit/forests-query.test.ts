@@ -11,6 +11,8 @@ import {
 const API_URL = "http://localhost/api/forests";
 
 const server = setupServer();
+const noTolls = { avoidTolls: true } as const;
+const allowTolls = { avoidTolls: false } as const;
 
 const createQueryClient = () =>
   new QueryClient({
@@ -50,6 +52,7 @@ const buildPayload = (overrides: Partial<ForestApiResponse> = {}): ForestApiResp
       geocodeName: "Forest A",
       geocodeConfidence: 0.8,
       distanceKm: 12.4,
+      travelDurationMinutes: 18,
       facilities: {}
     }
   ],
@@ -80,17 +83,18 @@ describe("forests query options", () => {
 
     const queryClient = createQueryClient();
     const location = { latitude: -33.9, longitude: 151.1 };
-    const queryKey = buildForestsQueryKey(location);
+    const queryKey = buildForestsQueryKey(location, noTolls);
 
     const response = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(location)
+      queryFn: forestsQueryFn(location, noTolls)
     });
 
     expect(response.forests[0]?.forestName).toBe("Forest A");
     expect(seenUrl?.searchParams.get("lat")).toBe(String(location.latitude));
     expect(seenUrl?.searchParams.get("lng")).toBe(String(location.longitude));
     expect(seenUrl?.searchParams.get("refresh")).toBeNull();
+    expect(seenUrl?.searchParams.get("tolls")).toBe("avoid");
   });
 
   it("forces refresh-from-source requests with refresh=1 on the same query key", async () => {
@@ -113,15 +117,15 @@ describe("forests query options", () => {
     );
 
     const queryClient = createQueryClient();
-    const queryKey = buildForestsQueryKey(null);
+    const queryKey = buildForestsQueryKey(null, noTolls);
 
     const firstResponse = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(null, false)
+      queryFn: forestsQueryFn(null, noTolls, false)
     });
     const refreshedResponse = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(null, true)
+      queryFn: forestsQueryFn(null, noTolls, true)
     });
 
     expect(firstResponse.fetchedAt).toBe("2026-02-21T10:00:00.000Z");
@@ -147,7 +151,8 @@ describe("forests query options", () => {
                 id: "forest-fast",
                 forestName: "Fast Forest",
                 areaName: "Area Fast",
-                distanceKm: 1.2
+                distanceKm: 1.2,
+                travelDurationMinutes: 5
               },
               forests: [
                 {
@@ -166,6 +171,7 @@ describe("forests query options", () => {
                   geocodeName: "Fast Forest",
                   geocodeConfidence: 0.9,
                   distanceKm: 1.2,
+                  travelDurationMinutes: 5,
                   facilities: {}
                 }
               ]
@@ -187,24 +193,62 @@ describe("forests query options", () => {
     const location = { latitude: -33.9, longitude: 151.1 };
 
     const nonLocationRequest = queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(null),
-      queryFn: forestsQueryFn(null)
+      queryKey: buildForestsQueryKey(null, noTolls),
+      queryFn: forestsQueryFn(null, noTolls)
     });
     const locationResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(location),
-      queryFn: forestsQueryFn(location)
+      queryKey: buildForestsQueryKey(location, noTolls),
+      queryFn: forestsQueryFn(location, noTolls)
     });
 
     await nonLocationRequest;
 
     expect(locationResponse.nearestLegalSpot?.forestName).toBe("Fast Forest");
     expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(location))
+      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(location, noTolls))
         ?.nearestLegalSpot?.forestName
     ).toBe("Fast Forest");
     expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(null))
+      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(null, noTolls))
         ?.nearestLegalSpot
     ).toBeNull();
+  });
+
+  it("separates toll and no-toll responses by query key", async () => {
+    const seenTolls: string[] = [];
+    server.use(
+      http.get(API_URL, ({ request }) => {
+        const requestUrl = new URL(request.url);
+        const tolls = requestUrl.searchParams.get("tolls") ?? "avoid";
+        seenTolls.push(tolls);
+
+        return HttpResponse.json(
+          buildPayload({
+            nearestLegalSpot: {
+              id: tolls === "allow" ? "forest-allow" : "forest-avoid",
+              forestName: tolls === "allow" ? "Allow Tolls Forest" : "Avoid Tolls Forest",
+              areaName: "Area",
+              distanceKm: tolls === "allow" ? 8 : 9,
+              travelDurationMinutes: tolls === "allow" ? 12 : 14
+            }
+          })
+        );
+      })
+    );
+
+    const queryClient = createQueryClient();
+
+    const noTollsResponse = await queryClient.fetchQuery({
+      queryKey: buildForestsQueryKey(null, noTolls),
+      queryFn: forestsQueryFn(null, noTolls)
+    });
+    const allowTollsResponse = await queryClient.fetchQuery({
+      queryKey: buildForestsQueryKey(null, allowTolls),
+      queryFn: forestsQueryFn(null, allowTolls)
+    });
+
+    expect(noTollsResponse.nearestLegalSpot?.forestName).toBe("Avoid Tolls Forest");
+    expect(allowTollsResponse.nearestLegalSpot?.forestName).toBe("Allow Tolls Forest");
+    expect(seenTolls).toEqual(["avoid", "allow"]);
   });
 });

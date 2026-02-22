@@ -6,15 +6,35 @@ export type UserLocation = {
   longitude: number;
 };
 
-export const buildForestsQueryKey = (location: UserLocation | null) =>
-  ["forests", location?.latitude ?? null, location?.longitude ?? null] as const;
+export type RoutePreferences = {
+  avoidTolls: boolean;
+};
+
+export const buildForestsQueryKey = (
+  location: UserLocation | null,
+  routePreferences: RoutePreferences
+) =>
+  [
+    "forests",
+    location?.latitude ?? null,
+    location?.longitude ?? null,
+    routePreferences.avoidTolls ? "no-tolls" : "allow-tolls"
+  ] as const;
 
 export type ForestsQueryKey = ReturnType<typeof buildForestsQueryKey>;
 
 export const forestsQueryFn =
-  (location: UserLocation | null, refresh = false) =>
+  (
+    location: UserLocation | null,
+    routePreferences: RoutePreferences,
+    refresh = false
+  ) =>
   ({ signal }: QueryFunctionContext<ForestsQueryKey>): Promise<ForestApiResponse> =>
-    fetchForests(location ?? undefined, refresh, signal);
+    fetchForests(
+      location ?? undefined,
+      { refresh, avoidTolls: routePreferences.avoidTolls },
+      signal
+    );
 
 export const toLoadErrorMessage = (error: unknown): string | null => {
   if (!error) {

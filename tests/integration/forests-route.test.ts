@@ -27,7 +27,8 @@ const responseFixture: ForestApiResponse = {
     id: "forest-a",
     forestName: "Forest A",
     areaName: "Area A",
-    distanceKm: 14.2
+    distanceKm: 14.2,
+    travelDurationMinutes: 22
   },
   forests: [
     {
@@ -47,15 +48,20 @@ const responseFixture: ForestApiResponse = {
       facilities: {
         fishing: true
       },
-      distanceKm: 14.2
+      distanceKm: 14.2,
+      travelDurationMinutes: 22
     }
   ]
 };
 
 describe("GET /api/forests", () => {
   it("returns forest payload from service", async () => {
+    let seenInput: Parameters<ForestDataService["getForestData"]>[0] | undefined;
     const service: ForestDataService = {
-      getForestData: async () => responseFixture
+      getForestData: async (input) => {
+        seenInput = input;
+        return responseFixture;
+      }
     };
 
     const app = createApp(service);
@@ -64,6 +70,32 @@ describe("GET /api/forests", () => {
     expect(res.status).toBe(200);
     expect(res.body.nearestLegalSpot.forestName).toBe("Forest A");
     expect(res.body.forests).toHaveLength(1);
+    expect(seenInput).toEqual({
+      forceRefresh: false,
+      preferCachedSnapshot: false,
+      avoidTolls: true,
+      progressCallback: expect.any(Function),
+      userLocation: {
+        latitude: -33.8,
+        longitude: 151.2
+      }
+    });
+  });
+
+  it("respects toll settings from query params", async () => {
+    let seenInput: Parameters<ForestDataService["getForestData"]>[0] | undefined;
+    const service: ForestDataService = {
+      getForestData: async (input) => {
+        seenInput = input;
+        return responseFixture;
+      }
+    };
+
+    const app = createApp(service);
+    const res = await request(app).get("/api/forests?tolls=allow");
+
+    expect(res.status).toBe(200);
+    expect(seenInput?.avoidTolls).toBe(false);
   });
 
   it("returns 500 when service errors", async () => {

@@ -1,9 +1,18 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { createServer } from "node:net";
+import { loadLocalEnv } from "../apps/api/src/utils/load-local-env.js";
 
 const DEFAULT_API_PORT = 8787;
 const DEFAULT_WEB_PORT = 5173;
 const MAX_PORT = 65_535;
+const NOMINATIM_CONTAINER_NAME = "campfire-nominatim";
+const DEFAULT_NOMINATIM_IMAGE = "mediagis/nominatim:4.5";
+const DEFAULT_NOMINATIM_PORT = "8080";
+const DEFAULT_NOMINATIM_DNS_SERVERS = "1.1.1.1,8.8.8.8";
+const DEFAULT_NOMINATIM_PBF_URL =
+  "https://download.geofabrik.de/australia-oceania/australia/new-south-wales-latest.osm.pbf";
+
+loadLocalEnv();
 
 const parsePort = (value: string | undefined, fallback: number) => {
   if (!value) {
@@ -75,7 +84,212 @@ const stopProcess = (child: ChildProcess, signal: NodeJS.Signals) => {
   }
 };
 
+const runDockerCommand = async (argumentsList: string[]): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const dockerProcess = spawn("docker", argumentsList, {
+      stdio: ["ignore", "pipe", "pipe"]
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    dockerProcess.stdout.on("data", (chunk: Buffer) => {
+      stdout += chunk.toString();
+    });
+
+    dockerProcess.stderr.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString();
+    });
+
+    dockerProcess.on("error", (error) => {
+      reject(error);
+    });
+
+    dockerProcess.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(stderr.trim() || stdout.trim() || `docker exited with code ${code}`));
+        return;
+      }
+
+      resolve(stdout.trim());
+    });
+  });
+
+const normalizeDnsServers = (dnsServers: string[]): string[] =>
+  [...dnsServers]
+    .map((dnsServer) => dnsServer.trim())
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+
+const getContainerDnsServers = async (containerName: string): Promise<string[]> => {
+  try {
+    const dnsJson = await runDockerCommand([
+      "inspect",
+      "--format",
+      "{{json .HostConfig.Dns}}",
+      containerName
+    ]);
+
+    const parsed = JSON.parse(dnsJson) as unknown;
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return normalizeDnsServers(parsed.filter((value): value is string => typeof value === "string"));
+  } catch {
+    return [];
+  }
+};
+
+const isContainerRunning = async (containerName: string): Promise<boolean> => {
+  try {
+    const running = await runDockerCommand([
+      "inspect",
+      "--format",
+      "{{.State.Running}}",
+      containerName
+    ]);
+
+    return running.trim().toLowerCase() === "true";
+  } catch {
+    return false;
+  }
+};
+
+const ensureNominatimContainerRunning = async (): Promise<void> => {
+  if (process.env.NOMINATIM_AUTO_START === "0") {
+    // eslint-disable-next-line no-console
+    console.log("[dev] Nominatim auto-start disabled via NOMINATIM_AUTO_START=0.");
+    return;
+  }
+
+  const nominatimPort = process.env.NOMINATIM_PORT ?? DEFAULT_NOMINATIM_PORT;
+  const nominatimImage = process.env.NOMINATIM_IMAGE ?? DEFAULT_NOMINATIM_IMAGE;
+  const nominatimPbfUrl = process.env.NOMINATIM_PBF_URL ?? DEFAULT_NOMINATIM_PBF_URL;
+  const nominatimDnsServers = (
+    process.env.NOMINATIM_DNS_SERVERS ?? DEFAULT_NOMINATIM_DNS_SERVERS
+  )
+    .split(",")
+    .map((dnsServer) => dnsServer.trim())
+    .filter(Boolean);
+  const dnsArguments = nominatimDnsServers.flatMap((dnsServer) => ["--dns", dnsServer]);
+
+  try {
+    const originalExistingContainerId = await runDockerCommand([
+      "ps",
+      "-aq",
+      "--filter",
+      `name=^/${NOMINATIM_CONTAINER_NAME}$`
+    ]);
+
+    if (originalExistingContainerId) {
+      const configuredDnsServers = await getContainerDnsServers(NOMINATIM_CONTAINER_NAME);
+      const expectedDnsServers = normalizeDnsServers(nominatimDnsServers);
+      const dnsConfigurationChanged =
+        JSON.stringify(configuredDnsServers) !== JSON.stringify(expectedDnsServers);
+
+      if (dnsConfigurationChanged) {
+        await runDockerCommand(["rm", "-f", NOMINATIM_CONTAINER_NAME]);
+        // eslint-disable-next-line no-console
+        console.log(
+          `[dev] Recreating Nominatim container to apply DNS settings: ${expectedDnsServers.join(", ")}.`
+        );
+      }
+    }
+
+    const existingContainerId = await runDockerCommand([
+      "ps",
+      "-aq",
+      "--filter",
+      `name=^/${NOMINATIM_CONTAINER_NAME}$`
+    ]);
+
+    const runningContainerId = await runDockerCommand([
+      "ps",
+      "-q",
+      "--filter",
+      `name=^/${NOMINATIM_CONTAINER_NAME}$`
+    ]);
+
+    if (runningContainerId) {
+      // eslint-disable-next-line no-console
+      console.log(`[dev] Nominatim container is already running on :${nominatimPort}.`);
+      return;
+    }
+
+    if (existingContainerId) {
+      await runDockerCommand(["start", NOMINATIM_CONTAINER_NAME]);
+
+      const startedSuccessfully = await isContainerRunning(NOMINATIM_CONTAINER_NAME);
+      if (startedSuccessfully) {
+        // eslint-disable-next-line no-console
+        console.log(`[dev] Started existing Nominatim container on :${nominatimPort}.`);
+        return;
+      }
+
+      await runDockerCommand(["rm", "-f", NOMINATIM_CONTAINER_NAME]);
+      // eslint-disable-next-line no-console
+      console.log("[dev] Recreating Nominatim container after failed start.");
+    }
+
+    await runDockerCommand([
+      "run",
+      "-d",
+      "--name",
+      NOMINATIM_CONTAINER_NAME,
+      "-p",
+      `${nominatimPort}:8080`,
+      ...dnsArguments,
+      "-e",
+      `PBF_URL=${nominatimPbfUrl}`,
+      "-e",
+      "REPLICATION_URL=https://download.geofabrik.de/australia-oceania/australia-updates/",
+      nominatimImage
+    ]);
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `[dev] Started new Nominatim container on :${nominatimPort} (first import can take time).`
+    );
+    // eslint-disable-next-line no-console
+    console.log(
+      `[dev] Nominatim DNS servers: ${nominatimDnsServers.join(", ")} (configure via NOMINATIM_DNS_SERVERS).`
+    );
+
+    const runningAfterCreate = await isContainerRunning(NOMINATIM_CONTAINER_NAME);
+    if (!runningAfterCreate) {
+      let recentLogs = "";
+      try {
+        recentLogs = await runDockerCommand([
+          "logs",
+          "--tail",
+          "20",
+          NOMINATIM_CONTAINER_NAME
+        ]);
+      } catch {
+        recentLogs = "";
+      }
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[dev] Nominatim container was created but is not running; check network/DNS and review logs.${
+          recentLogs ? ` Latest logs:\n${recentLogs}` : ""
+        }`
+      );
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[dev] Unable to ensure Nominatim container is running: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+  }
+};
+
 const main = async () => {
+  await ensureNominatimContainerRunning();
+
   const apiStartPort = parsePort(
     process.env.API_PORT_START ?? process.env.PORT,
     DEFAULT_API_PORT

@@ -1,4 +1,13 @@
 export type BanStatus = "BANNED" | "NOT_BANNED" | "UNKNOWN";
+export type RefreshTaskStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
+export type RefreshTaskPhase =
+  | "IDLE"
+  | "SCRAPE"
+  | "GEOCODE_AREAS"
+  | "GEOCODE_FORESTS"
+  | "ROUTES"
+  | "PERSIST"
+  | "DONE";
 
 export interface FacilityDefinition {
   key: string;
@@ -45,6 +54,7 @@ export interface ForestPoint {
   totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, boolean | null>;
   distanceKm: number | null;
+  travelDurationMinutes: number | null;
 }
 
 export interface FacilityMatchDiagnostics {
@@ -68,15 +78,71 @@ export interface ForestApiResponse {
     forestName: string;
     areaName: string;
     distanceKm: number;
+    travelDurationMinutes: number | null;
   } | null;
   warnings: string[];
+  refreshTask?: RefreshTaskState | null;
 }
+
+export interface RefreshTaskProgress {
+  phase: RefreshTaskPhase;
+  message: string;
+  completed: number;
+  total: number | null;
+}
+
+export interface RefreshTaskState {
+  taskId: string | null;
+  status: RefreshTaskStatus;
+  phase: RefreshTaskPhase;
+  message: string;
+  startedAt: string | null;
+  updatedAt: string;
+  completedAt: string | null;
+  error: string | null;
+  progress: RefreshTaskProgress | null;
+}
+
+export type ForestLoadStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
+
+export interface ForestLoadProgressState {
+  requestId: string | null;
+  status: ForestLoadStatus;
+  phase: RefreshTaskPhase;
+  message: string;
+  startedAt: string | null;
+  updatedAt: string;
+  completedAt: string | null;
+  error: string | null;
+  progress: RefreshTaskProgress | null;
+  activeRequestCount: number;
+}
+
+export const fetchRefreshTaskStatus = async (
+  signal?: AbortSignal
+): Promise<RefreshTaskState> => {
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  const url = new URL("/api/refresh/status", origin);
+  const response = await fetch(url.toString(), { signal });
+
+  if (!response.ok) {
+    throw new Error("Unable to fetch refresh task status");
+  }
+
+  return response.json() as Promise<RefreshTaskState>;
+};
 
 export const fetchForests = async (
   location?: { latitude: number; longitude: number },
-  refresh = false,
+  options?: {
+    refresh?: boolean;
+    avoidTolls?: boolean;
+  },
   signal?: AbortSignal
 ): Promise<ForestApiResponse> => {
+  const refresh = options?.refresh ?? false;
+  const avoidTolls = options?.avoidTolls ?? true;
   const origin =
     typeof window !== "undefined" ? window.location.origin : "http://localhost";
   const url = new URL("/api/forests", origin);
@@ -88,6 +154,8 @@ export const fetchForests = async (
   if (refresh) {
     url.searchParams.set("refresh", "1");
   }
+
+  url.searchParams.set("tolls", avoidTolls ? "avoid" : "allow");
 
   const response = await fetch(url.toString(), { signal });
   if (!response.ok) {

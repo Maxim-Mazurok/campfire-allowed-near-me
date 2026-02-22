@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { LiveForestDataService } from "../../apps/api/src/services/live-forest-data-service.js";
 import type { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
 import type { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
+import type { RouteService } from "../../apps/api/src/services/google-routes.js";
 import type { TotalFireBanService } from "../../apps/api/src/services/total-fire-ban-service.js";
 import type {
   ForestDirectorySnapshot,
@@ -488,10 +489,33 @@ describe("LiveForestDataService facilities matching", () => {
     const snapshotPath = join(tmpDir, "snapshot.json");
 
     try {
+      const routeServiceStub: RouteService = {
+        getDrivingRouteMetrics: async ({ forests }) => {
+          const byForestId = new Map<string, { distanceKm: number; durationMinutes: number }>();
+
+          for (const forest of forests) {
+            const isNymboidaCoordinates =
+              Math.abs(forest.latitude - -29.3) < 0.001 &&
+              Math.abs(forest.longitude - 152.4) < 0.001;
+            byForestId.set(forest.id, {
+              distanceKm: isNymboidaCoordinates ? 10 : 30,
+              durationMinutes: isNymboidaCoordinates ? 15 : 40
+            });
+          }
+
+          return {
+            byForestId,
+            warnings: []
+          };
+        }
+      };
+
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        routeService: routeServiceStub,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({

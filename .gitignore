@@ -9,3 +9,5 @@ data/cache/geocode-cache.json
 data/cache/*.sqlite
 data/cache/*.sqlite-*
 .DS_Store
+.env*
+!.env.example

@@ -5,7 +5,13 @@ import Tippy from "@tippyjs/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FacilityIcon } from "./components/FacilityIcon";
 import { MapView } from "./components/MapView";
-import type { ForestApiResponse } from "./lib/api";
+import {
+  fetchForests,
+  fetchRefreshTaskStatus,
+  type ForestLoadProgressState,
+  type ForestApiResponse,
+  type RefreshTaskState
+} from "./lib/api";
 import {
   buildForestsQueryKey,
   forestsQueryFn,
@@ -25,6 +31,7 @@ type UserPreferences = {
   banFilterMode?: LegacyBanFilterMode;
   facilityFilterModes?: Record<string, TriStateMode>;
   userLocation?: UserLocation | null;
+  avoidTolls?: boolean;
 };
 
 const SOLID_FUEL_FIRE_BAN_SOURCE_URL =
@@ -60,6 +67,41 @@ const sortForestsByDistance = (
   }
 
   return left.distanceKm - right.distanceKm;
+};
+
+const formatDriveDuration = (durationMinutes: number | null): string => {
+  if (durationMinutes === null || !Number.isFinite(durationMinutes)) {
+    return "Drive time unavailable";
+  }
+
+  const roundedMinutes = Math.max(1, Math.round(durationMinutes));
+  const hours = Math.floor(roundedMinutes / 60);
+  const minutes = roundedMinutes % 60;
+
+  if (hours === 0) {
+    return `${minutes}m`;
+  }
+
+  if (minutes === 0) {
+    return `${hours}h`;
+  }
+
+  return `${hours}h ${minutes}m`;
+};
+
+const formatDriveSummary = (
+  distanceKm: number | null,
+  durationMinutes: number | null
+): string => {
+  if (distanceKm === null) {
+    return "Drive distance unavailable";
+  }
+
+  if (durationMinutes === null) {
+    return `${distanceKm.toFixed(1)} km`;
+  }
+
+  return `${distanceKm.toFixed(1)} km, ${formatDriveDuration(durationMinutes)}`;
 };
 
 const FORESTRY_BASE_URL = "https://www.forestrycorporation.com.au";
@@ -231,6 +273,8 @@ const isTriStateMode = (value: unknown): value is TriStateMode =>
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
 
+const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
+
 const parseUserPreferences = (value: string | null): UserPreferences => {
   if (!value) {
     return {};
@@ -284,6 +328,10 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
       }
     }
 
+    if (isBoolean(rawPreferences.avoidTolls)) {
+      preferences.avoidTolls = rawPreferences.avoidTolls;
+    }
+
     return preferences;
   } catch {
     return {};
@@ -306,6 +354,16 @@ const writeUserPreferences = (preferences: UserPreferences) => {
   }
 };
 
+const buildRefreshWebSocketUrl = (): string => {
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${protocol}://${window.location.host}/api/refresh/ws`;
+};
+
+const buildForestsWebSocketUrl = (): string => {
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${protocol}://${window.location.host}/api/forests/ws`;
+};
+
 export const App = () => {
   const initialPreferencesRef = useRef<UserPreferences | null>(null);
   const getInitialPreferences = (): UserPreferences => {
@@ -320,6 +378,7 @@ export const App = () => {
 
   const queryClient = useQueryClient();
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [warningsOpen, setWarningsOpen] = useState(false);
   const [fireBanForestTableOpen, setFireBanForestTableOpen] = useState(false);
   const [fireBanForestSortColumn, setFireBanForestSortColumn] =
@@ -338,13 +397,50 @@ export const App = () => {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
     () => getInitialPreferences().userLocation ?? null
   );
+  const [avoidTolls, setAvoidTolls] = useState<boolean>(
+    () => getInitialPreferences().avoidTolls ?? true
+  );
+  const [refreshTaskState, setRefreshTaskState] = useState<RefreshTaskState | null>(null);
+  const [forestLoadProgressState, setForestLoadProgressState] =
+    useState<ForestLoadProgressState | null>(null);
+  const refreshStatusPollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearRefreshStatusPollTimer = () => {
+    if (refreshStatusPollTimerRef.current) {
+      clearInterval(refreshStatusPollTimerRef.current);
+      refreshStatusPollTimerRef.current = null;
+    }
+  };
+
+  const syncRefreshTaskState = () => {
+    void fetchRefreshTaskStatus()
+      .then((taskState) => {
+        setRefreshTaskState(taskState);
+        if (taskState.status !== "RUNNING") {
+          clearRefreshStatusPollTimer();
+        }
+      })
+      .catch(() => undefined);
+  };
+
+  const startRefreshStatusPolling = () => {
+    syncRefreshTaskState();
+
+    if (refreshStatusPollTimerRef.current) {
+      return;
+    }
+
+    refreshStatusPollTimerRef.current = setInterval(() => {
+      syncRefreshTaskState();
+    }, 1500);
+  };
   const forestsQueryKey = useMemo(
-    () => buildForestsQueryKey(userLocation),
-    [userLocation?.latitude, userLocation?.longitude]
+    () => buildForestsQueryKey(userLocation, { avoidTolls }),
+    [userLocation?.latitude, userLocation?.longitude, avoidTolls]
   );
   const forestsQuery = useQuery({
     queryKey: forestsQueryKey,
-    queryFn: forestsQueryFn(userLocation)
+    queryFn: forestsQueryFn(userLocation, { avoidTolls })
   });
 
   const payload = forestsQuery.data ?? null;
@@ -375,9 +471,235 @@ export const App = () => {
       solidFuelBanFilterMode,
       totalFireBanFilterMode,
       facilityFilterModes,
-      userLocation
+      userLocation,
+      avoidTolls
     });
-  }, [solidFuelBanFilterMode, totalFireBanFilterMode, facilityFilterModes, userLocation]);
+  }, [
+    solidFuelBanFilterMode,
+    totalFireBanFilterMode,
+    facilityFilterModes,
+    userLocation,
+    avoidTolls
+  ]);
+
+  useEffect(() => {
+    if (!payload?.refreshTask) {
+      return;
+    }
+
+    setRefreshTaskState(payload.refreshTask);
+  }, [payload?.refreshTask]);
+
+  useEffect(() => {
+    let isMounted = true;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let webSocket: WebSocket | null = null;
+
+    const connect = () => {
+      if (!isMounted) {
+        return;
+      }
+
+      const webSocketUrl = buildRefreshWebSocketUrl();
+      webSocket = new WebSocket(webSocketUrl);
+
+      webSocket.addEventListener("message", (event) => {
+        if (!isMounted) {
+          return;
+        }
+
+        try {
+          const payload = JSON.parse(event.data as string) as {
+            type?: string;
+            task?: RefreshTaskState;
+          };
+
+          if (payload.type === "refresh-task" && payload.task) {
+            setRefreshTaskState(payload.task);
+          }
+        } catch {
+          return;
+        }
+      });
+
+      webSocket.addEventListener("close", () => {
+        if (!isMounted) {
+          return;
+        }
+
+        reconnectTimer = setTimeout(connect, 1500);
+      });
+    };
+
+    connect();
+
+    return () => {
+      isMounted = false;
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+      }
+      webSocket?.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let webSocket: WebSocket | null = null;
+
+    const connect = () => {
+      if (!isMounted) {
+        return;
+      }
+
+      const webSocketUrl = buildForestsWebSocketUrl();
+      webSocket = new WebSocket(webSocketUrl);
+
+      webSocket.addEventListener("message", (event) => {
+        if (!isMounted) {
+          return;
+        }
+
+        try {
+          const payload = JSON.parse(event.data as string) as {
+            type?: string;
+            load?: ForestLoadProgressState;
+          };
+
+          if (payload.type === "forest-load-progress" && payload.load) {
+            setForestLoadProgressState(payload.load);
+          }
+        } catch {
+          return;
+        }
+      });
+
+      webSocket.addEventListener("close", () => {
+        if (!isMounted) {
+          return;
+        }
+
+        reconnectTimer = setTimeout(connect, 1500);
+      });
+    };
+
+    connect();
+
+    return () => {
+      isMounted = false;
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+      }
+      webSocket?.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (refreshTaskState?.status !== "RUNNING") {
+      clearRefreshStatusPollTimer();
+      return;
+    }
+
+    startRefreshStatusPolling();
+
+    return () => {
+      clearRefreshStatusPollTimer();
+    };
+  }, [refreshTaskState?.status]);
+
+  const refreshTaskStatusText = useMemo(() => {
+    if (!refreshTaskState || refreshTaskState.status === "IDLE") {
+      return null;
+    }
+
+    if (refreshTaskState.status === "RUNNING") {
+      const completed = refreshTaskState.progress?.completed;
+      const total = refreshTaskState.progress?.total;
+      const progressText =
+        typeof completed === "number" && typeof total === "number"
+          ? ` (${completed}/${total})`
+          : "";
+      return `Refresh in progress: ${refreshTaskState.message}${progressText}`;
+    }
+
+    if (refreshTaskState.status === "FAILED") {
+      return `Refresh failed: ${refreshTaskState.error ?? "Unknown error"}`;
+    }
+
+    return "Refresh completed.";
+  }, [refreshTaskState]);
+
+  const refreshTaskProgress = useMemo(() => {
+    if (!refreshTaskState || refreshTaskState.status !== "RUNNING") {
+      return null;
+    }
+
+    const completed = refreshTaskState.progress?.completed ?? 0;
+    const total = refreshTaskState.progress?.total;
+
+    if (typeof total !== "number" || total <= 0) {
+      return {
+        phase: refreshTaskState.phase,
+        completed,
+        total: null,
+        percentage: null
+      };
+    }
+
+    return {
+      phase: refreshTaskState.phase,
+      completed,
+      total,
+      percentage: Math.max(0, Math.min(100, Math.round((completed / total) * 100)))
+    };
+  }, [refreshTaskState]);
+
+  const forestLoadStatusText = useMemo(() => {
+    if (!forestLoadProgressState || forestLoadProgressState.status === "IDLE") {
+      return null;
+    }
+
+    if (forestLoadProgressState.status === "RUNNING") {
+      const completed = forestLoadProgressState.progress?.completed;
+      const total = forestLoadProgressState.progress?.total;
+      const progressText =
+        typeof completed === "number" && typeof total === "number"
+          ? ` (${completed}/${total})`
+          : "";
+      return `Loading forests: ${forestLoadProgressState.message}${progressText}`;
+    }
+
+    if (forestLoadProgressState.status === "FAILED") {
+      return `Forest load failed: ${forestLoadProgressState.error ?? "Unknown error"}`;
+    }
+
+    return "Forest load completed.";
+  }, [forestLoadProgressState]);
+
+  const forestLoadProgress = useMemo(() => {
+    if (!forestLoadProgressState || forestLoadProgressState.status !== "RUNNING") {
+      return null;
+    }
+
+    const completed = forestLoadProgressState.progress?.completed ?? 0;
+    const total = forestLoadProgressState.progress?.total;
+
+    if (typeof total !== "number" || total <= 0) {
+      return {
+        phase: forestLoadProgressState.phase,
+        completed,
+        total: null,
+        percentage: null
+      };
+    }
+
+    return {
+      phase: forestLoadProgressState.phase,
+      completed,
+      total,
+      percentage: Math.max(0, Math.min(100, Math.round((completed / total) * 100)))
+    };
+  }, [forestLoadProgressState]);
 
   const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
     setFacilityFilterModes((current) => ({
@@ -570,6 +892,14 @@ export const App = () => {
         `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`,
       forestName
     );
+  const closeSettingsDialog = () => {
+    setSettingsOpen(false);
+  };
+  const openSettingsDialog = () => {
+    setSettingsOpen(true);
+    setWarningsOpen(false);
+    setFireBanForestTableOpen(false);
+  };
   const closeWarningsDialog = () => {
     setWarningsOpen(false);
     setFireBanForestTableOpen(false);
@@ -613,11 +943,42 @@ export const App = () => {
 
   const refreshFromSource = () => {
     setLocationError(null);
+    setRefreshTaskState({
+      taskId: null,
+      status: "RUNNING",
+      phase: "SCRAPE",
+      message: "Refresh requested.",
+      startedAt: null,
+      updatedAt: new Date().toISOString(),
+      completedAt: null,
+      error: null,
+      progress: {
+        phase: "SCRAPE",
+        message: "Refresh requested.",
+        completed: 0,
+        total: null
+      }
+    });
+    startRefreshStatusPolling();
+
     void queryClient
-      .fetchQuery({
+      .cancelQueries({
         queryKey: forestsQueryKey,
-        queryFn: forestsQueryFn(userLocation, true)
+        exact: true
       })
+      .then(() =>
+        fetchForests(userLocation ?? undefined, {
+          refresh: true,
+          avoidTolls
+        })
+      )
+      .then((response) => {
+        queryClient.setQueryData(forestsQueryKey, response);
+        if (response.refreshTask) {
+          setRefreshTaskState(response.refreshTask);
+        }
+      })
+      .then(() => syncRefreshTaskState())
       .catch(() => undefined);
   };
 
@@ -639,7 +1000,7 @@ export const App = () => {
         setLocationError(null);
         setUserLocation(location);
         void queryClient.invalidateQueries({
-          queryKey: buildForestsQueryKey(location),
+          queryKey: buildForestsQueryKey(location, { avoidTolls }),
           exact: true
         });
       },
@@ -706,10 +1067,19 @@ export const App = () => {
           </button>
           <button
             type="button"
+            className="settings-btn"
+            data-testid="settings-btn"
+            onClick={openSettingsDialog}
+          >
+            Settings
+          </button>
+          <button
+            type="button"
             className="warnings-btn"
             data-testid="warnings-btn"
             aria-label={`Warnings (${warningCount})`}
             onClick={() => {
+              setSettingsOpen(false);
               setWarningsOpen(true);
               setFireBanForestTableOpen(false);
             }}
@@ -719,6 +1089,66 @@ export const App = () => {
             <span className="warnings-btn-count">{warningCount}</span>
           </button>
         </div>
+        {refreshTaskStatusText ? (
+          <p className="muted refresh-task-status" data-testid="refresh-task-status">
+            {refreshTaskStatusText}
+          </p>
+        ) : null}
+        {refreshTaskProgress ? (
+          <div className="refresh-progress" data-testid="refresh-progress">
+            <div className="refresh-progress-meta">
+              <span>{refreshTaskProgress.phase.replaceAll("_", " ")}</span>
+              {typeof refreshTaskProgress.percentage === "number" ? (
+                <span>{refreshTaskProgress.percentage}%</span>
+              ) : (
+                <span>In progress</span>
+              )}
+            </div>
+            {typeof refreshTaskProgress.percentage === "number" ? (
+              <progress
+                className="refresh-progress-bar"
+                data-testid="refresh-progress-bar"
+                value={refreshTaskProgress.completed}
+                max={refreshTaskProgress.total ?? 1}
+              />
+            ) : (
+              <progress
+                className="refresh-progress-bar"
+                data-testid="refresh-progress-bar"
+              />
+            )}
+          </div>
+        ) : null}
+        {forestLoadStatusText ? (
+          <p className="muted refresh-task-status" data-testid="forest-load-status">
+            {forestLoadStatusText}
+          </p>
+        ) : null}
+        {forestLoadProgress ? (
+          <div className="refresh-progress" data-testid="forest-load-progress">
+            <div className="refresh-progress-meta">
+              <span>{forestLoadProgress.phase.replaceAll("_", " ")}</span>
+              {typeof forestLoadProgress.percentage === "number" ? (
+                <span>{forestLoadProgress.percentage}%</span>
+              ) : (
+                <span>In progress</span>
+              )}
+            </div>
+            {typeof forestLoadProgress.percentage === "number" ? (
+              <progress
+                className="refresh-progress-bar"
+                data-testid="forest-load-progress-bar"
+                value={forestLoadProgress.completed}
+                max={forestLoadProgress.total ?? 1}
+              />
+            ) : (
+              <progress
+                className="refresh-progress-bar"
+                data-testid="forest-load-progress-bar"
+              />
+            )}
+          </div>
+        ) : null}
       </header>
 
       {!loading && payload && !userLocation ? (
@@ -737,7 +1167,12 @@ export const App = () => {
           </p>
           <p className="nearest-copy">
             Closest legal campfire spot: <strong>{payload.nearestLegalSpot.forestName}</strong> in{" "}
-            {payload.nearestLegalSpot.areaName} ({payload.nearestLegalSpot.distanceKm.toFixed(1)} km)
+            {payload.nearestLegalSpot.areaName} (
+            {formatDriveSummary(
+              payload.nearestLegalSpot.distanceKm,
+              payload.nearestLegalSpot.travelDurationMinutes
+            )}
+            )
           </p>
         </section>
       ) : null}
@@ -751,6 +1186,58 @@ export const App = () => {
             No legal campfire spot could be determined from currently mapped forests.
           </p>
         </section>
+      ) : null}
+
+      {settingsOpen ? (
+        <div
+          className="warnings-overlay settings-overlay"
+          data-testid="settings-overlay"
+          role="presentation"
+          onClick={closeSettingsDialog}
+        >
+          <section
+            className="panel settings-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-title"
+            data-testid="settings-dialog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="warnings-dialog-header">
+              <h2 id="settings-title">Route Settings</h2>
+              <button type="button" onClick={closeSettingsDialog}>
+                Close
+              </button>
+            </div>
+            <p className="muted">
+              Driving estimates use Google Routes traffic for the next Saturday at 10:00 AM
+              (calculated at request time).
+            </p>
+            <fieldset className="settings-options">
+              <legend>Toll roads</legend>
+              <label className="settings-option">
+                <input
+                  type="radio"
+                  name="toll-setting"
+                  checked={avoidTolls}
+                  onChange={() => setAvoidTolls(true)}
+                  data-testid="settings-tolls-avoid"
+                />
+                <span>No tolls (default)</span>
+              </label>
+              <label className="settings-option">
+                <input
+                  type="radio"
+                  name="toll-setting"
+                  checked={!avoidTolls}
+                  onChange={() => setAvoidTolls(false)}
+                  data-testid="settings-tolls-allow"
+                />
+                <span>Allow toll roads</span>
+              </label>
+            </fieldset>
+          </section>
+        </div>
       ) : null}
 
       {warningsOpen ? (
@@ -776,7 +1263,6 @@ export const App = () => {
                 </button>
               </div>
 
-              {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
               {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
 
               {hasUnmappedForestWarning ? (
@@ -1286,8 +1772,11 @@ export const App = () => {
                       </a>
                       <small className="muted" data-testid="distance-text">
                         {forest.distanceKm !== null
-                          ? `${forest.distanceKm.toFixed(1)} km`
-                          : "Distance unavailable"}
+                          ? formatDriveSummary(
+                              forest.distanceKm,
+                              forest.travelDurationMinutes
+                            )
+                          : "Drive distance unavailable"}
                       </small>
                     </div>
                   </div>

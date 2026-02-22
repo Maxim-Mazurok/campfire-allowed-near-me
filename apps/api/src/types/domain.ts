@@ -1,4 +1,13 @@
 export type BanStatus = "BANNED" | "NOT_BANNED" | "UNKNOWN";
+export type RefreshTaskStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
+export type RefreshTaskPhase =
+  | "IDLE"
+  | "SCRAPE"
+  | "GEOCODE_AREAS"
+  | "GEOCODE_FORESTS"
+  | "ROUTES"
+  | "PERSIST"
+  | "DONE";
 
 export type FacilityValue = boolean | null;
 
@@ -70,6 +79,7 @@ export interface ForestPoint {
   totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, FacilityValue>;
   distanceKm: number | null;
+  travelDurationMinutes: number | null;
 }
 
 export interface UserLocation {
@@ -82,6 +92,7 @@ export interface NearestForest {
   forestName: string;
   areaName: string;
   distanceKm: number;
+  travelDurationMinutes: number | null;
 }
 
 export interface FuzzyFacilityMatch {
@@ -104,6 +115,26 @@ export interface ForestApiResponse {
   forests: ForestPoint[];
   nearestLegalSpot: NearestForest | null;
   warnings: string[];
+  refreshTask?: RefreshTaskState | null;
+}
+
+export interface RefreshTaskProgress {
+  phase: RefreshTaskPhase;
+  message: string;
+  completed: number;
+  total: number | null;
+}
+
+export interface RefreshTaskState {
+  taskId: string | null;
+  status: RefreshTaskStatus;
+  phase: RefreshTaskPhase;
+  message: string;
+  startedAt: string | null;
+  updatedAt: string;
+  completedAt: string | null;
+  error: string | null;
+  progress: RefreshTaskProgress | null;
 }
 
 export interface PersistedSnapshot {
@@ -113,13 +144,16 @@ export interface PersistedSnapshot {
   sourceName: string;
   availableFacilities: FacilityDefinition[];
   matchDiagnostics: FacilityMatchDiagnostics;
-  forests: Omit<ForestPoint, "distanceKm">[];
+  forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
   warnings: string[];
 }
 
 export interface ForestDataServiceInput {
   forceRefresh?: boolean;
   userLocation?: UserLocation;
+  avoidTolls?: boolean;
+  preferCachedSnapshot?: boolean;
+  progressCallback?: (progress: RefreshTaskProgress) => void;
 }
 
 export interface ForestryScrapeResult {

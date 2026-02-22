@@ -11,7 +11,12 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 - Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
 - Uses both **Solid Fuel Fire Ban** and **Total Fire Ban** status for campfire legality.
 - Ignores Firewood collection status for campfire legality.
+- Resolves forest coordinates with Google Places first, then falls back to OpenStreetMap only when Google geocoding fails.
+- Supports optional local Nominatim fallback (`NOMINATIM_BASE_URL`) for high-volume/local development geocoding.
 - Maps forests with OpenStreetMap + Leaflet.
+- Computes driving distance/time with Google Routes traffic for next Saturday at 10:00 AM (request-time calculation).
+- Route settings let users choose `No tolls` (default) or `Allow toll roads`.
+- Refreshes run as a background task with websocket progress updates (`/api/refresh/ws`).
 - Sidebar filters:
   - Solid Fuel Fire Ban (`All`, `Not banned`, `Banned`, `Unknown`)
   - Total Fire Ban (`All`, `No ban`, `Banned`, `Unknown`)
@@ -21,6 +26,7 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 - Shows matching forests as large red map pins and non-matching forests as smaller grey pins.
 - Shows per-forest facility icon rows in the list for quick vertical scanning.
 - Persists coordinates in local SQLite cache (`data/cache/coordinates.sqlite`).
+- Persists route metrics in local SQLite cache (`data/cache/routes.sqlite`) and reuses cache for user locations within a 5km radius.
 - Falls back to stale in-memory data if live scraping is temporarily blocked.
 
 ## Quick Start (Users)
@@ -30,15 +36,29 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
    ```bash
    npm install
    ```
-4. Install Playwright browser runtime:
+4. Create local environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then set `GOOGLE_MAPS_API_KEY` in `.env.local`.
+
+Optional: run local Nominatim (Docker) and point fallback geocoding at it:
+```bash
+docker run -it --rm -p 8080:8080 -e PBF_URL=https://download.geofabrik.de/australia-oceania-latest.osm.pbf mediagis/nominatim:4.5
+```
+Then set `NOMINATIM_BASE_URL=http://localhost:8080` in `.env.local`.
+First startup imports OSM data and can take significant time/disk.
+
+`npm run dev` also attempts to auto-start a local `campfire-nominatim` Docker container (unless `NOMINATIM_AUTO_START=0`).
+5. Install Playwright browser runtime:
    ```bash
    npx playwright install chromium
    ```
-5. Start the app:
+6. Start the app:
    ```bash
    npm run dev
    ```
-6. Open the URLs printed in the terminal.
+7. Open the URLs printed in the terminal.
    - Default first picks are Web `http://localhost:5173` and API `http://localhost:8787`.
    - If those ports are busy, the next available ports are selected automatically.
 
@@ -71,6 +91,7 @@ npm run warm:coordinates
 - `npm run dev:api`: run backend only (auto-increments to next free port if needed).
 - `npm run dev:web`: run frontend only (Vite auto-increments to next free port if needed).
 - `npm run warm:coordinates`: force refresh and populate coordinate cache.
+- `npm run cache:reset`: clear local geocoding/route/snapshot caches.
 - `npm run typecheck`: TypeScript checks.
 - `npm test`: unit + integration + e2e.
 - `npm run build`: backend + frontend production build.
@@ -89,9 +110,21 @@ npm run warm:coordinates
 - `FORESTRY_RAW_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json`)
 - `FORESTRY_RAW_CACHE_TTL_MS` (default `3600000`)
 - `SCRAPE_TTL_MS` (default `900000`, in-memory processed snapshot TTL)
+- `GOOGLE_MAPS_API_KEY` (required for Google Places geocoding and Google Routes driving metrics)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
 - `GEOCODE_DELAY_MS` (default `1200`)
+- `GEOCODE_TIMEOUT_MS` (default `15000`)
+- `GEOCODE_RETRY_ATTEMPTS` (default `3`)
+- `GEOCODE_RETRY_BASE_DELAY_MS` (default `750`)
+- `NOMINATIM_BASE_URL` (optional, default public Nominatim endpoint)
+- `NOMINATIM_AUTO_START` (default `1`, auto-start local Docker Nominatim in dev script)
+- `NOMINATIM_PORT` (default `8080`)
+- `NOMINATIM_DNS_SERVERS` (default `1.1.1.1,8.8.8.8`, comma-separated DNS list passed to Docker)
+- `NOMINATIM_IMAGE` (default `mediagis/nominatim:4.5`)
+- `NOMINATIM_PBF_URL` (default NSW Geofabrik extract URL)
 - `COORDINATE_CACHE_DB` (default `data/cache/coordinates.sqlite`)
+- `ROUTE_CACHE_DB` (default `data/cache/routes.sqlite`)
+- `ROUTE_MAX_CONCURRENT_REQUESTS` (default `8`)
 - `FORESTRY_SNAPSHOT_PATH` (optional path to persist processed snapshots)
 - `FORESTRY_SKIP_SCRAPE=true` (cache-only mode; requires in-memory data or `FORESTRY_SNAPSHOT_PATH`)
 - `FORESTRY_USE_FIXTURE=fixtures/mock-forests.json` (deterministic fixture mode)
@@ -100,8 +133,11 @@ npm run warm:coordinates
 - Raw Forestry page cache: `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json` (shared across worktrees, 1-hour TTL by default).
 - Processed snapshot cache: disabled by default; optional via `FORESTRY_SNAPSHOT_PATH`.
 - Coordinate cache: `data/cache/coordinates.sqlite` (ignored in git).
+- Route cache: `data/cache/routes.sqlite` (ignored in git, no TTL; reused for user locations within 5km).
 - Raw page cache avoids re-scraping identical Forestry HTML right after restarts.
 - Coordinate cache keeps geocoding stable across restarts and reduces API calls.
+- Route cache prevents re-fetching hundreds of route calculations when the user location only changes slightly.
+- If cached coordinates become stale/incorrect, run `npm run cache:reset` and then refresh from source.
 
 ## CI
 GitHub Actions workflow runs on push and pull request:

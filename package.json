@@ -18,7 +18,8 @@
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "warm:coordinates": "tsx apps/api/src/scripts/warm-coordinate-cache.ts"
+    "warm:coordinates": "tsx apps/api/src/scripts/warm-coordinate-cache.ts",
+    "cache:reset": "tsx apps/api/src/scripts/reset-caches.ts"
   },
   "keywords": [],
   "author": "",
@@ -39,6 +40,7 @@
     "react-dom": "^19.2.4",
     "react-leaflet": "^5.0.0",
     "tippy.js": "^6.3.7",
+    "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -50,6 +52,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/supertest": "^6.0.3",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^9.2.1",
     "msw": "^2.12.10",

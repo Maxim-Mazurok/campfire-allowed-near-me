@@ -1,5 +1,4 @@
 import { readJsonFile, writeJsonFile } from "../utils/fs-cache.js";
-import { haversineDistanceKm } from "../utils/distance.js";
 import {
   findBestForestNameMatch,
   normalizeForestNameForMatch
@@ -22,6 +21,11 @@ import {
   type TotalFireBanLookupResult,
   type TotalFireBanSnapshot
 } from "./total-fire-ban-service.js";
+import {
+  GoogleRoutesService,
+  type RouteLookupResult,
+  type RouteService
+} from "./google-routes.js";
 import type {
   BanStatus,
   FacilityMatchDiagnostics,
@@ -36,6 +40,7 @@ import type {
   ForestTotalFireBanDiagnostics,
   NearestForest,
   PersistedSnapshot,
+  RefreshTaskProgress,
   UserLocation
 } from "../types/domain.js";
 
@@ -46,6 +51,7 @@ interface LiveForestDataServiceOptions {
   scraper?: ForestryScraper;
   geocoder?: OSMGeocoder;
   totalFireBanService?: TotalFireBanService;
+  routeService?: RouteService;
 }
 
 interface LiveForestDataServiceResolvedOptions {
@@ -98,6 +104,8 @@ export class LiveForestDataService implements ForestDataService {
 
   private readonly totalFireBanService: TotalFireBanService;
 
+  private readonly routeService: RouteService;
+
   private memorySnapshot: PersistedSnapshot | null = null;
 
   constructor(options?: LiveForestDataServiceOptions) {
@@ -122,7 +130,20 @@ export class LiveForestDataService implements ForestDataService {
         maxNewLookupsPerRun: Number(
           process.env.GEOCODE_MAX_NEW_PER_REQUEST ?? "25"
         ),
-        requestDelayMs: Number(process.env.GEOCODE_DELAY_MS ?? "1200")
+        requestDelayMs: Number(process.env.GEOCODE_DELAY_MS ?? "1200"),
+        requestTimeoutMs: Number(process.env.GEOCODE_TIMEOUT_MS ?? "15000"),
+        retryAttempts: Number(process.env.GEOCODE_RETRY_ATTEMPTS ?? "3"),
+        retryBaseDelayMs: Number(process.env.GEOCODE_RETRY_BASE_DELAY_MS ?? "750"),
+        nominatimBaseUrl: process.env.NOMINATIM_BASE_URL ?? undefined,
+        googleApiKey: process.env.GOOGLE_MAPS_API_KEY ?? null
+      });
+    this.routeService = options?.routeService ??
+      new GoogleRoutesService({
+        apiKey: process.env.GOOGLE_MAPS_API_KEY ?? null,
+        cacheDbPath: process.env.ROUTE_CACHE_DB ?? "data/cache/routes.sqlite",
+        maxConcurrentRequests: Number(
+          process.env.ROUTE_MAX_CONCURRENT_REQUESTS ?? "8"
+        )
       });
     this.totalFireBanService = options?.totalFireBanService ?? new TotalFireBanService();
   }
@@ -412,7 +433,35 @@ export class LiveForestDataService implements ForestDataService {
     });
   }
 
-  private async resolveSnapshot(forceRefresh = false): Promise<PersistedSnapshot> {
+  private reportProgress(
+    progressCallback: ForestDataServiceInput["progressCallback"],
+    progress: RefreshTaskProgress
+  ): void {
+    progressCallback?.(progress);
+  }
+
+  private async resolveCachedSnapshotOnly(): Promise<PersistedSnapshot | null> {
+    if (
+      this.memorySnapshot &&
+      this.isSnapshotCompatible(this.memorySnapshot) &&
+      this.hasFacilityDefinitions(this.memorySnapshot)
+    ) {
+      return this.memorySnapshot;
+    }
+
+    const persistedSnapshot = await this.loadPersistedSnapshot();
+    if (persistedSnapshot && this.isSnapshotCompatible(persistedSnapshot)) {
+      this.memorySnapshot = persistedSnapshot;
+      return persistedSnapshot;
+    }
+
+    return null;
+  }
+
+  private async resolveSnapshot(
+    forceRefresh = false,
+    progressCallback?: ForestDataServiceInput["progressCallback"]
+  ): Promise<PersistedSnapshot> {
     const fixturePath = process.env.FORESTRY_USE_FIXTURE;
     if (fixturePath) {
       const fixture = await readJsonFile<PersistedSnapshot>(fixturePath);
@@ -471,10 +520,25 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     try {
+      this.reportProgress(progressCallback, {
+        phase: "SCRAPE",
+        message: "Scraping Forestry and Total Fire Ban source pages.",
+        completed: 0,
+        total: null
+      });
+
       const [scraped, totalFireBanSnapshot] = await Promise.all([
         this.scraper.scrape(),
         this.totalFireBanService.fetchCurrentSnapshot()
       ]);
+
+      this.reportProgress(progressCallback, {
+        phase: "SCRAPE",
+        message: "Source pages loaded. Preparing geocoding.",
+        completed: 1,
+        total: 1
+      });
+
       const warningSet = new Set([
         ...(scraped.warnings ?? []),
         ...(totalFireBanSnapshot.warnings ?? [])
@@ -483,8 +547,16 @@ export class LiveForestDataService implements ForestDataService {
         scraped.areas,
         scraped.directory,
         totalFireBanSnapshot,
-        warningSet
+        warningSet,
+        progressCallback
       );
+
+      this.reportProgress(progressCallback, {
+        phase: "PERSIST",
+        message: "Persisting refreshed snapshot.",
+        completed: 0,
+        total: 1
+      });
 
       const snapshot: PersistedSnapshot = {
         schemaVersion: SNAPSHOT_FORMAT_VERSION,
@@ -517,6 +589,14 @@ export class LiveForestDataService implements ForestDataService {
       }
 
       await this.persistSnapshot(snapshot);
+
+      this.reportProgress(progressCallback, {
+        phase: "PERSIST",
+        message: "Snapshot persisted.",
+        completed: 1,
+        total: 1
+      });
+
       return snapshot;
     } catch (error) {
       if (staleFallbackSnapshot) {
@@ -547,7 +627,11 @@ export class LiveForestDataService implements ForestDataService {
   }
 
   private describeGeocodeAttempt(prefix: string, attempt: GeocodeLookupAttempt): string {
-    const details: string[] = [`${prefix}: ${attempt.outcome}`, `query=${attempt.query}`];
+    const details: string[] = [
+      `${prefix}: ${attempt.outcome}`,
+      `provider=${attempt.provider}`,
+      `query=${attempt.query}`
+    ];
     if (attempt.httpStatus !== null) {
       details.push(`http=${attempt.httpStatus}`);
     }
@@ -564,6 +648,10 @@ export class LiveForestDataService implements ForestDataService {
   private selectGeocodeFailureReason(attempts: GeocodeLookupAttempt[]): string {
     if (attempts.some((attempt) => attempt.outcome === "LIMIT_REACHED")) {
       return "Geocoding lookup limit reached before coordinates were resolved.";
+    }
+
+    if (attempts.some((attempt) => attempt.outcome === "GOOGLE_API_KEY_MISSING")) {
+      return "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is missing.";
     }
 
     if (
@@ -608,6 +696,29 @@ export class LiveForestDataService implements ForestDataService {
     };
   }
 
+  private shouldUseAreaFallbackForForestLookup(forestLookup: GeocodeResponse): boolean {
+    const attempts = this.getGeocodeAttempts(forestLookup);
+
+    if (!attempts.length) {
+      return true;
+    }
+
+    const hasNoResultOutcome = attempts.some(
+      (attempt) =>
+        attempt.outcome === "EMPTY_RESULT" || attempt.outcome === "INVALID_COORDINATES"
+    );
+
+    const hasTransientOrConfigFailure = attempts.some(
+      (attempt) =>
+        attempt.outcome === "LIMIT_REACHED" ||
+        attempt.outcome === "HTTP_ERROR" ||
+        attempt.outcome === "REQUEST_FAILED" ||
+        attempt.outcome === "GOOGLE_API_KEY_MISSING"
+    );
+
+    return hasNoResultOutcome && !hasTransientOrConfigFailure;
+  }
+
   private buildTotalFireBanDiagnostics(
     totalFireBanLookup: TotalFireBanLookupResult,
     latitude: number | null,
@@ -650,6 +761,15 @@ export class LiveForestDataService implements ForestDataService {
       fireWeatherAreaName: totalFireBanLookup.fireWeatherAreaName,
       debug
     };
+  }
+
+  private collectGeocodeWarnings(
+    warningSet: Set<string>,
+    response: GeocodeResponse | null | undefined
+  ): void {
+    for (const warning of response?.warnings ?? []) {
+      warningSet.add(warning);
+    }
   }
 
   private buildUnknownFacilities(directory: ForestDirectorySnapshot): Record<string, FacilityValue> {
@@ -879,12 +999,13 @@ export class LiveForestDataService implements ForestDataService {
     areas: ForestAreaWithForests[],
     directory: ForestDirectorySnapshot,
     totalFireBanSnapshot: TotalFireBanSnapshot,
-    warningSet: Set<string>
+    warningSet: Set<string>,
+    progressCallback?: ForestDataServiceInput["progressCallback"]
   ): Promise<{
-    forests: Omit<ForestPoint, "distanceKm">[];
+    forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
     diagnostics: FacilityMatchDiagnostics;
   }> {
-    const points: Omit<ForestPoint, "distanceKm">[] = [];
+    const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
     const areaGeocodeMap = new Map<string, Awaited<ReturnType<OSMGeocoder["geocodeArea"]>>>();
     const byForestName = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.facilities] as const)
@@ -901,14 +1022,44 @@ export class LiveForestDataService implements ForestDataService {
       directory,
       byForestName
     );
+    const totalForestGeocodeCount =
+      areas.reduce(
+        (runningTotal, area) =>
+          runningTotal + new Set(area.forests.map((forest) => forest.trim()).filter(Boolean)).size,
+        0
+      ) + facilityAssignments.diagnostics.unmatchedFacilitiesForests.length;
     const totalFireBanNoAreaMatchForests = new Set<string>();
     const totalFireBanMissingStatusAreas = new Set<string>();
+    let completedAreaGeocodes = 0;
+    let completedForestGeocodes = 0;
+
+    this.reportProgress(progressCallback, {
+      phase: "GEOCODE_AREAS",
+      message: "Resolving area coordinates.",
+      completed: completedAreaGeocodes,
+      total: areas.length
+    });
 
     // Prioritize one lookup per area first so every forest can fall back to an area centroid.
     for (const area of areas) {
       const areaGeocode = await this.geocoder.geocodeArea(area.areaName, area.areaUrl);
       areaGeocodeMap.set(area.areaUrl, areaGeocode);
+      this.collectGeocodeWarnings(warningSet, areaGeocode);
+      completedAreaGeocodes += 1;
+      this.reportProgress(progressCallback, {
+        phase: "GEOCODE_AREAS",
+        message: `Resolving area coordinates (${completedAreaGeocodes}/${areas.length}).`,
+        completed: completedAreaGeocodes,
+        total: areas.length
+      });
     }
+
+    this.reportProgress(progressCallback, {
+      phase: "GEOCODE_FORESTS",
+      message: "Resolving forest coordinates.",
+      completed: completedForestGeocodes,
+      total: totalForestGeocodeCount
+    });
 
     for (const area of areas) {
       const uniqueForestNames = [...new Set(area.forests.map((forest) => forest.trim()))];
@@ -916,7 +1067,8 @@ export class LiveForestDataService implements ForestDataService {
         latitude: null,
         longitude: null,
         displayName: null,
-        confidence: null
+        confidence: null,
+        provider: null
       };
 
       for (const forestName of uniqueForestNames) {
@@ -930,9 +1082,20 @@ export class LiveForestDataService implements ForestDataService {
             statusText: this.normalizeBanStatusText(area.status, area.statusText)
           };
         const geocode = await this.geocoder.geocodeForest(forestName, area.areaName);
-        const resolvedLatitude = geocode.latitude ?? areaGeocode.latitude;
-        const resolvedLongitude = geocode.longitude ?? areaGeocode.longitude;
-        const usedAreaFallback = geocode.latitude === null && areaGeocode.latitude !== null;
+        this.collectGeocodeWarnings(warningSet, geocode);
+        completedForestGeocodes += 1;
+        this.reportProgress(progressCallback, {
+          phase: "GEOCODE_FORESTS",
+          message: `Resolving forest coordinates (${completedForestGeocodes}/${totalForestGeocodeCount}).`,
+          completed: completedForestGeocodes,
+          total: totalForestGeocodeCount
+        });
+        const usedAreaFallback =
+          geocode.latitude === null &&
+          areaGeocode.latitude !== null &&
+          this.shouldUseAreaFallbackForForestLookup(geocode);
+        const resolvedLatitude = usedAreaFallback ? areaGeocode.latitude : geocode.latitude;
+        const resolvedLongitude = usedAreaFallback ? areaGeocode.longitude : geocode.longitude;
         const geocodeDiagnostics =
           resolvedLatitude === null || resolvedLongitude === null
             ? this.buildGeocodeDiagnostics(geocode, areaGeocode)
@@ -995,6 +1158,14 @@ export class LiveForestDataService implements ForestDataService {
 
     for (const forestName of unmatchedFacilitiesForests) {
       const geocode = await this.geocoder.geocodeForest(forestName);
+      this.collectGeocodeWarnings(warningSet, geocode);
+      completedForestGeocodes += 1;
+      this.reportProgress(progressCallback, {
+        phase: "GEOCODE_FORESTS",
+        message: `Resolving forest coordinates (${completedForestGeocodes}/${totalForestGeocodeCount}).`,
+        completed: completedForestGeocodes,
+        total: totalForestGeocodeCount
+      });
       const geocodeDiagnostics =
         geocode.latitude === null || geocode.longitude === null
           ? this.buildGeocodeDiagnostics(geocode)
@@ -1096,32 +1267,94 @@ export class LiveForestDataService implements ForestDataService {
     };
   }
 
-  private addDistances(
-    forests: Omit<ForestPoint, "distanceKm">[],
-    location?: UserLocation
-  ): ForestPoint[] {
-    return forests.map((forest) => {
-      if (
-        !location ||
-        forest.latitude === null ||
-        forest.longitude === null
-      ) {
-        return {
+  private async addTravelMetrics(
+    forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[],
+    location: UserLocation | undefined,
+    avoidTolls: boolean,
+    progressCallback?: ForestDataServiceInput["progressCallback"]
+  ): Promise<{
+    forests: ForestPoint[];
+    warnings: string[];
+  }> {
+    if (!location) {
+      return {
+        forests: forests.map((forest) => ({
           ...forest,
-          distanceKm: null
+          distanceKm: null,
+          travelDurationMinutes: null
+        })),
+        warnings: []
+      };
+    }
+
+    const routableForests = forests
+      .filter(
+        (forest) =>
+          forest.latitude !== null &&
+          forest.longitude !== null
+      )
+      .map((forest) => ({
+        id: forest.id,
+        latitude: forest.latitude!,
+        longitude: forest.longitude!
+      }));
+
+    let routeLookup: RouteLookupResult = {
+      byForestId: new Map(),
+      warnings: []
+    };
+
+    if (routableForests.length) {
+      try {
+        this.reportProgress(progressCallback, {
+          phase: "ROUTES",
+          message: "Computing driving routes.",
+          completed: 0,
+          total: routableForests.length
+        });
+
+        routeLookup = await this.routeService.getDrivingRouteMetrics({
+          userLocation: location,
+          forests: routableForests,
+          avoidTolls,
+          progressCallback: ({ completed, total, message }) => {
+            this.reportProgress(progressCallback, {
+              phase: "ROUTES",
+              message,
+              completed,
+              total
+            });
+          }
+        });
+      } catch (error) {
+        routeLookup = {
+          byForestId: new Map(),
+          warnings: [
+            `Driving route lookup failed: ${error instanceof Error ? error.message : "Unknown error"}`
+          ]
         };
       }
 
-      return {
-        ...forest,
-        distanceKm: haversineDistanceKm(
-          location.latitude,
-          location.longitude,
-          forest.latitude,
-          forest.longitude
-        )
-      };
-    });
+      this.reportProgress(progressCallback, {
+        phase: "ROUTES",
+        message: "Driving routes completed.",
+        completed: routableForests.length,
+        total: routableForests.length
+      });
+    }
+
+    return {
+      forests: forests.map((forest) => {
+        const metric = routeLookup.byForestId.get(forest.id);
+
+        return {
+          ...forest,
+          distanceKm: metric?.distanceKm ?? null,
+          travelDurationMinutes: metric?.durationMinutes ?? null
+        };
+      }),
+      warnings: routeLookup.warnings
+    };
   }
 
   private findNearestLegalSpot(forests: ForestPoint[]): NearestForest | null {
@@ -1152,23 +1385,55 @@ export class LiveForestDataService implements ForestDataService {
       id: nearest.id,
       forestName: nearest.forestName,
       areaName: nearest.areaName,
-      distanceKm: nearest.distanceKm
+      distanceKm: nearest.distanceKm,
+      travelDurationMinutes: nearest.travelDurationMinutes
     };
   }
 
   async getForestData(input?: ForestDataServiceInput): Promise<ForestApiResponse> {
-    const snapshot = await this.resolveSnapshot(input?.forceRefresh);
-    const forests = this.addDistances(snapshot.forests, input?.userLocation);
+    const snapshot = input?.preferCachedSnapshot
+      ? await this.resolveCachedSnapshotOnly()
+      : null;
+
+    if (input?.preferCachedSnapshot && !snapshot) {
+      return {
+        fetchedAt: new Date().toISOString(),
+        stale: true,
+        sourceName: this.options.sourceName,
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        forests: [],
+        nearestLegalSpot: null,
+        warnings: [
+          "Refresh is running in the background. Cached forest data is not available yet."
+        ]
+      };
+    }
+
+    const resolvedSnapshot =
+      snapshot ??
+      (await this.resolveSnapshot(input?.forceRefresh, input?.progressCallback));
+    const avoidTolls = input?.avoidTolls ?? true;
+    const routeResult = await this.addTravelMetrics(
+      resolvedSnapshot.forests,
+      input?.userLocation,
+      avoidTolls,
+      input?.progressCallback
+    );
+    const forests = routeResult.forests;
 
     return {
-      fetchedAt: snapshot.fetchedAt,
-      stale: snapshot.stale,
-      sourceName: snapshot.sourceName,
-      availableFacilities: snapshot.availableFacilities,
-      matchDiagnostics: snapshot.matchDiagnostics,
+      fetchedAt: resolvedSnapshot.fetchedAt,
+      stale: resolvedSnapshot.stale,
+      sourceName: resolvedSnapshot.sourceName,
+      availableFacilities: resolvedSnapshot.availableFacilities,
+      matchDiagnostics: resolvedSnapshot.matchDiagnostics,
       forests,
       nearestLegalSpot: this.findNearestLegalSpot(forests),
-      warnings: this.sanitizeWarnings(snapshot.warnings)
+      warnings: this.sanitizeWarnings([...(resolvedSnapshot.warnings ?? []), ...routeResult.warnings])
     };
   }
 }
