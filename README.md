@@ -175,5 +175,14 @@ GitHub Actions workflow runs on push and pull request:
 
 Workflow file: `.github/workflows/ci.yml`.
 
+## Project Documentation
+- `docs/architecture-audit-and-roadmap.md`: architecture audit, risks, and phased roadmap.
+- `docs/technical-business-brief.md`: product/technical goals and pragmatic delivery direction.
+- `docs/quality-and-simplification-plan.md`: DRY/YAGNI-focused refactor sequence.
+- `docs/testing-strategy-and-pragmatic-tdd.md`: test pyramid, gap analysis, and TDD workflow.
+- `docs/performance-and-scalability-plan.md`: performance bottlenecks and scaling plan.
+- `docs/data-source-expansion-and-llm-plan.md`: multi-source and LLM enrichment architecture plan.
+- `docs/ai-implementation-handoff.md`: implementation order and safety checklist for AI agents.
+
 ## Notes on Source Reliability
 Forestry endpoints are Cloudflare-protected for non-browser HTTP clients. This app uses Playwright-rendered scraping and cache fallback to stay operational when direct fetches are blocked.
