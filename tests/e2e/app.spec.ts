@@ -1,5 +1,65 @@
 import { expect, test } from "@playwright/test";
 
+test("highlights matching map pin when hovering a forest row", async ({ page }) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: {
+          id: "forest-a",
+          forestName: "Forest A",
+          areaName: "Area 1",
+          distanceKm: 10.2
+        },
+        forests: [
+          {
+            id: "forest-a",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest A",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Forest A",
+            geocodeConfidence: 0.8,
+            distanceKm: 10.2,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  const forestRow = page.getByTestId("forest-row").first();
+  await expect(forestRow).toBeVisible();
+  const mapPanel = page.getByTestId("map-panel");
+
+  await forestRow.hover();
+
+  await expect(forestRow).toHaveCSS("background-color", "rgb(244, 239, 255)");
+  await expect(mapPanel).toHaveAttribute("data-hovered-forest-id", "forest-a");
+
+  await page.getByTestId("forest-search-input").hover();
+  await expect(mapPanel).toHaveAttribute("data-hovered-forest-id", "");
+});
+
 test("loads forests, applies filters, and resolves nearest legal spot", async ({
   page
 }) => {

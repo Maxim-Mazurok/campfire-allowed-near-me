@@ -10,25 +10,15 @@ import {
 import { ForestCardContent } from "./ForestCardContent";
 import type { FacilityDefinition, ForestPoint } from "../lib/api";
 import {
+  getForestMarkerVisualOptions
+} from "../lib/forest-marker-style";
+import {
   getUnmatchedMarkerLimitForZoom,
   selectClosestForestsToCenter
 } from "../lib/map-marker-rendering";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
 const MAP_BOUNDS_PADDING_FACTOR = 0.2;
-const MATCHED_FOREST_MARKER_PATH_OPTIONS = {
-  color: "#00e85a",
-  fillColor: "#00e85a",
-  fillOpacity: 0.95,
-  opacity: 1
-} as const;
-const UNMATCHED_FOREST_MARKER_PATH_OPTIONS = {
-  color: "#7f8690",
-  fillColor: "#7f8690",
-  fillOpacity: 0.32,
-  opacity: 0.55
-} as const;
-
 type ForestWithCoordinates = ForestPoint & {
   latitude: number;
   longitude: number;
@@ -122,17 +112,20 @@ const ForestPopupContent = ({
 const ForestMarker = memo(({
   forest,
   matchesFilters,
+  hoveredForestId,
   selectForestPopup
 }: {
   forest: ForestWithCoordinates;
   matchesFilters: boolean;
+  hoveredForestId: string | null;
   selectForestPopup: (selectedForestPopupState: SelectedForestPopupState) => void;
 }) => {
+  const isHoveredForest = hoveredForestId === forest.id;
   const markerPaneName = matchesFilters ? "matched-forests" : "unmatched-forests";
-  const markerRadius = matchesFilters ? 9 : 4;
-  const markerPathOptions = matchesFilters
-    ? MATCHED_FOREST_MARKER_PATH_OPTIONS
-    : UNMATCHED_FOREST_MARKER_PATH_OPTIONS;
+  const { markerRadius, markerPathOptions } = getForestMarkerVisualOptions({
+    matchesFilters,
+    isHoveredForest
+  });
 
   return (
     <CircleMarker
@@ -156,12 +149,14 @@ const VisibleForestMarkers = ({
   matchedForests,
   unmatchedForests,
   availableFacilities,
-  avoidTolls
+  avoidTolls,
+  hoveredForestId
 }: {
   matchedForests: ForestWithCoordinates[];
   unmatchedForests: ForestWithCoordinates[];
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
+  hoveredForestId: string | null;
 }) => {
   const map = useMap();
   const [mapViewportSnapshot, setMapViewportSnapshot] =
@@ -287,6 +282,7 @@ const VisibleForestMarkers = ({
             key={forest.id}
             forest={forest}
             matchesFilters={false}
+            hoveredForestId={hoveredForestId}
             selectForestPopup={setSelectedForestPopupState}
           />
         ))}
@@ -298,6 +294,7 @@ const VisibleForestMarkers = ({
             key={forest.id}
             forest={forest}
             matchesFilters={true}
+            hoveredForestId={hoveredForestId}
             selectForestPopup={setSelectedForestPopupState}
           />
         ))}
@@ -339,13 +336,15 @@ export const MapView = memo(({
   matchedForestIds,
   userLocation,
   availableFacilities,
-  avoidTolls
+  avoidTolls,
+  hoveredForestId
 }: {
   forests: ForestPoint[];
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
+  hoveredForestId: string | null;
 }) => {
   const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
     const nextMappedForests: ForestWithCoordinates[] = [];
@@ -385,6 +384,8 @@ export const MapView = memo(({
       zoom={6}
       scrollWheelZoom
       className="map"
+      data-testid="map-container"
+      data-hovered-forest-id={hoveredForestId ?? ""}
       preferCanvas
     >
       <TileLayer
@@ -410,6 +411,7 @@ export const MapView = memo(({
         unmatchedForests={unmatchedForests}
         availableFacilities={availableFacilities}
         avoidTolls={avoidTolls}
+        hoveredForestId={hoveredForestId}
       />
     </MapContainer>
   );

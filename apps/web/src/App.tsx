@@ -94,6 +94,7 @@ export const App = () => {
   const [avoidTolls, setAvoidTolls] = useState<boolean>(
     () => getInitialPreferences().avoidTolls ?? true
   );
+  const [hoveredForestId, setHoveredForestId] = useState<string | null>(null);
   const forestsQueryKey = useMemo(
     () => buildForestsQueryKey(userLocation, { avoidTolls }),
     [userLocation?.latitude, userLocation?.longitude, avoidTolls]
@@ -465,7 +466,11 @@ export const App = () => {
           setSingleFacilityMode={setSingleFacilityMode}
         />
 
-        <section className="panel map-panel">
+        <section
+          className="panel map-panel"
+          data-testid="map-panel"
+          data-hovered-forest-id={hoveredForestId ?? ""}
+        >
           <p className="meta map-meta" data-testid="mapped-count">
             Showing {mappableMatchingForestCount} matching mapped forests out of{" "}
             {mappableForestCount} mapped forests.
@@ -484,6 +489,7 @@ export const App = () => {
               userLocation={userLocation}
               availableFacilities={availableFacilities}
               avoidTolls={avoidTolls}
+              hoveredForestId={hoveredForestId}
             />
           ) : null}
         </section>
@@ -493,6 +499,8 @@ export const App = () => {
           availableFacilities={availableFacilities}
           payload={payload}
           avoidTolls={avoidTolls}
+          hoveredForestId={hoveredForestId}
+          onHoveredForestIdChange={setHoveredForestId}
         />
       </section>
     </main>
