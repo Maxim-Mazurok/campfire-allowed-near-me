@@ -167,6 +167,101 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     .toBeGreaterThan(0);
 });
 
+test("persists location and filters across reloads", async ({ page }) => {
+  await page.context().grantPermissions(["geolocation"]);
+  await page.context().setGeolocation({ latitude: -33.9, longitude: 151.1 });
+
+  await page.route("**/api/forests**", async (route) => {
+    const requestUrl = new URL(route.request().url());
+    const hasLocation =
+      requestUrl.searchParams.has("lat") && requestUrl.searchParams.has("lng");
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [
+          {
+            key: "fishing",
+            label: "Fishing",
+            paramName: "fishing",
+            iconKey: "fishing"
+          }
+        ],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: hasLocation
+          ? {
+              id: "forest-a",
+              forestName: "Forest A",
+              areaName: "Area 1",
+              distanceKm: 2.4
+            }
+          : null,
+        forests: [
+          {
+            id: "forest-a",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest A",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Forest A",
+            geocodeConfidence: 0.8,
+            distanceKm: 2.4,
+            facilities: {
+              fishing: false
+            }
+          },
+          {
+            id: "forest-b",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 2",
+            areaUrl: "https://example.com/b",
+            forestName: "Forest B",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
+            banStatus: "BANNED",
+            banStatusText: "Solid Fuel Fire Ban",
+            latitude: -34.5,
+            longitude: 149.1,
+            geocodeName: "Forest B",
+            geocodeConfidence: 0.8,
+            distanceKm: 45.5,
+            facilities: {
+              fishing: true
+            }
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
+
+  await page.getByTestId("ban-filter-not-allowed").click();
+  await page.getByTestId("facility-filter-fishing-include").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await page.context().clearPermissions();
+  await page.reload();
+
+  await expect(page.getByTestId("ban-filter-not-allowed")).toHaveClass(/is-active/);
+  await expect(page.getByTestId("facility-filter-fishing-include")).toHaveClass(/is-active/);
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
+});
+
 test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({
   page
 }) => {

@@ -8,10 +8,20 @@ import { fetchForests, type ForestApiResponse } from "./lib/api";
 
 type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
+type UserLocation = {
+  latitude: number;
+  longitude: number;
+};
+type UserPreferences = {
+  banFilterMode?: BanFilterMode;
+  facilityFilterModes?: Record<string, TriStateMode>;
+  userLocation?: UserLocation | null;
+};
 
 const FIRE_BAN_SOURCE_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
+const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 
 const isHttpUrl = (value?: string | null): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
@@ -72,19 +82,108 @@ const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string): string
   return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
 };
 
+const isBanFilterMode = (value: unknown): value is BanFilterMode =>
+  value === "ALL" || value === "ALLOWED" || value === "NOT_ALLOWED";
+
+const isTriStateMode = (value: unknown): value is TriStateMode =>
+  value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
+
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+const parseUserPreferences = (value: string | null): UserPreferences => {
+  if (!value) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (typeof parsed !== "object" || parsed === null) {
+      return {};
+    }
+
+    const rawPreferences = parsed as Record<string, unknown>;
+    const preferences: UserPreferences = {};
+
+    if (isBanFilterMode(rawPreferences.banFilterMode)) {
+      preferences.banFilterMode = rawPreferences.banFilterMode;
+    }
+
+    if (
+      typeof rawPreferences.facilityFilterModes === "object" &&
+      rawPreferences.facilityFilterModes !== null
+    ) {
+      const nextFacilityFilterModes: Record<string, TriStateMode> = {};
+      for (const [key, mode] of Object.entries(rawPreferences.facilityFilterModes)) {
+        if (isTriStateMode(mode)) {
+          nextFacilityFilterModes[key] = mode;
+        }
+      }
+      preferences.facilityFilterModes = nextFacilityFilterModes;
+    }
+
+    if (rawPreferences.userLocation === null) {
+      preferences.userLocation = null;
+    } else if (
+      typeof rawPreferences.userLocation === "object" &&
+      rawPreferences.userLocation !== null
+    ) {
+      const rawLocation = rawPreferences.userLocation as Record<string, unknown>;
+      if (isFiniteNumber(rawLocation.latitude) && isFiniteNumber(rawLocation.longitude)) {
+        preferences.userLocation = {
+          latitude: rawLocation.latitude,
+          longitude: rawLocation.longitude
+        };
+      }
+    }
+
+    return preferences;
+  } catch {
+    return {};
+  }
+};
+
+const readUserPreferences = (): UserPreferences => {
+  try {
+    return parseUserPreferences(window.localStorage.getItem(USER_PREFERENCES_STORAGE_KEY));
+  } catch {
+    return {};
+  }
+};
+
+const writeUserPreferences = (preferences: UserPreferences) => {
+  try {
+    window.localStorage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+  } catch {
+    return;
+  }
+};
+
 export const App = () => {
+  const initialPreferencesRef = useRef<UserPreferences | null>(null);
+  const getInitialPreferences = (): UserPreferences => {
+    if (initialPreferencesRef.current !== null) {
+      return initialPreferencesRef.current;
+    }
+
+    const preferences = readUserPreferences();
+    initialPreferencesRef.current = preferences;
+    return preferences;
+  };
+
   const [payload, setPayload] = useState<ForestApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [warningsOpen, setWarningsOpen] = useState(false);
-  const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>("ALL");
-  const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
-    {}
+  const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>(
+    () => getInitialPreferences().banFilterMode ?? "ALL"
   );
-  const [userLocation, setUserLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
+    () => getInitialPreferences().facilityFilterModes ?? {}
+  );
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(
+    () => getInitialPreferences().userLocation ?? null
+  );
   const autoLocateRequestedRef = useRef(false);
   const latestLoadRequestRef = useRef(0);
 
@@ -149,6 +248,10 @@ export const App = () => {
   const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
 
   useEffect(() => {
+    if (!payload) {
+      return;
+    }
+
     setFacilityFilterModes((current) => {
       const next: Record<string, TriStateMode> = {};
       for (const facility of availableFacilities) {
@@ -156,7 +259,15 @@ export const App = () => {
       }
       return next;
     });
-  }, [facilitySignature, availableFacilities]);
+  }, [payload, facilitySignature, availableFacilities]);
+
+  useEffect(() => {
+    writeUserPreferences({
+      banFilterMode,
+      facilityFilterModes,
+      userLocation
+    });
+  }, [banFilterMode, facilityFilterModes, userLocation]);
 
   const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
     setFacilityFilterModes((current) => ({
