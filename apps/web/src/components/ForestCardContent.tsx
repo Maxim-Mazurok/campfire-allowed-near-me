@@ -35,6 +35,7 @@ export const ForestCardContent = memo(({
   const impactSummary = getForestImpactSummary(forest);
   const googleMapsDrivingNavigationUrl =
     buildGoogleMapsDrivingNavigationUrl(forest);
+  const closureNotices = forest.closureNotices ?? [];
 
   return (
     <>
@@ -93,9 +94,9 @@ export const ForestCardContent = memo(({
             >
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
             </a>
-            {forestClosureStatus !== "NONE" ? (
+            {forestClosureStatus === "CLOSED" || forestClosureStatus === "PARTIAL" ? (
               <span
-                className={`status-pill ${forestClosureStatus === "CLOSED" ? "banned" : "unknown"}`}
+                className={`status-pill ${forestClosureStatus === "CLOSED" ? "banned" : "partial-closed"}`}
               >
                 {getClosureStatusLabel(forestClosureStatus)}
               </span>
@@ -111,6 +112,29 @@ export const ForestCardContent = memo(({
           </small>
         </div>
       </div>
+      {closureNotices.length > 0 ? (
+        <div className="forest-notice-list-wrap" data-testid="forest-notice-list">
+          <div className="forest-notice-list-label">Notices:</div>
+          <ul className="forest-notice-list">
+            {closureNotices.map((closureNotice) => (
+              <li key={closureNotice.id} className="forest-notice-item">
+                {isHttpUrl(closureNotice.detailUrl) ? (
+                  <a
+                    href={closureNotice.detailUrl}
+                    className="forest-notice-link"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {closureNotice.title}
+                  </a>
+                ) : (
+                  <span>{closureNotice.title}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {availableFacilities.length ? (
         <div className="facility-row" data-testid="facility-row">
           {availableFacilities.map((facility) => {

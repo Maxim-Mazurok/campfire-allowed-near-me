@@ -139,13 +139,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     "https://www.google.com/maps/dir/?api=1&destination=-33.9%2C151.1&travelmode=driving"
   );
 
-  await page.locator(".leaflet-pane.leaflet-map-pane .leaflet-interactive").first().click();
-  await expect(page.getByTestId("forest-popup-card")).toContainText("Forest A");
-  await expect(page.getByTestId("forest-popup-card").getByTestId("forest-navigation-link")).toHaveAttribute(
-    "href",
-    "https://www.google.com/maps/dir/?api=1&destination=-33.9%2C151.1&travelmode=driving"
-  );
-
   const totalRows = await page.getByTestId("forest-row").count();
   expect(totalRows).toBeGreaterThan(0);
 

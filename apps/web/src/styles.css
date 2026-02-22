@@ -452,10 +452,48 @@ a.status-pill {
   background: #64748b;
 }
 
+.status-pill.partial-closed {
+  background: #d97706;
+}
+
 .facility-row {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.forest-notice-list-wrap {
+  padding-bottom: 6px;
+  margin-top: 2px;
+}
+
+.forest-notice-list-label {
+  font-size: 0.7rem;
+  color: #536070;
+  margin-bottom: 4px;
+}
+
+.forest-notice-list {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.forest-notice-item {
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.forest-notice-link {
+  color: #1c4a76;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.forest-notice-link:hover {
+  color: #123a63;
 }
 
 .facility-indicator {

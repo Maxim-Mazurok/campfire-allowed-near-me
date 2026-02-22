@@ -73,7 +73,7 @@ export const getClosureStatusLabel = (
   }
 
   if (status === "PARTIAL") {
-    return "Partial";
+    return "Partly closed";
   }
 
   if (status === "NOTICE") {
