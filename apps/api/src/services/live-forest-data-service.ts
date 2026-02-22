@@ -643,12 +643,19 @@ export class LiveForestDataService implements ForestDataService {
           ...(scraped.warnings ?? []),
           ...(totalFireBanSnapshot.warnings ?? [])
         ]);
+        const unresolvedForestStatusKeys = new Set(
+          (staleFallbackSnapshot?.forests ?? [])
+            .filter((forest) => forest.latitude === null || forest.longitude === null)
+            .map((forest) => this.buildForestStatusKey(forest.forestName))
+            .filter(Boolean)
+        );
         const forestResult = await this.buildForestPoints(
           scraped.areas,
           scraped.directory,
           scraped.closures ?? [],
           totalFireBanSnapshot,
           warningSet,
+          unresolvedForestStatusKeys,
           progressCallback
         );
 
@@ -1268,12 +1275,17 @@ export class LiveForestDataService implements ForestDataService {
     closureNotices: ForestClosureNotice[],
     totalFireBanSnapshot: TotalFireBanSnapshot,
     warningSet: Set<string>,
+    unresolvedForestStatusKeys: Set<string>,
     progressCallback?: ForestDataServiceInput["progressCallback"]
   ): Promise<{
     forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
     diagnostics: FacilityMatchDiagnostics;
     closureDiagnostics: ClosureMatchDiagnostics;
   }> {
+    if ("resetLookupBudgetForRun" in this.geocoder) {
+      this.geocoder.resetLookupBudgetForRun();
+    }
+
     const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
     const areaGeocodeMap = new Map<string, Awaited<ReturnType<OSMGeocoder["geocodeArea"]>>>();
     const byForestName = new Map(
@@ -1330,8 +1342,34 @@ export class LiveForestDataService implements ForestDataService {
       total: totalForestGeocodeCount
     });
 
+    if ("resetLookupBudgetForRun" in this.geocoder) {
+      this.geocoder.resetLookupBudgetForRun();
+    }
+
+    const sortForestNamesForRetryPriority = (forestNames: string[]): string[] =>
+      [...forestNames].sort((leftForestName, rightForestName) => {
+        const leftPriority = unresolvedForestStatusKeys.has(
+          this.buildForestStatusKey(leftForestName)
+        )
+          ? 0
+          : 1;
+        const rightPriority = unresolvedForestStatusKeys.has(
+          this.buildForestStatusKey(rightForestName)
+        )
+          ? 0
+          : 1;
+
+        if (leftPriority !== rightPriority) {
+          return leftPriority - rightPriority;
+        }
+
+        return leftForestName.localeCompare(rightForestName);
+      });
+
     for (const area of areas) {
-      const uniqueForestNames = [...new Set(area.forests.map((forest) => forest.trim()))];
+      const uniqueForestNames = sortForestNamesForRetryPriority(
+        [...new Set(area.forests.map((forest) => forest.trim()).filter(Boolean))]
+      );
       const areaGeocode = areaGeocodeMap.get(area.areaUrl) ?? {
         latitude: null,
         longitude: null,
@@ -1423,7 +1461,9 @@ export class LiveForestDataService implements ForestDataService {
       }
     }
 
-    const unmatchedFacilitiesForests = facilityAssignments.diagnostics.unmatchedFacilitiesForests;
+    const unmatchedFacilitiesForests = sortForestNamesForRetryPriority(
+      facilityAssignments.diagnostics.unmatchedFacilitiesForests
+    );
 
     for (const forestName of unmatchedFacilitiesForests) {
       const geocode = await this.geocoder.geocodeForest(forestName);

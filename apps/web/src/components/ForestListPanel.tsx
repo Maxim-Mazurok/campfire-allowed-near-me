@@ -1,6 +1,6 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Tippy from "@tippyjs/react";
-import { memo, useMemo, useRef } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
@@ -256,6 +256,7 @@ export const ForestListPanel = memo(({
   availableFacilities,
   payload
 }: ForestListPanelProps) => {
+  const [forestSearchText, setForestSearchText] = useState("");
   const sortedMatchingForests = useMemo(() => {
     if (matchingForests.length <= 1) {
       return matchingForests;
@@ -263,25 +264,52 @@ export const ForestListPanel = memo(({
 
     return [...matchingForests].sort(sortForestsByDistance);
   }, [matchingForests]);
+
+  const normalizedForestSearchText = forestSearchText.trim().toLowerCase();
+  const filteredMatchingForests = useMemo(() => {
+    if (!normalizedForestSearchText) {
+      return sortedMatchingForests;
+    }
+
+    return sortedMatchingForests.filter((forest) =>
+      forest.forestName.toLowerCase().includes(normalizedForestSearchText)
+    );
+  }, [normalizedForestSearchText, sortedMatchingForests]);
+
   const shouldUseVirtualizedForestList =
-    sortedMatchingForests.length >= FOREST_LIST_VIRTUALIZATION_THRESHOLD;
+    filteredMatchingForests.length >= FOREST_LIST_VIRTUALIZATION_THRESHOLD;
 
   return (
     <aside className="panel list-panel">
-      <h2>Forests ({matchingForests.length})</h2>
+      <h2>Forests ({filteredMatchingForests.length})</h2>
       <p className="meta">
         Last fetched: {payload ? new Date(payload.fetchedAt).toLocaleString() : "-"}
         {payload?.stale ? " (stale cache)" : ""}
       </p>
 
+      <label className="forest-search-label" htmlFor="forest-search-input">
+        Search forests
+      </label>
+      <input
+        id="forest-search-input"
+        data-testid="forest-search-input"
+        type="search"
+        className="forest-search-input"
+        value={forestSearchText}
+        onChange={(event) => {
+          setForestSearchText(event.target.value);
+        }}
+        placeholder="Filter by forest name"
+      />
+
       {shouldUseVirtualizedForestList ? (
         <VirtualizedForestList
-          sortedMatchingForests={sortedMatchingForests}
+          sortedMatchingForests={filteredMatchingForests}
           availableFacilities={availableFacilities}
         />
       ) : (
         <StandardForestList
-          sortedMatchingForests={sortedMatchingForests}
+          sortedMatchingForests={filteredMatchingForests}
           availableFacilities={availableFacilities}
         />
       )}

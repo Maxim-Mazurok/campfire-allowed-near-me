@@ -138,6 +138,12 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   const totalRows = await page.getByTestId("forest-row").count();
   expect(totalRows).toBeGreaterThan(0);
 
+  await page.getByTestId("forest-search-input").fill("Forest B");
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("forest-row").first()).toContainText("Forest B");
+  await page.getByTestId("forest-search-input").fill("");
+  await expect(page.getByTestId("forest-row")).toHaveCount(totalRows);
+
   await page.getByTestId("ban-filter-not-allowed").click();
   const bannedRows = await page.getByTestId("forest-row").count();
   expect(bannedRows).toBeLessThanOrEqual(totalRows);

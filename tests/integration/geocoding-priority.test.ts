@@ -205,6 +205,89 @@ describe("OSMGeocoder forest lookup priority", () => {
     }
   });
 
+  it("prefers localhost Nominatim by default and falls back to public OSM", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-local-default-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    const originalNominatimBaseUrl = process.env.NOMINATIM_BASE_URL;
+    const originalNominatimPort = process.env.NOMINATIM_PORT;
+    delete process.env.NOMINATIM_BASE_URL;
+    process.env.NOMINATIM_PORT = "8080";
+
+    const requestedHosts: string[] = [];
+
+    globalThis.fetch = vi.fn(async (url) => {
+      const parsedUrl = new URL(String(url));
+      requestedHosts.push(parsedUrl.host);
+
+      if (parsedUrl.host === "localhost:8080" && parsedUrl.pathname === "/search") {
+        return new Response(JSON.stringify([]), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      if (
+        parsedUrl.host === "nominatim.openstreetmap.org" &&
+        parsedUrl.pathname === "/search"
+      ) {
+        return new Response(
+          JSON.stringify([
+            {
+              lat: "-35.91",
+              lon: "149.59",
+              display_name: "Badja State Forest",
+              importance: 0.9
+            }
+          ]),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(JSON.stringify({ places: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new OSMGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        googleApiKey: "test-key"
+      });
+
+      const geocodeResult = await geocoder.geocodeForest(
+        "Badja State Forest",
+        "State forests around Bombala"
+      );
+
+      expect(geocodeResult.latitude).toBe(-35.91);
+      expect(geocodeResult.longitude).toBe(149.59);
+      expect(requestedHosts).toContain("localhost:8080");
+      expect(requestedHosts).toContain("nominatim.openstreetmap.org");
+      expect(requestedHosts.indexOf("localhost:8080")).toBeLessThan(
+        requestedHosts.indexOf("nominatim.openstreetmap.org")
+      );
+    } finally {
+      if (originalNominatimBaseUrl === undefined) {
+        delete process.env.NOMINATIM_BASE_URL;
+      } else {
+        process.env.NOMINATIM_BASE_URL = originalNominatimBaseUrl;
+      }
+
+      if (originalNominatimPort === undefined) {
+        delete process.env.NOMINATIM_PORT;
+      } else {
+        process.env.NOMINATIM_PORT = originalNominatimPort;
+      }
+
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
   it("returns Nominatim first and upgrades to Google from background enrichment", async () => {
     const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-background-google-"));
     const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
@@ -303,6 +386,105 @@ describe("OSMGeocoder forest lookup priority", () => {
       expect(secondLookup.provider).toBe("GOOGLE_PLACES");
       expect(secondLookup.latitude).toBe(-35.77);
       expect(secondLookup.longitude).toBe(149.66);
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it("retries previously limited Google lookups after budget reset", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-budget-reset-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    let googleRequestCount = 0;
+
+    globalThis.fetch = vi.fn(async (url, init) => {
+      const parsedUrl = new URL(String(url));
+
+      if (parsedUrl.hostname === "places.googleapis.com") {
+        googleRequestCount += 1;
+
+        if (googleRequestCount === 1) {
+          return new Response(JSON.stringify({ places: [] }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
+          });
+        }
+
+        return new Response(
+          JSON.stringify({
+            places: [
+              {
+                displayName: { text: "Brewombenia State Forest" },
+                formattedAddress: "Brewombenia State Forest, NSW",
+                location: {
+                  latitude: -31.21,
+                  longitude: 148.54
+                }
+              }
+            ]
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (parsedUrl.pathname === "/search") {
+        return new Response(JSON.stringify([]), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new OSMGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        maxNewLookupsPerRun: 1,
+        googleApiKey: "test-key"
+      });
+
+      const firstMiss = await geocoder.geocodeForest(
+        "Brewombenia State Forest",
+        "Cypress pine forests"
+      );
+
+      expect(firstMiss.latitude).toBeNull();
+      expect(
+        firstMiss.attempts?.some(
+          (attempt) =>
+            attempt.provider === "GOOGLE_PLACES" && attempt.outcome === "EMPTY_RESULT"
+        )
+      ).toBe(true);
+
+      const secondLimited = await geocoder.geocodeForest(
+        "Another Missing Forest",
+        "Cypress pine forests"
+      );
+
+      expect(
+        secondLimited.attempts?.some(
+          (attempt) =>
+            attempt.provider === "GOOGLE_PLACES" && attempt.outcome === "LIMIT_REACHED"
+        )
+      ).toBe(true);
+
+      geocoder.resetLookupBudgetForRun();
+
+      const thirdRetried = await geocoder.geocodeForest(
+        "Brewombenia State Forest",
+        "Cypress pine forests"
+      );
+
+      expect(thirdRetried.latitude).toBe(-31.21);
+      expect(thirdRetried.longitude).toBe(148.54);
+      expect(thirdRetried.provider).toBe("GOOGLE_PLACES");
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true });
     }

@@ -141,7 +141,7 @@ npm run warm:coordinates
 - `GEOCODE_TIMEOUT_MS` (default `15000`)
 - `GEOCODE_RETRY_ATTEMPTS` (default `3`)
 - `GEOCODE_RETRY_BASE_DELAY_MS` (default `750`)
-- `NOMINATIM_BASE_URL` (optional, default public Nominatim endpoint)
+- `NOMINATIM_BASE_URL` (optional override, default `http://localhost:${NOMINATIM_PORT}` with public Nominatim fallback)
 - `NOMINATIM_AUTO_START` (default `1`, auto-start local Docker Nominatim in dev script)
 - `NOMINATIM_PORT` (default `8080`)
 - `NOMINATIM_DNS_SERVERS` (default `1.1.1.1,8.8.8.8`, comma-separated DNS list passed to Docker)

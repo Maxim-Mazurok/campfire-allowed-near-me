@@ -71,6 +71,17 @@ const GOOGLE_FALLBACK_WARNING =
 const GOOGLE_KEY_MISSING_WARNING =
   "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap fallback geocoding is active.";
 const DEFAULT_NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
+const DEFAULT_LOCAL_NOMINATIM_PORT = "8080";
+
+const resolvePreferredNominatimBaseUrl = (): string => {
+  const configuredBaseUrl = process.env.NOMINATIM_BASE_URL?.trim();
+  if (configuredBaseUrl) {
+    return configuredBaseUrl;
+  }
+
+  const nominatimPort = process.env.NOMINATIM_PORT?.trim() || DEFAULT_LOCAL_NOMINATIM_PORT;
+  return `http://localhost:${nominatimPort}`;
+};
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -136,6 +147,10 @@ export class OSMGeocoder {
 
   private backgroundGoogleEnrichmentInProgress = false;
 
+  resetLookupBudgetForRun(): void {
+    this.newLookupsThisRun = 0;
+  }
+
   constructor(options?: {
     cacheDbPath?: string;
     requestDelayMs?: number;
@@ -155,8 +170,7 @@ export class OSMGeocoder {
     this.googleApiKey = options?.googleApiKey?.trim() || null;
     this.nominatimBaseUrl =
       options?.nominatimBaseUrl?.trim() ||
-      process.env.NOMINATIM_BASE_URL?.trim() ||
-      DEFAULT_NOMINATIM_BASE_URL;
+      resolvePreferredNominatimBaseUrl();
 
     mkdirSync(dirname(this.cacheDbPath), { recursive: true });
     this.db = this.openDatabaseWithRecovery();

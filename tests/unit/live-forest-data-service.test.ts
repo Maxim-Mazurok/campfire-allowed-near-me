@@ -238,6 +238,82 @@ describe("LiveForestDataService facilities matching", () => {
     }
   });
 
+  it("prioritizes previously unresolved forests on force refresh", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "Cypress pine forests",
+          areaUrl: "https://example.com/cypress-pine-forests",
+          status: "NOT_BANNED",
+          statusText: "No Solid Fuel Fire Ban",
+          forests: ["Alpha State Forest", "Brewombenia State Forest"]
+        }
+      ],
+      directory: {
+        filters: [],
+        forests: [],
+        warnings: []
+      },
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocodedForestNameOrder: string[] = [];
+    const geocoder = {
+      resetLookupBudgetForRun: () => {},
+      geocodeArea: async () => ({
+        latitude: null,
+        longitude: null,
+        displayName: "Cypress pine forests",
+        confidence: null
+      }),
+      geocodeForest: async (forestName: string) => {
+        geocodedForestNameOrder.push(forestName);
+
+        if (forestName === "Brewombenia State Forest") {
+          return {
+            latitude: null,
+            longitude: null,
+            displayName: null,
+            confidence: null
+          };
+        }
+
+        return {
+          latitude: -31.1,
+          longitude: 148.1,
+          displayName: forestName,
+          confidence: 0.9
+        };
+      }
+    };
+
+    const temporaryDirectoryPath = mkdtempSync(join(tmpdir(), "campfire-live-service-retry-priority-"));
+    const snapshotPath = join(temporaryDirectoryPath, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
+      });
+
+      await service.getForestData({ forceRefresh: true });
+
+      geocodedForestNameOrder.length = 0;
+
+      await service.getForestData({ forceRefresh: true });
+
+      expect(geocodedForestNameOrder[0]).toBe("Brewombenia State Forest");
+    } finally {
+      rmSync(temporaryDirectoryPath, { recursive: true, force: true });
+    }
+  });
+
   it("attaches closure notices and skips fully closed forests for nearest legal spot", async () => {
     const scrapeFixture: ForestryScrapeResult = {
       areas: [
