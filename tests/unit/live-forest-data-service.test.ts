@@ -383,6 +383,115 @@ describe("LiveForestDataService facilities matching", () => {
     }
   });
 
+  it("treats forests as banned when any fire-ban area marks them banned", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "State Forests of the North Coast of NSW",
+          areaUrl: "https://example.com/state-forests-of-the-north-coast-of-nsw",
+          status: "NOT_BANNED",
+          statusText: "No Solid Fuel Fire Ban",
+          forests: ["Carwong State Forest", "Nymboida State Forest"]
+        },
+        {
+          areaName: "Pine Forests of North Coast",
+          areaUrl: "https://example.com/pine-forests-of-north-coast",
+          status: "BANNED",
+          statusText: "Solid Fuel Fire Ban",
+          forests: ["Carwong State Forest"]
+        }
+      ],
+      directory: {
+        filters: [
+          {
+            key: "camping",
+            label: "Camping",
+            paramName: "camping",
+            iconKey: "camping"
+          }
+        ],
+        forests: [
+          {
+            forestName: "Carwong State Forest",
+            facilities: {
+              camping: true
+            }
+          },
+          {
+            forestName: "Nymboida State Forest",
+            facilities: {
+              camping: true
+            }
+          }
+        ],
+        warnings: []
+      },
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocoder = {
+      geocodeArea: async () => ({
+        latitude: -29.0,
+        longitude: 152.0,
+        displayName: "North Coast",
+        confidence: 0.9
+      }),
+      geocodeForest: async (forestName: string) => {
+        if (forestName === "Carwong State Forest") {
+          return {
+            latitude: -29.001,
+            longitude: 152.001,
+            displayName: "Carwong State Forest",
+            confidence: 0.9
+          };
+        }
+
+        return {
+          latitude: -29.3,
+          longitude: 152.4,
+          displayName: "Nymboida State Forest",
+          confidence: 0.9
+        };
+      }
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-live-service-ban-priority-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder
+      });
+
+      const response = await service.getForestData({
+        forceRefresh: true,
+        userLocation: {
+          latitude: -29.002,
+          longitude: 152.002
+        }
+      });
+
+      const carwongEntries = response.forests.filter(
+        (forest) => forest.forestName === "Carwong State Forest"
+      );
+
+      expect(carwongEntries).toHaveLength(2);
+      expect(carwongEntries.every((forest) => forest.banStatus === "BANNED")).toBe(true);
+      expect(carwongEntries.every((forest) => forest.banStatusText === "Solid Fuel Fire Ban")).toBe(
+        true
+      );
+      expect(response.nearestLegalSpot?.forestName).toBe("Nymboida State Forest");
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("refreshes legacy snapshots that do not contain facilities metadata", async () => {
     const tmpDir = mkdtempSync(join(tmpdir(), "campfire-legacy-snapshot-"));
     const snapshotPath = join(tmpDir, "snapshot.json");

@@ -17,6 +17,7 @@ import {
   type GeocodeResponse
 } from "./osm-geocoder.js";
 import type {
+  BanStatus,
   FacilityMatchDiagnostics,
   FacilityValue,
   ForestApiResponse,
@@ -52,7 +53,7 @@ const DEFAULT_OPTIONS: LiveForestDataServiceResolvedOptions = {
 };
 
 const FACILITY_MATCH_THRESHOLD = 0.62;
-const SNAPSHOT_FORMAT_VERSION = 4;
+const SNAPSHOT_FORMAT_VERSION = 5;
 const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on fire-ban pages";
 const UNKNOWN_FIRE_BAN_STATUS_TEXT =
@@ -66,6 +67,17 @@ interface FacilityMatchResult {
   score: number | null;
   matchType: "EXACT" | "FUZZY" | "UNMATCHED";
 }
+
+interface ForestBanSummary {
+  status: BanStatus;
+  statusText: string;
+}
+
+const BAN_STATUS_PRIORITY: Record<BanStatus, number> = {
+  UNKNOWN: 0,
+  NOT_BANNED: 1,
+  BANNED: 2
+};
 
 export class LiveForestDataService implements ForestDataService {
   private readonly options: LiveForestDataServiceResolvedOptions;
@@ -508,6 +520,58 @@ export class LiveForestDataService implements ForestDataService {
     ) as Record<string, FacilityValue>;
   }
 
+  private normalizeBanStatusText(status: BanStatus, statusText: string): string {
+    const normalized = statusText.trim();
+    if (normalized) {
+      return normalized;
+    }
+
+    if (status === "BANNED") {
+      return "Solid Fuel Fire Ban";
+    }
+
+    if (status === "NOT_BANNED") {
+      return "No Solid Fuel Fire Ban";
+    }
+
+    return "Unknown";
+  }
+
+  private buildForestStatusKey(forestName: string): string {
+    return normalizeForestLabel(forestName).toLowerCase();
+  }
+
+  private buildMostRestrictiveBanByForest(
+    areas: ForestAreaWithForests[]
+  ): Map<string, ForestBanSummary> {
+    const byForest = new Map<string, ForestBanSummary>();
+
+    for (const area of areas) {
+      const uniqueForestNames = [...new Set(
+        area.forests.map((forest) => normalizeForestLabel(forest)).filter(Boolean)
+      )];
+      const candidateSummary: ForestBanSummary = {
+        status: area.status,
+        statusText: this.normalizeBanStatusText(area.status, area.statusText)
+      };
+
+      for (const forestName of uniqueForestNames) {
+        const key = this.buildForestStatusKey(forestName);
+        const existingSummary = byForest.get(key);
+
+        if (
+          !existingSummary ||
+          BAN_STATUS_PRIORITY[candidateSummary.status] >
+            BAN_STATUS_PRIORITY[existingSummary.status]
+        ) {
+          byForest.set(key, candidateSummary);
+        }
+      }
+    }
+
+    return byForest;
+  }
+
   private hasDirectionalConflict(leftName: string, rightName: string): boolean {
     const left = normalizeForestNameForMatch(leftName);
     const right = normalizeForestNameForMatch(rightName);
@@ -689,6 +753,7 @@ export class LiveForestDataService implements ForestDataService {
     const byForestUrl = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.forestUrl ?? null] as const)
     );
+    const mostRestrictiveBanByForest = this.buildMostRestrictiveBanByForest(areas);
     const uniqueFireBanNames = [...new Set(
       areas.flatMap((area) => area.forests.map((forest) => forest.trim()).filter(Boolean))
     )];
@@ -718,6 +783,11 @@ export class LiveForestDataService implements ForestDataService {
           continue;
         }
 
+        const banSummary =
+          mostRestrictiveBanByForest.get(this.buildForestStatusKey(forestName)) ?? {
+            status: area.status,
+            statusText: this.normalizeBanStatusText(area.status, area.statusText)
+          };
         const geocode = await this.geocoder.geocodeForest(forestName, area.areaName);
         const resolvedLatitude = geocode.latitude ?? areaGeocode.latitude;
         const resolvedLongitude = geocode.longitude ?? areaGeocode.longitude;
@@ -744,8 +814,8 @@ export class LiveForestDataService implements ForestDataService {
           forestUrl: facilityMatch.matchedDirectoryForestName
             ? (byForestUrl.get(facilityMatch.matchedDirectoryForestName) ?? null)
             : null,
-          banStatus: area.status,
-          banStatusText: area.statusText,
+          banStatus: banSummary.status,
+          banStatusText: banSummary.statusText,
           latitude: resolvedLatitude,
           longitude: resolvedLongitude,
           geocodeName: usedAreaFallback
