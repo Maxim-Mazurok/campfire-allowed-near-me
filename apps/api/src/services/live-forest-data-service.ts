@@ -9,6 +9,7 @@ import {
   normalizeForestLabel
 } from "../utils/forest-name-validation.js";
 import { slugify } from "../utils/slugs.js";
+import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { ForestryScraper } from "./forestry-scraper.js";
 import {
   OSMGeocoder,
@@ -86,7 +87,7 @@ export class LiveForestDataService implements ForestDataService {
           process.env.FORESTRY_DIRECTORY_URL ??
           "https://www.forestrycorporation.com.au/visiting/forests",
         rawPageCachePath:
-          process.env.FORESTRY_RAW_CACHE_PATH ?? "data/cache/forestry-raw-pages.json",
+          process.env.FORESTRY_RAW_CACHE_PATH ?? DEFAULT_FORESTRY_RAW_CACHE_PATH,
         rawPageCacheTtlMs: Number(
           process.env.FORESTRY_RAW_CACHE_TTL_MS ?? `${60 * 60 * 1000}`
         )

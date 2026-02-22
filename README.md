@@ -84,7 +84,7 @@ npm run warm:coordinates
 - `WEB_PREVIEW_PORT` (default `4173`)
 - `FORESTRY_ENTRY_URL` (default Forestry Corporation solid-fuel-fire-ban URL)
 - `FORESTRY_DIRECTORY_URL` (default Forestry Corporation forests directory URL)
-- `FORESTRY_RAW_CACHE_PATH` (default `data/cache/forestry-raw-pages.json`)
+- `FORESTRY_RAW_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json`)
 - `FORESTRY_RAW_CACHE_TTL_MS` (default `3600000`)
 - `SCRAPE_TTL_MS` (default `900000`, in-memory processed snapshot TTL)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
@@ -95,7 +95,7 @@ npm run warm:coordinates
 - `FORESTRY_USE_FIXTURE=fixtures/mock-forests.json` (deterministic fixture mode)
 
 ## Caching Strategy
-- Raw Forestry page cache: `data/cache/forestry-raw-pages.json` (ignored in git, 1-hour TTL by default).
+- Raw Forestry page cache: `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json` (shared across worktrees, 1-hour TTL by default).
 - Processed snapshot cache: disabled by default; optional via `FORESTRY_SNAPSHOT_PATH`.
 - Coordinate cache: `data/cache/coordinates.sqlite` (ignored in git).
 - Raw page cache avoids re-scraping identical Forestry HTML right after restarts.

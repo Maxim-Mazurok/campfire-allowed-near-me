@@ -8,6 +8,7 @@ import {
   parseMainFireBanPage
 } from "./forestry-parser.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
+import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import type {
   ForestAreaWithForests,
   ForestDirectorySnapshot,
@@ -34,7 +35,7 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   timeoutMs: 60_000,
   maxAreaConcurrency: 3,
   maxFilterConcurrency: 4,
-  rawPageCachePath: "data/cache/forestry-raw-pages.json",
+  rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000
 };
 
