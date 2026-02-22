@@ -16,6 +16,7 @@
     "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
+    "test:integration:nominatim-live": "NOMINATIM_LIVE_TEST=1 vitest run tests/integration/nominatim-live.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "warm:coordinates": "tsx apps/api/src/scripts/warm-coordinate-cache.ts",

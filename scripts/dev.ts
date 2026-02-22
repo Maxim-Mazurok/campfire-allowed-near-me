@@ -10,7 +10,7 @@ const DEFAULT_NOMINATIM_IMAGE = "mediagis/nominatim:4.5";
 const DEFAULT_NOMINATIM_PORT = "8080";
 const DEFAULT_NOMINATIM_DNS_SERVERS = "1.1.1.1,8.8.8.8";
 const DEFAULT_NOMINATIM_PBF_URL =
-  "https://download.geofabrik.de/australia-oceania/australia/new-south-wales-latest.osm.pbf";
+  "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf";
 
 loadLocalEnv();
 
@@ -141,6 +141,44 @@ const getContainerDnsServers = async (containerName: string): Promise<string[]> 
   }
 };
 
+const resolveNominatimPbfUrl = async (requestedPbfUrl: string): Promise<string> => {
+  try {
+    const response = await fetch(requestedPbfUrl, {
+      method: "HEAD",
+      redirect: "follow"
+    });
+
+    const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
+    const contentLength = Number(response.headers.get("content-length") ?? "0");
+    const looksLikeHtml = contentType.includes("text/html");
+    const looksLikeVerySmallFile = Number.isFinite(contentLength) && contentLength > 0 && contentLength < 100_000;
+
+    if (response.ok && !looksLikeHtml && !looksLikeVerySmallFile) {
+      return requestedPbfUrl;
+    }
+
+    if (requestedPbfUrl !== DEFAULT_NOMINATIM_PBF_URL) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[dev] NOMINATIM_PBF_URL seems invalid (${requestedPbfUrl}). Falling back to ${DEFAULT_NOMINATIM_PBF_URL}.`
+      );
+      return DEFAULT_NOMINATIM_PBF_URL;
+    }
+
+    return requestedPbfUrl;
+  } catch {
+    if (requestedPbfUrl !== DEFAULT_NOMINATIM_PBF_URL) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[dev] NOMINATIM_PBF_URL is unreachable (${requestedPbfUrl}). Falling back to ${DEFAULT_NOMINATIM_PBF_URL}.`
+      );
+      return DEFAULT_NOMINATIM_PBF_URL;
+    }
+
+    return requestedPbfUrl;
+  }
+};
+
 const isContainerRunning = async (containerName: string): Promise<boolean> => {
   try {
     const running = await runDockerCommand([
@@ -165,7 +203,9 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
 
   const nominatimPort = process.env.NOMINATIM_PORT ?? DEFAULT_NOMINATIM_PORT;
   const nominatimImage = process.env.NOMINATIM_IMAGE ?? DEFAULT_NOMINATIM_IMAGE;
-  const nominatimPbfUrl = process.env.NOMINATIM_PBF_URL ?? DEFAULT_NOMINATIM_PBF_URL;
+  const nominatimPbfUrl = await resolveNominatimPbfUrl(
+    process.env.NOMINATIM_PBF_URL ?? DEFAULT_NOMINATIM_PBF_URL
+  );
   const nominatimDnsServers = (
     process.env.NOMINATIM_DNS_SERVERS ?? DEFAULT_NOMINATIM_DNS_SERVERS
   )
@@ -218,18 +258,9 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
     }
 
     if (existingContainerId) {
-      await runDockerCommand(["start", NOMINATIM_CONTAINER_NAME]);
-
-      const startedSuccessfully = await isContainerRunning(NOMINATIM_CONTAINER_NAME);
-      if (startedSuccessfully) {
-        // eslint-disable-next-line no-console
-        console.log(`[dev] Started existing Nominatim container on :${nominatimPort}.`);
-        return;
-      }
-
       await runDockerCommand(["rm", "-f", NOMINATIM_CONTAINER_NAME]);
       // eslint-disable-next-line no-console
-      console.log("[dev] Recreating Nominatim container after failed start.");
+      console.log("[dev] Recreating stopped Nominatim container to avoid stale/corrupt import state.");
     }
 
     await runDockerCommand([

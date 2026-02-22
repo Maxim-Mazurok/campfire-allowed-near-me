@@ -11,7 +11,7 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 - Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
 - Uses both **Solid Fuel Fire Ban** and **Total Fire Ban** status for campfire legality.
 - Ignores Firewood collection status for campfire legality.
-- Resolves forest coordinates with Google Places first, then falls back to OpenStreetMap only when Google geocoding fails.
+- Resolves forest coordinates with local Nominatim first for fast initial results, then enriches/upgrades coordinates in the background with Google Places.
 - Supports optional local Nominatim fallback (`NOMINATIM_BASE_URL`) for high-volume/local development geocoding.
 - Maps forests with OpenStreetMap + Leaflet.
 - Computes driving distance/time with Google Routes traffic for next Saturday at 10:00 AM (request-time calculation).
@@ -94,6 +94,7 @@ npm run warm:coordinates
 - `npm run cache:reset`: clear local geocoding/route/snapshot caches.
 - `npm run typecheck`: TypeScript checks.
 - `npm test`: unit + integration + e2e.
+- `npm run test:integration:nominatim-live`: run live local Nominatim integration check (requires local Nominatim ready).
 - `npm run build`: backend + frontend production build.
 
 ## Environment Variables
@@ -121,7 +122,7 @@ npm run warm:coordinates
 - `NOMINATIM_PORT` (default `8080`)
 - `NOMINATIM_DNS_SERVERS` (default `1.1.1.1,8.8.8.8`, comma-separated DNS list passed to Docker)
 - `NOMINATIM_IMAGE` (default `mediagis/nominatim:4.5`)
-- `NOMINATIM_PBF_URL` (default NSW Geofabrik extract URL)
+- `NOMINATIM_PBF_URL` (default Australia Geofabrik extract URL)
 - `COORDINATE_CACHE_DB` (default `data/cache/coordinates.sqlite`)
 - `ROUTE_CACHE_DB` (default `data/cache/routes.sqlite`)
 - `ROUTE_MAX_CONCURRENT_REQUESTS` (default `8`)

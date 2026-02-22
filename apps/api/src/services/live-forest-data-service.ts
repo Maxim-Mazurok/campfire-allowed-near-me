@@ -108,6 +108,8 @@ export class LiveForestDataService implements ForestDataService {
 
   private memorySnapshot: PersistedSnapshot | null = null;
 
+  private snapshotResolvePromise: Promise<PersistedSnapshot> | null = null;
+
   constructor(options?: LiveForestDataServiceOptions) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
     this.scraper = options?.scraper ??
@@ -519,102 +521,118 @@ export class LiveForestDataService implements ForestDataService {
       return persisted;
     }
 
+    if (this.snapshotResolvePromise) {
+      return this.snapshotResolvePromise;
+    }
+
+    const snapshotResolvePromise = (async (): Promise<PersistedSnapshot> => {
+      try {
+        this.reportProgress(progressCallback, {
+          phase: "SCRAPE",
+          message: "Scraping Forestry and Total Fire Ban source pages.",
+          completed: 0,
+          total: null
+        });
+
+        const [scraped, totalFireBanSnapshot] = await Promise.all([
+          this.scraper.scrape(),
+          this.totalFireBanService.fetchCurrentSnapshot()
+        ]);
+
+        this.reportProgress(progressCallback, {
+          phase: "SCRAPE",
+          message: "Source pages loaded. Preparing geocoding.",
+          completed: 1,
+          total: 1
+        });
+
+        const warningSet = new Set([
+          ...(scraped.warnings ?? []),
+          ...(totalFireBanSnapshot.warnings ?? [])
+        ]);
+        const forestResult = await this.buildForestPoints(
+          scraped.areas,
+          scraped.directory,
+          totalFireBanSnapshot,
+          warningSet,
+          progressCallback
+        );
+
+        this.reportProgress(progressCallback, {
+          phase: "PERSIST",
+          message: "Persisting refreshed snapshot.",
+          completed: 0,
+          total: 1
+        });
+
+        const snapshot: PersistedSnapshot = {
+          schemaVersion: SNAPSHOT_FORMAT_VERSION,
+          fetchedAt: new Date().toISOString(),
+          stale: false,
+          sourceName: this.options.sourceName,
+          availableFacilities: scraped.directory.filters,
+          matchDiagnostics: forestResult.diagnostics,
+          forests: forestResult.forests,
+          warnings: [...warningSet]
+        };
+
+        if (
+          !this.hasAnyMappedForest(snapshot) &&
+          staleFallbackSnapshot &&
+          this.hasAnyMappedForest(staleFallbackSnapshot)
+        ) {
+          const fallbackSnapshot: PersistedSnapshot = {
+            ...staleFallbackSnapshot,
+            stale: true,
+            warnings: [
+              ...new Set([
+                ...(staleFallbackSnapshot.warnings ?? []),
+                "Latest refresh had no mappable coordinates; using previous mapped snapshot."
+              ])
+            ]
+          };
+          this.memorySnapshot = fallbackSnapshot;
+          return fallbackSnapshot;
+        }
+
+        await this.persistSnapshot(snapshot);
+
+        this.reportProgress(progressCallback, {
+          phase: "PERSIST",
+          message: "Snapshot persisted.",
+          completed: 1,
+          total: 1
+        });
+
+        return snapshot;
+      } catch (error) {
+        if (staleFallbackSnapshot) {
+          const warning =
+            error instanceof Error
+              ? error.message
+              : "Unknown scrape error while refreshing Forestry data.";
+
+          const staleSnapshot: PersistedSnapshot = {
+            ...staleFallbackSnapshot,
+            stale: true,
+            warnings: [...new Set([...(staleFallbackSnapshot.warnings ?? []), warning])]
+          };
+          this.memorySnapshot = staleSnapshot;
+          return staleSnapshot;
+        }
+
+        throw error;
+      }
+    })();
+
+    this.snapshotResolvePromise = snapshotResolvePromise;
+
     try {
-      this.reportProgress(progressCallback, {
-        phase: "SCRAPE",
-        message: "Scraping Forestry and Total Fire Ban source pages.",
-        completed: 0,
-        total: null
-      });
-
-      const [scraped, totalFireBanSnapshot] = await Promise.all([
-        this.scraper.scrape(),
-        this.totalFireBanService.fetchCurrentSnapshot()
-      ]);
-
-      this.reportProgress(progressCallback, {
-        phase: "SCRAPE",
-        message: "Source pages loaded. Preparing geocoding.",
-        completed: 1,
-        total: 1
-      });
-
-      const warningSet = new Set([
-        ...(scraped.warnings ?? []),
-        ...(totalFireBanSnapshot.warnings ?? [])
-      ]);
-      const forestResult = await this.buildForestPoints(
-        scraped.areas,
-        scraped.directory,
-        totalFireBanSnapshot,
-        warningSet,
-        progressCallback
-      );
-
-      this.reportProgress(progressCallback, {
-        phase: "PERSIST",
-        message: "Persisting refreshed snapshot.",
-        completed: 0,
-        total: 1
-      });
-
-      const snapshot: PersistedSnapshot = {
-        schemaVersion: SNAPSHOT_FORMAT_VERSION,
-        fetchedAt: new Date().toISOString(),
-        stale: false,
-        sourceName: this.options.sourceName,
-        availableFacilities: scraped.directory.filters,
-        matchDiagnostics: forestResult.diagnostics,
-        forests: forestResult.forests,
-        warnings: [...warningSet]
-      };
-
-      if (
-        !this.hasAnyMappedForest(snapshot) &&
-        staleFallbackSnapshot &&
-        this.hasAnyMappedForest(staleFallbackSnapshot)
-      ) {
-        const fallbackSnapshot: PersistedSnapshot = {
-          ...staleFallbackSnapshot,
-          stale: true,
-          warnings: [
-            ...new Set([
-              ...(staleFallbackSnapshot.warnings ?? []),
-              "Latest refresh had no mappable coordinates; using previous mapped snapshot."
-            ])
-          ]
-        };
-        this.memorySnapshot = fallbackSnapshot;
-        return fallbackSnapshot;
+      return await snapshotResolvePromise;
+    } finally {
+      if (this.snapshotResolvePromise === snapshotResolvePromise) {
+        this.snapshotResolvePromise = null;
       }
-
-      await this.persistSnapshot(snapshot);
-
-      this.reportProgress(progressCallback, {
-        phase: "PERSIST",
-        message: "Snapshot persisted.",
-        completed: 1,
-        total: 1
-      });
-
-      return snapshot;
-    } catch (error) {
-      if (staleFallbackSnapshot) {
-        const warning =
-          error instanceof Error
-            ? error.message
-            : "Unknown scrape error while refreshing Forestry data.";
-
-        const staleSnapshot: PersistedSnapshot = {
-          ...staleFallbackSnapshot,
-          stale: true,
-          warnings: [...new Set([...(staleFallbackSnapshot.warnings ?? []), warning])]
-        };
-        this.memorySnapshot = staleSnapshot;
-        return staleSnapshot;
-      }
-
-      throw error;
     }
   }
 

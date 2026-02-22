@@ -90,6 +90,21 @@ const toErrorMessage = (value: unknown): string => {
 const shouldRetryHttpStatus = (httpStatus: number): boolean =>
   httpStatus === 408 || httpStatus === 429 || httpStatus >= 500;
 
+const isLocalNominatimBaseUrl = (baseUrl: string): boolean => {
+  try {
+    const parsedUrl = new URL(baseUrl);
+    const hostname = parsedUrl.hostname.toLowerCase();
+    return (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname === "host.docker.internal"
+    );
+  } catch {
+    return false;
+  }
+};
+
 export class OSMGeocoder {
   private readonly cacheDbPath: string;
 
@@ -110,6 +125,16 @@ export class OSMGeocoder {
   private db: DatabaseSync;
 
   private newLookupsThisRun = 0;
+
+  private readonly backgroundGoogleEnrichmentQueue: Array<{
+    query: string;
+    aliasKey: string | null;
+    cacheKey: string;
+  }> = [];
+
+  private readonly queuedBackgroundGoogleEnrichmentKeys = new Set<string>();
+
+  private backgroundGoogleEnrichmentInProgress = false;
 
   constructor(options?: {
     cacheDbPath?: string;
@@ -561,7 +586,9 @@ export class OSMGeocoder {
         })
       );
 
-      await sleep(this.requestDelayMs);
+      if (!isLocalNominatimBaseUrl(baseUrl) && this.requestDelayMs > 0) {
+        await sleep(this.requestDelayMs);
+      }
 
       if (!nominatimRequest.response) {
         lastErrorMessage = nominatimRequest.error;
@@ -672,6 +699,10 @@ export class OSMGeocoder {
         : null;
 
     if (cached && cacheKeyUsed) {
+      if (cached.provider === "OSM_NOMINATIM") {
+        this.enqueueBackgroundGoogleEnrichment(query, aliasKeyNormalized, queryKey);
+      }
+
       return this.toGeocodeResponse(
         cached,
         [this.buildAttempt("CACHE", query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")],
@@ -683,6 +714,20 @@ export class OSMGeocoder {
 
     const attempts: GeocodeLookupAttempt[] = [];
     const warnings: string[] = [];
+
+    const nominatimLookup = await this.lookupNominatim(query, aliasKeyNormalized, queryKey);
+    attempts.push(nominatimLookup.attempt);
+
+    if (nominatimLookup.hit) {
+      this.putCached(queryKey, nominatimLookup.hit);
+      if (aliasKeyNormalized) {
+        this.putCached(aliasKeyNormalized, nominatimLookup.hit);
+      }
+
+      this.enqueueBackgroundGoogleEnrichment(query, aliasKeyNormalized, queryKey);
+
+      return this.toGeocodeResponse(nominatimLookup.hit, attempts, warnings);
+    }
 
     const googleLookup =
       this.newLookupsThisRun >= this.maxNewLookupsPerRun
@@ -719,18 +764,6 @@ export class OSMGeocoder {
         : GOOGLE_FALLBACK_WARNING
     );
 
-    const nominatimLookup = await this.lookupNominatim(query, aliasKeyNormalized, queryKey);
-    attempts.push(nominatimLookup.attempt);
-
-    if (nominatimLookup.hit) {
-      this.putCached(queryKey, nominatimLookup.hit);
-      if (aliasKeyNormalized) {
-        this.putCached(aliasKeyNormalized, nominatimLookup.hit);
-      }
-
-      return this.toGeocodeResponse(nominatimLookup.hit, attempts, warnings);
-    }
-
     return {
       latitude: null,
       longitude: null,
@@ -740,6 +773,93 @@ export class OSMGeocoder {
       warnings,
       attempts
     };
+  }
+
+  private enqueueBackgroundGoogleEnrichment(
+    query: string,
+    aliasKey: string | null,
+    cacheKey: string
+  ): void {
+    if (!this.googleApiKey) {
+      return;
+    }
+
+    if (this.newLookupsThisRun >= this.maxNewLookupsPerRun) {
+      return;
+    }
+
+    const queueKey = `${cacheKey}|${aliasKey ?? ""}`;
+    if (this.queuedBackgroundGoogleEnrichmentKeys.has(queueKey)) {
+      return;
+    }
+
+    this.queuedBackgroundGoogleEnrichmentKeys.add(queueKey);
+    this.backgroundGoogleEnrichmentQueue.push({
+      query,
+      aliasKey,
+      cacheKey
+    });
+
+    if (this.backgroundGoogleEnrichmentInProgress) {
+      return;
+    }
+
+    this.backgroundGoogleEnrichmentInProgress = true;
+    void this.runBackgroundGoogleEnrichmentQueue();
+  }
+
+  private async runBackgroundGoogleEnrichmentQueue(): Promise<void> {
+    try {
+      while (this.backgroundGoogleEnrichmentQueue.length > 0) {
+        const nextEnrichment = this.backgroundGoogleEnrichmentQueue.shift();
+        if (!nextEnrichment) {
+          continue;
+        }
+
+        const queueKey = `${nextEnrichment.cacheKey}|${nextEnrichment.aliasKey ?? ""}`;
+
+        try {
+          const aliasCachedHit = nextEnrichment.aliasKey
+            ? this.getCached(nextEnrichment.aliasKey)
+            : null;
+          const queryCachedHit = this.getCached(nextEnrichment.cacheKey);
+          const existingHit = aliasCachedHit ?? queryCachedHit;
+
+          if (existingHit?.provider === "GOOGLE_PLACES") {
+            continue;
+          }
+
+          if (this.newLookupsThisRun >= this.maxNewLookupsPerRun) {
+            continue;
+          }
+
+          const googleLookup = await this.lookupGooglePlaces(
+            nextEnrichment.query,
+            nextEnrichment.aliasKey,
+            nextEnrichment.cacheKey
+          );
+
+          if (googleLookup.attempt.outcome !== "LIMIT_REACHED") {
+            this.newLookupsThisRun += 1;
+          }
+
+          if (!googleLookup.hit) {
+            continue;
+          }
+
+          this.putCached(nextEnrichment.cacheKey, googleLookup.hit);
+          if (nextEnrichment.aliasKey) {
+            this.putCached(nextEnrichment.aliasKey, googleLookup.hit);
+          }
+        } catch {
+          continue;
+        } finally {
+          this.queuedBackgroundGoogleEnrichmentKeys.delete(queueKey);
+        }
+      }
+    } finally {
+      this.backgroundGoogleEnrichmentInProgress = false;
+    }
   }
 
   async geocodeForest(
