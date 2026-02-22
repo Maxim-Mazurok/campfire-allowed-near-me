@@ -46,6 +46,8 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
@@ -65,6 +67,8 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -34.0,
             longitude: 151.3,
             geocodeName: "Forest B",
@@ -84,6 +88,8 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
             banStatus: "BANNED",
             banStatusText: "Solid Fuel Fire Ban",
+            totalFireBanStatus: "BANNED",
+            totalFireBanStatusText: "Total Fire Ban",
             latitude: -35.0,
             longitude: 151.4,
             geocodeName: "Forest C",
@@ -102,7 +108,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   await page.goto("/");
 
   await expect(page.getByRole("heading", { name: "Campfire Allowed Near Me" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Fire Ban" })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Solid Fuel Fire Ban" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
   );
@@ -129,25 +135,39 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   const bannedRows = await page.getByTestId("forest-row").count();
   expect(bannedRows).toBeLessThanOrEqual(totalRows);
   if (bannedRows > 0) {
-    const bannedStatuses = await page.locator("[data-testid='forest-row'] .status-pill").allTextContents();
-    expect(bannedStatuses.every((text) => text.includes("Banned"))).toBe(true);
+    const bannedStatuses = await page
+      .locator("[data-testid='forest-row'] .status-block .status-pill:first-child")
+      .allTextContents();
+    expect(bannedStatuses.every((text) => text.includes("Solid fuel: banned"))).toBe(true);
   }
 
   await page.getByTestId("ban-filter-allowed").click();
   const allowedRows = await page.getByTestId("forest-row").count();
   expect(allowedRows).toBeLessThanOrEqual(totalRows);
   if (allowedRows > 0) {
-    const allowedStatuses = await page.locator("[data-testid='forest-row'] .status-pill").allTextContents();
-    expect(allowedStatuses.every((text) => text.includes("No ban"))).toBe(true);
+    const allowedStatuses = await page
+      .locator("[data-testid='forest-row'] .status-block .status-pill:first-child")
+      .allTextContents();
+    expect(allowedStatuses.every((text) => text.includes("Solid fuel: not banned"))).toBe(true);
   }
+
+  await page.getByTestId("ban-filter-all").click();
+  await page.getByTestId("total-fire-ban-filter-banned").click();
+  const totalFireBanRows = await page.getByTestId("forest-row").count();
+  expect(totalFireBanRows).toBe(1);
+  const totalFireBanStatuses = await page
+    .locator("[data-testid='forest-row'] .status-block .status-pill:nth-child(2)")
+    .allTextContents();
+  expect(totalFireBanStatuses.every((text) => text.includes("Total Fire Ban"))).toBe(true);
+  await page.getByTestId("total-fire-ban-filter-all").click();
 
   await page.getByTestId("facility-filter-fishing-include").click();
   const fishingRows = await page.getByTestId("forest-row").count();
-  expect(fishingRows).toBe(1);
+  expect(fishingRows).toBe(2);
 
   await page.getByTestId("facility-filter-fishing-include").click();
   const resetFromIncludeRows = await page.getByTestId("forest-row").count();
-  expect(resetFromIncludeRows).toBe(allowedRows);
+  expect(resetFromIncludeRows).toBe(totalRows);
 
   await page.getByTestId("facility-filter-fishing-exclude").click();
   const noFishingRows = await page.getByTestId("forest-row").count();
@@ -155,7 +175,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
 
   await page.getByTestId("facility-filter-fishing-exclude").click();
   const resetFromExcludeRows = await page.getByTestId("forest-row").count();
-  expect(resetFromExcludeRows).toBe(allowedRows);
+  expect(resetFromExcludeRows).toBe(totalRows);
 
   await page.getByTestId("locate-btn").click();
   await expect
@@ -214,6 +234,8 @@ test("persists location and filters across reloads", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
@@ -232,6 +254,8 @@ test("persists location and filters across reloads", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             banStatus: "BANNED",
             banStatusText: "Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -34.5,
             longitude: 149.1,
             geocodeName: "Forest B",
@@ -361,6 +385,8 @@ test("uses current location on page load when permission is already granted", as
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
@@ -420,6 +446,8 @@ test("keeps nearest spot when non-location response resolves after location resp
               forestUrl: "https://www.forestrycorporation.com.au/visit/forests/fast-forest",
               banStatus: "NOT_BANNED",
               banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
               latitude: -33.9,
               longitude: 151.1,
               geocodeName: "Fast Forest",
@@ -499,6 +527,8 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
             forestName: "Belangalo State Forest",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -35.2,
             longitude: 150.4,
             geocodeName: "Belangalo State Forest",
@@ -524,23 +554,24 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
   await expect(page.getByTestId("warnings-dialog")).not.toContainText(
     "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest."
   );
-  await expect(page.getByRole("link", { name: "Facilities page" })).toHaveAttribute(
+  const warningsDialog = page.getByTestId("warnings-dialog");
+  await expect(warningsDialog.getByRole("link", { name: "Facilities page" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/forests"
   );
-  await expect(page.getByRole("link", { name: "Solid Fuel Fire Ban" })).toHaveAttribute(
+  await expect(warningsDialog.getByRole("link", { name: "Solid Fuel Fire Ban" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
   );
-  await expect(page.getByRole("link", { name: "Coolangubra State Forest" })).toHaveAttribute(
+  await expect(warningsDialog.getByRole("link", { name: "Coolangubra State Forest" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/forests/coolangubra-state-forest"
   );
-  await expect(page.getByRole("link", { name: "Belanglo State Forest" })).toHaveAttribute(
+  await expect(warningsDialog.getByRole("link", { name: "Belanglo State Forest" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/forests/belanglo-state-forest"
   );
-  const fireBanForestLinks = page.getByRole("link", { name: "Belangalo State Forest" });
+  const fireBanForestLinks = warningsDialog.getByRole("link", { name: "Belangalo State Forest" });
   await expect(fireBanForestLinks).toHaveCount(2);
   await expect(fireBanForestLinks.first()).toHaveAttribute(
     "href",
@@ -575,6 +606,8 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             forestName: "Zulu State Forest",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -29.2,
             longitude: 153.5,
             geocodeName: "Zulu State Forest",
@@ -590,6 +623,8 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             forestName: "Alpha State Forest",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -35.5,
             longitude: 150.2,
             geocodeName: "Alpha State Forest",
@@ -605,6 +640,8 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             forestName: "Beta State Forest",
             banStatus: "BANNED",
             banStatusText: "Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -33.4,
             longitude: 149.6,
             geocodeName: "Beta State Forest",
@@ -620,6 +657,8 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             forestName: "Coolangubra State Forest",
             banStatus: "UNKNOWN",
             banStatusText: "Unknown (not listed on Solid Fuel Fire Ban pages)",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: -36.4,
             longitude: 149.2,
             geocodeName: "Coolangubra State Forest",
@@ -690,6 +729,8 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-state-forest",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: null,
             longitude: null,
             geocodeName: null,
@@ -711,6 +752,8 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
             forestName: "Bravo State Forest",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
             latitude: null,
             longitude: null,
             geocodeName: null,

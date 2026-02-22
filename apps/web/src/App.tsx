@@ -13,18 +13,26 @@ import {
   type UserLocation
 } from "./lib/forests-query";
 
-type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
+type BanFilterMode = "ALL" | "NOT_BANNED" | "BANNED" | "UNKNOWN";
+type LegacyBanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
 type FireBanForestSortColumn = "forestName" | "areaName";
 type SortDirection = "asc" | "desc";
 type UserPreferences = {
-  banFilterMode?: BanFilterMode;
+  solidFuelBanFilterMode?: BanFilterMode;
+  totalFireBanFilterMode?: BanFilterMode;
+  // Legacy key from older builds.
+  banFilterMode?: LegacyBanFilterMode;
   facilityFilterModes?: Record<string, TriStateMode>;
   userLocation?: UserLocation | null;
 };
 
-const FIRE_BAN_SOURCE_URL =
+const SOLID_FUEL_FIRE_BAN_SOURCE_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
+const TOTAL_FIRE_BAN_SOURCE_URL =
+  "https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans";
+const TOTAL_FIRE_BAN_RULES_URL =
+  "https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans/total-fire-ban-rules";
 const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 const ALPHABETICAL_COLLATOR = new Intl.Collator("en-AU", {
@@ -91,6 +99,23 @@ const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string): string
   return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
 };
 
+const buildTotalFireBanDetailsUrl = (
+  forest: ForestApiResponse["forests"][number]
+): string => {
+  const fullAddress = forest.geocodeName?.trim() ? forest.geocodeName : " ";
+  const placeIdentifier = " ";
+  const latitude =
+    typeof forest.latitude === "number" && Number.isFinite(forest.latitude)
+      ? String(forest.latitude)
+      : " ";
+  const longitude =
+    typeof forest.longitude === "number" && Number.isFinite(forest.longitude)
+      ? String(forest.longitude)
+      : " ";
+
+  return `${TOTAL_FIRE_BAN_SOURCE_URL}?fullAddress=${encodeURIComponent(fullAddress)}&lat=${encodeURIComponent(latitude)}&lng=${encodeURIComponent(longitude)}&placeId=${encodeURIComponent(placeIdentifier)}`;
+};
+
 const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
   const facilitiesPageLabel = "Facilities page";
   const fireBanPagesLabel = "Solid Fuel Fire Ban pages";
@@ -115,7 +140,11 @@ const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
         {facilitiesPageLabel}
       </a>
       {betweenLinks}
-      <a href={FIRE_BAN_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+      <a
+        href={SOLID_FUEL_FIRE_BAN_SOURCE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Solid Fuel Fire Ban
       </a>
       {" pages"}
@@ -125,7 +154,76 @@ const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
 };
 
 const isBanFilterMode = (value: unknown): value is BanFilterMode =>
+  value === "ALL" ||
+  value === "NOT_BANNED" ||
+  value === "BANNED" ||
+  value === "UNKNOWN";
+
+const isLegacyBanFilterMode = (value: unknown): value is LegacyBanFilterMode =>
   value === "ALL" || value === "ALLOWED" || value === "NOT_ALLOWED";
+
+const toModernBanFilterMode = (mode: LegacyBanFilterMode): BanFilterMode => {
+  if (mode === "ALLOWED") {
+    return "NOT_BANNED";
+  }
+
+  if (mode === "NOT_ALLOWED") {
+    return "BANNED";
+  }
+
+  return "ALL";
+};
+
+const matchesBanFilter = (
+  mode: BanFilterMode,
+  status: ForestApiResponse["forests"][number]["banStatus"]
+): boolean => {
+  if (mode === "ALL") {
+    return true;
+  }
+
+  return status === mode;
+};
+
+const getStatusClassName = (status: ForestApiResponse["forests"][number]["banStatus"]): string => {
+  if (status === "NOT_BANNED") {
+    return "allowed";
+  }
+
+  if (status === "BANNED") {
+    return "banned";
+  }
+
+  return "unknown";
+};
+
+const getSolidFuelStatusLabel = (
+  status: ForestApiResponse["forests"][number]["banStatus"]
+): string => {
+  if (status === "NOT_BANNED") {
+    return "Solid fuel: not banned";
+  }
+
+  if (status === "BANNED") {
+    return "Solid fuel: banned";
+  }
+
+  return "Solid fuel: unknown";
+};
+
+const getTotalFireBanStatusLabel = (
+  status: ForestApiResponse["forests"][number]["totalFireBanStatus"]
+): string => {
+  if (status === "NOT_BANNED") {
+    return "No Total Fire Ban";
+  }
+
+  if (status === "BANNED") {
+    return "Total Fire Ban";
+  }
+
+  return "Total Fire Ban: unknown";
+};
 
 const isTriStateMode = (value: unknown): value is TriStateMode =>
   value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
@@ -147,8 +245,15 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
     const rawPreferences = parsed as Record<string, unknown>;
     const preferences: UserPreferences = {};
 
-    if (isBanFilterMode(rawPreferences.banFilterMode)) {
+    if (isBanFilterMode(rawPreferences.solidFuelBanFilterMode)) {
+      preferences.solidFuelBanFilterMode = rawPreferences.solidFuelBanFilterMode;
+    } else if (isLegacyBanFilterMode(rawPreferences.banFilterMode)) {
+      preferences.solidFuelBanFilterMode = toModernBanFilterMode(rawPreferences.banFilterMode);
       preferences.banFilterMode = rawPreferences.banFilterMode;
+    }
+
+    if (isBanFilterMode(rawPreferences.totalFireBanFilterMode)) {
+      preferences.totalFireBanFilterMode = rawPreferences.totalFireBanFilterMode;
     }
 
     if (
@@ -221,8 +326,11 @@ export const App = () => {
     useState<FireBanForestSortColumn>("forestName");
   const [fireBanForestSortDirection, setFireBanForestSortDirection] =
     useState<SortDirection>("asc");
-  const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>(
-    () => getInitialPreferences().banFilterMode ?? "ALL"
+  const [solidFuelBanFilterMode, setSolidFuelBanFilterMode] = useState<BanFilterMode>(
+    () => getInitialPreferences().solidFuelBanFilterMode ?? "ALL"
+  );
+  const [totalFireBanFilterMode, setTotalFireBanFilterMode] = useState<BanFilterMode>(
+    () => getInitialPreferences().totalFireBanFilterMode ?? "ALL"
   );
   const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
     () => getInitialPreferences().facilityFilterModes ?? {}
@@ -264,11 +372,12 @@ export const App = () => {
 
   useEffect(() => {
     writeUserPreferences({
-      banFilterMode,
+      solidFuelBanFilterMode,
+      totalFireBanFilterMode,
       facilityFilterModes,
       userLocation
     });
-  }, [banFilterMode, facilityFilterModes, userLocation]);
+  }, [solidFuelBanFilterMode, totalFireBanFilterMode, facilityFilterModes, userLocation]);
 
   const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
     setFacilityFilterModes((current) => ({
@@ -294,11 +403,11 @@ export const App = () => {
 
   const matchingForests = useMemo(() => {
     return forests.filter((forest) => {
-      if (banFilterMode === "ALLOWED" && forest.banStatus !== "NOT_BANNED") {
+      if (!matchesBanFilter(solidFuelBanFilterMode, forest.banStatus)) {
         return false;
       }
 
-      if (banFilterMode === "NOT_ALLOWED" && forest.banStatus !== "BANNED") {
+      if (!matchesBanFilter(totalFireBanFilterMode, forest.totalFireBanStatus)) {
         return false;
       }
 
@@ -320,7 +429,13 @@ export const App = () => {
 
       return true;
     });
-  }, [availableFacilities, banFilterMode, facilityFilterModes, forests]);
+  }, [
+    availableFacilities,
+    facilityFilterModes,
+    forests,
+    solidFuelBanFilterMode,
+    totalFireBanFilterMode
+  ]);
 
   const matchingForestIds = useMemo(
     () => new Set(matchingForests.map((forest) => forest.id)),
@@ -371,8 +486,14 @@ export const App = () => {
     .filter((forest) => forest.latitude === null || forest.longitude === null)
     .slice()
     .sort((left, right) => left.forestName.localeCompare(right.forestName));
+  const forestsWithUnknownTotalFireBan = forests
+    .filter((forest) => forest.totalFireBanStatus === "UNKNOWN")
+    .slice()
+    .sort((left, right) => left.forestName.localeCompare(right.forestName));
   const hasUnmappedForestWarning = unmappedForests.length > 0;
+  const hasUnknownTotalFireBanWarning = forestsWithUnknownTotalFireBan.length > 0;
   const unmappedForestWarningCount = unmappedForests.length;
+  const unknownTotalFireBanWarningCount = forestsWithUnknownTotalFireBan.length;
   const facilitiesMismatchWarningCount =
     matchDiagnostics.unmatchedFacilitiesForests.length > 0
       ? matchDiagnostics.unmatchedFacilitiesForests.length
@@ -388,6 +509,7 @@ export const App = () => {
   const warningCount =
     generalWarnings.length +
     unmappedForestWarningCount +
+    unknownTotalFireBanWarningCount +
     facilitiesMismatchWarningCount +
     fuzzyMatchesWarningCount;
   const unmatchedFacilitiesForestNames = useMemo(
@@ -574,8 +696,8 @@ export const App = () => {
       <header className="panel header">
         <h1>Campfire Allowed Near Me</h1>
         <p>
-          NSW forestry checker for solid fuel fire bans. Data source: Forestry
-          Corporation NSW.
+          NSW forestry checker combining Solid Fuel Fire Ban data (Forestry Corporation NSW)
+          and Total Fire Ban data (NSW Rural Fire Service).
         </p>
 
         <div className="controls">
@@ -658,8 +780,14 @@ export const App = () => {
               {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
 
               {hasUnmappedForestWarning ? (
-                <section className="warnings-section" data-testid="warnings-unmapped-section">
-                  <h3>Unmapped Forests (Distance Unavailable)</h3>
+                <details
+                  className="warnings-section warnings-section-collapsible"
+                  data-testid="warnings-unmapped-section"
+                  open
+                >
+                  <summary className="warnings-section-summary">
+                    Unmapped Forests (Distance Unavailable)
+                  </summary>
                   <p className="muted">
                     {unmappedForests.length} forest(s) could not be mapped to coordinates.
                   </p>
@@ -695,23 +823,75 @@ export const App = () => {
                       );
                     })}
                   </ul>
-                </section>
+                </details>
+              ) : null}
+
+              {hasUnknownTotalFireBanWarning ? (
+                <details
+                  className="warnings-section warnings-section-collapsible"
+                  data-testid="warnings-total-fire-ban-unknown-section"
+                  open
+                >
+                  <summary className="warnings-section-summary">
+                    Total Fire Ban Status Unknown
+                  </summary>
+                  <p className="muted">
+                    {forestsWithUnknownTotalFireBan.length} forest(s) have unknown Total Fire Ban status.
+                  </p>
+                  <ul className="warning-list warning-list-detailed">
+                    {forestsWithUnknownTotalFireBan.map((forest) => {
+                      const debugEntries =
+                        forest.totalFireBanDiagnostics?.debug?.length
+                          ? forest.totalFireBanDiagnostics.debug
+                          : ["No Total Fire Ban diagnostics were captured in this snapshot."];
+                      const failureReason =
+                        forest.totalFireBanDiagnostics?.reason ??
+                        "Total Fire Ban status could not be determined from available source data.";
+
+                      return (
+                        <li key={`${forest.id}:total-fire-ban-unknown`} className="warning-list-item-detailed">
+                          <div>
+                            <a
+                              href={buildTotalFireBanDetailsUrl(forest)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <mark className="warning-forest-highlight">{forest.forestName}</mark>
+                            </a>{" "}
+                            <span className="muted">(RFS Total Fire Ban details)</span>
+                          </div>
+                          <div className="muted">Reason: {failureReason}</div>
+                          <details className="warning-debug">
+                            <summary>Debug info</summary>
+                            <ul className="warning-debug-list">
+                              {debugEntries.map((entry, index) => (
+                                <li key={`${forest.id}:total-fire-ban-debug:${index}`}>{entry}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
               ) : null}
 
               {generalWarnings.length > 0 ? (
-                <section className="warnings-section">
-                  <h3>General</h3>
+                <details className="warnings-section warnings-section-collapsible" open>
+                  <summary className="warnings-section-summary">General</summary>
                   <ul className="warning-list">
                     {generalWarnings.map((warning) => (
                       <li key={warning}>{warning}</li>
                     ))}
                   </ul>
-                </section>
+                </details>
               ) : null}
 
               {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
-                <section className="warnings-section">
-                  <h3>Facilities Missing From Fire-Ban Pages</h3>
+                <details className="warnings-section warnings-section-collapsible" open>
+                  <summary className="warnings-section-summary">
+                    Facilities Missing From Fire-Ban Pages
+                  </summary>
                   <p className="muted">
                     {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}
                     {" "}
@@ -739,12 +919,12 @@ export const App = () => {
                       ))}
                     </ul>
                   ) : null}
-                </section>
+                </details>
               ) : null}
 
               {hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? (
-                <section className="warnings-section">
-                  <h3>Fuzzy Facilities Matching</h3>
+                <details className="warnings-section warnings-section-collapsible" open>
+                  <summary className="warnings-section-summary">Fuzzy Facilities Matching</summary>
                   <p className="muted">{fuzzyMatchesWarningText}</p>
                   {matchDiagnostics.fuzzyMatches.length > 0 ? (
                     <ul className="warning-list">
@@ -771,7 +951,7 @@ export const App = () => {
                       ))}
                     </ul>
                   ) : null}
-                </section>
+                </details>
               ) : null}
             </section>
           </div>
@@ -865,37 +1045,98 @@ export const App = () => {
               <h3>
                 <a
                   className="source-link"
-                  href={FIRE_BAN_SOURCE_URL}
+                  href={SOLID_FUEL_FIRE_BAN_SOURCE_URL}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Fire Ban
+                  Solid Fuel Fire Ban
                 </a>
               </h3>
               <div className="tri-toggle-group">
                 <button
                   type="button"
-                  className={banFilterMode === "ALL" ? "is-active" : ""}
-                  onClick={() => setBanFilterMode("ALL")}
+                  className={solidFuelBanFilterMode === "ALL" ? "is-active" : ""}
+                  onClick={() => setSolidFuelBanFilterMode("ALL")}
                   data-testid="ban-filter-all"
                 >
                   All
                 </button>
                 <button
                   type="button"
-                  className={banFilterMode === "ALLOWED" ? "is-active" : ""}
-                  onClick={() => setBanFilterMode("ALLOWED")}
+                  className={solidFuelBanFilterMode === "NOT_BANNED" ? "is-active" : ""}
+                  onClick={() => setSolidFuelBanFilterMode("NOT_BANNED")}
                   data-testid="ban-filter-allowed"
                 >
-                  Allowed
+                  Not banned
                 </button>
                 <button
                   type="button"
-                  className={banFilterMode === "NOT_ALLOWED" ? "is-active" : ""}
-                  onClick={() => setBanFilterMode("NOT_ALLOWED")}
+                  className={solidFuelBanFilterMode === "BANNED" ? "is-active" : ""}
+                  onClick={() => setSolidFuelBanFilterMode("BANNED")}
                   data-testid="ban-filter-not-allowed"
                 >
-                  Not allowed
+                  Banned
+                </button>
+                <button
+                  type="button"
+                  className={solidFuelBanFilterMode === "UNKNOWN" ? "is-active" : ""}
+                  onClick={() => setSolidFuelBanFilterMode("UNKNOWN")}
+                  data-testid="ban-filter-unknown"
+                >
+                  Unknown
+                </button>
+              </div>
+            </section>
+
+            <section className="filter-section">
+              <h3>
+                <a
+                  className="source-link"
+                  href={TOTAL_FIRE_BAN_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Total Fire Ban
+                </a>
+              </h3>
+              <p className="muted filter-subnote">
+                <a className="source-link" href={TOTAL_FIRE_BAN_RULES_URL} target="_blank" rel="noreferrer">
+                  Rules
+                </a>{" "}
+                apply to all outdoor fire use during a declared Total Fire Ban.
+              </p>
+              <div className="tri-toggle-group">
+                <button
+                  type="button"
+                  className={totalFireBanFilterMode === "ALL" ? "is-active" : ""}
+                  onClick={() => setTotalFireBanFilterMode("ALL")}
+                  data-testid="total-fire-ban-filter-all"
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  className={totalFireBanFilterMode === "NOT_BANNED" ? "is-active" : ""}
+                  onClick={() => setTotalFireBanFilterMode("NOT_BANNED")}
+                  data-testid="total-fire-ban-filter-not-banned"
+                >
+                  No ban
+                </button>
+                <button
+                  type="button"
+                  className={totalFireBanFilterMode === "BANNED" ? "is-active" : ""}
+                  onClick={() => setTotalFireBanFilterMode("BANNED")}
+                  data-testid="total-fire-ban-filter-banned"
+                >
+                  Banned
+                </button>
+                <button
+                  type="button"
+                  className={totalFireBanFilterMode === "UNKNOWN" ? "is-active" : ""}
+                  onClick={() => setTotalFireBanFilterMode("UNKNOWN")}
+                  data-testid="total-fire-ban-filter-unknown"
+                >
+                  Unknown
                 </button>
               </div>
             </section>
@@ -1031,14 +1272,18 @@ export const App = () => {
                     </div>
                     <div className="status-block">
                       <span
-                        className={`status-pill ${forest.banStatus === "NOT_BANNED" ? "allowed" : forest.banStatus === "BANNED" ? "banned" : "unknown"}`}
+                        className={`status-pill ${getStatusClassName(forest.banStatus)}`}
                       >
-                        {forest.banStatus === "NOT_BANNED"
-                          ? "No ban"
-                          : forest.banStatus === "BANNED"
-                            ? "Banned"
-                            : "Unknown"}
+                        {getSolidFuelStatusLabel(forest.banStatus)}
                       </span>
+                      <a
+                        href={buildTotalFireBanDetailsUrl(forest)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`status-pill ${getStatusClassName(forest.totalFireBanStatus)}`}
+                      >
+                        {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
+                      </a>
                       <small className="muted" data-testid="distance-text">
                         {forest.distanceKm !== null
                           ? `${forest.distanceKm.toFixed(1)} km`

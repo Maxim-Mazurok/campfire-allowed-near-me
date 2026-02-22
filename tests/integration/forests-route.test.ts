@@ -38,6 +38,8 @@ const responseFixture: ForestApiResponse = {
       forestName: "Forest A",
       banStatus: "NOT_BANNED",
       banStatusText: "No Solid Fuel Fire Ban",
+      totalFireBanStatus: "NOT_BANNED",
+      totalFireBanStatusText: "No Total Fire Ban",
       latitude: -33.9,
       longitude: 151.1,
       geocodeName: "Forest A",

@@ -16,6 +16,12 @@ import {
   type GeocodeLookupAttempt,
   type GeocodeResponse
 } from "./osm-geocoder.js";
+import {
+  TotalFireBanService,
+  UNKNOWN_TOTAL_FIRE_BAN_STATUS_TEXT,
+  type TotalFireBanLookupResult,
+  type TotalFireBanSnapshot
+} from "./total-fire-ban-service.js";
 import type {
   BanStatus,
   FacilityMatchDiagnostics,
@@ -27,6 +33,7 @@ import type {
   ForestDirectorySnapshot,
   ForestGeocodeDiagnostics,
   ForestPoint,
+  ForestTotalFireBanDiagnostics,
   NearestForest,
   PersistedSnapshot,
   UserLocation
@@ -38,6 +45,7 @@ interface LiveForestDataServiceOptions {
   sourceName?: string;
   scraper?: ForestryScraper;
   geocoder?: OSMGeocoder;
+  totalFireBanService?: TotalFireBanService;
 }
 
 interface LiveForestDataServiceResolvedOptions {
@@ -60,6 +68,8 @@ const UNKNOWN_FIRE_BAN_STATUS_TEXT =
   "Unknown (not listed on Solid Fuel Fire Ban pages)";
 const MISSING_GEOCODE_ATTEMPTS_MESSAGE =
   "No geocoding attempt diagnostics were captured in this snapshot.";
+const MISSING_TOTAL_FIRE_BAN_DIAGNOSTICS_MESSAGE =
+  "No Total Fire Ban diagnostics were captured in this snapshot.";
 
 interface FacilityMatchResult {
   facilities: Record<string, FacilityValue>;
@@ -85,6 +95,8 @@ export class LiveForestDataService implements ForestDataService {
   private readonly scraper: ForestryScraper;
 
   private readonly geocoder: OSMGeocoder;
+
+  private readonly totalFireBanService: TotalFireBanService;
 
   private memorySnapshot: PersistedSnapshot | null = null;
 
@@ -112,6 +124,7 @@ export class LiveForestDataService implements ForestDataService {
         ),
         requestDelayMs: Number(process.env.GEOCODE_DELAY_MS ?? "1200")
       });
+    this.totalFireBanService = options?.totalFireBanService ?? new TotalFireBanService();
   }
 
   private isFacilitiesMismatchWarning(warning: string): boolean {
@@ -227,9 +240,56 @@ export class LiveForestDataService implements ForestDataService {
             }
           : null;
 
+      const normalizedTotalFireBanStatus =
+        forest.totalFireBanStatus === "BANNED" ||
+        forest.totalFireBanStatus === "NOT_BANNED" ||
+        forest.totalFireBanStatus === "UNKNOWN"
+          ? forest.totalFireBanStatus
+          : "UNKNOWN";
+
+      const normalizedTotalFireBanStatusText =
+        typeof forest.totalFireBanStatusText === "string" &&
+        forest.totalFireBanStatusText.trim()
+          ? forest.totalFireBanStatusText
+          : normalizedTotalFireBanStatus === "BANNED"
+            ? "Total Fire Ban"
+            : normalizedTotalFireBanStatus === "NOT_BANNED"
+              ? "No Total Fire Ban"
+              : UNKNOWN_TOTAL_FIRE_BAN_STATUS_TEXT;
+
+      const normalizedTotalFireBanDiagnostics =
+        forest.totalFireBanDiagnostics &&
+        typeof forest.totalFireBanDiagnostics === "object" &&
+        typeof forest.totalFireBanDiagnostics.reason === "string"
+          ? {
+              reason: forest.totalFireBanDiagnostics.reason,
+              lookupCode:
+                forest.totalFireBanDiagnostics.lookupCode === "MATCHED" ||
+                forest.totalFireBanDiagnostics.lookupCode === "NO_COORDINATES" ||
+                forest.totalFireBanDiagnostics.lookupCode === "NO_AREA_MATCH" ||
+                forest.totalFireBanDiagnostics.lookupCode === "MISSING_AREA_STATUS" ||
+                forest.totalFireBanDiagnostics.lookupCode === "DATA_UNAVAILABLE"
+                  ? forest.totalFireBanDiagnostics.lookupCode
+                  : "DATA_UNAVAILABLE",
+              fireWeatherAreaName:
+                typeof forest.totalFireBanDiagnostics.fireWeatherAreaName === "string" &&
+                forest.totalFireBanDiagnostics.fireWeatherAreaName.trim()
+                  ? forest.totalFireBanDiagnostics.fireWeatherAreaName
+                  : null,
+              debug: Array.isArray(forest.totalFireBanDiagnostics.debug)
+                ? forest.totalFireBanDiagnostics.debug.filter((entry): entry is string =>
+                    typeof entry === "string"
+                  )
+                : []
+            }
+          : null;
+
       return {
         ...forest,
         forestUrl: typeof forest.forestUrl === "string" ? forest.forestUrl : null,
+        totalFireBanStatus: normalizedTotalFireBanStatus,
+        totalFireBanStatusText: normalizedTotalFireBanStatusText,
+        totalFireBanDiagnostics: normalizedTotalFireBanDiagnostics,
         geocodeDiagnostics: normalizedGeocodeDiagnostics,
         facilities
       };
@@ -327,6 +387,31 @@ export class LiveForestDataService implements ForestDataService {
     });
   }
 
+  private hasCompleteTotalFireBanDiagnostics(snapshot: PersistedSnapshot): boolean {
+    return snapshot.forests.every((forest) => {
+      if (forest.totalFireBanStatus !== "UNKNOWN") {
+        return true;
+      }
+
+      const diagnostics = forest.totalFireBanDiagnostics;
+      if (!diagnostics || typeof diagnostics.reason !== "string" || !diagnostics.reason.trim()) {
+        return false;
+      }
+
+      if (!Array.isArray(diagnostics.debug) || diagnostics.debug.length === 0) {
+        return false;
+      }
+
+      return diagnostics.debug.every((entry) => {
+        if (typeof entry !== "string" || !entry.trim()) {
+          return false;
+        }
+
+        return entry !== MISSING_TOTAL_FIRE_BAN_DIAGNOSTICS_MESSAGE;
+      });
+    });
+  }
+
   private async resolveSnapshot(forceRefresh = false): Promise<PersistedSnapshot> {
     const fixturePath = process.env.FORESTRY_USE_FIXTURE;
     if (fixturePath) {
@@ -345,6 +430,7 @@ export class LiveForestDataService implements ForestDataService {
       this.isSnapshotFresh(this.memorySnapshot) &&
       this.hasAnyMappedForest(this.memorySnapshot) &&
       this.hasCompleteGeocodeDiagnostics(this.memorySnapshot) &&
+      this.hasCompleteTotalFireBanDiagnostics(this.memorySnapshot) &&
       !this.hasUnknownStatuses(this.memorySnapshot) &&
       this.hasFacilityDefinitions(this.memorySnapshot)
     ) {
@@ -376,6 +462,7 @@ export class LiveForestDataService implements ForestDataService {
       this.isSnapshotFresh(persisted) &&
       this.hasAnyMappedForest(persisted) &&
       this.hasCompleteGeocodeDiagnostics(persisted) &&
+      this.hasCompleteTotalFireBanDiagnostics(persisted) &&
       !this.hasUnknownStatuses(persisted) &&
       this.hasFacilityDefinitions(persisted)
     ) {
@@ -384,11 +471,18 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     try {
-      const scraped = await this.scraper.scrape();
-      const warningSet = new Set(scraped.warnings ?? []);
+      const [scraped, totalFireBanSnapshot] = await Promise.all([
+        this.scraper.scrape(),
+        this.totalFireBanService.fetchCurrentSnapshot()
+      ]);
+      const warningSet = new Set([
+        ...(scraped.warnings ?? []),
+        ...(totalFireBanSnapshot.warnings ?? [])
+      ]);
       const forestResult = await this.buildForestPoints(
         scraped.areas,
         scraped.directory,
+        totalFireBanSnapshot,
         warningSet
       );
 
@@ -510,6 +604,50 @@ export class LiveForestDataService implements ForestDataService {
 
     return {
       reason: this.selectGeocodeFailureReason(allAttempts),
+      debug
+    };
+  }
+
+  private buildTotalFireBanDiagnostics(
+    totalFireBanLookup: TotalFireBanLookupResult,
+    latitude: number | null,
+    longitude: number | null,
+    totalFireBanSnapshot: TotalFireBanSnapshot
+  ): ForestTotalFireBanDiagnostics | null {
+    if (totalFireBanLookup.status !== "UNKNOWN") {
+      return null;
+    }
+
+    const reason =
+      totalFireBanLookup.lookupCode === "NO_COORDINATES"
+        ? "Coordinates were unavailable, so Total Fire Ban lookup could not run."
+        : totalFireBanLookup.lookupCode === "NO_AREA_MATCH"
+          ? "Coordinates did not match a NSW RFS fire weather area polygon."
+          : totalFireBanLookup.lookupCode === "MISSING_AREA_STATUS"
+            ? "A fire weather area was matched, but the status feed had no status entry for that area."
+            : totalFireBanLookup.lookupCode === "DATA_UNAVAILABLE"
+              ? "Total Fire Ban source data was unavailable or incomplete during lookup."
+              : "Matched fire weather area returned an unknown Total Fire Ban status value.";
+
+    const debug = [
+      `lookupCode=${totalFireBanLookup.lookupCode}`,
+      `statusText=${totalFireBanLookup.statusText}`,
+      `latitude=${latitude === null ? "null" : String(latitude)}`,
+      `longitude=${longitude === null ? "null" : String(longitude)}`,
+      `fireWeatherAreaName=${totalFireBanLookup.fireWeatherAreaName ?? "null"}`,
+      `snapshotAreaStatuses=${totalFireBanSnapshot.areaStatuses.length}`,
+      `snapshotGeoAreas=${totalFireBanSnapshot.geoAreas.length}`,
+      `snapshotWarnings=${totalFireBanSnapshot.warnings.length}`
+    ];
+
+    if (totalFireBanLookup.rawStatusText !== null) {
+      debug.push(`rawStatusText=${totalFireBanLookup.rawStatusText}`);
+    }
+
+    return {
+      reason,
+      lookupCode: totalFireBanLookup.lookupCode,
+      fireWeatherAreaName: totalFireBanLookup.fireWeatherAreaName,
       debug
     };
   }
@@ -740,6 +878,7 @@ export class LiveForestDataService implements ForestDataService {
   private async buildForestPoints(
     areas: ForestAreaWithForests[],
     directory: ForestDirectorySnapshot,
+    totalFireBanSnapshot: TotalFireBanSnapshot,
     warningSet: Set<string>
   ): Promise<{
     forests: Omit<ForestPoint, "distanceKm">[];
@@ -762,6 +901,8 @@ export class LiveForestDataService implements ForestDataService {
       directory,
       byForestName
     );
+    const totalFireBanNoAreaMatchForests = new Set<string>();
+    const totalFireBanMissingStatusAreas = new Set<string>();
 
     // Prioritize one lookup per area first so every forest can fall back to an area centroid.
     for (const area of areas) {
@@ -804,6 +945,25 @@ export class LiveForestDataService implements ForestDataService {
             score: null,
             matchType: "UNMATCHED"
           } satisfies FacilityMatchResult);
+        const totalFireBanLookup = this.totalFireBanService.lookupStatusByCoordinates(
+          totalFireBanSnapshot,
+          resolvedLatitude,
+          resolvedLongitude
+        );
+        const totalFireBanDiagnostics = this.buildTotalFireBanDiagnostics(
+          totalFireBanLookup,
+          resolvedLatitude,
+          resolvedLongitude,
+          totalFireBanSnapshot
+        );
+
+        if (totalFireBanLookup.lookupCode === "NO_AREA_MATCH") {
+          totalFireBanNoAreaMatchForests.add(forestName);
+        } else if (totalFireBanLookup.lookupCode === "MISSING_AREA_STATUS") {
+          if (totalFireBanLookup.fireWeatherAreaName) {
+            totalFireBanMissingStatusAreas.add(totalFireBanLookup.fireWeatherAreaName);
+          }
+        }
 
         points.push({
           id: `${slugify(area.areaName)}-${slugify(forestName)}`,
@@ -816,6 +976,9 @@ export class LiveForestDataService implements ForestDataService {
             : null,
           banStatus: banSummary.status,
           banStatusText: banSummary.statusText,
+          totalFireBanStatus: totalFireBanLookup.status,
+          totalFireBanStatusText: totalFireBanLookup.statusText,
+          totalFireBanDiagnostics,
           latitude: resolvedLatitude,
           longitude: resolvedLongitude,
           geocodeName: usedAreaFallback
@@ -841,6 +1004,25 @@ export class LiveForestDataService implements ForestDataService {
         byForestName,
         [forestName]
       );
+      const totalFireBanLookup = this.totalFireBanService.lookupStatusByCoordinates(
+        totalFireBanSnapshot,
+        geocode.latitude,
+        geocode.longitude
+      );
+      const totalFireBanDiagnostics = this.buildTotalFireBanDiagnostics(
+        totalFireBanLookup,
+        geocode.latitude,
+        geocode.longitude,
+        totalFireBanSnapshot
+      );
+
+      if (totalFireBanLookup.lookupCode === "NO_AREA_MATCH") {
+        totalFireBanNoAreaMatchForests.add(forestName);
+      } else if (totalFireBanLookup.lookupCode === "MISSING_AREA_STATUS") {
+        if (totalFireBanLookup.fireWeatherAreaName) {
+          totalFireBanMissingStatusAreas.add(totalFireBanLookup.fireWeatherAreaName);
+        }
+      }
 
       points.push({
         id: `${slugify("unmatched-fire-ban")}-${slugify(forestName)}`,
@@ -851,6 +1033,9 @@ export class LiveForestDataService implements ForestDataService {
         forestUrl: byForestUrl.get(forestName) ?? null,
         banStatus: "UNKNOWN",
         banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT,
+        totalFireBanStatus: totalFireBanLookup.status,
+        totalFireBanStatusText: totalFireBanLookup.statusText,
+        totalFireBanDiagnostics,
         latitude: geocode.latitude,
         longitude: geocode.longitude,
         geocodeName: geocode.displayName,
@@ -876,6 +1061,29 @@ export class LiveForestDataService implements ForestDataService {
     if (fuzzyMatchesList.length) {
       warningSet.add(
         `Applied fuzzy facilities matching for ${fuzzyMatchesList.length} forest name(s) with minor naming differences.`
+      );
+    }
+
+    if (totalFireBanNoAreaMatchForests.size) {
+      const unmatchedForests = [...totalFireBanNoAreaMatchForests].sort((left, right) =>
+        left.localeCompare(right)
+      );
+      const sample = unmatchedForests.slice(0, 8);
+      const suffix =
+        unmatchedForests.length > sample.length
+          ? ` (+${unmatchedForests.length - sample.length} more)`
+          : "";
+      warningSet.add(
+        `Total Fire Ban area could not be matched for ${unmatchedForests.length} forest(s) using current coordinates: ${sample.join(", ")}${suffix}.`
+      );
+    }
+
+    if (totalFireBanMissingStatusAreas.size) {
+      const missingAreas = [...totalFireBanMissingStatusAreas].sort((left, right) =>
+        left.localeCompare(right)
+      );
+      warningSet.add(
+        `Total Fire Ban status feed did not include ${missingAreas.length} mapped fire weather area(s): ${missingAreas.join(", ")}.`
       );
     }
 
@@ -920,7 +1128,10 @@ export class LiveForestDataService implements ForestDataService {
     let nearest: ForestPoint | null = null;
 
     for (const forest of forests) {
-      if (forest.banStatus !== "NOT_BANNED") {
+      if (
+        forest.banStatus !== "NOT_BANNED" ||
+        forest.totalFireBanStatus !== "NOT_BANNED"
+      ) {
         continue;
       }
 

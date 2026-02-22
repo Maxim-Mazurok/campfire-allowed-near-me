@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import { LiveForestDataService } from "../../apps/api/src/services/live-forest-data-service.js";
 import type { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
 import type { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
+import type { TotalFireBanService } from "../../apps/api/src/services/total-fire-ban-service.js";
 import type {
   ForestDirectorySnapshot,
   ForestryScrapeResult
@@ -46,6 +47,26 @@ const makeDirectoryFixture = (): ForestDirectorySnapshot => ({
   ],
   warnings: []
 });
+
+const makeTotalFireBanServiceStub = (): TotalFireBanService =>
+  ({
+    fetchCurrentSnapshot: async () => ({
+      fetchedAt: "2026-02-22T08:00:00.000Z",
+      lastUpdatedIso: "2026-02-22T08:00:00.000Z",
+      areaStatuses: [],
+      geoAreas: [],
+      warnings: []
+    }),
+    lookupStatusByCoordinates: (_snapshot, latitude, longitude) => ({
+      status: latitude === null || longitude === null ? "UNKNOWN" : "NOT_BANNED",
+      statusText:
+        latitude === null || longitude === null
+          ? "Unknown (Total Fire Ban status unavailable)"
+          : "No Total Fire Ban",
+      fireWeatherAreaName: latitude === null || longitude === null ? null : "Test Area",
+      lookupCode: latitude === null || longitude === null ? "NO_COORDINATES" : "MATCHED"
+    })
+  }) as unknown as TotalFireBanService;
 
 describe("LiveForestDataService facilities matching", () => {
   it("fuzzy-matches near-identical names and leaves unmatched forests as unknown", async () => {
@@ -89,7 +110,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({
@@ -198,7 +220,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const first = await service.getForestData();
@@ -271,7 +294,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({ forceRefresh: true });
@@ -359,7 +383,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({ forceRefresh: true });
@@ -510,6 +535,8 @@ describe("LiveForestDataService facilities matching", () => {
           forestName: "Legacy Forest",
           banStatus: "NOT_BANNED",
           banStatusText: "No Solid Fuel Fire Ban",
+          totalFireBanStatus: "NOT_BANNED",
+          totalFireBanStatusText: "No Total Fire Ban",
           latitude: -33.9,
           longitude: 151.2,
           geocodeName: "Legacy Forest",
@@ -578,7 +605,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({
@@ -635,6 +663,8 @@ describe("LiveForestDataService facilities matching", () => {
           forestName: "Old Forest",
           banStatus: "NOT_BANNED",
           banStatusText: "No Solid Fuel Fire Ban",
+          totalFireBanStatus: "NOT_BANNED",
+          totalFireBanStatusText: "No Total Fire Ban",
           latitude: -33.5,
           longitude: 150.5,
           geocodeName: "Old Forest",
@@ -706,7 +736,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData();
@@ -727,7 +758,7 @@ describe("LiveForestDataService facilities matching", () => {
     const snapshotPath = join(tmpDir, "snapshot.json");
 
     const snapshotWithoutDiagnostics = {
-      schemaVersion: 4,
+      schemaVersion: 5,
       fetchedAt: new Date().toISOString(),
       stale: false,
       sourceName: "Forestry Corporation NSW",
@@ -754,6 +785,8 @@ describe("LiveForestDataService facilities matching", () => {
           forestUrl: null,
           banStatus: "NOT_BANNED",
           banStatusText: "No Solid Fuel Fire Ban",
+          totalFireBanStatus: "NOT_BANNED",
+          totalFireBanStatusText: "No Total Fire Ban",
           latitude: -33.9,
           longitude: 151.2,
           geocodeName: "Mapped State Forest",
@@ -772,6 +805,8 @@ describe("LiveForestDataService facilities matching", () => {
           forestUrl: null,
           banStatus: "NOT_BANNED",
           banStatusText: "No Solid Fuel Fire Ban",
+          totalFireBanStatus: "UNKNOWN",
+          totalFireBanStatusText: "Unknown (Total Fire Ban status unavailable)",
           latitude: null,
           longitude: null,
           geocodeName: null,
@@ -896,7 +931,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const firstResponse = await service.getForestData();
@@ -1008,7 +1044,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as OSMGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
       });
 
       const response = await service.getForestData({ forceRefresh: true });

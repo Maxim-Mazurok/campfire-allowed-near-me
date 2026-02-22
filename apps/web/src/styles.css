@@ -169,13 +169,18 @@ button {
 
 .tri-toggle-group {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
 }
 
 .tri-toggle-group button {
   padding: 5px 8px;
   line-height: 1;
+}
+
+.filter-subnote {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
 }
 
 .tri-toggle button {
@@ -333,6 +338,11 @@ button {
   padding: 3px 9px;
   color: #fff;
   font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+a.status-pill {
+  text-decoration: none;
 }
 
 .status-pill.allowed {
@@ -472,6 +482,16 @@ button {
   border-top: 1px solid #dfe8de;
   margin-top: 10px;
   padding-top: 10px;
+}
+
+.warnings-section-collapsible {
+  padding-top: 8px;
+}
+
+.warnings-section-summary {
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 700;
 }
 
 .warnings-section h3 {

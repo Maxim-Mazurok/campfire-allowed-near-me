@@ -7,12 +7,14 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 
 ## Features
 - Scrapes Forestry Corporation NSW fire-ban page and linked area pages.
+- Loads NSW RFS Total Fire Ban status data and fire weather area map data.
 - Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
-- Uses **Solid Fuel Fire Ban** status only for burn legality.
+- Uses both **Solid Fuel Fire Ban** and **Total Fire Ban** status for campfire legality.
 - Ignores Firewood collection status for campfire legality.
 - Maps forests with OpenStreetMap + Leaflet.
 - Sidebar filters:
-  - Fire ban status (`All`, `Allowed`, `Not allowed`)
+  - Solid Fuel Fire Ban (`All`, `Not banned`, `Banned`, `Unknown`)
+  - Total Fire Ban (`All`, `No ban`, `Banned`, `Unknown`)
   - Tri-state facilities (`with`, `without`, `doesn't matter`)
 - Matches Forestry fire-ban forests to directory forests with fuzzy name scoring for minor naming differences/typos.
 - Uses browser geolocation and computes nearest legal spot.

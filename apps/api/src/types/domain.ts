@@ -14,6 +14,20 @@ export interface ForestGeocodeDiagnostics {
   debug: string[];
 }
 
+export type TotalFireBanLookupCode =
+  | "MATCHED"
+  | "NO_COORDINATES"
+  | "NO_AREA_MATCH"
+  | "MISSING_AREA_STATUS"
+  | "DATA_UNAVAILABLE";
+
+export interface ForestTotalFireBanDiagnostics {
+  reason: string;
+  lookupCode: TotalFireBanLookupCode;
+  fireWeatherAreaName: string | null;
+  debug: string[];
+}
+
 export interface FacilityForestEntry {
   forestName: string;
   forestUrl?: string | null;
@@ -46,11 +60,14 @@ export interface ForestPoint {
   forestUrl?: string | null;
   banStatus: BanStatus;
   banStatusText: string;
+  totalFireBanStatus: BanStatus;
+  totalFireBanStatusText: string;
   latitude: number | null;
   longitude: number | null;
   geocodeName: string | null;
   geocodeConfidence: number | null;
   geocodeDiagnostics?: ForestGeocodeDiagnostics | null;
+  totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, FacilityValue>;
   distanceKm: number | null;
 }

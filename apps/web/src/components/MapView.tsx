@@ -110,7 +110,9 @@ export const MapView = ({
               <br />
               Area: {forest.areaName}
               <br />
-              Status: {forest.banStatusText}
+              Solid fuel: {forest.banStatusText}
+              <br />
+              Total Fire Ban: {forest.totalFireBanStatusText}
               <br />
               Matches filters: No
               {forest.distanceKm !== null ? (
@@ -143,7 +145,9 @@ export const MapView = ({
               <br />
               Area: {forest.areaName}
               <br />
-              Status: {forest.banStatusText}
+              Solid fuel: {forest.banStatusText}
+              <br />
+              Total Fire Ban: {forest.totalFireBanStatusText}
               <br />
               Matches filters: Yes
               {forest.distanceKm !== null ? (
