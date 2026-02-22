@@ -11,6 +11,7 @@ export interface FacilityDefinition {
 
 export interface FacilityForestEntry {
   forestName: string;
+  forestUrl?: string | null;
   facilities: Record<string, boolean>;
 }
 
@@ -37,6 +38,7 @@ export interface ForestPoint {
   areaName: string;
   areaUrl: string;
   forestName: string;
+  forestUrl?: string | null;
   banStatus: BanStatus;
   banStatusText: string;
   latitude: number | null;

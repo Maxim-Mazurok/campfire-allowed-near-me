@@ -182,6 +182,7 @@ export class LiveForestDataService implements ForestDataService {
 
       return {
         ...forest,
+        forestUrl: typeof forest.forestUrl === "string" ? forest.forestUrl : null,
         facilities
       };
     });
@@ -519,6 +520,9 @@ export class LiveForestDataService implements ForestDataService {
     const byForestName = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.facilities] as const)
     );
+    const byForestUrl = new Map(
+      directory.forests.map((entry) => [entry.forestName, entry.forestUrl ?? null] as const)
+    );
     const uniqueFireBanNames = [...new Set(
       areas.flatMap((area) => area.forests.map((forest) => forest.trim()).filter(Boolean))
     )];
@@ -567,6 +571,9 @@ export class LiveForestDataService implements ForestDataService {
           areaName: area.areaName,
           areaUrl: area.areaUrl,
           forestName,
+          forestUrl: facilityMatch.matchedDirectoryForestName
+            ? (byForestUrl.get(facilityMatch.matchedDirectoryForestName) ?? null)
+            : null,
           banStatus: area.status,
           banStatusText: area.statusText,
           latitude: resolvedLatitude,

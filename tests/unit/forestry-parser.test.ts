@@ -3,6 +3,7 @@ import {
   parseAreaForestNames,
   parseBanStatus,
   parseForestDirectoryFilters,
+  parseForestDirectoryForests,
   parseForestDirectoryForestNames,
   parseMainFireBanPage
 } from "../../apps/api/src/services/forestry-parser.js";
@@ -199,6 +200,51 @@ describe("parseForestDirectoryFilters", () => {
       paramName: "camping",
       iconKey: "camping"
     });
+  });
+});
+
+describe("parseForestDirectoryForests", () => {
+  it("extracts forest names and canonical detail URLs from directory results", () => {
+    const html = `
+      <ul>
+        <li><a href="/visit/forests/awaba-state-forest">Awaba State Forest</a></li>
+        <li><a href="/visiting/forests/chichester-state-forest-allyn-river">Chichester State Forest (Allyn River)</a></li>
+      </ul>
+    `;
+
+    expect(parseForestDirectoryForests(html)).toEqual([
+      {
+        forestName: "Awaba State Forest",
+        forestUrl: "https://www.forestrycorporation.com.au/visit/forests/awaba-state-forest"
+      },
+      {
+        forestName: "Chichester State Forest (Allyn River)",
+        forestUrl:
+          "https://www.forestrycorporation.com.au/visit/forests/chichester-state-forest-allyn-river"
+      }
+    ]);
+  });
+
+  it("falls back to map marker scripts when anchor tags are unavailable", () => {
+    const html = `
+      <script type="text/javascript">
+        addMarker("<h3><a href='https://www.forestrycorporation.com.au/visiting/forests/double-duke'>Double Duke State Forest</a></h3>", "-29.1", "153.2", 1)
+      </script>
+      <script type="text/javascript">
+        addMarker("<h3><a href='https://www.forestrycorporation.com.au/visiting/forests/bondi-state-forest'>Bondi State Forest</a></h3>", "-37.1", "149.2", 2)
+      </script>
+    `;
+
+    expect(parseForestDirectoryForests(html)).toEqual([
+      {
+        forestName: "Double Duke State Forest",
+        forestUrl: "https://www.forestrycorporation.com.au/visit/forests/double-duke"
+      },
+      {
+        forestName: "Bondi State Forest",
+        forestUrl: "https://www.forestrycorporation.com.au/visit/forests/bondi-state-forest"
+      }
+    ]);
   });
 });
 

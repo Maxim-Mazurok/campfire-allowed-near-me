@@ -335,14 +335,28 @@ export const parseForestDirectoryFilters = (html: string): FacilityDefinition[] 
 const cleanDirectoryForestName = (value: string): string =>
   normalizeText(value.replace(/\s*\|\s*show on map/i, "").replace(/[|,;]$/, ""));
 
-const resolveForestHrefPath = (href: string): string | null => {
+const FORESTRY_BASE_URL = "https://www.forestrycorporation.com.au";
+
+const normalizeForestDetailPath = (path: string): string =>
+  path
+    .replace(/\/+$/, "")
+    .replace(/^\/visiting\//i, "/visit/");
+
+const resolveForestDetailUrl = (href: string): string | null => {
   const value = normalizeText(href);
   if (!value || value.startsWith("#") || /^javascript:/i.test(value)) {
     return null;
   }
 
   try {
-    return new URL(value, "https://www.forestrycorporation.com.au/visiting/").pathname;
+    const path = normalizeForestDetailPath(
+      new URL(value, `${FORESTRY_BASE_URL}/visiting/`).pathname
+    );
+    if (!isForestDetailPath(path)) {
+      return null;
+    }
+
+    return new URL(path, FORESTRY_BASE_URL).toString();
   } catch {
     return null;
   }
@@ -351,18 +365,22 @@ const resolveForestHrefPath = (href: string): string | null => {
 const isForestDetailPath = (path: string): boolean =>
   /^\/(?:visit(?:ing)?\/)?forests\/[^/?#]+\/?$/i.test(path);
 
-export const parseForestDirectoryForestNames = (html: string): string[] => {
-  const $ = load(html);
-  const names = new Set<string>();
+export interface ForestDirectoryEntry {
+  forestName: string;
+  forestUrl: string;
+}
 
-  $("a[href]").each((_, node) => {
-    const href = $(node).attr("href") ?? "";
-    const path = resolveForestHrefPath(href);
-    if (!path || !isForestDetailPath(path)) {
+export const parseForestDirectoryForests = (html: string): ForestDirectoryEntry[] => {
+  const $ = load(html);
+  const forestsByName = new Map<string, string>();
+
+  const addForest = (label: string, href: string): void => {
+    const forestUrl = resolveForestDetailUrl(href);
+    if (!forestUrl) {
       return;
     }
 
-    const name = cleanDirectoryForestName($(node).text());
+    const name = cleanDirectoryForestName(label);
     if (!name || name.length > 120) {
       return;
     }
@@ -375,27 +393,38 @@ export const parseForestDirectoryForestNames = (html: string): string[] => {
       return;
     }
 
-    names.add(normalizeForestLabel(name));
+    const normalizedName = normalizeForestLabel(name);
+    if (!forestsByName.has(normalizedName)) {
+      forestsByName.set(normalizedName, forestUrl);
+    }
+  };
+
+  $("a[href]").each((_, node) => {
+    addForest($(node).text(), $(node).attr("href") ?? "");
   });
 
-  if (!names.size) {
+  if (!forestsByName.size) {
     $("script").each((_, node) => {
       const scriptBody = $(node).html() ?? "";
       const markerForestLinkRegex =
-        /<a href=['"][^'"]*\/(?:visit(?:ing)?\/)?forests\/[^'"]+['"][^>]*>([^<]+)<\/a>/gi;
+        /<a href=['"]([^'"]*\/(?:visit(?:ing)?\/)?forests\/[^'"]+)['"][^>]*>([^<]+)<\/a>/gi;
 
       let match = markerForestLinkRegex.exec(scriptBody);
       while (match) {
-        const name = cleanDirectoryForestName(match[1] ?? "");
-        if (name && name.length <= 120 && isLikelyStateForestName(name)) {
-          names.add(normalizeForestLabel(name));
-        }
+        addForest(match[2] ?? "", match[1] ?? "");
         match = markerForestLinkRegex.exec(scriptBody);
       }
     });
   }
 
-  return [...names];
+  return [...forestsByName.entries()].map(([forestName, forestUrl]) => ({
+    forestName,
+    forestUrl
+  }));
+};
+
+export const parseForestDirectoryForestNames = (html: string): string[] => {
+  return parseForestDirectoryForests(html).map((entry) => entry.forestName);
 };
 
 export const isCloudflareChallengeHtml = (html: string): boolean =>

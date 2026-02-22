@@ -7,6 +7,13 @@ import { fetchForests, type ForestApiResponse } from "./lib/api";
 type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
 
+const FIRE_BAN_SOURCE_URL =
+  "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
+const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
+
+const isHttpUrl = (value?: string | null): value is string =>
+  typeof value === "string" && /^https?:\/\//i.test(value);
+
 const sortForestsByDistance = (
   left: ForestApiResponse["forests"][number],
   right: ForestApiResponse["forests"][number]
@@ -378,7 +385,16 @@ export const App = () => {
           </p>
           <div className="filter-panel-scroll">
             <section className="filter-section">
-              <h3>Fire Ban</h3>
+              <h3>
+                <a
+                  className="source-link"
+                  href={FIRE_BAN_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Fire Ban
+                </a>
+              </h3>
               <div className="tri-toggle-group">
                 <button
                   type="button"
@@ -409,7 +425,16 @@ export const App = () => {
 
             <section className="filter-section">
               <div className="filter-section-header">
-                <h3>Facilities</h3>
+                <h3>
+                  <a
+                    className="source-link"
+                    href={FACILITIES_SOURCE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Facilities
+                  </a>
+                </h3>
                 <button type="button" className="text-btn" onClick={clearFacilityModes}>
                   Clear
                 </button>
@@ -499,9 +524,33 @@ export const App = () => {
               .map((forest) => (
                 <li key={forest.id} className="forest-row" data-testid="forest-row">
                   <div className="forest-main-row">
-                    <div>
-                      <strong>{forest.forestName}</strong>
-                      <div className="muted">{forest.areaName}</div>
+                    <div className="forest-title-block">
+                      <strong>
+                        {isHttpUrl(forest.forestUrl) ? (
+                          <a
+                            href={forest.forestUrl}
+                            className="forest-name-link"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {forest.forestName}
+                          </a>
+                        ) : (
+                          forest.forestName
+                        )}
+                      </strong>
+                      {isHttpUrl(forest.areaUrl) ? (
+                        <a
+                          href={forest.areaUrl}
+                          className="muted forest-region-link"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {forest.areaName}
+                        </a>
+                      ) : (
+                        <div className="muted forest-region-link">{forest.areaName}</div>
+                      )}
                     </div>
                     <div className="status-block">
                       <span

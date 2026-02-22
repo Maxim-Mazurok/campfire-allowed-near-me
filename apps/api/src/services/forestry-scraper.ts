@@ -4,7 +4,7 @@ import {
   isCloudflareChallengeHtml,
   parseAreaForestNames,
   parseForestDirectoryFilters,
-  parseForestDirectoryForestNames,
+  parseForestDirectoryForests,
   parseMainFireBanPage
 } from "./forestry-parser.js";
 import type {
@@ -178,7 +178,7 @@ export class ForestryScraper {
     }
 
     const filters = parseForestDirectoryFilters(base.html).filter((filter) => Boolean(filter.paramName));
-    const allForestNames = parseForestDirectoryForestNames(base.html);
+    const baseForestEntries = parseForestDirectoryForests(base.html);
 
     if (!filters.length) {
       return this.buildEmptyDirectorySnapshot(
@@ -190,20 +190,32 @@ export class ForestryScraper {
     const makeDefaultFacilities = (): Record<string, boolean> =>
       Object.fromEntries(facilityKeys.map((key) => [key, false]));
 
-    const byForestName = new Map<string, Record<string, boolean>>();
-    const ensureForest = (forestName: string): Record<string, boolean> => {
+    const byForestName = new Map<
+      string,
+      { facilities: Record<string, boolean>; forestUrl: string | null }
+    >();
+    const ensureForest = (
+      forestName: string,
+      forestUrl?: string | null
+    ): { facilities: Record<string, boolean>; forestUrl: string | null } => {
       const existing = byForestName.get(forestName);
       if (existing) {
+        if (!existing.forestUrl && forestUrl) {
+          existing.forestUrl = forestUrl;
+        }
         return existing;
       }
 
-      const created = makeDefaultFacilities();
+      const created = {
+        facilities: makeDefaultFacilities(),
+        forestUrl: forestUrl ?? null
+      };
       byForestName.set(forestName, created);
       return created;
     };
 
-    for (const forestName of allForestNames) {
-      ensureForest(forestName);
+    for (const entry of baseForestEntries) {
+      ensureForest(entry.forestName, entry.forestUrl);
     }
 
     const warnings = new Set<string>();
@@ -236,10 +248,10 @@ export class ForestryScraper {
               return;
             }
 
-            const forestsWithFacility = parseForestDirectoryForestNames(filteredHtml);
-            for (const forestName of forestsWithFacility) {
-              const row = ensureForest(forestName);
-              row[filter.key] = true;
+            const forestsWithFacility = parseForestDirectoryForests(filteredHtml);
+            for (const entry of forestsWithFacility) {
+              const row = ensureForest(entry.forestName, entry.forestUrl);
+              row.facilities[filter.key] = true;
             }
           } finally {
             await page.close();
@@ -250,9 +262,10 @@ export class ForestryScraper {
 
     const forests = [...byForestName.entries()]
       .sort(([left], [right]) => left.localeCompare(right))
-      .map(([forestName, facilities]) => ({
+      .map(([forestName, row]) => ({
         forestName,
-        facilities
+        forestUrl: row.forestUrl,
+        facilities: row.facilities
       }));
 
     return {

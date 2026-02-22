@@ -125,6 +125,12 @@ button {
   font-size: 0.95rem;
 }
 
+.source-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .filter-section-header {
   display: flex;
   align-items: center;
@@ -274,6 +280,22 @@ button {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+}
+
+.forest-title-block {
+  min-width: 0;
+}
+
+.forest-name-link {
+  color: inherit;
+}
+
+.forest-region-link {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-block {

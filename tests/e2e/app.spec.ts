@@ -43,6 +43,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             areaName: "Area 1",
             areaUrl: "https://example.com/a",
             forestName: "Forest A",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
             latitude: -33.9,
@@ -61,6 +62,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             areaName: "Area 1",
             areaUrl: "https://example.com/b",
             forestName: "Forest B",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             banStatus: "NOT_BANNED",
             banStatusText: "No Solid Fuel Fire Ban",
             latitude: -34.0,
@@ -79,6 +81,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             areaName: "Area 2",
             areaUrl: "https://example.com/c",
             forestName: "Forest C",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
             banStatus: "BANNED",
             banStatusText: "Solid Fuel Fire Ban",
             latitude: -35.0,
@@ -99,7 +102,25 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   await page.goto("/");
 
   await expect(page.getByRole("heading", { name: "Campfire Allowed Near Me" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Fire Ban" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
+  );
+  await expect(page.getByRole("link", { name: "Facilities" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests"
+  );
   await expect(page.getByTestId("forest-row").first()).toBeVisible();
+
+  const firstForestRow = page.getByTestId("forest-row").first();
+  await expect(firstForestRow.getByRole("link", { name: "Forest A" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests/forest-a"
+  );
+  await expect(firstForestRow.getByRole("link", { name: "Area 1" })).toHaveAttribute(
+    "href",
+    "https://example.com/a"
+  );
 
   const totalRows = await page.getByTestId("forest-row").count();
   expect(totalRows).toBeGreaterThan(0);

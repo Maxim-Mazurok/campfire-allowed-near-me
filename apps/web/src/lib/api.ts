@@ -13,6 +13,7 @@ export interface ForestPoint {
   areaName: string;
   areaUrl: string;
   forestName: string;
+  forestUrl?: string | null;
   banStatus: BanStatus;
   banStatusText: string;
   latitude: number | null;

@@ -29,6 +29,7 @@ const makeDirectoryFixture = (): ForestDirectorySnapshot => ({
   forests: [
     {
       forestName: "Belanglo State Forest",
+      forestUrl: "https://www.forestrycorporation.com.au/visit/forests/belanglo-state-forest",
       facilities: {
         fishing: true,
         camping: false
@@ -36,6 +37,7 @@ const makeDirectoryFixture = (): ForestDirectorySnapshot => ({
     },
     {
       forestName: "Awaba State Forest",
+      forestUrl: "https://www.forestrycorporation.com.au/visit/forests/awaba-state-forest",
       facilities: {
         fishing: false,
         camping: true
@@ -110,10 +112,14 @@ describe("LiveForestDataService facilities matching", () => {
         fishing: true,
         camping: false
       });
+      expect(belangalo?.forestUrl).toBe(
+        "https://www.forestrycorporation.com.au/visit/forests/belanglo-state-forest"
+      );
       expect(unmatched?.facilities).toEqual({
         fishing: null,
         camping: null
       });
+      expect(unmatched?.forestUrl).toBeNull();
       expect(
         response.warnings.some((warning) => warning.includes("fuzzy facilities matching"))
       ).toBe(true);
