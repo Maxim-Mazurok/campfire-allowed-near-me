@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import {
   CircleMarker,
   MapContainer,
@@ -8,8 +8,59 @@ import {
   useMap
 } from "react-leaflet";
 import type { ForestPoint } from "../lib/api";
+import {
+  getUnmatchedMarkerLimitForZoom,
+  selectClosestForestsToCenter
+} from "../lib/map-marker-rendering";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
+const MAP_BOUNDS_PADDING_FACTOR = 0.2;
+const MATCHED_FOREST_MARKER_PATH_OPTIONS = {
+  color: "#00e85a",
+  fillColor: "#00e85a",
+  fillOpacity: 0.95,
+  opacity: 1
+} as const;
+const UNMATCHED_FOREST_MARKER_PATH_OPTIONS = {
+  color: "#7f8690",
+  fillColor: "#7f8690",
+  fillOpacity: 0.32,
+  opacity: 0.55
+} as const;
+
+type ForestWithCoordinates = ForestPoint & {
+  latitude: number;
+  longitude: number;
+};
+
+type MapViewportSnapshot = {
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+  zoom: number;
+  centerLatitude: number;
+  centerLongitude: number;
+};
+
+const areMapViewportSnapshotsEqual = (
+  leftMapViewportSnapshot: MapViewportSnapshot | null,
+  rightMapViewportSnapshot: MapViewportSnapshot
+): boolean => {
+  if (!leftMapViewportSnapshot) {
+    return false;
+  }
+
+  return (
+    leftMapViewportSnapshot.west === rightMapViewportSnapshot.west &&
+    leftMapViewportSnapshot.south === rightMapViewportSnapshot.south &&
+    leftMapViewportSnapshot.east === rightMapViewportSnapshot.east &&
+    leftMapViewportSnapshot.north === rightMapViewportSnapshot.north &&
+    leftMapViewportSnapshot.zoom === rightMapViewportSnapshot.zoom &&
+    leftMapViewportSnapshot.centerLatitude === rightMapViewportSnapshot.centerLatitude &&
+    leftMapViewportSnapshot.centerLongitude === rightMapViewportSnapshot.centerLongitude
+  );
+};
 
 const formatDriveDuration = (durationMinutes: number | null): string => {
   if (durationMinutes === null || !Number.isFinite(durationMinutes)) {
@@ -58,13 +109,11 @@ const FitToUser = ({
   return null;
 };
 
-const FitToForests = ({ forests }: { forests: ForestPoint[] }) => {
+const FitToForests = ({ forests }: { forests: ForestWithCoordinates[] }) => {
   const map = useMap();
 
   useEffect(() => {
-    const points = forests
-      .filter((forest) => forest.latitude !== null && forest.longitude !== null)
-      .map((forest) => [forest.latitude!, forest.longitude!] as [number, number]);
+    const points = forests.map((forest) => [forest.latitude, forest.longitude] as [number, number]);
 
     if (!points.length) {
       return;
@@ -76,6 +125,240 @@ const FitToForests = ({ forests }: { forests: ForestPoint[] }) => {
   return null;
 };
 
+type SelectedForestPopupState = {
+  forest: ForestWithCoordinates;
+  matchesFilters: boolean;
+};
+
+const ForestPopupContent = ({
+  forest,
+  matchesFilters
+}: {
+  forest: ForestWithCoordinates;
+  matchesFilters: boolean;
+}) => {
+  return (
+    <>
+      <strong>{forest.forestName}</strong>
+      <br />
+      Area: {forest.areaName}
+      <br />
+      Solid fuel: {forest.banStatusText}
+      <br />
+      Total Fire Ban: {forest.totalFireBanStatusText}
+      <br />
+      Matches filters: {matchesFilters ? "Yes" : "No"}
+      <br />
+      Drive: {formatDriveSummary(forest)}
+    </>
+  );
+};
+
+const ForestMarker = memo(({
+  forest,
+  matchesFilters,
+  selectForestPopup
+}: {
+  forest: ForestWithCoordinates;
+  matchesFilters: boolean;
+  selectForestPopup: (selectedForestPopupState: SelectedForestPopupState) => void;
+}) => {
+  const markerPaneName = matchesFilters ? "matched-forests" : "unmatched-forests";
+  const markerRadius = matchesFilters ? 9 : 4;
+  const markerPathOptions = matchesFilters
+    ? MATCHED_FOREST_MARKER_PATH_OPTIONS
+    : UNMATCHED_FOREST_MARKER_PATH_OPTIONS;
+
+  return (
+    <CircleMarker
+      center={[forest.latitude, forest.longitude]}
+      pane={markerPaneName}
+      radius={markerRadius}
+      pathOptions={markerPathOptions}
+      eventHandlers={{
+        click: () => {
+          selectForestPopup({
+            forest,
+            matchesFilters
+          });
+        }
+      }}
+    />
+  );
+});
+
+const VisibleForestMarkers = ({
+  matchedForests,
+  unmatchedForests
+}: {
+  matchedForests: ForestWithCoordinates[];
+  unmatchedForests: ForestWithCoordinates[];
+}) => {
+  const map = useMap();
+  const [mapViewportSnapshot, setMapViewportSnapshot] =
+    useState<MapViewportSnapshot | null>(null);
+  const [selectedForestPopupState, setSelectedForestPopupState] =
+    useState<SelectedForestPopupState | null>(null);
+
+  const readMapViewportSnapshot = (): MapViewportSnapshot => {
+    const currentMapBounds = map.getBounds();
+    const currentMapCenter = map.getCenter();
+    const currentMapZoom = map.getZoom();
+
+    return {
+      west: currentMapBounds.getWest(),
+      south: currentMapBounds.getSouth(),
+      east: currentMapBounds.getEast(),
+      north: currentMapBounds.getNorth(),
+      zoom: currentMapZoom,
+      centerLatitude: currentMapCenter.lat,
+      centerLongitude: currentMapCenter.lng
+    };
+  };
+
+  useEffect(() => {
+    const refreshMapViewportSnapshot = () => {
+      const nextMapViewportSnapshot = readMapViewportSnapshot();
+      setMapViewportSnapshot((currentMapViewportSnapshot) => {
+        if (areMapViewportSnapshotsEqual(currentMapViewportSnapshot, nextMapViewportSnapshot)) {
+          return currentMapViewportSnapshot;
+        }
+
+        return nextMapViewportSnapshot;
+      });
+    };
+
+    refreshMapViewportSnapshot();
+
+    map.on("moveend", refreshMapViewportSnapshot);
+    map.on("zoomend", refreshMapViewportSnapshot);
+    map.on("resize", refreshMapViewportSnapshot);
+
+    return () => {
+      map.off("moveend", refreshMapViewportSnapshot);
+      map.off("zoomend", refreshMapViewportSnapshot);
+      map.off("resize", refreshMapViewportSnapshot);
+    };
+  }, [map]);
+
+  const paddedVisibleMapBounds = useMemo(
+    () => map.getBounds().pad(MAP_BOUNDS_PADDING_FACTOR),
+    [map, mapViewportSnapshot]
+  );
+  const currentMapZoom = useMemo(() => map.getZoom(), [map, mapViewportSnapshot]);
+  const currentMapCenter = useMemo(() => map.getCenter(), [map, mapViewportSnapshot]);
+
+  const { visibleMatchedForests, renderedUnmatchedForests } = useMemo(() => {
+    const nextVisibleMatchedForests: ForestWithCoordinates[] = [];
+    const nextVisibleUnmatchedForests: ForestWithCoordinates[] = [];
+
+    for (const forest of matchedForests) {
+      if (paddedVisibleMapBounds.contains([forest.latitude, forest.longitude])) {
+        nextVisibleMatchedForests.push(forest);
+      }
+    }
+
+    for (const forest of unmatchedForests) {
+      if (paddedVisibleMapBounds.contains([forest.latitude, forest.longitude])) {
+        nextVisibleUnmatchedForests.push(forest);
+      }
+    }
+
+    const unmatchedMarkerLimit = getUnmatchedMarkerLimitForZoom(currentMapZoom);
+    if (
+      unmatchedMarkerLimit === null ||
+      nextVisibleUnmatchedForests.length <= unmatchedMarkerLimit
+    ) {
+      return {
+        visibleMatchedForests: nextVisibleMatchedForests,
+        renderedUnmatchedForests: nextVisibleUnmatchedForests
+      };
+    }
+
+    return {
+      visibleMatchedForests: nextVisibleMatchedForests,
+      renderedUnmatchedForests: selectClosestForestsToCenter(
+        nextVisibleUnmatchedForests,
+        currentMapCenter.lat,
+        currentMapCenter.lng,
+        unmatchedMarkerLimit
+      )
+    };
+  }, [
+    matchedForests,
+    unmatchedForests,
+    paddedVisibleMapBounds,
+    currentMapCenter.lat,
+    currentMapCenter.lng,
+    currentMapZoom
+  ]);
+
+  useEffect(() => {
+    if (!selectedForestPopupState) {
+      return;
+    }
+
+    const forestsToCheck = selectedForestPopupState.matchesFilters
+      ? visibleMatchedForests
+      : renderedUnmatchedForests;
+    const selectedForestStillVisible = forestsToCheck.some(
+      (forest) => forest.id === selectedForestPopupState.forest.id
+    );
+
+    if (!selectedForestStillVisible) {
+      setSelectedForestPopupState(null);
+    }
+  }, [renderedUnmatchedForests, selectedForestPopupState, visibleMatchedForests]);
+
+  return (
+    <>
+      <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
+        {renderedUnmatchedForests.map((forest) => (
+          <ForestMarker
+            key={forest.id}
+            forest={forest}
+            matchesFilters={false}
+            selectForestPopup={setSelectedForestPopupState}
+          />
+        ))}
+      </Pane>
+
+      <Pane name="matched-forests" style={{ zIndex: 660 }}>
+        {visibleMatchedForests.map((forest) => (
+          <ForestMarker
+            key={forest.id}
+            forest={forest}
+            matchesFilters={true}
+            selectForestPopup={setSelectedForestPopupState}
+          />
+        ))}
+      </Pane>
+
+      {selectedForestPopupState ? (
+        <Popup
+          position={[
+            selectedForestPopupState.forest.latitude,
+            selectedForestPopupState.forest.longitude
+          ]}
+          pane={selectedForestPopupState.matchesFilters ? "matched-forests" : "unmatched-forests"}
+          eventHandlers={{
+            remove: () => {
+              setSelectedForestPopupState(null);
+            }
+          }}
+        >
+          <ForestPopupContent
+            forest={selectedForestPopupState.forest}
+            matchesFilters={selectedForestPopupState.matchesFilters}
+          />
+        </Popup>
+      ) : null}
+    </>
+  );
+};
+
+ForestMarker.displayName = "ForestMarker";
+
 export const MapView = memo(({
   forests,
   matchedForestIds,
@@ -85,27 +368,37 @@ export const MapView = memo(({
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
 }) => {
-  const mappedForests = useMemo(
-    () => forests.filter((forest) => forest.latitude !== null && forest.longitude !== null),
-    [forests]
-  );
-  const { matchedForests, unmatchedForests } = useMemo(() => {
-    const nextMatchedForests: ForestPoint[] = [];
-    const nextUnmatchedForests: ForestPoint[] = [];
+  const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
+    const nextMappedForests: ForestWithCoordinates[] = [];
+    const nextMatchedForests: ForestWithCoordinates[] = [];
+    const nextUnmatchedForests: ForestWithCoordinates[] = [];
 
-    for (const forest of mappedForests) {
+    for (const forest of forests) {
+      if (forest.latitude === null || forest.longitude === null) {
+        continue;
+      }
+
+      const forestWithCoordinates: ForestWithCoordinates = {
+        ...forest,
+        latitude: forest.latitude,
+        longitude: forest.longitude
+      };
+
+      nextMappedForests.push(forestWithCoordinates);
+
       if (matchedForestIds.has(forest.id)) {
-        nextMatchedForests.push(forest);
+        nextMatchedForests.push(forestWithCoordinates);
       } else {
-        nextUnmatchedForests.push(forest);
+        nextUnmatchedForests.push(forestWithCoordinates);
       }
     }
 
     return {
+      mappedForests: nextMappedForests,
       matchedForests: nextMatchedForests,
       unmatchedForests: nextUnmatchedForests
     };
-  }, [mappedForests, matchedForestIds]);
+  }, [forests, matchedForestIds]);
 
   return (
     <MapContainer
@@ -133,67 +426,10 @@ export const MapView = memo(({
         </>
       ) : <FitToForests forests={mappedForests} />}
 
-      <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
-        {unmatchedForests.map((forest) => (
-          <CircleMarker
-            key={forest.id}
-            center={[forest.latitude!, forest.longitude!]}
-            pane="unmatched-forests"
-            radius={4}
-            pathOptions={{
-              color: "#7f8690",
-              fillColor: "#7f8690",
-              fillOpacity: 0.32,
-              opacity: 0.55
-            }}
-          >
-            <Popup>
-              <strong>{forest.forestName}</strong>
-              <br />
-              Area: {forest.areaName}
-              <br />
-              Solid fuel: {forest.banStatusText}
-              <br />
-              Total Fire Ban: {forest.totalFireBanStatusText}
-              <br />
-              Matches filters: No
-              <br />
-              Drive: {formatDriveSummary(forest)}
-            </Popup>
-          </CircleMarker>
-        ))}
-      </Pane>
-
-      <Pane name="matched-forests" style={{ zIndex: 660 }}>
-        {matchedForests.map((forest) => (
-          <CircleMarker
-            key={forest.id}
-            center={[forest.latitude!, forest.longitude!]}
-            pane="matched-forests"
-            radius={9}
-            pathOptions={{
-              color: "#00e85a",
-              fillColor: "#00e85a",
-              fillOpacity: 0.95,
-              opacity: 1
-            }}
-          >
-            <Popup>
-              <strong>{forest.forestName}</strong>
-              <br />
-              Area: {forest.areaName}
-              <br />
-              Solid fuel: {forest.banStatusText}
-              <br />
-              Total Fire Ban: {forest.totalFireBanStatusText}
-              <br />
-              Matches filters: Yes
-              <br />
-              Drive: {formatDriveSummary(forest)}
-            </Popup>
-          </CircleMarker>
-        ))}
-      </Pane>
+      <VisibleForestMarkers
+        matchedForests={matchedForests}
+        unmatchedForests={unmatchedForests}
+      />
     </MapContainer>
   );
 });

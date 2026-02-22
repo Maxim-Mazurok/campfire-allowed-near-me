@@ -41,7 +41,18 @@ Hard policy constraints:
 - Reconnecting websocket callback handling is stabilized with ref-based callback wiring.
 - Map/list rendering path now includes memoized `MapView` and `ForestListPanel` plus a memoized `ForestListItem` row.
 - `MapView` now uses `preferCanvas` and single-pass matched/unmatched marker partitioning to reduce marker overhead.
-- Remaining high-impact decomposition target is map/list scaling behavior under larger forest sets.
+- `ForestListPanel` now uses threshold-based virtualization via `@tanstack/react-virtual` for larger result sets while preserving the existing rendering path for smaller lists.
+- `MapView` now culls rendered markers to the current padded viewport bounds, reducing marker work during pan/zoom on larger datasets.
+- `MapView` now applies zoom-aware unmatched marker budgets at lower zoom levels, prioritizing closest-to-center unmatched forests to reduce dense marker rendering load.
+- Map marker budgeting and closest-selection logic is now extracted into `apps/web/src/lib/map-marker-rendering.ts` with unit coverage for zoom tiers and nearest-selection behavior.
+- `MapView` now renders both matched and unmatched markers through a shared memoized marker component with stable path option objects to reduce marker subtree churn.
+- `VisibleForestMarkers` now computes visible matched markers and rendered unmatched markers in one memoized pass to reduce per-update array churn.
+- `VisibleForestMarkers` now deduplicates viewport event updates via a signature check, reducing redundant recomputation after move/zoom/resize events.
+- `MapView` now derives mapped forests and matched/unmatched partitions in a single pass through source forests.
+- `ForestListPanel` now isolates virtualization into `VirtualizedForestList`, so `useVirtualizer` only runs when list size crosses the virtualization threshold.
+- `ForestListPanel` now skips clone/sort work when 0–1 forests are present.
+- `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
+- Current high-impact map/list rendering phases are complete; next work can focus on optional scalability features (for example marker clustering) if real-world dataset size grows beyond current assumptions.
 
 ### Step 4: Performance iteration
 - Add list virtualization and marker rendering strategy.

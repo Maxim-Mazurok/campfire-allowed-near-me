@@ -331,6 +331,20 @@ button {
   overflow: auto;
 }
 
+.forest-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.forest-list-virtual {
+  display: block;
+  flex: none;
+  min-height: 0;
+  overflow: visible;
+  position: relative;
+}
+
 .forest-row {
   display: flex;
   flex-direction: column;
