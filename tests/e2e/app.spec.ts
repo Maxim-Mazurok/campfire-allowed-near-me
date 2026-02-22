@@ -662,6 +662,96 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
   await expect(firstRow).toContainText("Far North");
 });
 
+test("shows unmapped forests with diagnostics and fallback links in warnings dialog", async ({
+  page
+}) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "alpha",
+            source: "Forestry Corporation NSW",
+            areaName: "North Region",
+            areaUrl: "https://example.com/north-region",
+            forestName: "Alpha State Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-state-forest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: null,
+            longitude: null,
+            geocodeName: null,
+            geocodeConfidence: null,
+            geocodeDiagnostics: {
+              reason: "Geocoding lookup limit reached before coordinates were resolved.",
+              debug: [
+                "Forest lookup: LIMIT_REACHED | query=Alpha State Forest, North Region, New South Wales, Australia"
+              ]
+            },
+            distanceKm: null,
+            facilities: {}
+          },
+          {
+            id: "bravo",
+            source: "Forestry Corporation NSW",
+            areaName: "South Region",
+            areaUrl: "https://example.com/south-region",
+            forestName: "Bravo State Forest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: null,
+            longitude: null,
+            geocodeName: null,
+            geocodeConfidence: null,
+            geocodeDiagnostics: {
+              reason: "No usable geocoding results were returned for this forest.",
+              debug: [
+                "Forest lookup: EMPTY_RESULT | query=Bravo State Forest, South Region, New South Wales, Australia | results=0",
+                "Area fallback: EMPTY_RESULT | query=South Region, New South Wales, Australia | results=0"
+              ]
+            },
+            distanceKm: null,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("warnings-btn")).toContainText("2");
+  await page.getByTestId("warnings-btn").click();
+
+  const unmappedSection = page.getByTestId("warnings-unmapped-section");
+  await expect(unmappedSection).toContainText("2 forest(s) could not be mapped to coordinates.");
+  await expect(unmappedSection.getByRole("link", { name: "Alpha State Forest" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests/alpha-state-forest"
+  );
+  await expect(unmappedSection.getByRole("link", { name: "Bravo State Forest" })).toHaveAttribute(
+    "href",
+    "https://example.com/south-region#:~:text=Bravo%20State%20Forest"
+  );
+  await expect(unmappedSection).toContainText(
+    "Geocoding lookup limit reached before coordinates were resolved."
+  );
+
+  await unmappedSection.getByText("Debug info").first().click();
+  await expect(unmappedSection).toContainText("Forest lookup: LIMIT_REACHED");
+});
+
 test("prompts for location access when geolocation is unavailable", async ({
   page
 }) => {

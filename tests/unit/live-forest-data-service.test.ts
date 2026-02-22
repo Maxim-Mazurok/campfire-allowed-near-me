@@ -612,4 +612,314 @@ describe("LiveForestDataService facilities matching", () => {
       rmSync(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it("refreshes fresh snapshots when unmapped forests have missing geocode diagnostics", async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-missing-geocode-diagnostics-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    const snapshotWithoutDiagnostics = {
+      schemaVersion: 4,
+      fetchedAt: new Date().toISOString(),
+      stale: false,
+      sourceName: "Forestry Corporation NSW",
+      availableFacilities: [
+        {
+          key: "camping",
+          label: "Camping",
+          paramName: "camping",
+          iconKey: "camping"
+        }
+      ],
+      matchDiagnostics: {
+        unmatchedFacilitiesForests: [],
+        fuzzyMatches: []
+      },
+      warnings: [],
+      forests: [
+        {
+          id: "mapped-forest",
+          source: "Forestry Corporation NSW",
+          areaName: "Legacy Area",
+          areaUrl: "https://example.com/legacy-area",
+          forestName: "Mapped State Forest",
+          forestUrl: null,
+          banStatus: "NOT_BANNED",
+          banStatusText: "No Solid Fuel Fire Ban",
+          latitude: -33.9,
+          longitude: 151.2,
+          geocodeName: "Mapped State Forest",
+          geocodeConfidence: 0.8,
+          geocodeDiagnostics: null,
+          facilities: {
+            camping: true
+          }
+        },
+        {
+          id: "unmapped-forest",
+          source: "Forestry Corporation NSW",
+          areaName: "Legacy Area",
+          areaUrl: "https://example.com/legacy-area",
+          forestName: "Unmapped State Forest",
+          forestUrl: null,
+          banStatus: "NOT_BANNED",
+          banStatusText: "No Solid Fuel Fire Ban",
+          latitude: null,
+          longitude: null,
+          geocodeName: null,
+          geocodeConfidence: null,
+          geocodeDiagnostics: null,
+          facilities: {
+            camping: true
+          }
+        }
+      ]
+    };
+
+    let scrapeCalls = 0;
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => {
+        scrapeCalls += 1;
+        return {
+          areas: [
+            {
+              areaName: "Legacy Area",
+              areaUrl: "https://example.com/legacy-area",
+              status: "NOT_BANNED",
+              statusText: "No Solid Fuel Fire Ban",
+              forests: ["Mapped State Forest", "Unmapped State Forest"]
+            }
+          ],
+          directory: {
+            filters: [
+              {
+                key: "camping",
+                label: "Camping",
+                paramName: "camping",
+                iconKey: "camping"
+              }
+            ],
+            forests: [
+              {
+                forestName: "Mapped State Forest",
+                facilities: {
+                  camping: true
+                }
+              },
+              {
+                forestName: "Unmapped State Forest",
+                facilities: {
+                  camping: true
+                }
+              }
+            ],
+            warnings: []
+          },
+          warnings: []
+        };
+      }
+    };
+
+    const geocoder = {
+      geocodeArea: async () => ({
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          {
+            query: "Legacy Area, New South Wales, Australia",
+            aliasKey: "alias:area:https://example.com/legacy-area",
+            cacheKey: "query:legacy area, new south wales, australia",
+            outcome: "EMPTY_RESULT",
+            httpStatus: null,
+            resultCount: 0,
+            errorMessage: null
+          }
+        ]
+      }),
+      geocodeForest: async (forestName: string) => {
+        if (forestName === "Mapped State Forest") {
+          return {
+            latitude: -33.9,
+            longitude: 151.2,
+            displayName: "Mapped State Forest",
+            confidence: 0.8,
+            attempts: [
+              {
+                query: "Mapped State Forest, Legacy Area, New South Wales, Australia",
+                aliasKey: "alias:forest:legacy area:mapped state forest",
+                cacheKey:
+                  "query:mapped state forest, legacy area, new south wales, australia",
+                outcome: "LOOKUP_SUCCESS",
+                httpStatus: 200,
+                resultCount: 1,
+                errorMessage: null
+              }
+            ]
+          };
+        }
+
+        return {
+          latitude: null,
+          longitude: null,
+          displayName: null,
+          confidence: null,
+          attempts: [
+            {
+              query: "Unmapped State Forest, Legacy Area, New South Wales, Australia",
+              aliasKey: "alias:forest:legacy area:unmapped state forest",
+              cacheKey:
+                "query:unmapped state forest, legacy area, new south wales, australia",
+              outcome: "LIMIT_REACHED",
+              httpStatus: null,
+              resultCount: null,
+              errorMessage: null
+            }
+          ]
+        };
+      }
+    };
+
+    try {
+      await writeFile(snapshotPath, JSON.stringify(snapshotWithoutDiagnostics), "utf8");
+
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder
+      });
+
+      const firstResponse = await service.getForestData();
+      const secondResponse = await service.getForestData();
+      const unmappedForest = firstResponse.forests.find(
+        (forest) => forest.forestName === "Unmapped State Forest"
+      );
+
+      expect(scrapeCalls).toBe(1);
+      expect(unmappedForest?.geocodeDiagnostics?.reason).toBe(
+        "Geocoding lookup limit reached before coordinates were resolved."
+      );
+      expect(unmappedForest?.geocodeDiagnostics?.debug).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("Forest lookup: LIMIT_REACHED"),
+          expect.stringContaining("Area fallback: EMPTY_RESULT")
+        ])
+      );
+      expect(secondResponse.forests.find((forest) => forest.forestName === "Unmapped State Forest")
+        ?.geocodeDiagnostics?.debug).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("Forest lookup: LIMIT_REACHED")
+        ])
+      );
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("includes geocode failure diagnostics for unmapped forests", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "West Region",
+          areaUrl: "https://example.com/west-region",
+          status: "NOT_BANNED",
+          statusText: "No Solid Fuel Fire Ban",
+          forests: ["Unmapped State Forest"]
+        }
+      ],
+      directory: {
+        filters: [
+          {
+            key: "camping",
+            label: "Camping",
+            paramName: "camping",
+            iconKey: "camping"
+          }
+        ],
+        forests: [
+          {
+            forestName: "Unmapped State Forest",
+            facilities: {
+              camping: true
+            }
+          }
+        ],
+        warnings: []
+      },
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocoder = {
+      geocodeArea: async () => ({
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          {
+            query: "West Region, New South Wales, Australia",
+            aliasKey: "alias:area:https://example.com/west-region",
+            cacheKey: "query:west region, new south wales, australia",
+            outcome: "EMPTY_RESULT",
+            httpStatus: null,
+            resultCount: 0,
+            errorMessage: null
+          }
+        ]
+      }),
+      geocodeForest: async () => ({
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          {
+            query: "Unmapped State Forest, West Region, New South Wales, Australia",
+            aliasKey: "alias:forest:west region:unmapped state forest",
+            cacheKey:
+              "query:unmapped state forest, west region, new south wales, australia",
+            outcome: "LIMIT_REACHED",
+            httpStatus: null,
+            resultCount: null,
+            errorMessage: null
+          }
+        ]
+      })
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-live-service-geocode-diagnostics-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder
+      });
+
+      const response = await service.getForestData({ forceRefresh: true });
+      const unmappedForest = response.forests.find(
+        (forest) => forest.forestName === "Unmapped State Forest"
+      );
+
+      expect(unmappedForest?.latitude).toBeNull();
+      expect(unmappedForest?.longitude).toBeNull();
+      expect(unmappedForest?.geocodeDiagnostics?.reason).toBe(
+        "Geocoding lookup limit reached before coordinates were resolved."
+      );
+      expect(unmappedForest?.geocodeDiagnostics?.debug).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("Forest lookup: LIMIT_REACHED"),
+          expect.stringContaining("Area fallback: EMPTY_RESULT")
+        ])
+      );
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

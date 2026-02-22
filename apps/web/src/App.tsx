@@ -367,6 +367,12 @@ export const App = () => {
       :
           baseWarnings.find((warning) => /Applied fuzzy facilities matching/i.test(warning)) ??
           `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`;
+  const unmappedForests = forests
+    .filter((forest) => forest.latitude === null || forest.longitude === null)
+    .slice()
+    .sort((left, right) => left.forestName.localeCompare(right.forestName));
+  const hasUnmappedForestWarning = unmappedForests.length > 0;
+  const unmappedForestWarningCount = unmappedForests.length;
   const facilitiesMismatchWarningCount =
     matchDiagnostics.unmatchedFacilitiesForests.length > 0
       ? matchDiagnostics.unmatchedFacilitiesForests.length
@@ -381,6 +387,7 @@ export const App = () => {
         : 0;
   const warningCount =
     generalWarnings.length +
+    unmappedForestWarningCount +
     facilitiesMismatchWarningCount +
     fuzzyMatchesWarningCount;
   const unmatchedFacilitiesForestNames = useMemo(
@@ -462,6 +469,25 @@ export const App = () => {
   };
   const fireBanForestTableSortLabel =
     fireBanForestSortDirection === "asc" ? "A-Z" : "Z-A";
+  const getUnmappedForestLink = (
+    forest: ForestApiResponse["forests"][number]
+  ): { href: string; label: string } => {
+    if (isHttpUrl(forest.forestUrl)) {
+      return {
+        href: forest.forestUrl,
+        label: "Facilities page"
+      };
+    }
+
+    const areaTarget = isHttpUrl(forest.areaUrl)
+      ? forest.areaUrl
+      : `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`;
+
+    return {
+      href: buildTextHighlightUrl(areaTarget, forest.forestName),
+      label: `${forest.areaName} region`
+    };
+  };
 
   const refreshFromSource = () => {
     setLocationError(null);
@@ -629,6 +655,48 @@ export const App = () => {
               </div>
 
               {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
+              {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
+
+              {hasUnmappedForestWarning ? (
+                <section className="warnings-section" data-testid="warnings-unmapped-section">
+                  <h3>Unmapped Forests (Distance Unavailable)</h3>
+                  <p className="muted">
+                    {unmappedForests.length} forest(s) could not be mapped to coordinates.
+                  </p>
+                  <ul className="warning-list warning-list-detailed">
+                    {unmappedForests.map((forest) => {
+                      const debugEntries =
+                        forest.geocodeDiagnostics?.debug?.length
+                          ? forest.geocodeDiagnostics.debug
+                          : ["No geocoding attempt diagnostics were captured in this snapshot."];
+                      const failureReason =
+                        forest.geocodeDiagnostics?.reason ??
+                        "Coordinates were unavailable after forest and area geocoding.";
+                      const linkTarget = getUnmappedForestLink(forest);
+
+                      return (
+                        <li key={forest.id} className="warning-list-item-detailed">
+                          <div>
+                            <a href={linkTarget.href} target="_blank" rel="noopener noreferrer">
+                              <mark className="warning-forest-highlight">{forest.forestName}</mark>
+                            </a>{" "}
+                            <span className="muted">({linkTarget.label})</span>
+                          </div>
+                          <div className="muted">Reason: {failureReason}</div>
+                          <details className="warning-debug">
+                            <summary>Debug info</summary>
+                            <ul className="warning-debug-list">
+                              {debugEntries.map((entry, index) => (
+                                <li key={`${forest.id}:debug:${index}`}>{entry}</li>
+                              ))}
+                            </ul>
+                          </details>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ) : null}
 
               {generalWarnings.length > 0 ? (
                 <section className="warnings-section">

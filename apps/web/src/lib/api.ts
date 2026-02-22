@@ -7,6 +7,11 @@ export interface FacilityDefinition {
   iconKey: string;
 }
 
+export interface ForestGeocodeDiagnostics {
+  reason: string;
+  debug: string[];
+}
+
 export interface ForestPoint {
   id: string;
   source: string;
@@ -20,6 +25,7 @@ export interface ForestPoint {
   longitude: number | null;
   geocodeName: string | null;
   geocodeConfidence: number | null;
+  geocodeDiagnostics?: ForestGeocodeDiagnostics | null;
   facilities: Record<string, boolean | null>;
   distanceKm: number | null;
 }

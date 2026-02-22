@@ -392,6 +392,52 @@ button {
   margin-bottom: 6px;
 }
 
+.warning-list-detailed {
+  list-style: none;
+  padding-left: 0;
+}
+
+.warning-list-item-detailed {
+  margin-bottom: 10px;
+}
+
+.warning-forest-highlight {
+  background: #fff3b0;
+  border-radius: 2px;
+  padding: 0 3px;
+}
+
+.warning-debug {
+  margin-top: 4px;
+}
+
+.warning-debug summary {
+  cursor: pointer;
+  color: #1c4a76;
+  font-size: 0.82rem;
+}
+
+.warning-debug-list {
+  margin: 5px 0 0;
+  padding-left: 18px;
+  color: #455569;
+  font-size: 0.78rem;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace;
+}
+
+.warning-debug-list li {
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
 .warnings-overlay {
   position: fixed;
   inset: 0;

@@ -17,15 +17,47 @@ interface NominatimRow {
   importance?: number;
 }
 
+export type GeocodeLookupOutcome =
+  | "CACHE_HIT"
+  | "LOOKUP_SUCCESS"
+  | "LIMIT_REACHED"
+  | "HTTP_ERROR"
+  | "REQUEST_FAILED"
+  | "EMPTY_RESULT"
+  | "INVALID_COORDINATES";
+
+export interface GeocodeLookupAttempt {
+  query: string;
+  aliasKey: string | null;
+  cacheKey: string;
+  outcome: GeocodeLookupOutcome;
+  httpStatus: number | null;
+  resultCount: number | null;
+  errorMessage: string | null;
+}
+
 export interface GeocodeResponse {
   latitude: number | null;
   longitude: number | null;
   displayName: string | null;
   confidence: number | null;
+  attempts?: GeocodeLookupAttempt[];
 }
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+const toErrorMessage = (value: unknown): string => {
+  if (value instanceof Error && value.message.trim()) {
+    return value.message.trim();
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    return value.trim();
+  }
+
+  return "Unknown error";
+};
 
 export class OSMGeocoder {
   private readonly cacheDbPath: string;
@@ -61,12 +93,38 @@ export class OSMGeocoder {
     `);
   }
 
-  private toGeocodeResponse(hit: GeocodeHit): GeocodeResponse {
+  private toGeocodeResponse(
+    hit: GeocodeHit,
+    attempts: GeocodeLookupAttempt[]
+  ): GeocodeResponse {
     return {
       latitude: hit.latitude,
       longitude: hit.longitude,
       displayName: hit.displayName,
-      confidence: hit.importance
+      confidence: hit.importance,
+      attempts
+    };
+  }
+
+  private buildAttempt(
+    query: string,
+    aliasKey: string | null,
+    cacheKey: string,
+    outcome: GeocodeLookupOutcome,
+    options?: {
+      httpStatus?: number | null;
+      resultCount?: number | null;
+      errorMessage?: string | null;
+    }
+  ): GeocodeLookupAttempt {
+    return {
+      query,
+      aliasKey,
+      cacheKey,
+      outcome,
+      httpStatus: options?.httpStatus ?? null,
+      resultCount: options?.resultCount ?? null,
+      errorMessage: options?.errorMessage ?? null
     };
   }
 
@@ -132,13 +190,22 @@ export class OSMGeocoder {
     const aliasKeyNormalized = aliasKey
       ? `alias:${this.normalizeKey(aliasKey)}`
       : null;
+    const cacheHitFromAlias = aliasKeyNormalized
+      ? this.getCached(aliasKeyNormalized)
+      : null;
+    const cacheHitFromQuery = this.getCached(queryKey);
 
-    const cached =
-      (aliasKeyNormalized ? this.getCached(aliasKeyNormalized) : null) ??
-      this.getCached(queryKey);
+    const cached = cacheHitFromAlias ?? cacheHitFromQuery;
+    const cacheKeyUsed = cacheHitFromAlias
+      ? aliasKeyNormalized
+      : cacheHitFromQuery
+        ? queryKey
+        : null;
 
-    if (cached) {
-      return this.toGeocodeResponse(cached);
+    if (cached && cacheKeyUsed) {
+      return this.toGeocodeResponse(cached, [
+        this.buildAttempt(query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")
+      ]);
     }
 
     if (this.newLookupsThisRun >= this.maxNewLookupsPerRun) {
@@ -146,7 +213,10 @@ export class OSMGeocoder {
         latitude: null,
         longitude: null,
         displayName: null,
-        confidence: null
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "LIMIT_REACHED")
+        ]
       };
     }
 
@@ -156,24 +226,62 @@ export class OSMGeocoder {
     url.searchParams.set("countrycodes", "au");
     url.searchParams.set("limit", "1");
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        "User-Agent":
-          "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
-        Accept: "application/json"
-      }
-    });
+    let response: Response;
+    try {
+      response = await fetch(url.toString(), {
+        headers: {
+          "User-Agent":
+            "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
+          Accept: "application/json"
+        }
+      });
+    } catch (error) {
+      return {
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "REQUEST_FAILED", {
+            errorMessage: toErrorMessage(error)
+          })
+        ]
+      };
+    }
 
     if (!response.ok) {
       return {
         latitude: null,
         longitude: null,
         displayName: null,
-        confidence: null
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "HTTP_ERROR", {
+            httpStatus: response.status
+          })
+        ]
       };
     }
 
-    const rows = (await response.json()) as NominatimRow[];
+    let rows: NominatimRow[];
+    try {
+      rows = (await response.json()) as NominatimRow[];
+    } catch (error) {
+      this.newLookupsThisRun += 1;
+      return {
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "REQUEST_FAILED", {
+            errorMessage: `Invalid JSON response: ${toErrorMessage(error)}`
+          })
+        ]
+      };
+    }
+
+    const resultCount = rows.length;
     const top = rows[0];
     this.newLookupsThisRun += 1;
 
@@ -182,13 +290,40 @@ export class OSMGeocoder {
         latitude: null,
         longitude: null,
         displayName: null,
-        confidence: null
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "EMPTY_RESULT", {
+            resultCount
+          })
+        ]
       };
     }
 
+    const latitude = Number(top.lat);
+    const longitude = Number(top.lon);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return {
+        latitude: null,
+        longitude: null,
+        displayName: null,
+        confidence: null,
+        attempts: [
+          this.buildAttempt(query, aliasKeyNormalized, queryKey, "INVALID_COORDINATES", {
+            resultCount
+          })
+        ]
+      };
+    }
+
+    const attempts = [
+      this.buildAttempt(query, aliasKeyNormalized, queryKey, "LOOKUP_SUCCESS", {
+        resultCount
+      })
+    ];
+
     const hit: GeocodeHit = {
-      latitude: Number(top.lat),
-      longitude: Number(top.lon),
+      latitude,
+      longitude,
       displayName: top.display_name,
       importance: top.importance ?? 0,
       updatedAt: new Date().toISOString()
@@ -201,7 +336,7 @@ export class OSMGeocoder {
 
     await sleep(this.requestDelayMs);
 
-    return this.toGeocodeResponse(hit);
+    return this.toGeocodeResponse(hit, attempts);
   }
 
   async geocodeForest(
@@ -237,11 +372,16 @@ export class OSMGeocoder {
     ].filter((value): value is string => Boolean(value));
 
     const areaKey = `area:${areaUrl || areaName}`;
+    const attempts: GeocodeLookupAttempt[] = [];
 
     for (const query of queryCandidates) {
       const hit = await this.geocodeQuery(query, areaKey);
+      attempts.push(...(hit.attempts ?? []));
       if (hit.latitude !== null && hit.longitude !== null) {
-        return hit;
+        return {
+          ...hit,
+          attempts
+        };
       }
     }
 
@@ -249,7 +389,8 @@ export class OSMGeocoder {
       latitude: null,
       longitude: null,
       displayName: null,
-      confidence: null
+      confidence: null,
+      attempts
     };
   }
 }

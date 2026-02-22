@@ -10,7 +10,11 @@ import {
 } from "../utils/forest-name-validation.js";
 import { slugify } from "../utils/slugs.js";
 import { ForestryScraper } from "./forestry-scraper.js";
-import { OSMGeocoder } from "./osm-geocoder.js";
+import {
+  OSMGeocoder,
+  type GeocodeLookupAttempt,
+  type GeocodeResponse
+} from "./osm-geocoder.js";
 import type {
   FacilityMatchDiagnostics,
   FacilityValue,
@@ -19,6 +23,7 @@ import type {
   ForestDataService,
   ForestDataServiceInput,
   ForestDirectorySnapshot,
+  ForestGeocodeDiagnostics,
   ForestPoint,
   NearestForest,
   PersistedSnapshot,
@@ -46,11 +51,13 @@ const DEFAULT_OPTIONS: LiveForestDataServiceResolvedOptions = {
 };
 
 const FACILITY_MATCH_THRESHOLD = 0.62;
-const SNAPSHOT_FORMAT_VERSION = 3;
+const SNAPSHOT_FORMAT_VERSION = 4;
 const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on fire-ban pages";
 const UNKNOWN_FIRE_BAN_STATUS_TEXT =
   "Unknown (not listed on Solid Fuel Fire Ban pages)";
+const MISSING_GEOCODE_ATTEMPTS_MESSAGE =
+  "No geocoding attempt diagnostics were captured in this snapshot.";
 
 interface FacilityMatchResult {
   facilities: Record<string, FacilityValue>;
@@ -193,9 +200,24 @@ export class LiveForestDataService implements ForestDataService {
         })
       ) as Record<string, FacilityValue>;
 
+      const normalizedGeocodeDiagnostics =
+        forest.geocodeDiagnostics &&
+        typeof forest.geocodeDiagnostics === "object" &&
+        typeof forest.geocodeDiagnostics.reason === "string"
+          ? {
+              reason: forest.geocodeDiagnostics.reason,
+              debug: Array.isArray(forest.geocodeDiagnostics.debug)
+                ? forest.geocodeDiagnostics.debug.filter((entry): entry is string =>
+                    typeof entry === "string"
+                  )
+                : []
+            }
+          : null;
+
       return {
         ...forest,
         forestUrl: typeof forest.forestUrl === "string" ? forest.forestUrl : null,
+        geocodeDiagnostics: normalizedGeocodeDiagnostics,
         facilities
       };
     });
@@ -264,6 +286,34 @@ export class LiveForestDataService implements ForestDataService {
     });
   }
 
+  private hasCompleteGeocodeDiagnostics(snapshot: PersistedSnapshot): boolean {
+    return snapshot.forests.every((forest) => {
+      const hasMissingCoordinates = forest.latitude === null || forest.longitude === null;
+
+      if (!hasMissingCoordinates) {
+        return true;
+      }
+
+      const diagnostics = forest.geocodeDiagnostics;
+
+      if (!diagnostics || typeof diagnostics.reason !== "string" || !diagnostics.reason.trim()) {
+        return false;
+      }
+
+      if (!Array.isArray(diagnostics.debug) || diagnostics.debug.length === 0) {
+        return false;
+      }
+
+      return diagnostics.debug.every((entry) => {
+        if (typeof entry !== "string" || !entry.trim()) {
+          return false;
+        }
+
+        return entry !== MISSING_GEOCODE_ATTEMPTS_MESSAGE;
+      });
+    });
+  }
+
   private async resolveSnapshot(forceRefresh = false): Promise<PersistedSnapshot> {
     const fixturePath = process.env.FORESTRY_USE_FIXTURE;
     if (fixturePath) {
@@ -281,6 +331,7 @@ export class LiveForestDataService implements ForestDataService {
       this.isSnapshotCompatible(this.memorySnapshot) &&
       this.isSnapshotFresh(this.memorySnapshot) &&
       this.hasAnyMappedForest(this.memorySnapshot) &&
+      this.hasCompleteGeocodeDiagnostics(this.memorySnapshot) &&
       !this.hasUnknownStatuses(this.memorySnapshot) &&
       this.hasFacilityDefinitions(this.memorySnapshot)
     ) {
@@ -311,6 +362,7 @@ export class LiveForestDataService implements ForestDataService {
       this.isSnapshotCompatible(persisted) &&
       this.isSnapshotFresh(persisted) &&
       this.hasAnyMappedForest(persisted) &&
+      this.hasCompleteGeocodeDiagnostics(persisted) &&
       !this.hasUnknownStatuses(persisted) &&
       this.hasFacilityDefinitions(persisted)
     ) {
@@ -377,6 +429,76 @@ export class LiveForestDataService implements ForestDataService {
 
       throw error;
     }
+  }
+
+  private getGeocodeAttempts(response: GeocodeResponse | null | undefined): GeocodeLookupAttempt[] {
+    if (!response?.attempts) {
+      return [];
+    }
+
+    return response.attempts;
+  }
+
+  private describeGeocodeAttempt(prefix: string, attempt: GeocodeLookupAttempt): string {
+    const details: string[] = [`${prefix}: ${attempt.outcome}`, `query=${attempt.query}`];
+    if (attempt.httpStatus !== null) {
+      details.push(`http=${attempt.httpStatus}`);
+    }
+    if (attempt.resultCount !== null) {
+      details.push(`results=${attempt.resultCount}`);
+    }
+    if (attempt.errorMessage) {
+      details.push(`error=${attempt.errorMessage}`);
+    }
+
+    return details.join(" | ");
+  }
+
+  private selectGeocodeFailureReason(attempts: GeocodeLookupAttempt[]): string {
+    if (attempts.some((attempt) => attempt.outcome === "LIMIT_REACHED")) {
+      return "Geocoding lookup limit reached before coordinates were resolved.";
+    }
+
+    if (
+      attempts.some(
+        (attempt) => attempt.outcome === "HTTP_ERROR" || attempt.outcome === "REQUEST_FAILED"
+      )
+    ) {
+      return "Geocoding request failed before coordinates were resolved.";
+    }
+
+    if (
+      attempts.some(
+        (attempt) =>
+          attempt.outcome === "EMPTY_RESULT" || attempt.outcome === "INVALID_COORDINATES"
+      )
+    ) {
+      return "No usable geocoding results were returned for this forest.";
+    }
+
+    return "Coordinates were unavailable after forest and area geocoding.";
+  }
+
+  private buildGeocodeDiagnostics(
+    forestLookup: GeocodeResponse,
+    areaLookup?: GeocodeResponse | null
+  ): ForestGeocodeDiagnostics {
+    const forestAttempts = this.getGeocodeAttempts(forestLookup);
+    const areaAttempts = this.getGeocodeAttempts(areaLookup);
+    const allAttempts = [...forestAttempts, ...areaAttempts];
+    const debug = [
+      ...forestAttempts.map((attempt) => this.describeGeocodeAttempt("Forest lookup", attempt)),
+      ...areaAttempts.map((attempt) => this.describeGeocodeAttempt("Area fallback", attempt))
+    ];
+
+    if (!debug.length) {
+      debug.push("No geocoding attempt diagnostics were captured in this snapshot.");
+    }
+
+    return {
+      reason: this.selectGeocodeFailureReason(allAttempts),
+      debug
+    };
   }
 
   private buildUnknownFacilities(directory: ForestDirectorySnapshot): Record<string, FacilityValue> {
@@ -599,6 +721,10 @@ export class LiveForestDataService implements ForestDataService {
         const resolvedLatitude = geocode.latitude ?? areaGeocode.latitude;
         const resolvedLongitude = geocode.longitude ?? areaGeocode.longitude;
         const usedAreaFallback = geocode.latitude === null && areaGeocode.latitude !== null;
+        const geocodeDiagnostics =
+          resolvedLatitude === null || resolvedLongitude === null
+            ? this.buildGeocodeDiagnostics(geocode, areaGeocode)
+            : null;
         const facilityMatch =
           facilityAssignments.byFireBanForestName.get(forestName) ??
           ({
@@ -625,6 +751,7 @@ export class LiveForestDataService implements ForestDataService {
             ? `${areaGeocode.displayName} (area centroid approximation)`
             : geocode.displayName,
           geocodeConfidence: geocode.confidence ?? areaGeocode.confidence,
+          geocodeDiagnostics,
           facilities: facilityMatch.facilities
         });
       }
@@ -634,6 +761,10 @@ export class LiveForestDataService implements ForestDataService {
 
     for (const forestName of unmatchedFacilitiesForests) {
       const geocode = await this.geocoder.geocodeForest(forestName);
+      const geocodeDiagnostics =
+        geocode.latitude === null || geocode.longitude === null
+          ? this.buildGeocodeDiagnostics(geocode)
+          : null;
       const directoryFacilities = this.createMatchedFacilities(
         directory,
         byForestName,
@@ -653,6 +784,7 @@ export class LiveForestDataService implements ForestDataService {
         longitude: geocode.longitude,
         geocodeName: geocode.displayName,
         geocodeConfidence: geocode.confidence,
+        geocodeDiagnostics,
         facilities: directoryFacilities
       });
     }
