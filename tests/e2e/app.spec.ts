@@ -480,7 +480,9 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
             }
           ]
         },
-        warnings: [],
+        warnings: [
+          "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest."
+        ],
         nearestLegalSpot: null,
         forests: [
           {
@@ -510,6 +512,17 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
 
   await expect(page.getByTestId("warnings-dialog")).toContainText(
     "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages."
+  );
+  await expect(page.getByTestId("warnings-dialog")).not.toContainText(
+    "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest."
+  );
+  await expect(page.getByRole("link", { name: "Facilities page" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests"
+  );
+  await expect(page.getByRole("link", { name: "Solid Fuel Fire Ban" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
   );
   await expect(page.getByRole("link", { name: "Coolangubra State Forest" })).toHaveAttribute(
     "href",

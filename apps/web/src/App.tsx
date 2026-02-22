@@ -85,6 +85,39 @@ const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string): string
   return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
 };
 
+const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
+  const facilitiesPageLabel = "Facilities page";
+  const fireBanPagesLabel = "Solid Fuel Fire Ban pages";
+  const summaryPartsAfterFacilitiesPage = summaryText.split(facilitiesPageLabel);
+  const beforeFacilitiesPage = summaryPartsAfterFacilitiesPage[0];
+  const afterFacilitiesPage = summaryPartsAfterFacilitiesPage[1];
+  if (beforeFacilitiesPage === undefined || afterFacilitiesPage === undefined) {
+    return summaryText;
+  }
+
+  const summaryPartsAfterFireBanPages = afterFacilitiesPage.split(fireBanPagesLabel);
+  const betweenLinks = summaryPartsAfterFireBanPages[0];
+  const afterFireBanPages = summaryPartsAfterFireBanPages[1];
+  if (betweenLinks === undefined || afterFireBanPages === undefined) {
+    return summaryText;
+  }
+
+  return (
+    <>
+      {beforeFacilitiesPage}
+      <a href={FACILITIES_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+        {facilitiesPageLabel}
+      </a>
+      {betweenLinks}
+      <a href={FIRE_BAN_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+        Solid Fuel Fire Ban
+      </a>
+      {" pages"}
+      {afterFireBanPages}
+    </>
+  );
+};
+
 const isBanFilterMode = (value: unknown): value is BanFilterMode =>
   value === "ALL" || value === "ALLOWED" || value === "NOT_ALLOWED";
 
@@ -310,6 +343,10 @@ export const App = () => {
   const facilitiesMismatchWarningText =
     baseWarnings.find((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning)) ??
     `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`;
+  const facilitiesMismatchWarningSummary = facilitiesMismatchWarningText.replace(
+    /(not present on the Solid Fuel Fire Ban pages)\s*:.*$/i,
+    "$1."
+  );
   const fuzzyMatchesWarningText =
     baseWarnings.find((warning) => /Applied fuzzy facilities matching/i.test(warning)) ??
     `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`;
@@ -511,7 +548,9 @@ export const App = () => {
             {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
               <section className="warnings-section">
                 <h3>Facilities Missing From Fire-Ban Pages</h3>
-                <p className="muted">{facilitiesMismatchWarningText}</p>
+                <p className="muted">
+                  {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}
+                </p>
                 {matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
                   <ul className="warning-list">
                     {matchDiagnostics.unmatchedFacilitiesForests.map((forestName) => (
