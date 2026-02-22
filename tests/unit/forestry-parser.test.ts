@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
-  parseAreaForestNames,
   parseBanStatus,
   parseClosureNoticeDetailPage,
   parseClosureNoticeForestNameHint,
   parseClosureNoticeStatus,
   parseClosureNoticesPage,
   classifyClosureNoticeTags,
-  parseForestDirectoryFilters,
-  parseForestDirectoryForests,
-  parseForestDirectoryForestNames,
   parseMainFireBanPage
 } from "../../apps/api/src/services/forestry-parser.js";
+import {
+  parseAreaForestNames,
+  parseForestDirectoryFilters,
+  parseForestDirectoryForests,
+  parseForestDirectoryForestNames
+} from "../../apps/api/src/services/forestry-directory-parser.js";
 
 describe("parseBanStatus", () => {
   it("detects no ban text", () => {
