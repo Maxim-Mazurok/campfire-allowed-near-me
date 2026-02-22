@@ -35,6 +35,12 @@ Hard policy constraints:
 - Move filter/sort/warning derivation logic into selectors.
 - Split rendering into feature components.
 
+### Current implementation snapshot
+- Shared API and websocket contracts are now consumed from `packages/shared/src` by both API and web.
+- `App.tsx` has extracted dialog and domain helpers, plus dedicated `FilterPanel` and `ForestListPanel` components.
+- Reconnecting websocket callback handling is stabilized with ref-based callback wiring.
+- Remaining high-impact decomposition target is map/list scaling behavior under larger forest sets.
+
 ### Step 4: Performance iteration
 - Add list virtualization and marker rendering strategy.
 - Keep UX unchanged.
