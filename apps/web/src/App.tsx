@@ -54,6 +54,24 @@ const normalizeForestName = (value: string): string =>
     .trim()
     .replace(/\s+/g, " ");
 
+const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string): string => {
+  const normalizedTextToHighlight = textToHighlight.trim();
+  if (!normalizedTextToHighlight) {
+    return baseUrl;
+  }
+
+  const encodedTextToHighlight = encodeURIComponent(normalizedTextToHighlight);
+  if (baseUrl.includes(":~:text=")) {
+    return baseUrl;
+  }
+
+  if (baseUrl.includes("#")) {
+    return `${baseUrl}:~:text=${encodedTextToHighlight}`;
+  }
+
+  return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
+};
+
 export const App = () => {
   const [payload, setPayload] = useState<ForestApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -242,8 +260,11 @@ export const App = () => {
     return byForestName;
   }, [forests]);
   const getFireBanAreaUrl = (forestName: string): string =>
-    fireBanAreaUrlByForestName.get(normalizeForestName(forestName)) ??
-    `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`;
+    buildTextHighlightUrl(
+      fireBanAreaUrlByForestName.get(normalizeForestName(forestName)) ??
+        `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`,
+      forestName
+    );
 
   const requestLocation = (options?: { silent?: boolean }) => {
     if (!navigator.geolocation) {
@@ -612,7 +633,7 @@ export const App = () => {
                       </strong>
                       {isHttpUrl(forest.areaUrl) ? (
                         <a
-                          href={forest.areaUrl}
+                          href={buildTextHighlightUrl(forest.areaUrl, forest.forestName)}
                           className="muted forest-region-link"
                           target="_blank"
                           rel="noreferrer"

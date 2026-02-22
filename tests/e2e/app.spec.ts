@@ -119,7 +119,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   );
   await expect(firstForestRow.getByRole("link", { name: "Area 1" })).toHaveAttribute(
     "href",
-    "https://example.com/a"
+    "https://example.com/a#:~:text=Forest%20A"
   );
 
   const totalRows = await page.getByTestId("forest-row").count();
@@ -426,7 +426,7 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
   );
   await expect(page.getByRole("link", { name: "Belangalo State Forest" })).toHaveAttribute(
     "href",
-    "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw"
+    "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw#:~:text=Belangalo%20State%20Forest"
   );
 });
 
