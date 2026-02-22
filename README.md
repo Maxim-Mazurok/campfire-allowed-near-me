@@ -3,13 +3,16 @@
 TypeScript full-stack app that answers: **Where is the closest NSW state forest where a campfire is legal right now?**
 
 ## Disclaimer
-This project was developed with **Codex using the GPT-5.3.-Codex model**.
+This project was developed with **Codex using the GPT-5.3-Codex model**.
 
 ## Features
 - Scrapes Forestry Corporation NSW fire-ban page and linked area pages.
 - Loads NSW RFS Total Fire Ban status data and fire weather area map data.
 - Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
-- Uses both **Solid Fuel Fire Ban** and **Total Fire Ban** status for campfire legality.
+- Scrapes Forestry NSW closures/notices feed (`https://forestclosure.fcnsw.net`) and matches notices to forests.
+- Applies only closures/notices active right now (future and expired notices are ignored).
+- Extracts structured closure impacts (camping, 2WD, 4WD) from notice prose using deterministic rules, with optional Azure OpenAI enrichment.
+- Uses **Solid Fuel Fire Ban** and **Total Fire Ban** data in forest status, and excludes fully closed forests from nearest legal recommendations.
 - Ignores Firewood collection status for campfire legality.
 - Resolves forest coordinates with local Nominatim first for fast initial results, then enriches/upgrades coordinates in the background with Google Places.
 - Supports optional local Nominatim fallback (`NOMINATIM_BASE_URL`) for high-volume/local development geocoding.
@@ -18,13 +21,19 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 - Route settings let users choose `No tolls` (default) or `Allow toll roads`.
 - Refreshes run as a background task with websocket progress updates (`/api/refresh/ws`).
 - Sidebar filters:
-  - Solid Fuel Fire Ban (`All`, `Not banned`, `Banned`, `Unknown`)
-  - Total Fire Ban (`All`, `No ban`, `Banned`, `Unknown`)
+   - Solid Fuel Fire Ban (`All`, `Not banned`, `Banned`, `Unknown`)
+   - Total Fire Ban (`All`, `No ban`, `Banned`, `Unknown`)
+  - Closures/notices status (`All`, `Open only`, `No full closures`, `Has notices`)
+  - Closure notice tags (`road/trail`, `camping`, `event`, `operations/safety`)
+  - Planning impact warnings (`camping`, `2WD/4WD access`)
   - Tri-state facilities (`with`, `without`, `doesn't matter`)
 - Matches Forestry fire-ban forests to directory forests with fuzzy name scoring for minor naming differences/typos.
 - Uses browser geolocation and computes nearest legal spot.
+- Excludes forests marked fully closed from nearest legal campfire recommendations.
 - Shows matching forests as large red map pins and non-matching forests as smaller grey pins.
 - Shows per-forest facility icon rows in the list for quick vertical scanning.
+- Shows orange warning state on facility icons when notice impacts conflict with listed facilities (for camping and 2WD/4WD access).
+- Shows closure badges (`Closed`, `Partial`, `Notice`) next to fire-ban badges.
 - Persists coordinates in local SQLite cache (`data/cache/coordinates.sqlite`).
 - Persists route metrics in local SQLite cache (`data/cache/routes.sqlite`) and reuses cache for user locations within a 5km radius.
 - Falls back to stale in-memory data if live scraping is temporarily blocked.
@@ -108,8 +117,23 @@ npm run warm:coordinates
 - `WEB_PREVIEW_PORT` (default `4173`)
 - `FORESTRY_ENTRY_URL` (default Forestry Corporation solid-fuel-fire-ban URL)
 - `FORESTRY_DIRECTORY_URL` (default Forestry Corporation forests directory URL)
+- `FORESTRY_CLOSURES_URL` (default `https://forestclosure.fcnsw.net`)
+- `FORESTRY_MAX_CLOSURE_CONCURRENCY` (default `4`, concurrent closure detail fetches)
 - `FORESTRY_RAW_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json`)
 - `FORESTRY_RAW_CACHE_TTL_MS` (default `3600000`)
+- `CLOSURE_LLM_ENABLED` (`true|false`; default auto-enabled when Azure credentials are present)
+- `CLOSURE_LLM_ENV_FILE` (optional env file to preload credentials; useful with `/Users/max/scenario-lab/.env.local`)
+- `AZURE_OPENAI_ENDPOINT` (required for AI enrichment)
+- `AZURE_OPENAI_API_KEY` (required for AI enrichment)
+- `CLOSURE_LLM_DEPLOYMENT` (preferred Azure deployment name; falls back to `AZURE_OPENAI_DEPLOYMENT_REASONER`)
+- `CLOSURE_LLM_DEPLOYMENT_DEEP` (optional deep model deployment; also reads `AZURE_OPENAI_DEPLOYMENT_DEEP`)
+- `CLOSURE_LLM_MODEL_PROFILE` (`balanced|max_quality|low_cost`; also reads `SCENARIO_LAB_MODEL_PROFILE`)
+- `CLOSURE_LLM_TIMEOUT_MS` (default `90000`; also reads `SCENARIO_LAB_TIMEOUT_SEC`)
+- `CLOSURE_LLM_RATE_LIMIT_RETRIES` (default `2`; also reads `SCENARIO_LAB_RATE_LIMIT_RETRIES`)
+- `CLOSURE_LLM_MIN_CALL_INTERVAL_MS` (default `15000`; also reads `SCENARIO_LAB_MIN_CALL_INTERVAL_SEC`)
+- `CLOSURE_LLM_MAX_NOTICES_PER_REFRESH` (default `12`, cost-control cap)
+- `CLOSURE_LLM_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/closure-llm-impacts.json`)
+- `CLOSURE_LLM_CACHE_TTL_MS` (default `604800000`, 7 days)
 - `SCRAPE_TTL_MS` (default `900000`, in-memory processed snapshot TTL)
 - `GOOGLE_MAPS_API_KEY` (required for Google Places geocoding and Google Routes driving metrics)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
@@ -132,6 +156,7 @@ npm run warm:coordinates
 
 ## Caching Strategy
 - Raw Forestry page cache: `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json` (shared across worktrees, 1-hour TTL by default).
+- Closure LLM impact cache: `os.tmpdir()/campfire-allowed-near-me/closure-llm-impacts.json` (7-day TTL by default).
 - Processed snapshot cache: disabled by default; optional via `FORESTRY_SNAPSHOT_PATH`.
 - Coordinate cache: `data/cache/coordinates.sqlite` (ignored in git).
 - Route cache: `data/cache/routes.sqlite` (ignored in git, no TTL; reused for user locations within 5km).
