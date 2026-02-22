@@ -471,12 +471,17 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
         matchDiagnostics: {
-          unmatchedFacilitiesForests: ["Coolangubra State Forest"],
+          unmatchedFacilitiesForests: ["Coolangubra State Forest", "Bermagui State Forest"],
           fuzzyMatches: [
             {
               fireBanForestName: "Belangalo State Forest",
               facilitiesForestName: "Belanglo State Forest",
               score: 0.96
+            },
+            {
+              fireBanForestName: "Belangalo State Forest",
+              facilitiesForestName: "Belangaloo State Forest",
+              score: 0.91
             }
           ]
         },
@@ -507,11 +512,14 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
   });
 
   await page.goto("/");
-  await expect(page.getByTestId("warnings-btn")).toContainText("2");
+  await expect(page.getByTestId("warnings-btn")).toContainText("4");
   await page.getByTestId("warnings-btn").click();
 
   await expect(page.getByTestId("warnings-dialog")).toContainText(
-    "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages."
+    "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages."
+  );
+  await expect(page.getByTestId("warnings-dialog")).toContainText(
+    "Applied fuzzy facilities matching for 2 forest name(s) with minor naming differences."
   );
   await expect(page.getByTestId("warnings-dialog")).not.toContainText(
     "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest."
@@ -532,7 +540,9 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
     "href",
     "https://www.forestrycorporation.com.au/visit/forests/belanglo-state-forest"
   );
-  await expect(page.getByRole("link", { name: "Belangalo State Forest" })).toHaveAttribute(
+  const fireBanForestLinks = page.getByRole("link", { name: "Belangalo State Forest" });
+  await expect(fireBanForestLinks).toHaveCount(2);
+  await expect(fireBanForestLinks.first()).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw#:~:text=Belangalo%20State%20Forest"
   );

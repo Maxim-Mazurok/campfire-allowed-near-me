@@ -352,19 +352,37 @@ export const App = () => {
       !/Applied fuzzy facilities matching/i.test(warning)
   );
   const facilitiesMismatchWarningText =
-    baseWarnings.find((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning)) ??
-    `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`;
+    matchDiagnostics.unmatchedFacilitiesForests.length > 0
+      ? `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`
+      :
+          baseWarnings.find((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning)) ??
+          `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`;
   const facilitiesMismatchWarningSummary = facilitiesMismatchWarningText.replace(
     /(not present on the Solid Fuel Fire Ban pages)\s*:.*$/i,
     "$1."
   );
   const fuzzyMatchesWarningText =
-    baseWarnings.find((warning) => /Applied fuzzy facilities matching/i.test(warning)) ??
-    `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`;
+    matchDiagnostics.fuzzyMatches.length > 0
+      ? `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`
+      :
+          baseWarnings.find((warning) => /Applied fuzzy facilities matching/i.test(warning)) ??
+          `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`;
+  const facilitiesMismatchWarningCount =
+    matchDiagnostics.unmatchedFacilitiesForests.length > 0
+      ? matchDiagnostics.unmatchedFacilitiesForests.length
+      : hasFacilitiesMismatchWarning
+        ? 1
+        : 0;
+  const fuzzyMatchesWarningCount =
+    matchDiagnostics.fuzzyMatches.length > 0
+      ? matchDiagnostics.fuzzyMatches.length
+      : hasFuzzyMatchesWarning
+        ? 1
+        : 0;
   const warningCount =
     generalWarnings.length +
-    (hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? 1 : 0) +
-    (hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? 1 : 0);
+    facilitiesMismatchWarningCount +
+    fuzzyMatchesWarningCount;
   const unmatchedFacilitiesForestNames = useMemo(
     () => new Set(matchDiagnostics.unmatchedFacilitiesForests.map(normalizeForestName)),
     [matchDiagnostics.unmatchedFacilitiesForests]
