@@ -35,3 +35,13 @@ This file gives baseline instructions for AI coding agents collaborating in this
 ## Documentation
 - Keep README quick starts current for users and developers.
 - Mention any required external setup (for example `npx playwright install chromium`).
+
+## Future AI instructions
+- Treat completed roadmap phases as ongoing standards, not tasks to reopen.
+- Convert one-off implementation plans into durable guidance in `docs/` after completion.
+- Keep `docs/ai-implementation-handoff.md` aligned with current architecture and performance behavior.
+- When performance-related code changes land, document:
+	- what changed,
+	- why it improves maintainability/performance,
+	- how it was validated (`npm run typecheck`, `npm test`).
+- Prefer adding concise operational guidance over long historical phase logs.

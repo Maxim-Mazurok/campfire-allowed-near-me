@@ -13,27 +13,14 @@ Hard policy constraints:
 - Keep Forestry NSW `Solid Fuel Fire Ban` as legality source of truth.
 - Do not use firewood collection status for legality logic.
 
-## Current top priorities
+## Ongoing engineering guidance
 
-1. Reduce architecture bottlenecks (`App.tsx`, `LiveForestDataService`).
-2. Unify shared API/web types in `packages/shared`.
-3. Improve performance for larger forest sets.
-4. Prepare source connector architecture for expansion.
-
-## Recommended first implementation sequence
-
-### Step 1: Shared contracts extraction
-- Move duplicate DTO types into `packages/shared/src/contracts.ts`.
-- Update API and web imports.
-- Ensure no behavior changes.
-
-### Step 2: Service decomposition
-- Extract pure helper modules from `LiveForestDataService`.
-- Keep orchestration in existing class to minimize churn.
-
-### Step 3: Web selector and component extraction
-- Move filter/sort/warning derivation logic into selectors.
-- Split rendering into feature components.
+These are continuous standards (not a one-time phase plan):
+- Keep shared contracts in `packages/shared/src` and consume them from both API and web.
+- Keep UI/business/networking concerns separated into focused modules and hooks.
+- Preserve map/list UX while iterating on performance (no regressions that hide markers or details).
+- Prefer behavior-preserving refactors before adding new feature complexity.
+- Bias toward small, testable changes that can be validated quickly.
 
 ### Current implementation snapshot
 - Shared API and websocket contracts are now consumed from `packages/shared/src` by both API and web.
@@ -52,14 +39,16 @@ Hard policy constraints:
 - `ForestListPanel` now isolates virtualization into `VirtualizedForestList`, so `useVirtualizer` only runs when list size crosses the virtualization threshold.
 - `ForestListPanel` now skips clone/sort work when 0–1 forests are present.
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
-- Current high-impact map/list rendering phases are complete; next work can focus on optional scalability features (for example marker clustering) if real-world dataset size grows beyond current assumptions.
+- High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
 
-### Step 4: Performance iteration (completed)
-- List virtualization and map rendering optimizations have been implemented while preserving UX.
+## Future AI operating mode
 
-### Step 5: Connector scaffolding
-- Introduce `SourceConnector` interface.
-- Adapt current Forestry path to use it.
+When continuing work in this repository:
+- Treat this document as living guidance; update it whenever architecture or runtime behavior meaningfully changes.
+- Avoid reopening completed “phase” checklists; add forward-looking guidance instead.
+- Keep changes congruent with `AGENTS.md` and `.github/copilot-instructions.md`.
+- For performance work, include both implementation and verification notes (what changed + how validated).
+- If introducing new optimization knobs, document defaults and trade-offs.
 
 ## Change safety checklist for AI agents
 
