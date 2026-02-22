@@ -15,6 +15,8 @@ export type ForestListPanelProps = {
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
+  forestListSortOption: ForestListSortOption;
+  onForestListSortOptionChange: (option: ForestListSortOption) => void;
 };
 
 const FOREST_LIST_VIRTUALIZATION_THRESHOLD = 120;
@@ -182,11 +184,11 @@ export const ForestListPanel = memo(({
   payload,
   avoidTolls,
   hoveredForestId,
-  onHoveredForestIdChange
+  onHoveredForestIdChange,
+  forestListSortOption,
+  onForestListSortOptionChange
 }: ForestListPanelProps) => {
   const [forestSearchText, setForestSearchText] = useState("");
-  const [forestListSortOption, setForestListSortOption] =
-    useState<ForestListSortOption>("DRIVING_DISTANCE_ASC");
   const sortedMatchingForests = useMemo(() => {
     if (matchingForests.length <= 1) {
       return matchingForests;
@@ -257,7 +259,7 @@ export const ForestListPanel = memo(({
         className="forest-sort-select"
         value={forestListSortOption}
         onChange={(event) => {
-          setForestListSortOption(event.target.value as ForestListSortOption);
+          onForestListSortOptionChange(event.target.value as ForestListSortOption);
         }}
       >
         <option value="DRIVING_DISTANCE_ASC">Driving distance (low to high)</option>

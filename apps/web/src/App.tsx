@@ -24,6 +24,7 @@ import {
   type BanFilterMode,
   type ClosureFilterMode,
   type FireBanForestSortColumn,
+  type ForestListSortOption,
   type SortDirection,
   type TriStateMode,
   type UserPreferences
@@ -95,6 +96,9 @@ export const App = () => {
     () => getInitialPreferences().avoidTolls ?? true
   );
   const [hoveredForestId, setHoveredForestId] = useState<string | null>(null);
+  const [forestListSortOption, setForestListSortOption] = useState<ForestListSortOption>(
+    () => getInitialPreferences().forestListSortOption ?? "DRIVING_TIME_ASC"
+  );
   const forestsQueryKey = useMemo(
     () => buildForestsQueryKey(userLocation, { avoidTolls }),
     [userLocation?.latitude, userLocation?.longitude, avoidTolls]
@@ -167,7 +171,8 @@ export const App = () => {
       impactCampingFilterMode,
       impactAccessFilterMode,
       userLocation,
-      avoidTolls
+      avoidTolls,
+      forestListSortOption
     });
   }, [
     solidFuelBanFilterMode,
@@ -178,7 +183,8 @@ export const App = () => {
     impactCampingFilterMode,
     impactAccessFilterMode,
     userLocation,
-    avoidTolls
+    avoidTolls,
+    forestListSortOption
   ]);
 
   const refreshTaskStatusText = useRefreshTaskStatusText(refreshTaskState);
@@ -501,6 +507,8 @@ export const App = () => {
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={setHoveredForestId}
+          forestListSortOption={forestListSortOption}
+          onForestListSortOptionChange={setForestListSortOption}
         />
       </section>
     </main>

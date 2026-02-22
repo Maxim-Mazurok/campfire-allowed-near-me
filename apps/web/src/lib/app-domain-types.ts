@@ -23,4 +23,5 @@ export type UserPreferences = {
   impactAccessFilterMode?: TriStateMode;
   userLocation?: UserLocation | null;
   avoidTolls?: boolean;
+  forestListSortOption?: ForestListSortOption;
 };

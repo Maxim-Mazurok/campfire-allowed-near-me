@@ -1,4 +1,4 @@
-import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, ClosureFilterMode, TriStateMode } from "./app-domain-types";
+import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, ClosureFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
 
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 
@@ -31,6 +31,12 @@ const isClosureFilterMode = (value: unknown): value is ClosureFilterMode =>
 
 const isTriStateMode = (value: unknown): value is TriStateMode =>
   value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
+
+const isForestListSortOption = (value: unknown): value is ForestListSortOption =>
+  value === "DRIVING_DISTANCE_ASC" ||
+  value === "DRIVING_DISTANCE_DESC" ||
+  value === "DRIVING_TIME_ASC" ||
+  value === "DRIVING_TIME_DESC";
 
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -117,6 +123,10 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
 
     if (isBoolean(rawPreferences.avoidTolls)) {
       preferences.avoidTolls = rawPreferences.avoidTolls;
+    }
+
+    if (isForestListSortOption(rawPreferences.forestListSortOption)) {
+      preferences.forestListSortOption = rawPreferences.forestListSortOption;
     }
 
     return preferences;
