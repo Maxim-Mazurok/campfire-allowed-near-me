@@ -40,7 +40,11 @@ const DEFAULT_OPTIONS: Required<Omit<LiveForestDataServiceOptions, "scraper" | "
 };
 
 const FACILITY_MATCH_THRESHOLD = 0.62;
-const SNAPSHOT_FORMAT_VERSION = 2;
+const SNAPSHOT_FORMAT_VERSION = 3;
+const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
+const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on fire-ban pages";
+const UNKNOWN_FIRE_BAN_STATUS_TEXT =
+  "Unknown (not listed on Solid Fuel Fire Ban pages)";
 
 interface FacilityMatchResult {
   facilities: Record<string, FacilityValue>;
@@ -227,7 +231,19 @@ export class LiveForestDataService implements ForestDataService {
   }
 
   private hasUnknownStatuses(snapshot: PersistedSnapshot): boolean {
-    return snapshot.forests.some((forest) => forest.banStatus === "UNKNOWN");
+    const intentionallyUnknownForests = new Set(
+      (snapshot.matchDiagnostics?.unmatchedFacilitiesForests ?? [])
+        .map((forestName) => normalizeForestLabel(forestName))
+        .filter(Boolean)
+    );
+
+    return snapshot.forests.some((forest) => {
+      if (forest.banStatus !== "UNKNOWN") {
+        return false;
+      }
+
+      return !intentionallyUnknownForests.has(normalizeForestLabel(forest.forestName));
+    });
   }
 
   private async resolveSnapshot(forceRefresh = false): Promise<PersistedSnapshot> {
@@ -588,6 +604,31 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     const unmatchedFacilitiesForests = facilityAssignments.diagnostics.unmatchedFacilitiesForests;
+
+    for (const forestName of unmatchedFacilitiesForests) {
+      const geocode = await this.geocoder.geocodeForest(forestName);
+      const directoryFacilities = this.createMatchedFacilities(
+        directory,
+        byForestName,
+        [forestName]
+      );
+
+      points.push({
+        id: `${slugify("unmatched-fire-ban")}-${slugify(forestName)}`,
+        source: this.options.sourceName,
+        areaName: UNKNOWN_FIRE_BAN_AREA_NAME,
+        areaUrl: FIRE_BAN_ENTRY_URL,
+        forestName,
+        forestUrl: byForestUrl.get(forestName) ?? null,
+        banStatus: "UNKNOWN",
+        banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT,
+        latitude: geocode.latitude,
+        longitude: geocode.longitude,
+        geocodeName: geocode.displayName,
+        geocodeConfidence: geocode.confidence,
+        facilities: directoryFacilities
+      });
+    }
 
     if (unmatchedFacilitiesForests.length) {
       const sample = unmatchedFacilitiesForests.slice(0, 8);

@@ -103,6 +103,7 @@ describe("LiveForestDataService facilities matching", () => {
       const unmatched = response.forests.find((forest) =>
         /completely different/i.test(forest.forestName)
       );
+      const awaba = response.forests.find((forest) => forest.forestName === "Awaba State Forest");
 
       expect(response.availableFacilities.map((facility) => facility.key)).toEqual([
         "fishing",
@@ -120,6 +121,15 @@ describe("LiveForestDataService facilities matching", () => {
         camping: null
       });
       expect(unmatched?.forestUrl).toBeNull();
+      expect(awaba?.banStatus).toBe("UNKNOWN");
+      expect(awaba?.banStatusText).toContain("Unknown");
+      expect(awaba?.facilities).toEqual({
+        fishing: false,
+        camping: true
+      });
+      expect(awaba?.forestUrl).toBe(
+        "https://www.forestrycorporation.com.au/visit/forests/awaba-state-forest"
+      );
       expect(
         response.warnings.some((warning) => warning.includes("fuzzy facilities matching"))
       ).toBe(true);
@@ -138,6 +148,67 @@ describe("LiveForestDataService facilities matching", () => {
           score: expect.any(Number)
         }
       ]);
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("reuses fresh snapshots when unknown statuses are only from facilities-only forests", async () => {
+    let scrapeCalls = 0;
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "Southern Highlands",
+          areaUrl: "https://example.com/southern-highlands",
+          status: "NOT_BANNED",
+          statusText: "No Solid Fuel Fire Ban",
+          forests: ["Belangalo State Forest"]
+        }
+      ],
+      directory: makeDirectoryFixture(),
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => {
+        scrapeCalls += 1;
+        return scrapeFixture;
+      }
+    };
+
+    const geocoder = {
+      geocodeArea: async () => ({
+        latitude: -34.5,
+        longitude: 150.3,
+        displayName: "Southern Highlands",
+        confidence: 0.9
+      }),
+      geocodeForest: async () => ({
+        latitude: -34.5,
+        longitude: 150.3,
+        displayName: "Mock Forest",
+        confidence: 0.8
+      })
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-live-service-cache-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder
+      });
+
+      const first = await service.getForestData();
+      const second = await service.getForestData();
+
+      expect(scrapeCalls).toBe(1);
+      expect(first.forests.some((forest) => forest.forestName === "Awaba State Forest")).toBe(true);
+      expect(second.forests.some((forest) => forest.forestName === "Awaba State Forest")).toBe(
+        true
+      );
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
     }

@@ -206,13 +206,16 @@ export class OSMGeocoder {
 
   async geocodeForest(
     forestName: string,
-    areaName: string
+    areaName?: string
   ): Promise<GeocodeResponse> {
     const queryForestName = /state forest/i.test(forestName)
       ? forestName
       : `${forestName} State Forest`;
-    const query = `${queryForestName}, ${areaName}, New South Wales, Australia`;
-    const forestKey = `forest:${areaName}:${forestName}`;
+    const normalizedAreaName = areaName?.trim();
+    const query = normalizedAreaName
+      ? `${queryForestName}, ${normalizedAreaName}, New South Wales, Australia`
+      : `${queryForestName}, New South Wales, Australia`;
+    const forestKey = `forest:${normalizedAreaName ?? ""}:${forestName}`;
     return this.geocodeQuery(query, forestKey);
   }
 
