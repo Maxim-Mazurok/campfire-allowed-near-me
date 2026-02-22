@@ -146,7 +146,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     .toBeGreaterThan(0);
 });
 
-test("shows stale warning banner when upstream scrape falls back to cache", async ({
+test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({
   page
 }) => {
   await page.route("**/api/forests**", async (route) => {
@@ -170,7 +170,76 @@ test("shows stale warning banner when upstream scrape falls back to cache", asyn
   });
 
   await page.goto("/");
-  await expect(page.getByTestId("warning-banner")).toContainText(
+  await expect(page.getByTestId("warnings-btn")).toContainText("1");
+  await page.getByTestId("warnings-btn").click();
+  await expect(page.getByTestId("warnings-dialog")).toContainText(
     "anti-bot verification blocked scraping"
+  );
+});
+
+test("shows facilities mismatch and fuzzy-match details in warnings dialog with links", async ({
+  page
+}) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: ["Coolangubra State Forest"],
+          fuzzyMatches: [
+            {
+              fireBanForestName: "Belangalo State Forest",
+              facilitiesForestName: "Belanglo State Forest",
+              score: 0.96
+            }
+          ]
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "forest-a",
+            source: "Forestry Corporation NSW",
+            areaName: "South Coast",
+            areaUrl:
+              "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw",
+            forestName: "Belangalo State Forest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -35.2,
+            longitude: 150.4,
+            geocodeName: "Belangalo State Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: 10.2,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("warnings-btn")).toContainText("2");
+  await page.getByTestId("warnings-btn").click();
+
+  await expect(page.getByTestId("warnings-dialog")).toContainText(
+    "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages."
+  );
+  await expect(page.getByRole("link", { name: "Coolangubra State Forest" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests/coolangubra-state-forest"
+  );
+  await expect(page.getByRole("link", { name: "Belanglo State Forest" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/forests/belanglo-state-forest"
+  );
+  await expect(page.getByRole("link", { name: "Belangalo State Forest" })).toHaveAttribute(
+    "href",
+    "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw"
   );
 });

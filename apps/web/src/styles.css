@@ -54,6 +54,29 @@ body {
   align-items: center;
 }
 
+.warnings-btn {
+  margin-left: auto;
+  min-width: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-color: #d59f2f;
+  background: #fff9e8;
+}
+
+.warnings-btn:disabled {
+  border-color: #c5c9c5;
+  background: #f6f7f6;
+  color: #7a8380;
+  cursor: default;
+}
+
+.warnings-btn-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid #a8b9ad;
@@ -318,27 +341,60 @@ button {
 
 .warning-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 20px;
 }
 
 .warning-list li {
   margin-bottom: 6px;
 }
 
-.inline-popover-btn {
-  margin-left: 8px;
-  padding: 2px 7px;
-  font-size: 0.74rem;
+.warnings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
 }
 
-.warning-popover {
-  max-height: 280px;
+.warnings-dialog {
+  width: min(780px, 100%);
+  max-height: min(82dvh, 760px);
   overflow: auto;
 }
 
-.warning-popover-list {
-  margin: 7px 0 0;
-  padding-left: 16px;
+.warnings-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.warnings-dialog-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.warnings-section {
+  border-top: 1px solid #dfe8de;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.warnings-section h3 {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+}
+
+.warnings-section a {
+  color: #1c4a76;
+}
+
+.warnings-section a:hover {
+  color: #123a63;
 }
 
 .tippy-box {

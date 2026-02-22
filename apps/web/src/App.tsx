@@ -26,10 +26,30 @@ const sortForestsByDistance = (
   return left.distanceKm - right.distanceKm;
 };
 
+const FORESTRY_BASE_URL = "https://www.forestrycorporation.com.au";
+
+const slugifyPathSegment = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+
+const buildFacilitiesForestUrl = (forestName: string): string =>
+  `${FORESTRY_BASE_URL}/visit/forests/${slugifyPathSegment(forestName)}`;
+
+const normalizeForestName = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+
 export const App = () => {
   const [payload, setPayload] = useState<ForestApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [warningsOpen, setWarningsOpen] = useState(false);
   const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>("ALL");
   const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
     {}
@@ -146,25 +166,40 @@ export const App = () => {
   const baseWarnings = (payload?.warnings ?? []).filter(
     (warning) => !/Facilities data could not be matched for/i.test(warning)
   );
-  const warningLines = [...baseWarnings];
-
-  if (
-    matchDiagnostics.unmatchedFacilitiesForests.length > 0 &&
-    !warningLines.some((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning))
-  ) {
-    warningLines.push(
-      `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`
-    );
-  }
-
-  if (
-    matchDiagnostics.fuzzyMatches.length > 0 &&
-    !warningLines.some((warning) => /Applied fuzzy facilities matching/i.test(warning))
-  ) {
-    warningLines.push(
-      `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`
-    );
-  }
+  const hasFacilitiesMismatchWarning = baseWarnings.some((warning) =>
+    /not present on the Solid Fuel Fire Ban pages/i.test(warning)
+  );
+  const hasFuzzyMatchesWarning = baseWarnings.some((warning) =>
+    /Applied fuzzy facilities matching/i.test(warning)
+  );
+  const generalWarnings = baseWarnings.filter(
+    (warning) =>
+      !/not present on the Solid Fuel Fire Ban pages/i.test(warning) &&
+      !/Applied fuzzy facilities matching/i.test(warning)
+  );
+  const facilitiesMismatchWarningText =
+    baseWarnings.find((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning)) ??
+    `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`;
+  const fuzzyMatchesWarningText =
+    baseWarnings.find((warning) => /Applied fuzzy facilities matching/i.test(warning)) ??
+    `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`;
+  const warningCount =
+    generalWarnings.length +
+    (hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? 1 : 0) +
+    (hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? 1 : 0);
+  const fireBanAreaUrlByForestName = useMemo(() => {
+    const byForestName = new Map<string, string>();
+    for (const forest of forests) {
+      const normalizedForestName = normalizeForestName(forest.forestName);
+      if (!byForestName.has(normalizedForestName)) {
+        byForestName.set(normalizedForestName, forest.areaUrl);
+      }
+    }
+    return byForestName;
+  }, [forests]);
+  const getFireBanAreaUrl = (forestName: string): string =>
+    fireBanAreaUrlByForestName.get(normalizeForestName(forestName)) ??
+    `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`;
 
   const requestLocation = (options?: { silent?: boolean }) => {
     if (!navigator.geolocation) {
@@ -218,6 +253,17 @@ export const App = () => {
           <button type="button" onClick={() => void loadData({ refresh: true })}>
             Refresh from source
           </button>
+          <button
+            type="button"
+            className="warnings-btn"
+            data-testid="warnings-btn"
+            aria-label={`Warnings (${warningCount})`}
+            onClick={() => setWarningsOpen(true)}
+            disabled={warningCount === 0}
+          >
+            <span aria-hidden="true">⚠</span>
+            <span className="warnings-btn-count">{warningCount}</span>
+          </button>
         </div>
       </header>
 
@@ -233,43 +279,96 @@ export const App = () => {
         </section>
       ) : null}
 
-      {warningLines.length ? (
-        <section className="panel warning" data-testid="warning-banner">
-          <ul className="warning-list">
-            {warningLines.map((warning) => (
-              <li key={warning}>
-                {warning}
-                {/Applied fuzzy facilities matching/i.test(warning) &&
-                matchDiagnostics.fuzzyMatches.length > 0 ? (
-                  <Tippy
-                    interactive
-                    maxWidth={540}
-                    content={
-                      <div className="warning-popover">
-                        <strong>Fuzzy Match Details</strong>
-                        <ul className="warning-popover-list">
-                          {matchDiagnostics.fuzzyMatches.map((match) => (
-                            <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
-                              Facilities: <strong>{match.facilitiesForestName}</strong> {"->"} Fire ban:{" "}
-                              <strong>{match.fireBanForestName}</strong> ({match.score.toFixed(2)})
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    }
-                    delay={[0, 0]}
-                    duration={[0, 0]}
-                    placement="bottom-start"
-                  >
-                    <button type="button" className="inline-popover-btn">
-                      details
-                    </button>
-                  </Tippy>
+      {warningsOpen ? (
+        <div
+          className="warnings-overlay"
+          data-testid="warnings-overlay"
+          role="presentation"
+          onClick={() => setWarningsOpen(false)}
+        >
+          <section
+            className="panel warnings-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="warnings-title"
+            data-testid="warnings-dialog"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="warnings-dialog-header">
+              <h2 id="warnings-title">Warnings ({warningCount})</h2>
+              <button type="button" onClick={() => setWarningsOpen(false)}>
+                Close
+              </button>
+            </div>
+
+            {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
+
+            {generalWarnings.length > 0 ? (
+              <section className="warnings-section">
+                <h3>General</h3>
+                <ul className="warning-list">
+                  {generalWarnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
+              <section className="warnings-section">
+                <h3>Facilities Missing From Fire-Ban Pages</h3>
+                <p className="muted">{facilitiesMismatchWarningText}</p>
+                {matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
+                  <ul className="warning-list">
+                    {matchDiagnostics.unmatchedFacilitiesForests.map((forestName) => (
+                      <li key={forestName}>
+                        <a
+                          href={buildFacilitiesForestUrl(forestName)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {forestName}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 ) : null}
-              </li>
-            ))}
-          </ul>
-        </section>
+              </section>
+            ) : null}
+
+            {hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? (
+              <section className="warnings-section">
+                <h3>Fuzzy Facilities Matching</h3>
+                <p className="muted">{fuzzyMatchesWarningText}</p>
+                {matchDiagnostics.fuzzyMatches.length > 0 ? (
+                  <ul className="warning-list">
+                    {matchDiagnostics.fuzzyMatches.map((match) => (
+                      <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
+                        Facilities:{" "}
+                        <a
+                          href={buildFacilitiesForestUrl(match.facilitiesForestName)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {match.facilitiesForestName}
+                        </a>{" "}
+                        {"->"} Fire ban:{" "}
+                        <a
+                          href={getFireBanAreaUrl(match.fireBanForestName)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {match.fireBanForestName}
+                        </a>{" "}
+                        ({match.score.toFixed(2)})
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </section>
+            ) : null}
+          </section>
+        </div>
       ) : null}
       <section className="layout">
         <aside className="panel filter-panel">
