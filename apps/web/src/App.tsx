@@ -483,6 +483,7 @@ export const App = () => {
               forests={forests}
               matchedForestIds={matchingForestIds}
               userLocation={userLocation}
+              availableFacilities={availableFacilities}
             />
           ) : null}
         </section>

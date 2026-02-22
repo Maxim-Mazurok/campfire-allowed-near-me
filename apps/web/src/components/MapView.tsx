@@ -7,7 +7,8 @@ import {
   TileLayer,
   useMap
 } from "react-leaflet";
-import type { ForestPoint } from "../lib/api";
+import { ForestCardContent } from "./ForestCardContent";
+import type { FacilityDefinition, ForestPoint } from "../lib/api";
 import {
   getUnmatchedMarkerLimitForZoom,
   selectClosestForestsToCenter
@@ -62,38 +63,6 @@ const areMapViewportSnapshotsEqual = (
   );
 };
 
-const formatDriveDuration = (durationMinutes: number | null): string => {
-  if (durationMinutes === null || !Number.isFinite(durationMinutes)) {
-    return "Drive time unavailable";
-  }
-
-  const rounded = Math.max(1, Math.round(durationMinutes));
-  const hours = Math.floor(rounded / 60);
-  const minutes = rounded % 60;
-
-  if (hours === 0) {
-    return `${minutes}m`;
-  }
-
-  if (minutes === 0) {
-    return `${hours}h`;
-  }
-
-  return `${hours}h ${minutes}m`;
-};
-
-const formatDriveSummary = (forest: ForestPoint): string => {
-  if (forest.distanceKm === null) {
-    return "Drive distance unavailable";
-  }
-
-  if (forest.travelDurationMinutes === null) {
-    return `${forest.distanceKm.toFixed(1)} km`;
-  }
-
-  return `${forest.distanceKm.toFixed(1)} km, ${formatDriveDuration(forest.travelDurationMinutes)}`;
-};
-
 const FitToUser = ({
   latitude,
   longitude
@@ -132,25 +101,15 @@ type SelectedForestPopupState = {
 
 const ForestPopupContent = ({
   forest,
-  matchesFilters
+  availableFacilities
 }: {
   forest: ForestWithCoordinates;
-  matchesFilters: boolean;
+  availableFacilities: FacilityDefinition[];
 }) => {
   return (
-    <>
-      <strong>{forest.forestName}</strong>
-      <br />
-      Area: {forest.areaName}
-      <br />
-      Solid fuel: {forest.banStatusText}
-      <br />
-      Total Fire Ban: {forest.totalFireBanStatusText}
-      <br />
-      Matches filters: {matchesFilters ? "Yes" : "No"}
-      <br />
-      Drive: {formatDriveSummary(forest)}
-    </>
+    <div className="forest-popup-card" data-testid="forest-popup-card">
+      <ForestCardContent forest={forest} availableFacilities={availableFacilities} />
+    </div>
   );
 };
 
@@ -189,10 +148,12 @@ const ForestMarker = memo(({
 
 const VisibleForestMarkers = ({
   matchedForests,
-  unmatchedForests
+  unmatchedForests,
+  availableFacilities
 }: {
   matchedForests: ForestWithCoordinates[];
   unmatchedForests: ForestWithCoordinates[];
+  availableFacilities: FacilityDefinition[];
 }) => {
   const map = useMap();
   const [mapViewportSnapshot, setMapViewportSnapshot] =
@@ -334,13 +295,18 @@ const VisibleForestMarkers = ({
         ))}
       </Pane>
 
+      <Pane name="selected-forest-popup" style={{ zIndex: 900 }} />
+
       {selectedForestPopupState ? (
         <Popup
           position={[
             selectedForestPopupState.forest.latitude,
             selectedForestPopupState.forest.longitude
           ]}
-          pane={selectedForestPopupState.matchesFilters ? "matched-forests" : "unmatched-forests"}
+          className="forest-popup"
+          minWidth={420}
+          maxWidth={510}
+          pane="selected-forest-popup"
           eventHandlers={{
             remove: () => {
               setSelectedForestPopupState(null);
@@ -349,7 +315,7 @@ const VisibleForestMarkers = ({
         >
           <ForestPopupContent
             forest={selectedForestPopupState.forest}
-            matchesFilters={selectedForestPopupState.matchesFilters}
+            availableFacilities={availableFacilities}
           />
         </Popup>
       ) : null}
@@ -362,11 +328,13 @@ ForestMarker.displayName = "ForestMarker";
 export const MapView = memo(({
   forests,
   matchedForestIds,
-  userLocation
+  userLocation,
+  availableFacilities
 }: {
   forests: ForestPoint[];
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
+  availableFacilities: FacilityDefinition[];
 }) => {
   const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
     const nextMappedForests: ForestWithCoordinates[] = [];
@@ -429,6 +397,7 @@ export const MapView = memo(({
       <VisibleForestMarkers
         matchedForests={matchedForests}
         unmatchedForests={unmatchedForests}
+        availableFacilities={availableFacilities}
       />
     </MapContainer>
   );

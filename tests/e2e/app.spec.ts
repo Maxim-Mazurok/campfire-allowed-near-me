@@ -126,13 +126,24 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   await expect(page.getByTestId("forest-row").first()).toBeVisible();
 
   const firstForestRow = page.getByTestId("forest-row").first();
-  await expect(firstForestRow.getByRole("link", { name: "Forest A" })).toHaveAttribute(
+  await expect(firstForestRow.getByRole("link", { name: "Forest A", exact: true })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/forests/forest-a"
   );
   await expect(firstForestRow.getByRole("link", { name: "Area 1" })).toHaveAttribute(
     "href",
     "https://example.com/a#:~:text=Forest%20A"
+  );
+  await expect(firstForestRow.getByTestId("forest-navigation-link")).toHaveAttribute(
+    "href",
+    "https://www.google.com/maps/dir/?api=1&destination=-33.9%2C151.1&travelmode=driving"
+  );
+
+  await page.locator(".leaflet-pane.leaflet-map-pane .leaflet-interactive").first().click();
+  await expect(page.getByTestId("forest-popup-card")).toContainText("Forest A");
+  await expect(page.getByTestId("forest-popup-card").getByTestId("forest-navigation-link")).toHaveAttribute(
+    "href",
+    "https://www.google.com/maps/dir/?api=1&destination=-33.9%2C151.1&travelmode=driving"
   );
 
   const totalRows = await page.getByTestId("forest-row").count();

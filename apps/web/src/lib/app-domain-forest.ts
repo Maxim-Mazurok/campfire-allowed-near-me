@@ -109,3 +109,19 @@ export const buildTotalFireBanDetailsUrl = (
 
   return `${TOTAL_FIRE_BAN_SOURCE_URL}?fullAddress=${encodeURIComponent(fullAddress)}&lat=${encodeURIComponent(latitude)}&lng=${encodeURIComponent(longitude)}&placeId=${encodeURIComponent(placeIdentifier)}`;
 };
+
+export const buildGoogleMapsDrivingNavigationUrl = (
+  forest: ForestApiResponse["forests"][number]
+): string => {
+  const hasCoordinates =
+    typeof forest.latitude === "number" &&
+    Number.isFinite(forest.latitude) &&
+    typeof forest.longitude === "number" &&
+    Number.isFinite(forest.longitude);
+
+  const destination = hasCoordinates
+    ? `${forest.latitude},${forest.longitude}`
+    : `${forest.forestName}, ${forest.areaName}, NSW`;
+
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+};

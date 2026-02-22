@@ -374,6 +374,32 @@ button {
   min-width: 0;
 }
 
+.forest-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.forest-navigation-link {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #a8b9ad;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2933;
+  background: #fff;
+  text-decoration: none;
+  flex-shrink: 0;
+  font-size: 0.72rem;
+}
+
+.forest-navigation-link:hover {
+  border-color: #2f855a;
+  color: #2f855a;
+}
+
 .forest-name-link {
   color: inherit;
 }
@@ -410,6 +436,7 @@ button {
 }
 
 a.status-pill {
+  color: #fff;
   text-decoration: none;
 }
 
@@ -694,6 +721,76 @@ a.status-pill {
 
 .map-meta {
   margin-top: 0;
+}
+
+.forest-popup-card {
+  min-width: 420px;
+  max-width: 510px;
+}
+
+.forest-popup .leaflet-popup-content-wrapper {
+  max-width: none;
+}
+
+.forest-popup .leaflet-popup-content {
+  width: 420px;
+  max-width: 510px;
+  margin: 10px 12px;
+}
+
+.forest-popup a.leaflet-popup-close-button {
+  width: 20px;
+  height: 20px;
+  right: 0;
+  top: 0;
+  transform: translate(50%, -50%);
+  border-radius: 999px;
+  border: 1px solid #cfd9cf !important;
+  background: #fff !important;
+  box-shadow: 0 4px 10px rgba(47, 72, 66, 0.18) !important;
+  color: #334155 !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0;
+  z-index: 2;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease,
+    color 0.12s ease;
+}
+
+.forest-popup a.leaflet-popup-close-button:hover {
+  color: #1f2933;
+  box-shadow: 0 6px 12px rgba(47, 72, 66, 0.22);
+}
+
+.forest-popup a.leaflet-popup-close-button:focus-visible {
+  outline: 2px solid #aeb8c4;
+  outline-offset: 1px;
+}
+
+.leaflet-popup-content .forest-main-row {
+  margin-bottom: 7px;
+}
+
+.leaflet-popup-content a {
+  color: inherit;
+}
+
+.leaflet-popup-content a.status-pill,
+.leaflet-popup-content a.status-pill:visited,
+.leaflet-popup-content a.status-pill:hover,
+.leaflet-popup-content a.status-pill:active,
+.leaflet-popup-content a.status-pill:focus-visible {
+  color: #fff !important;
 }
 
 .warning-inline {
