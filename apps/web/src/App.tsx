@@ -33,12 +33,7 @@ import {
   buildFacilitiesForestUrl,
   buildTotalFireBanDetailsUrl
 } from "./lib/app-domain-forest";
-import {
-  getForestClosureStatus,
-  getForestImpactSummary,
-  isImpactWarning,
-  matchesBanFilter
-} from "./lib/app-domain-status";
+
 import {
   readUserPreferences,
   writeUserPreferences
@@ -47,6 +42,7 @@ import {
   renderFacilitiesMismatchWarningSummary,
   useWarningDialogData
 } from "./lib/hooks/use-warning-dialog-data";
+import { useForestFilter } from "./lib/hooks/use-forest-filter";
 
 export const App = () => {
   const initialPreferencesRef = useRef<UserPreferences | null>(null);
@@ -236,102 +232,18 @@ export const App = () => {
     );
   };
 
-  const matchingForests = useMemo(() => {
-    return forests.filter((forest) => {
-      const closureStatus = getForestClosureStatus(forest);
-      const impactSummary = getForestImpactSummary(forest);
-      const hasCampingImpactWarning = isImpactWarning(impactSummary.campingImpact);
-      const hasAccessImpactWarning =
-        isImpactWarning(impactSummary.access2wdImpact) ||
-        isImpactWarning(impactSummary.access4wdImpact);
-
-      if (!matchesBanFilter(solidFuelBanFilterMode, forest.banStatus)) {
-        return false;
-      }
-
-      if (!matchesBanFilter(totalFireBanFilterMode, forest.totalFireBanStatus)) {
-        return false;
-      }
-
-      if (closureFilterMode === "OPEN_ONLY" && closureStatus !== "NONE") {
-        return false;
-      }
-
-      if (closureFilterMode === "NO_FULL_CLOSURES" && closureStatus === "CLOSED") {
-        return false;
-      }
-
-      if (closureFilterMode === "HAS_NOTICE" && closureStatus === "NONE") {
-        return false;
-      }
-
-      for (const closureTag of availableClosureTags) {
-        const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
-        if (mode === "ANY") {
-          continue;
-        }
-
-        const value = forest.closureTags?.[closureTag.key] === true;
-        if (mode === "INCLUDE" && !value) {
-          return false;
-        }
-
-        if (mode === "EXCLUDE" && value) {
-          return false;
-        }
-      }
-
-      if (impactCampingFilterMode === "INCLUDE" && !hasCampingImpactWarning) {
-        return false;
-      }
-
-      if (impactCampingFilterMode === "EXCLUDE" && hasCampingImpactWarning) {
-        return false;
-      }
-
-      if (impactAccessFilterMode === "INCLUDE" && !hasAccessImpactWarning) {
-        return false;
-      }
-
-      if (impactAccessFilterMode === "EXCLUDE" && hasAccessImpactWarning) {
-        return false;
-      }
-
-      for (const facility of availableFacilities) {
-        const mode = facilityFilterModes[facility.key] ?? "ANY";
-        if (mode === "ANY") {
-          continue;
-        }
-
-        const value = forest.facilities[facility.key];
-        if (mode === "INCLUDE" && value !== true) {
-          return false;
-        }
-
-        if (mode === "EXCLUDE" && value !== false) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [
-    availableClosureTags,
+  const { matchingForests, matchingForestIds } = useForestFilter({
+    forests,
     availableFacilities,
+    availableClosureTags,
+    solidFuelBanFilterMode,
+    totalFireBanFilterMode,
     closureFilterMode,
     closureTagFilterModes,
     facilityFilterModes,
-    forests,
-    impactAccessFilterMode,
     impactCampingFilterMode,
-    solidFuelBanFilterMode,
-    totalFireBanFilterMode
-  ]);
-
-  const matchingForestIds = useMemo(
-    () => new Set(matchingForests.map((forest) => forest.id)),
-    [matchingForests]
-  );
+    impactAccessFilterMode
+  });
 
   const mappableMatchingForestCount = matchingForests.filter((forest) => forest.latitude !== null && forest.longitude !== null).length;
   const mappableForestCount = forests.filter((forest) => forest.latitude !== null && forest.longitude !== null).length;
