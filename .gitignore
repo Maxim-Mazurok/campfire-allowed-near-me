@@ -11,3 +11,5 @@ data/cache/*.sqlite-*
 .DS_Store
 .env*
 !.env.example
+.tmp*
+**/.tmp*

@@ -31,6 +31,9 @@ This file gives baseline instructions for AI coding agents collaborating in this
 - Coordinate cache is SQLite-backed (`data/cache/coordinates.sqlite`).
 - Do not commit runtime cache DB files.
 - When status parsing changes, avoid reusing stale snapshots with unknown status values.
+- Never auto-delete or auto-recreate the local `campfire-nominatim` Docker container during normal dev flows.
+	- Preserve existing container data and start the existing container if it is stopped.
+	- Recreate only when explicitly requested by the user in the current session.
 
 ## Documentation
 - Keep README quick starts current for users and developers.

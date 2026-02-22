@@ -8,6 +8,7 @@ const MAX_PORT = 65_535;
 const NOMINATIM_CONTAINER_NAME = "campfire-nominatim";
 const DEFAULT_NOMINATIM_IMAGE = "mediagis/nominatim:4.5";
 const DEFAULT_NOMINATIM_PORT = "8080";
+const DEFAULT_NOMINATIM_GUNICORN_WORKERS = "8";
 const DEFAULT_NOMINATIM_DNS_SERVERS = "1.1.1.1,8.8.8.8";
 const DEFAULT_NOMINATIM_PBF_URL =
   "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf";
@@ -141,6 +142,45 @@ const getContainerDnsServers = async (containerName: string): Promise<string[]> 
   }
 };
 
+const getContainerEnvironmentVariables = async (
+  containerName: string
+): Promise<Record<string, string>> => {
+  try {
+    const environmentJson = await runDockerCommand([
+      "inspect",
+      "--format",
+      "{{json .Config.Env}}",
+      containerName
+    ]);
+
+    const parsed = JSON.parse(environmentJson) as unknown;
+    if (!Array.isArray(parsed)) {
+      return {};
+    }
+
+    const environmentVariables: Record<string, string> = {};
+
+    for (const entry of parsed) {
+      if (typeof entry !== "string") {
+        continue;
+      }
+
+      const equalsIndex = entry.indexOf("=");
+      if (equalsIndex === -1) {
+        continue;
+      }
+
+      const key = entry.slice(0, equalsIndex);
+      const value = entry.slice(equalsIndex + 1);
+      environmentVariables[key] = value;
+    }
+
+    return environmentVariables;
+  } catch {
+    return {};
+  }
+};
+
 const resolveNominatimPbfUrl = async (requestedPbfUrl: string): Promise<string> => {
   try {
     const response = await fetch(requestedPbfUrl, {
@@ -203,6 +243,8 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
 
   const nominatimPort = process.env.NOMINATIM_PORT ?? DEFAULT_NOMINATIM_PORT;
   const nominatimImage = process.env.NOMINATIM_IMAGE ?? DEFAULT_NOMINATIM_IMAGE;
+  const nominatimGunicornWorkers =
+    process.env.NOMINATIM_GUNICORN_WORKERS ?? DEFAULT_NOMINATIM_GUNICORN_WORKERS;
   const nominatimPbfUrl = await resolveNominatimPbfUrl(
     process.env.NOMINATIM_PBF_URL ?? DEFAULT_NOMINATIM_PBF_URL
   );
@@ -224,15 +266,19 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
 
     if (originalExistingContainerId) {
       const configuredDnsServers = await getContainerDnsServers(NOMINATIM_CONTAINER_NAME);
+      const configuredEnvironmentVariables = await getContainerEnvironmentVariables(
+        NOMINATIM_CONTAINER_NAME
+      );
       const expectedDnsServers = normalizeDnsServers(nominatimDnsServers);
       const dnsConfigurationChanged =
         JSON.stringify(configuredDnsServers) !== JSON.stringify(expectedDnsServers);
+      const gunicornWorkersChanged =
+        configuredEnvironmentVariables.GUNICORN_WORKERS !== nominatimGunicornWorkers;
 
-      if (dnsConfigurationChanged) {
-        await runDockerCommand(["rm", "-f", NOMINATIM_CONTAINER_NAME]);
+      if (dnsConfigurationChanged || gunicornWorkersChanged) {
         // eslint-disable-next-line no-console
         console.log(
-          `[dev] Recreating Nominatim container to apply DNS settings: ${expectedDnsServers.join(", ")}.`
+          `[dev] Existing Nominatim container settings differ from requested values. Keeping container/data as-is to avoid reimport. Requested DNS: ${expectedDnsServers.join(", ")}, requested GUNICORN_WORKERS: ${nominatimGunicornWorkers}.`
         );
       }
     }
@@ -258,9 +304,10 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
     }
 
     if (existingContainerId) {
-      await runDockerCommand(["rm", "-f", NOMINATIM_CONTAINER_NAME]);
+      await runDockerCommand(["start", NOMINATIM_CONTAINER_NAME]);
       // eslint-disable-next-line no-console
-      console.log("[dev] Recreating stopped Nominatim container to avoid stale/corrupt import state.");
+      console.log("[dev] Started existing Nominatim container (data preserved).");
+      return;
     }
 
     await runDockerCommand([
@@ -274,6 +321,8 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
       "-e",
       `PBF_URL=${nominatimPbfUrl}`,
       "-e",
+      `GUNICORN_WORKERS=${nominatimGunicornWorkers}`,
+      "-e",
       "REPLICATION_URL=https://download.geofabrik.de/australia-oceania/australia-updates/",
       nominatimImage
     ]);
@@ -285,6 +334,10 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
     // eslint-disable-next-line no-console
     console.log(
       `[dev] Nominatim DNS servers: ${nominatimDnsServers.join(", ")} (configure via NOMINATIM_DNS_SERVERS).`
+    );
+    // eslint-disable-next-line no-console
+    console.log(
+      `[dev] Nominatim Gunicorn workers: ${nominatimGunicornWorkers} (configure via NOMINATIM_GUNICORN_WORKERS).`
     );
 
     const runningAfterCreate = await isContainerRunning(NOMINATIM_CONTAINER_NAME);

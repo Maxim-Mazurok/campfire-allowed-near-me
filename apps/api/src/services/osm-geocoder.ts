@@ -72,6 +72,9 @@ const GOOGLE_KEY_MISSING_WARNING =
   "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap fallback geocoding is active.";
 const DEFAULT_NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
 const DEFAULT_LOCAL_NOMINATIM_PORT = "8080";
+const DEFAULT_LOCAL_NOMINATIM_DELAY_MS = 200;
+const DEFAULT_LOCAL_NOMINATIM_HTTP_429_RETRIES = 4;
+const DEFAULT_LOCAL_NOMINATIM_HTTP_429_RETRY_DELAY_MS = 1_500;
 
 const resolvePreferredNominatimBaseUrl = (): string => {
   const configuredBaseUrl = process.env.NOMINATIM_BASE_URL?.trim();
@@ -127,6 +130,12 @@ export class OSMGeocoder {
 
   private readonly retryBaseDelayMs: number;
 
+  private readonly localNominatimDelayMs: number;
+
+  private readonly localNominatimHttp429Retries: number;
+
+  private readonly localNominatimHttp429RetryDelayMs: number;
+
   private readonly maxNewLookupsPerRun: number;
 
   private readonly googleApiKey: string | null;
@@ -157,6 +166,9 @@ export class OSMGeocoder {
     requestTimeoutMs?: number;
     retryAttempts?: number;
     retryBaseDelayMs?: number;
+    localNominatimDelayMs?: number;
+    localNominatimHttp429Retries?: number;
+    localNominatimHttp429RetryDelayMs?: number;
     maxNewLookupsPerRun?: number;
     googleApiKey?: string | null;
     nominatimBaseUrl?: string;
@@ -166,6 +178,21 @@ export class OSMGeocoder {
     this.requestTimeoutMs = options?.requestTimeoutMs ?? 15_000;
     this.retryAttempts = options?.retryAttempts ?? 3;
     this.retryBaseDelayMs = options?.retryBaseDelayMs ?? 750;
+    this.localNominatimDelayMs =
+      options?.localNominatimDelayMs ??
+      Number(process.env.NOMINATIM_LOCAL_DELAY_MS ?? `${DEFAULT_LOCAL_NOMINATIM_DELAY_MS}`);
+    this.localNominatimHttp429Retries =
+      options?.localNominatimHttp429Retries ??
+      Number(
+        process.env.NOMINATIM_LOCAL_429_RETRIES ??
+          `${DEFAULT_LOCAL_NOMINATIM_HTTP_429_RETRIES}`
+      );
+    this.localNominatimHttp429RetryDelayMs =
+      options?.localNominatimHttp429RetryDelayMs ??
+      Number(
+        process.env.NOMINATIM_LOCAL_429_RETRY_DELAY_MS ??
+          `${DEFAULT_LOCAL_NOMINATIM_HTTP_429_RETRY_DELAY_MS}`
+      );
     this.maxNewLookupsPerRun = options?.maxNewLookupsPerRun ?? 25;
     this.googleApiKey = options?.googleApiKey?.trim() || null;
     this.nominatimBaseUrl =
@@ -584,6 +611,10 @@ export class OSMGeocoder {
     let lastErrorMessage: string | null = null;
 
     for (const baseUrl of uniqueNominatimBaseUrls) {
+      const isLocalNominatim = isLocalNominatimBaseUrl(baseUrl);
+      let localNominatimHttp429RetryCount = 0;
+
+      while (true) {
       const url = new URL("/search", baseUrl);
       url.searchParams.set("q", query);
       url.searchParams.set("format", "jsonv2");
@@ -600,20 +631,38 @@ export class OSMGeocoder {
         })
       );
 
-      if (!isLocalNominatimBaseUrl(baseUrl) && this.requestDelayMs > 0) {
+      if (isLocalNominatim && this.localNominatimDelayMs > 0) {
+        await sleep(this.localNominatimDelayMs);
+      }
+
+      if (!isLocalNominatim && this.requestDelayMs > 0) {
         await sleep(this.requestDelayMs);
       }
 
       if (!nominatimRequest.response) {
         lastErrorMessage = nominatimRequest.error;
-        continue;
+        break;
       }
 
       const response = nominatimRequest.response;
 
       if (!response.ok) {
+        if (
+          isLocalNominatim &&
+          response.status === 429 &&
+          localNominatimHttp429RetryCount < this.localNominatimHttp429Retries
+        ) {
+          localNominatimHttp429RetryCount += 1;
+
+          if (this.localNominatimHttp429RetryDelayMs > 0) {
+            await sleep(this.localNominatimHttp429RetryDelayMs);
+          }
+
+          continue;
+        }
+
         lastHttpStatus = response.status;
-        continue;
+        break;
       }
 
       let rows: NominatimRow[];
@@ -621,7 +670,7 @@ export class OSMGeocoder {
         rows = (await response.json()) as NominatimRow[];
       } catch (error) {
         lastErrorMessage = `Invalid JSON response: ${toErrorMessage(error)}`;
-        continue;
+        break;
       }
 
       const resultCount = rows.length;
@@ -629,14 +678,14 @@ export class OSMGeocoder {
 
       if (!top?.lat || !top?.lon) {
         lastErrorMessage = `Empty result from ${baseUrl}`;
-        continue;
+        break;
       }
 
       const latitude = Number(top.lat);
       const longitude = Number(top.lon);
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
         lastErrorMessage = `Invalid coordinates from ${baseUrl}`;
-        continue;
+        break;
       }
 
       const hit: GeocodeHit = {
@@ -661,6 +710,7 @@ export class OSMGeocoder {
           }
         )
       };
+    }
     }
 
     if (lastHttpStatus !== null) {
@@ -885,15 +935,40 @@ export class OSMGeocoder {
       ? normalizedForestName
       : `${normalizedForestName} State Forest`;
     const normalizedAreaName = areaName?.trim();
+    const forestNameWithoutStateForest = normalizedForestName
+      .replace(/\bstate\s+forest\b/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const simplifiedAreaName = normalizedAreaName
+      ? normalizedAreaName
+        .replace(/\b(state|forests?|around|native|pine|of|the|region)\b/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+      : null;
 
     const queryCandidates = [
       `${queryForestName}, New South Wales, Australia`,
       `${normalizedForestName}, New South Wales, Australia`,
+      forestNameWithoutStateForest
+        ? `${forestNameWithoutStateForest}, New South Wales, Australia`
+        : null,
       normalizedAreaName
         ? `${queryForestName}, near ${normalizedAreaName}, New South Wales, Australia`
         : null,
       normalizedAreaName
         ? `${queryForestName}, ${normalizedAreaName}, New South Wales, Australia`
+        : null,
+      normalizedAreaName && forestNameWithoutStateForest
+        ? `${forestNameWithoutStateForest}, ${normalizedAreaName}, New South Wales, Australia`
+        : null,
+      simplifiedAreaName && forestNameWithoutStateForest
+        ? `${forestNameWithoutStateForest}, ${simplifiedAreaName}, New South Wales, Australia`
+        : null,
+      normalizedAreaName
+        ? `${normalizedAreaName}, New South Wales, Australia`
+        : null,
+      simplifiedAreaName
+        ? `${simplifiedAreaName}, New South Wales, Australia`
         : null
     ].filter((value): value is string => Boolean(value));
 
