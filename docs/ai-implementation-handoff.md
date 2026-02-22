@@ -1,6 +1,6 @@
 # AI Implementation Handoff Guide
 
-Last updated: 2026-02-22
+Last updated: 2026-02-23
 
 This guide is optimized for AI coding agents making iterative changes safely.
 
@@ -54,9 +54,8 @@ Hard policy constraints:
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - Current high-impact map/list rendering phases are complete; next work can focus on optional scalability features (for example marker clustering) if real-world dataset size grows beyond current assumptions.
 
-### Step 4: Performance iteration
-- Add list virtualization and marker rendering strategy.
-- Keep UX unchanged.
+### Step 4: Performance iteration (completed)
+- List virtualization and map rendering optimizations have been implemented while preserving UX.
 
 ### Step 5: Connector scaffolding
 - Introduce `SourceConnector` interface.
