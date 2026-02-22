@@ -81,7 +81,7 @@ export const FireBanForestTableDialog = ({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={2}>No forests are currently available from fire-ban pages.</td>
+                  <td colSpan={2}>No forests are currently available from Solid Fuel Fire Ban pages.</td>
                 </tr>
               )}
             </tbody>

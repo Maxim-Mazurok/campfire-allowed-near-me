@@ -76,7 +76,7 @@ export const createForestsRouter = (
       });
     } catch (error) {
       return res.status(500).json({
-        error: "Unable to load fire-ban forest data",
+        error: "Unable to load forest data",
         message: error instanceof Error ? error.message : "Unknown error"
       });
     }

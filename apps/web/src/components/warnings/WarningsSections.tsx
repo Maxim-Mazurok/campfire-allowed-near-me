@@ -132,7 +132,7 @@ export const WarningsSections = ({
     {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
       <details className="warnings-section warnings-section-collapsible" open>
         <summary className="warnings-section-summary">
-          Facilities Missing From Fire-Ban Pages
+          Facilities Missing From Solid Fuel Fire Ban Pages
         </summary>
         <p className="muted">
           {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}

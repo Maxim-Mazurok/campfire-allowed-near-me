@@ -1592,7 +1592,7 @@ export class LiveForestDataService implements ForestDataService {
           ? ` (+${closureAssignments.diagnostics.unmatchedNotices.length - sample.length} more)`
           : "";
       warningSet.add(
-        `Could not match ${closureAssignments.diagnostics.unmatchedNotices.length} closure notice(s) to fire-ban forest names: ${sample.join(", ")}${suffix}.`
+        `Could not match ${closureAssignments.diagnostics.unmatchedNotices.length} closure notice(s) to Solid Fuel Fire Ban forest names: ${sample.join(", ")}${suffix}.`
       );
     }
 
