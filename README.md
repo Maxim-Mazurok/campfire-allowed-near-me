@@ -36,9 +36,9 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
    ```bash
    npm run dev
    ```
-6. Open:
-   - Web: [http://localhost:5173](http://localhost:5173)
-   - API: [http://localhost:8787/api/forests](http://localhost:8787/api/forests)
+6. Open the URLs printed in the terminal.
+   - Default first picks are Web `http://localhost:5173` and API `http://localhost:8787`.
+   - If those ports are busy, the next available ports are selected automatically.
 
 Optional: warm up local coordinate cache once:
 ```bash
@@ -65,16 +65,23 @@ npm run warm:coordinates
    ```
 
 ## Scripts
-- `npm run dev`: run API and web together.
-- `npm run dev:api`: run backend only.
-- `npm run dev:web`: run frontend only.
+- `npm run dev`: find free ports, then run API and web together.
+- `npm run dev:api`: run backend only (auto-increments to next free port if needed).
+- `npm run dev:web`: run frontend only (Vite auto-increments to next free port if needed).
 - `npm run warm:coordinates`: force refresh and populate coordinate cache.
 - `npm run typecheck`: TypeScript checks.
 - `npm test`: unit + integration + e2e.
 - `npm run build`: backend + frontend production build.
 
 ## Environment Variables
-- `PORT` (default `8787`)
+- `API_PORT_START` (default `8787`, used by `npm run dev`)
+- `WEB_PORT_START` (default `5173`, used by `npm run dev`)
+- `PORT` (default `8787`, API server port when running `npm run dev:api`)
+- `STRICT_PORT=1` (disable API auto-increment and fail immediately if `PORT` is busy)
+- `VITE_API_PROXY_TARGET` (default `http://localhost:8787`, proxy target for `npm run dev:web`)
+- `WEB_PORT` (default `5173`, frontend dev port for `npm run dev:web`)
+- `VITE_STRICT_PORT=1` (frontend must bind exactly to `WEB_PORT`; otherwise fail)
+- `WEB_PREVIEW_PORT` (default `4173`)
 - `FORESTRY_ENTRY_URL` (default Forestry Corporation solid-fuel-fire-ban URL)
 - `FORESTRY_DIRECTORY_URL` (default Forestry Corporation forests directory URL)
 - `SCRAPE_TTL_MS` (default `900000`)

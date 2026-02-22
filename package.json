@@ -5,7 +5,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "dev": "concurrently -k \"npm run dev:api\" \"npm run dev:web\"",
+    "dev": "tsx scripts/dev.ts",
     "dev:api": "tsx watch apps/api/src/index.ts",
     "dev:web": "vite --config apps/web/vite.config.ts",
     "build": "npm run build:api && npm run build:web",
