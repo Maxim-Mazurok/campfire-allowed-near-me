@@ -15,6 +15,8 @@ import {
 
 type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
+type FireBanForestSortColumn = "forestName" | "areaName";
+type SortDirection = "asc" | "desc";
 type UserPreferences = {
   banFilterMode?: BanFilterMode;
   facilityFilterModes?: Record<string, TriStateMode>;
@@ -25,6 +27,10 @@ const FIRE_BAN_SOURCE_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
+const ALPHABETICAL_COLLATOR = new Intl.Collator("en-AU", {
+  sensitivity: "base",
+  numeric: true
+});
 
 const isHttpUrl = (value?: string | null): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
@@ -210,6 +216,11 @@ export const App = () => {
   const queryClient = useQueryClient();
   const [locationError, setLocationError] = useState<string | null>(null);
   const [warningsOpen, setWarningsOpen] = useState(false);
+  const [fireBanForestTableOpen, setFireBanForestTableOpen] = useState(false);
+  const [fireBanForestSortColumn, setFireBanForestSortColumn] =
+    useState<FireBanForestSortColumn>("forestName");
+  const [fireBanForestSortDirection, setFireBanForestSortDirection] =
+    useState<SortDirection>("asc");
   const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().banFilterMode ?? "ALL"
   );
@@ -354,6 +365,48 @@ export const App = () => {
     generalWarnings.length +
     (hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? 1 : 0) +
     (hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? 1 : 0);
+  const unmatchedFacilitiesForestNames = useMemo(
+    () => new Set(matchDiagnostics.unmatchedFacilitiesForests.map(normalizeForestName)),
+    [matchDiagnostics.unmatchedFacilitiesForests]
+  );
+  const fireBanPageForests = useMemo(
+    () =>
+      forests.filter(
+        (forest) => !unmatchedFacilitiesForestNames.has(normalizeForestName(forest.forestName))
+      ),
+    [forests, unmatchedFacilitiesForestNames]
+  );
+  const sortedFireBanPageForests = useMemo(() => {
+    const getSortValue = (
+      forest: ForestApiResponse["forests"][number],
+      sortColumn: FireBanForestSortColumn
+    ): string => (sortColumn === "forestName" ? forest.forestName : forest.areaName);
+
+    return [...fireBanPageForests].sort((left, right) => {
+      const primaryResult = ALPHABETICAL_COLLATOR.compare(
+        getSortValue(left, fireBanForestSortColumn),
+        getSortValue(right, fireBanForestSortColumn)
+      );
+      const normalizedPrimaryResult =
+        fireBanForestSortDirection === "asc" ? primaryResult : -primaryResult;
+
+      if (normalizedPrimaryResult !== 0) {
+        return normalizedPrimaryResult;
+      }
+
+      const secondaryColumn = fireBanForestSortColumn === "forestName" ? "areaName" : "forestName";
+      const secondaryResult = ALPHABETICAL_COLLATOR.compare(
+        getSortValue(left, secondaryColumn),
+        getSortValue(right, secondaryColumn)
+      );
+
+      if (secondaryResult !== 0) {
+        return secondaryResult;
+      }
+
+      return left.id.localeCompare(right.id);
+    });
+  }, [fireBanPageForests, fireBanForestSortColumn, fireBanForestSortDirection]);
   const fireBanAreaUrlByForestName = useMemo(() => {
     const byForestName = new Map<string, string>();
     for (const forest of forests) {
@@ -370,6 +423,27 @@ export const App = () => {
         `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`,
       forestName
     );
+  const closeWarningsDialog = () => {
+    setWarningsOpen(false);
+    setFireBanForestTableOpen(false);
+  };
+  const openFireBanForestTable = () => {
+    setFireBanForestTableOpen(true);
+  };
+  const closeFireBanForestTable = () => {
+    setFireBanForestTableOpen(false);
+  };
+  const toggleFireBanForestSort = (column: FireBanForestSortColumn) => {
+    if (fireBanForestSortColumn === column) {
+      setFireBanForestSortDirection((current) => (current === "asc" ? "desc" : "asc"));
+      return;
+    }
+
+    setFireBanForestSortColumn(column);
+    setFireBanForestSortDirection("asc");
+  };
+  const fireBanForestTableSortLabel =
+    fireBanForestSortDirection === "asc" ? "A-Z" : "Z-A";
 
   const refreshFromSource = () => {
     setLocationError(null);
@@ -469,7 +543,10 @@ export const App = () => {
             className="warnings-btn"
             data-testid="warnings-btn"
             aria-label={`Warnings (${warningCount})`}
-            onClick={() => setWarningsOpen(true)}
+            onClick={() => {
+              setWarningsOpen(true);
+              setFireBanForestTableOpen(false);
+            }}
             disabled={warningCount === 0}
           >
             <span aria-hidden="true">⚠</span>
@@ -511,97 +588,185 @@ export const App = () => {
       ) : null}
 
       {warningsOpen ? (
-        <div
-          className="warnings-overlay"
-          data-testid="warnings-overlay"
-          role="presentation"
-          onClick={() => setWarningsOpen(false)}
-        >
-          <section
-            className="panel warnings-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="warnings-title"
-            data-testid="warnings-dialog"
-            onClick={(event) => event.stopPropagation()}
+        <>
+          <div
+            className="warnings-overlay"
+            data-testid="warnings-overlay"
+            role="presentation"
+            onClick={closeWarningsDialog}
           >
-            <div className="warnings-dialog-header">
-              <h2 id="warnings-title">Warnings ({warningCount})</h2>
-              <button type="button" onClick={() => setWarningsOpen(false)}>
-                Close
-              </button>
-            </div>
+            <section
+              className="panel warnings-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="warnings-title"
+              data-testid="warnings-dialog"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="warnings-dialog-header">
+                <h2 id="warnings-title">Warnings ({warningCount})</h2>
+                <button type="button" onClick={closeWarningsDialog}>
+                  Close
+                </button>
+              </div>
 
-            {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
+              {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
 
-            {generalWarnings.length > 0 ? (
-              <section className="warnings-section">
-                <h3>General</h3>
-                <ul className="warning-list">
-                  {generalWarnings.map((warning) => (
-                    <li key={warning}>{warning}</li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
+              {generalWarnings.length > 0 ? (
+                <section className="warnings-section">
+                  <h3>General</h3>
+                  <ul className="warning-list">
+                    {generalWarnings.map((warning) => (
+                      <li key={warning}>{warning}</li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
 
-            {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
-              <section className="warnings-section">
-                <h3>Facilities Missing From Fire-Ban Pages</h3>
-                <p className="muted">
-                  {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}
+              {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
+                <section className="warnings-section">
+                  <h3>Facilities Missing From Fire-Ban Pages</h3>
+                  <p className="muted">
+                    {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}
+                    {" "}
+                    <button
+                      type="button"
+                      className="text-btn"
+                      onClick={openFireBanForestTable}
+                      data-testid="open-fire-ban-forest-table-btn"
+                    >
+                      (see full list)
+                    </button>
+                  </p>
+                  {matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
+                    <ul className="warning-list">
+                      {matchDiagnostics.unmatchedFacilitiesForests.map((forestName) => (
+                        <li key={forestName}>
+                          <a
+                            href={buildFacilitiesForestUrl(forestName)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {forestName}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </section>
+              ) : null}
+
+              {hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? (
+                <section className="warnings-section">
+                  <h3>Fuzzy Facilities Matching</h3>
+                  <p className="muted">{fuzzyMatchesWarningText}</p>
+                  {matchDiagnostics.fuzzyMatches.length > 0 ? (
+                    <ul className="warning-list">
+                      {matchDiagnostics.fuzzyMatches.map((match) => (
+                        <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
+                          Facilities:{" "}
+                          <a
+                            href={buildFacilitiesForestUrl(match.facilitiesForestName)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {match.facilitiesForestName}
+                          </a>{" "}
+                          {"->"} Fire ban:{" "}
+                          <a
+                            href={getFireBanAreaUrl(match.fireBanForestName)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {match.fireBanForestName}
+                          </a>{" "}
+                          ({match.score.toFixed(2)})
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </section>
+              ) : null}
+            </section>
+          </div>
+          {fireBanForestTableOpen ? (
+            <div
+              className="warnings-overlay fire-ban-forest-table-overlay"
+              data-testid="fire-ban-forest-table-overlay"
+              role="presentation"
+              onClick={closeFireBanForestTable}
+            >
+              <section
+                className="panel warnings-dialog fire-ban-forest-table-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="fire-ban-forest-table-title"
+                data-testid="fire-ban-forest-table-dialog"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <div className="warnings-dialog-header">
+                  <h2 id="fire-ban-forest-table-title">
+                    Solid Fuel Fire Ban Forests ({fireBanPageForests.length})
+                  </h2>
+                  <button type="button" onClick={closeFireBanForestTable}>
+                    Close
+                  </button>
+                </div>
+                <p className="muted fire-ban-forest-table-hint">
+                  Sort columns alphabetically by clicking the table headers.
                 </p>
-                {matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
-                  <ul className="warning-list">
-                    {matchDiagnostics.unmatchedFacilitiesForests.map((forestName) => (
-                      <li key={forestName}>
-                        <a
-                          href={buildFacilitiesForestUrl(forestName)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {forestName}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+                <div className="fire-ban-forest-table-wrap">
+                  <table className="fire-ban-forest-table" data-testid="fire-ban-forest-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <button
+                            type="button"
+                            className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "forestName" ? "is-active" : ""}`}
+                            data-testid="fire-ban-forest-table-forest-sort"
+                            onClick={() => toggleFireBanForestSort("forestName")}
+                          >
+                            Forest name{" "}
+                            {fireBanForestSortColumn === "forestName"
+                              ? `(${fireBanForestTableSortLabel})`
+                              : ""}
+                          </button>
+                        </th>
+                        <th scope="col">
+                          <button
+                            type="button"
+                            className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "areaName" ? "is-active" : ""}`}
+                            data-testid="fire-ban-forest-table-region-sort"
+                            onClick={() => toggleFireBanForestSort("areaName")}
+                          >
+                            Region name{" "}
+                            {fireBanForestSortColumn === "areaName"
+                              ? `(${fireBanForestTableSortLabel})`
+                              : ""}
+                          </button>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedFireBanPageForests.length > 0 ? (
+                        sortedFireBanPageForests.map((forest) => (
+                          <tr key={`${forest.id}:fire-ban-table`} data-testid="fire-ban-forest-table-row">
+                            <td>{forest.forestName}</td>
+                            <td>{forest.areaName}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={2}>No forests are currently available from fire-ban pages.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </section>
-            ) : null}
-
-            {hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? (
-              <section className="warnings-section">
-                <h3>Fuzzy Facilities Matching</h3>
-                <p className="muted">{fuzzyMatchesWarningText}</p>
-                {matchDiagnostics.fuzzyMatches.length > 0 ? (
-                  <ul className="warning-list">
-                    {matchDiagnostics.fuzzyMatches.map((match) => (
-                      <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
-                        Facilities:{" "}
-                        <a
-                          href={buildFacilitiesForestUrl(match.facilitiesForestName)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {match.facilitiesForestName}
-                        </a>{" "}
-                        {"->"} Fire ban:{" "}
-                        <a
-                          href={getFireBanAreaUrl(match.fireBanForestName)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {match.fireBanForestName}
-                        </a>{" "}
-                        ({match.score.toFixed(2)})
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </section>
-            ) : null}
-          </section>
-        </div>
+            </div>
+          ) : null}
+        </>
       ) : null}
       <section className="layout">
         <aside className="panel filter-panel">

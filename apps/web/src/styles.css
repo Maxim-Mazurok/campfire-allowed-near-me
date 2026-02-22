@@ -441,6 +441,62 @@ button {
   color: #123a63;
 }
 
+.fire-ban-forest-table-overlay {
+  z-index: 1500;
+}
+
+.fire-ban-forest-table-dialog {
+  width: min(860px, 100%);
+}
+
+.fire-ban-forest-table-hint {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.fire-ban-forest-table-wrap {
+  border: 1px solid #dfe8de;
+  border-radius: 10px;
+  overflow: auto;
+}
+
+.fire-ban-forest-table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+
+.fire-ban-forest-table th,
+.fire-ban-forest-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5ebe6;
+  vertical-align: top;
+}
+
+.fire-ban-forest-table th {
+  position: sticky;
+  top: 0;
+  background: #f5f9f6;
+  z-index: 1;
+}
+
+.fire-ban-forest-sort-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-weight: 700;
+  color: #3a4752;
+}
+
+.fire-ban-forest-sort-btn.is-active {
+  color: #1d4e89;
+}
+
+.fire-ban-forest-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .tippy-box {
   font-size: 0.74rem;
   transition-duration: 0ms !important;

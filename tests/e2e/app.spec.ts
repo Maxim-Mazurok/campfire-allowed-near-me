@@ -538,6 +538,120 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
   );
 });
 
+test("opens fire-ban forest table from warnings and sorts by forest and region", async ({
+  page
+}) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: ["Coolangubra State Forest"],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "fire-ban-zulu",
+            source: "Forestry Corporation NSW",
+            areaName: "Far North",
+            areaUrl: "https://example.com/far-north",
+            forestName: "Zulu State Forest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -29.2,
+            longitude: 153.5,
+            geocodeName: "Zulu State Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: null,
+            facilities: {}
+          },
+          {
+            id: "fire-ban-alpha",
+            source: "Forestry Corporation NSW",
+            areaName: "South Coast",
+            areaUrl: "https://example.com/south-coast",
+            forestName: "Alpha State Forest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -35.5,
+            longitude: 150.2,
+            geocodeName: "Alpha State Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: null,
+            facilities: {}
+          },
+          {
+            id: "fire-ban-beta",
+            source: "Forestry Corporation NSW",
+            areaName: "Central West",
+            areaUrl: "https://example.com/central-west",
+            forestName: "Beta State Forest",
+            banStatus: "BANNED",
+            banStatusText: "Solid Fuel Fire Ban",
+            latitude: -33.4,
+            longitude: 149.6,
+            geocodeName: "Beta State Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: null,
+            facilities: {}
+          },
+          {
+            id: "facilities-only-coolangubra",
+            source: "Forestry Corporation NSW",
+            areaName: "Unknown (not listed on Solid Fuel Fire Ban pages)",
+            areaUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
+            forestName: "Coolangubra State Forest",
+            banStatus: "UNKNOWN",
+            banStatusText: "Unknown (not listed on Solid Fuel Fire Ban pages)",
+            latitude: -36.4,
+            longitude: 149.2,
+            geocodeName: "Coolangubra State Forest",
+            geocodeConfidence: 0.5,
+            distanceKm: null,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await page.getByTestId("warnings-btn").click();
+  await page.getByTestId("open-fire-ban-forest-table-btn").click();
+
+  const table = page.getByTestId("fire-ban-forest-table");
+  await expect(table).toBeVisible();
+  await expect(page.getByTestId("fire-ban-forest-table-row")).toHaveCount(3);
+  await expect(table).not.toContainText("Coolangubra State Forest");
+
+  const firstRow = page.getByTestId("fire-ban-forest-table-row").first();
+  await expect(firstRow).toContainText("Alpha State Forest");
+  await expect(firstRow).toContainText("South Coast");
+
+  await page.getByTestId("fire-ban-forest-table-region-sort").click();
+  await expect(firstRow).toContainText("Beta State Forest");
+  await expect(firstRow).toContainText("Central West");
+
+  await page.getByTestId("fire-ban-forest-table-region-sort").click();
+  await expect(firstRow).toContainText("Alpha State Forest");
+  await expect(firstRow).toContainText("South Coast");
+
+  await page.getByTestId("fire-ban-forest-table-forest-sort").click();
+  await expect(firstRow).toContainText("Alpha State Forest");
+  await expect(firstRow).toContainText("South Coast");
+
+  await page.getByTestId("fire-ban-forest-table-forest-sort").click();
+  await expect(firstRow).toContainText("Zulu State Forest");
+  await expect(firstRow).toContainText("Far North");
+});
+
 test("prompts for location access when geolocation is unavailable", async ({
   page
 }) => {
