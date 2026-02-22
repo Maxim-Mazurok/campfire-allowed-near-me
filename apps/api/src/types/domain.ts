@@ -37,6 +37,59 @@ export interface ForestTotalFireBanDiagnostics {
   debug: string[];
 }
 
+export type ClosureNoticeStatus = "NOTICE" | "PARTIAL" | "CLOSED";
+export type ClosureStatus = "NONE" | ClosureNoticeStatus;
+export type ClosureTagKey = "ROAD_ACCESS" | "CAMPING" | "EVENT" | "OPERATIONS";
+export type ClosureImpactLevel = "NONE" | "ADVISORY" | "RESTRICTED" | "CLOSED" | "UNKNOWN";
+export type ClosureImpactConfidence = "LOW" | "MEDIUM" | "HIGH";
+
+export interface ClosureTagDefinition {
+  key: ClosureTagKey;
+  label: string;
+}
+
+export interface ClosureNoticeStructuredImpact {
+  source: "RULES" | "LLM";
+  confidence: ClosureImpactConfidence;
+  campingImpact: ClosureImpactLevel;
+  access2wdImpact: ClosureImpactLevel;
+  access4wdImpact: ClosureImpactLevel;
+  rationale: string | null;
+}
+
+export interface ClosureImpactSummary {
+  campingImpact: ClosureImpactLevel;
+  access2wdImpact: ClosureImpactLevel;
+  access4wdImpact: ClosureImpactLevel;
+}
+
+export interface ForestClosureNotice {
+  id: string;
+  title: string;
+  detailUrl: string;
+  listedAt: string | null;
+  listedAtText: string | null;
+  untilAt: string | null;
+  untilText: string | null;
+  forestNameHint: string | null;
+  status: ClosureNoticeStatus;
+  tags: ClosureTagKey[];
+  detailText?: string | null;
+  structuredImpact?: ClosureNoticeStructuredImpact | null;
+}
+
+export interface FuzzyClosureMatch {
+  noticeId: string;
+  noticeTitle: string;
+  matchedForestName: string;
+  score: number;
+}
+
+export interface ClosureMatchDiagnostics {
+  unmatchedNotices: ForestClosureNotice[];
+  fuzzyMatches: FuzzyClosureMatch[];
+}
+
 export interface FacilityForestEntry {
   forestName: string;
   forestUrl?: string | null;
@@ -78,6 +131,10 @@ export interface ForestPoint {
   geocodeDiagnostics?: ForestGeocodeDiagnostics | null;
   totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, FacilityValue>;
+  closureStatus?: ClosureStatus;
+  closureNotices?: ForestClosureNotice[];
+  closureTags?: Partial<Record<ClosureTagKey, boolean>>;
+  closureImpactSummary?: ClosureImpactSummary;
   distanceKm: number | null;
   travelDurationMinutes: number | null;
 }
@@ -111,7 +168,9 @@ export interface ForestApiResponse {
   stale: boolean;
   sourceName: string;
   availableFacilities: FacilityDefinition[];
+  availableClosureTags?: ClosureTagDefinition[];
   matchDiagnostics: FacilityMatchDiagnostics;
+  closureDiagnostics?: ClosureMatchDiagnostics;
   forests: ForestPoint[];
   nearestLegalSpot: NearestForest | null;
   warnings: string[];
@@ -143,7 +202,9 @@ export interface PersistedSnapshot {
   stale: boolean;
   sourceName: string;
   availableFacilities: FacilityDefinition[];
+  availableClosureTags?: ClosureTagDefinition[];
   matchDiagnostics: FacilityMatchDiagnostics;
+  closureDiagnostics?: ClosureMatchDiagnostics;
   forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
   warnings: string[];
 }
@@ -159,6 +220,7 @@ export interface ForestDataServiceInput {
 export interface ForestryScrapeResult {
   areas: ForestAreaWithForests[];
   directory: ForestDirectorySnapshot;
+  closures?: ForestClosureNotice[];
   warnings: string[];
 }
 

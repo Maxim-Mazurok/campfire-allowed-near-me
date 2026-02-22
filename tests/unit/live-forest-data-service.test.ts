@@ -238,6 +238,191 @@ describe("LiveForestDataService facilities matching", () => {
     }
   });
 
+  it("attaches closure notices and skips fully closed forests for nearest legal spot", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "South Coast",
+          areaUrl: "https://example.com/south-coast",
+          status: "NOT_BANNED",
+          statusText: "No Solid Fuel Fire Ban",
+          forests: ["Forest A State Forest", "Forest B State Forest"]
+        }
+      ],
+      directory: {
+        filters: [],
+        forests: [],
+        warnings: []
+      },
+      closures: [
+        {
+          id: "100",
+          title: "Forest A State Forest: Closed",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=100",
+          listedAt: "2026-01-01T00:00:00.000Z",
+          listedAtText: "2026-01-01",
+          untilAt: null,
+          untilText: "further notice",
+          forestNameHint: "Forest A State Forest",
+          status: "CLOSED",
+          tags: ["ROAD_ACCESS"],
+          structuredImpact: {
+            source: "RULES",
+            confidence: "HIGH",
+            campingImpact: "CLOSED",
+            access2wdImpact: "CLOSED",
+            access4wdImpact: "CLOSED",
+            rationale: "Full closure."
+          }
+        },
+        {
+          id: "101",
+          title: "Forest B State Forest: Partial closure",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=101",
+          listedAt: "2026-01-02T00:00:00.000Z",
+          listedAtText: "2026-01-02",
+          untilAt: null,
+          untilText: "further notice",
+          forestNameHint: "Forest B State Forest",
+          status: "PARTIAL",
+          tags: ["ROAD_ACCESS"],
+          structuredImpact: {
+            source: "RULES",
+            confidence: "MEDIUM",
+            campingImpact: "RESTRICTED",
+            access2wdImpact: "RESTRICTED",
+            access4wdImpact: "NONE",
+            rationale: "Partial closure."
+          }
+        },
+        {
+          id: "103",
+          title: "Forest B State Forest: Closed for event",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=103",
+          listedAt: "2999-01-01T00:00:00.000Z",
+          listedAtText: "2999-01-01",
+          untilAt: "2999-01-07T00:00:00.000Z",
+          untilText: "2999-01-07",
+          forestNameHint: "Forest B State Forest",
+          status: "CLOSED",
+          tags: ["EVENT"]
+        },
+        {
+          id: "104",
+          title: "Forest B State Forest: Closed due to works",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=104",
+          listedAt: "2000-01-01T00:00:00.000Z",
+          listedAtText: "2000-01-01",
+          untilAt: "2000-01-07T00:00:00.000Z",
+          untilText: "2000-01-07",
+          forestNameHint: "Forest B State Forest",
+          status: "CLOSED",
+          tags: ["OPERATIONS"]
+        },
+        {
+          id: "102",
+          title: "Forest C State Forest: Closed",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=102",
+          listedAt: null,
+          listedAtText: null,
+          untilAt: null,
+          untilText: null,
+          forestNameHint: "Forest C State Forest",
+          status: "CLOSED",
+          tags: []
+        }
+      ],
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocoder = {
+      geocodeArea: async () => ({
+        latitude: -35.2,
+        longitude: 150.8,
+        displayName: "South Coast",
+        confidence: 0.8
+      }),
+      geocodeForest: async (forestName: string) => {
+        if (forestName === "Forest A State Forest") {
+          return {
+            latitude: -35.0,
+            longitude: 150.0,
+            displayName: "Forest A",
+            confidence: 0.9
+          };
+        }
+
+        if (forestName === "Forest B State Forest") {
+          return {
+            latitude: -35.3,
+            longitude: 150.4,
+            displayName: "Forest B",
+            confidence: 0.9
+          };
+        }
+
+        return {
+          latitude: -35.8,
+          longitude: 151.1,
+          displayName: "Other",
+          confidence: 0.6
+        };
+      }
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-live-service-closures-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as OSMGeocoder
+      });
+
+      const response = await service.getForestData({
+        forceRefresh: true,
+        userLocation: { latitude: -35.01, longitude: 150.01 }
+      });
+
+      const forestA = response.forests.find((forest) => forest.forestName === "Forest A State Forest");
+      const forestB = response.forests.find((forest) => forest.forestName === "Forest B State Forest");
+
+      expect(forestA?.closureStatus).toBe("CLOSED");
+      expect(forestA?.closureNotices?.map((notice) => notice.id)).toEqual(["100"]);
+      expect(forestA?.closureImpactSummary).toEqual({
+        campingImpact: "CLOSED",
+        access2wdImpact: "CLOSED",
+        access4wdImpact: "CLOSED"
+      });
+      expect(forestB?.closureStatus).toBe("PARTIAL");
+      expect(forestB?.closureNotices?.map((notice) => notice.id)).toEqual(["101"]);
+      expect(forestB?.closureImpactSummary).toEqual({
+        campingImpact: "RESTRICTED",
+        access2wdImpact: "RESTRICTED",
+        access4wdImpact: "NONE"
+      });
+      expect(forestB?.closureNotices?.map((notice) => notice.id)).not.toContain("103");
+      expect(forestB?.closureNotices?.map((notice) => notice.id)).not.toContain("104");
+      expect(response.nearestLegalSpot?.forestName).toBe("Forest B State Forest");
+      expect(response.closureDiagnostics?.unmatchedNotices).toEqual([
+        expect.objectContaining({
+          id: "102",
+          title: "Forest C State Forest: Closed"
+        })
+      ]);
+      expect(
+        response.warnings.some((warning) => warning.includes("Could not match 1 closure notice"))
+      ).toBe(true);
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("does not reuse an exact-matched facilities forest for fuzzy matching", async () => {
     const scrapeFixture: ForestryScrapeResult = {
       areas: [

@@ -209,6 +209,17 @@ button {
   font-size: 0.8rem;
 }
 
+.closure-filter-group {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 8px;
+}
+
+.closure-filter-meta {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+}
+
 .tri-toggle button {
   width: 30px;
   height: 30px;
@@ -355,6 +366,13 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  gap: 4px;
+}
+
+.status-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 4px;
 }
 

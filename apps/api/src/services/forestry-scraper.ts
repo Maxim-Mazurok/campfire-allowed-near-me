@@ -1,16 +1,21 @@
 import pLimit from "p-limit";
 import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
 import {
+  classifyClosureNoticeTags,
   isCloudflareChallengeHtml,
   parseAreaForestNames,
+  parseClosureNoticeDetailPage,
+  parseClosureNoticesPage,
   parseForestDirectoryFilters,
   parseForestDirectoryForests,
   parseMainFireBanPage
 } from "./forestry-parser.js";
+import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import type {
   ForestAreaWithForests,
+  ForestClosureNotice,
   ForestDirectorySnapshot,
   ForestryScrapeResult
 } from "../types/domain.js";
@@ -18,23 +23,28 @@ import type {
 interface ForestryScraperOptions {
   entryUrl: string;
   forestsDirectoryUrl: string;
+  closuresUrl: string;
   timeoutMs: number;
   maxAreaConcurrency: number;
   maxFilterConcurrency: number;
+  maxClosureConcurrency: number;
   rawPageCachePath: string;
   rawPageCacheTtlMs: number;
 }
 
 interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptions> {
   rawPageCache?: RawPageCache;
+  closureImpactEnricher?: ClosureImpactEnricher;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
   entryUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
+  closuresUrl: "https://forestclosure.fcnsw.net",
   timeoutMs: 60_000,
   maxAreaConcurrency: 3,
   maxFilterConcurrency: 4,
+  maxClosureConcurrency: 4,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000
 };
@@ -69,6 +79,8 @@ export class ForestryScraper {
 
   private readonly rawPageCache: RawPageCache;
 
+  private readonly closureImpactEnricher: ClosureImpactEnricher;
+
   constructor(options?: ForestryScraperConstructorOptions) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
     this.rawPageCache = options?.rawPageCache ??
@@ -76,6 +88,7 @@ export class ForestryScraper {
         filePath: this.options.rawPageCachePath,
         ttlMs: this.options.rawPageCacheTtlMs
       });
+    this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
   }
 
   private async fetchHtml(
@@ -311,6 +324,101 @@ export class ForestryScraper {
     };
   }
 
+  private async scrapeClosures(
+    getContext: () => Promise<BrowserContext>
+  ): Promise<{
+    closures: ForestryScrapeResult["closures"];
+    warnings: string[];
+  }> {
+    const response = await this.fetchHtml(
+      getContext,
+      this.options.closuresUrl,
+      /forest closures|closuredetails/i
+    );
+    const html = response.html;
+
+    if (isCloudflareChallengeHtml(html)) {
+      return {
+        closures: [],
+        warnings: [
+          "Could not load Forestry closures/notices page due to anti-bot verification."
+        ]
+      };
+    }
+
+    const closures = parseClosureNoticesPage(html, response.url);
+    if (!closures.length) {
+      return {
+        closures: [],
+        warnings: [
+          "No closure notices were parsed from Forestry closures/notices page."
+        ]
+      };
+    }
+
+    const detailLimit = pLimit(this.options.maxClosureConcurrency);
+    let detailFailureCount = 0;
+    let detailChallengeCount = 0;
+
+    const closuresWithDetails = await Promise.all(
+      closures.map((closure) =>
+        detailLimit(async (): Promise<ForestClosureNotice> => {
+          try {
+            const detailResponse = await this.fetchHtml(
+              getContext,
+              closure.detailUrl,
+              /more information|go to forest closures list|closures and notices/i
+            );
+            const detailHtml = detailResponse.html;
+            if (isCloudflareChallengeHtml(detailHtml)) {
+              detailChallengeCount += 1;
+              return {
+                ...closure,
+                detailText: null
+              };
+            }
+
+            const detailText = parseClosureNoticeDetailPage(detailHtml);
+            const mergedTags = [...new Set([
+              ...closure.tags,
+              ...classifyClosureNoticeTags(detailText ?? "")
+            ])];
+
+            return {
+              ...closure,
+              detailText,
+              tags: mergedTags
+            };
+          } catch {
+            detailFailureCount += 1;
+            return {
+              ...closure,
+              detailText: null
+            };
+          }
+        })
+      )
+    );
+
+    const structured = await this.closureImpactEnricher.enrichNotices(closuresWithDetails);
+    const warnings = new Set<string>(structured.warnings);
+    if (detailChallengeCount > 0) {
+      warnings.add(
+        `Could not load ${detailChallengeCount} closure detail page(s) due to anti-bot verification.`
+      );
+    }
+    if (detailFailureCount > 0) {
+      warnings.add(
+        `Could not load ${detailFailureCount} closure detail page(s); list titles were used instead.`
+      );
+    }
+
+    return {
+      closures: structured.notices,
+      warnings: [...warnings]
+    };
+  }
+
   async scrape(): Promise<ForestryScrapeResult> {
     const runtime: { browser: Browser | null; context: BrowserContext | null } = {
       browser: null,
@@ -333,15 +441,17 @@ export class ForestryScraper {
     };
 
     try {
-      const [areas, directory] = await Promise.all([
+      const [areas, directory, closuresResult] = await Promise.all([
         this.scrapeAreas(getContext),
-        this.scrapeDirectory(getContext)
+        this.scrapeDirectory(getContext),
+        this.scrapeClosures(getContext)
       ]);
 
       return {
         areas,
         directory,
-        warnings: [...directory.warnings]
+        closures: closuresResult.closures ?? [],
+        warnings: [...new Set([...directory.warnings, ...closuresResult.warnings])]
       };
     } finally {
       const activeContext = runtime.context;

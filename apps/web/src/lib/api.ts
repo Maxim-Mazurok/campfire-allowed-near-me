@@ -35,6 +35,56 @@ export interface ForestTotalFireBanDiagnostics {
   debug: string[];
 }
 
+export type ClosureStatus = "NONE" | "NOTICE" | "PARTIAL" | "CLOSED";
+export type ClosureTagKey = "ROAD_ACCESS" | "CAMPING" | "EVENT" | "OPERATIONS";
+export type ClosureImpactLevel = "NONE" | "ADVISORY" | "RESTRICTED" | "CLOSED" | "UNKNOWN";
+export type ClosureImpactConfidence = "LOW" | "MEDIUM" | "HIGH";
+
+export interface ClosureTagDefinition {
+  key: ClosureTagKey;
+  label: string;
+}
+
+export interface ClosureNoticeStructuredImpact {
+  source: "RULES" | "LLM";
+  confidence: ClosureImpactConfidence;
+  campingImpact: ClosureImpactLevel;
+  access2wdImpact: ClosureImpactLevel;
+  access4wdImpact: ClosureImpactLevel;
+  rationale: string | null;
+}
+
+export interface ClosureImpactSummary {
+  campingImpact: ClosureImpactLevel;
+  access2wdImpact: ClosureImpactLevel;
+  access4wdImpact: ClosureImpactLevel;
+}
+
+export interface ForestClosureNotice {
+  id: string;
+  title: string;
+  detailUrl: string;
+  listedAt: string | null;
+  listedAtText: string | null;
+  untilAt: string | null;
+  untilText: string | null;
+  forestNameHint: string | null;
+  status: "NOTICE" | "PARTIAL" | "CLOSED";
+  tags: ClosureTagKey[];
+  detailText?: string | null;
+  structuredImpact?: ClosureNoticeStructuredImpact | null;
+}
+
+export interface ClosureMatchDiagnostics {
+  unmatchedNotices: ForestClosureNotice[];
+  fuzzyMatches: Array<{
+    noticeId: string;
+    noticeTitle: string;
+    matchedForestName: string;
+    score: number;
+  }>;
+}
+
 export interface ForestPoint {
   id: string;
   source: string;
@@ -53,6 +103,10 @@ export interface ForestPoint {
   geocodeDiagnostics?: ForestGeocodeDiagnostics | null;
   totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, boolean | null>;
+  closureStatus?: ClosureStatus;
+  closureNotices?: ForestClosureNotice[];
+  closureTags?: Partial<Record<ClosureTagKey, boolean>>;
+  closureImpactSummary?: ClosureImpactSummary;
   distanceKm: number | null;
   travelDurationMinutes: number | null;
 }
@@ -71,7 +125,9 @@ export interface ForestApiResponse {
   stale: boolean;
   sourceName: string;
   availableFacilities: FacilityDefinition[];
+  availableClosureTags?: ClosureTagDefinition[];
   matchDiagnostics: FacilityMatchDiagnostics;
+  closureDiagnostics?: ClosureMatchDiagnostics;
   forests: ForestPoint[];
   nearestLegalSpot: {
     id: string;

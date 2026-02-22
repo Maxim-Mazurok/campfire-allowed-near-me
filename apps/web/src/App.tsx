@@ -8,6 +8,8 @@ import { MapView } from "./components/MapView";
 import {
   fetchForests,
   fetchRefreshTaskStatus,
+  type ClosureImpactLevel,
+  type ClosureTagDefinition,
   type ForestLoadProgressState,
   type ForestApiResponse,
   type RefreshTaskState
@@ -21,15 +23,20 @@ import {
 
 type BanFilterMode = "ALL" | "NOT_BANNED" | "BANNED" | "UNKNOWN";
 type LegacyBanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
+type ClosureFilterMode = "ALL" | "OPEN_ONLY" | "NO_FULL_CLOSURES" | "HAS_NOTICE";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
 type FireBanForestSortColumn = "forestName" | "areaName";
 type SortDirection = "asc" | "desc";
 type UserPreferences = {
   solidFuelBanFilterMode?: BanFilterMode;
   totalFireBanFilterMode?: BanFilterMode;
+  closureFilterMode?: ClosureFilterMode;
   // Legacy key from older builds.
   banFilterMode?: LegacyBanFilterMode;
   facilityFilterModes?: Record<string, TriStateMode>;
+  closureTagFilterModes?: Record<string, TriStateMode>;
+  impactCampingFilterMode?: TriStateMode;
+  impactAccessFilterMode?: TriStateMode;
   userLocation?: UserLocation | null;
   avoidTolls?: boolean;
 };
@@ -41,6 +48,7 @@ const TOTAL_FIRE_BAN_SOURCE_URL =
 const TOTAL_FIRE_BAN_RULES_URL =
   "https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans/total-fire-ban-rules";
 const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
+const CLOSURES_SOURCE_URL = "https://forestclosure.fcnsw.net";
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 const ALPHABETICAL_COLLATOR = new Intl.Collator("en-AU", {
   sensitivity: "base",
@@ -267,6 +275,121 @@ const getTotalFireBanStatusLabel = (
   return "Total Fire Ban: unknown";
 };
 
+const getForestClosureStatus = (
+  forest: ForestApiResponse["forests"][number]
+): "NONE" | "NOTICE" | "PARTIAL" | "CLOSED" => {
+  const status = forest.closureStatus;
+  if (status === "NONE" || status === "NOTICE" || status === "PARTIAL" || status === "CLOSED") {
+    return status;
+  }
+
+  return "NONE";
+};
+
+const getClosureStatusLabel = (status: "NONE" | "NOTICE" | "PARTIAL" | "CLOSED"): string => {
+  if (status === "CLOSED") {
+    return "Closed";
+  }
+
+  if (status === "PARTIAL") {
+    return "Partial";
+  }
+
+  if (status === "NOTICE") {
+    return "Notice";
+  }
+
+  return "No notice";
+};
+
+const CLOSURE_IMPACT_ORDER: Record<ClosureImpactLevel, number> = {
+  NONE: 0,
+  ADVISORY: 1,
+  RESTRICTED: 2,
+  CLOSED: 3,
+  UNKNOWN: -1
+};
+
+const mergeImpactLevel = (
+  leftImpact: ClosureImpactLevel,
+  rightImpact: ClosureImpactLevel
+): ClosureImpactLevel => {
+  if (CLOSURE_IMPACT_ORDER[rightImpact] > CLOSURE_IMPACT_ORDER[leftImpact]) {
+    return rightImpact;
+  }
+
+  return leftImpact;
+};
+
+const isImpactWarning = (impactLevel: ClosureImpactLevel): boolean =>
+  impactLevel === "RESTRICTED" || impactLevel === "CLOSED";
+
+type ForestImpactSummary = {
+  campingImpact: ClosureImpactLevel;
+  access2wdImpact: ClosureImpactLevel;
+  access4wdImpact: ClosureImpactLevel;
+};
+
+const getForestImpactSummary = (
+  forest: ForestApiResponse["forests"][number]
+): ForestImpactSummary => {
+  const summary = forest.closureImpactSummary;
+  if (summary) {
+    return {
+      campingImpact: summary.campingImpact,
+      access2wdImpact: summary.access2wdImpact,
+      access4wdImpact: summary.access4wdImpact
+    };
+  }
+
+  const fallback: ForestImpactSummary = {
+    campingImpact: "NONE",
+    access2wdImpact: "NONE",
+    access4wdImpact: "NONE"
+  };
+
+  for (const notice of forest.closureNotices ?? []) {
+    const impact = notice.structuredImpact;
+    if (!impact) {
+      continue;
+    }
+
+    fallback.campingImpact = mergeImpactLevel(fallback.campingImpact, impact.campingImpact);
+    fallback.access2wdImpact = mergeImpactLevel(fallback.access2wdImpact, impact.access2wdImpact);
+    fallback.access4wdImpact = mergeImpactLevel(fallback.access4wdImpact, impact.access4wdImpact);
+  }
+
+  return fallback;
+};
+
+type FacilityImpactTarget = "CAMPING" | "ACCESS_2WD" | "ACCESS_4WD" | null;
+
+const inferFacilityImpactTarget = (
+  facility: ForestApiResponse["availableFacilities"][number]
+): FacilityImpactTarget => {
+  const text = `${facility.iconKey} ${facility.label} ${facility.paramName}`.toLowerCase();
+
+  if (/camp/.test(text)) {
+    return "CAMPING";
+  }
+
+  if (/2wd|two.?wheel/.test(text)) {
+    return "ACCESS_2WD";
+  }
+
+  if (/4wd|four.?wheel/.test(text)) {
+    return "ACCESS_4WD";
+  }
+
+  return null;
+};
+
+const isClosureFilterMode = (value: unknown): value is ClosureFilterMode =>
+  value === "ALL" ||
+  value === "OPEN_ONLY" ||
+  value === "NO_FULL_CLOSURES" ||
+  value === "HAS_NOTICE";
+
 const isTriStateMode = (value: unknown): value is TriStateMode =>
   value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
 
@@ -300,6 +423,10 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
       preferences.totalFireBanFilterMode = rawPreferences.totalFireBanFilterMode;
     }
 
+    if (isClosureFilterMode(rawPreferences.closureFilterMode)) {
+      preferences.closureFilterMode = rawPreferences.closureFilterMode;
+    }
+
     if (
       typeof rawPreferences.facilityFilterModes === "object" &&
       rawPreferences.facilityFilterModes !== null
@@ -311,6 +438,27 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
         }
       }
       preferences.facilityFilterModes = nextFacilityFilterModes;
+    }
+
+    if (
+      typeof rawPreferences.closureTagFilterModes === "object" &&
+      rawPreferences.closureTagFilterModes !== null
+    ) {
+      const nextClosureTagFilterModes: Record<string, TriStateMode> = {};
+      for (const [key, mode] of Object.entries(rawPreferences.closureTagFilterModes)) {
+        if (isTriStateMode(mode)) {
+          nextClosureTagFilterModes[key] = mode;
+        }
+      }
+      preferences.closureTagFilterModes = nextClosureTagFilterModes;
+    }
+
+    if (isTriStateMode(rawPreferences.impactCampingFilterMode)) {
+      preferences.impactCampingFilterMode = rawPreferences.impactCampingFilterMode;
+    }
+
+    if (isTriStateMode(rawPreferences.impactAccessFilterMode)) {
+      preferences.impactAccessFilterMode = rawPreferences.impactAccessFilterMode;
     }
 
     if (rawPreferences.userLocation === null) {
@@ -391,8 +539,20 @@ export const App = () => {
   const [totalFireBanFilterMode, setTotalFireBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().totalFireBanFilterMode ?? "ALL"
   );
+  const [closureFilterMode, setClosureFilterMode] = useState<ClosureFilterMode>(
+    () => getInitialPreferences().closureFilterMode ?? "ALL"
+  );
   const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
     () => getInitialPreferences().facilityFilterModes ?? {}
+  );
+  const [closureTagFilterModes, setClosureTagFilterModes] = useState<Record<string, TriStateMode>>(
+    () => getInitialPreferences().closureTagFilterModes ?? {}
+  );
+  const [impactCampingFilterMode, setImpactCampingFilterMode] = useState<TriStateMode>(
+    () => getInitialPreferences().impactCampingFilterMode ?? "ANY"
+  );
+  const [impactAccessFilterMode, setImpactAccessFilterMode] = useState<TriStateMode>(
+    () => getInitialPreferences().impactAccessFilterMode ?? "ANY"
   );
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
     () => getInitialPreferences().userLocation ?? null
@@ -450,7 +610,9 @@ export const App = () => {
 
   const forests = payload?.forests ?? [];
   const availableFacilities = payload?.availableFacilities ?? [];
+  const availableClosureTags = payload?.availableClosureTags ?? [];
   const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
+  const closureTagSignature = availableClosureTags.map((tag) => tag.key).join("|");
 
   useEffect(() => {
     if (!payload) {
@@ -467,17 +629,39 @@ export const App = () => {
   }, [payload, facilitySignature, availableFacilities]);
 
   useEffect(() => {
+    if (!payload) {
+      return;
+    }
+
+    setClosureTagFilterModes((current) => {
+      const next: Record<string, TriStateMode> = {};
+      for (const closureTag of availableClosureTags) {
+        next[closureTag.key] = current[closureTag.key] ?? "ANY";
+      }
+      return next;
+    });
+  }, [payload, closureTagSignature, availableClosureTags]);
+
+  useEffect(() => {
     writeUserPreferences({
       solidFuelBanFilterMode,
       totalFireBanFilterMode,
+      closureFilterMode,
       facilityFilterModes,
+      closureTagFilterModes,
+      impactCampingFilterMode,
+      impactAccessFilterMode,
       userLocation,
       avoidTolls
     });
   }, [
     solidFuelBanFilterMode,
     totalFireBanFilterMode,
+    closureFilterMode,
     facilityFilterModes,
+    closureTagFilterModes,
+    impactCampingFilterMode,
+    impactAccessFilterMode,
     userLocation,
     avoidTolls
   ]);
@@ -723,13 +907,86 @@ export const App = () => {
     );
   };
 
+  const setSingleClosureTagMode = (key: string, mode: TriStateMode) => {
+    setClosureTagFilterModes((current) => ({
+      ...current,
+      [key]: mode
+    }));
+  };
+
+  const toggleClosureTagMode = (key: string, mode: Exclude<TriStateMode, "ANY">) => {
+    setClosureTagFilterModes((current) => ({
+      ...current,
+      [key]: current[key] === mode ? "ANY" : mode
+    }));
+  };
+
+  const clearClosureTagModes = () => {
+    setClosureTagFilterModes((current) =>
+      Object.fromEntries(
+        Object.keys(current).map((key) => [key, "ANY"])
+      ) as Record<string, TriStateMode>
+    );
+  };
+
   const matchingForests = useMemo(() => {
     return forests.filter((forest) => {
+      const closureStatus = getForestClosureStatus(forest);
+      const impactSummary = getForestImpactSummary(forest);
+      const hasCampingImpactWarning = isImpactWarning(impactSummary.campingImpact);
+      const hasAccessImpactWarning =
+        isImpactWarning(impactSummary.access2wdImpact) ||
+        isImpactWarning(impactSummary.access4wdImpact);
+
       if (!matchesBanFilter(solidFuelBanFilterMode, forest.banStatus)) {
         return false;
       }
 
       if (!matchesBanFilter(totalFireBanFilterMode, forest.totalFireBanStatus)) {
+        return false;
+      }
+
+      if (closureFilterMode === "OPEN_ONLY" && closureStatus !== "NONE") {
+        return false;
+      }
+
+      if (closureFilterMode === "NO_FULL_CLOSURES" && closureStatus === "CLOSED") {
+        return false;
+      }
+
+      if (closureFilterMode === "HAS_NOTICE" && closureStatus === "NONE") {
+        return false;
+      }
+
+      for (const closureTag of availableClosureTags) {
+        const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
+        if (mode === "ANY") {
+          continue;
+        }
+
+        const value = forest.closureTags?.[closureTag.key] === true;
+        if (mode === "INCLUDE" && !value) {
+          return false;
+        }
+
+        if (mode === "EXCLUDE" && value) {
+          return false;
+        }
+      }
+
+      if (impactCampingFilterMode === "INCLUDE" && !hasCampingImpactWarning) {
+        return false;
+      }
+
+      if (impactCampingFilterMode === "EXCLUDE" && hasCampingImpactWarning) {
+        return false;
+      }
+
+      if (impactAccessFilterMode === "INCLUDE" && !hasAccessImpactWarning) {
+        return false;
+      }
+
+      if (impactAccessFilterMode === "EXCLUDE" && hasAccessImpactWarning) {
         return false;
       }
 
@@ -752,9 +1009,14 @@ export const App = () => {
       return true;
     });
   }, [
+    availableClosureTags,
     availableFacilities,
+    closureFilterMode,
+    closureTagFilterModes,
     facilityFilterModes,
     forests,
+    impactAccessFilterMode,
+    impactCampingFilterMode,
     solidFuelBanFilterMode,
     totalFireBanFilterMode
   ]);
@@ -772,6 +1034,10 @@ export const App = () => {
   ).length;
   const matchDiagnostics = payload?.matchDiagnostics ?? {
     unmatchedFacilitiesForests: [],
+    fuzzyMatches: []
+  };
+  const closureDiagnostics = payload?.closureDiagnostics ?? {
+    unmatchedNotices: [],
     fuzzyMatches: []
   };
   const baseWarnings = (payload?.warnings ?? []).filter(
@@ -833,7 +1099,8 @@ export const App = () => {
     unmappedForestWarningCount +
     unknownTotalFireBanWarningCount +
     facilitiesMismatchWarningCount +
-    fuzzyMatchesWarningCount;
+    fuzzyMatchesWarningCount +
+    closureDiagnostics.unmatchedNotices.length;
   const unmatchedFacilitiesForestNames = useMemo(
     () => new Set(matchDiagnostics.unmatchedFacilitiesForests.map(normalizeForestName)),
     [matchDiagnostics.unmatchedFacilitiesForests]
@@ -1439,6 +1706,24 @@ export const App = () => {
                   ) : null}
                 </details>
               ) : null}
+
+              {closureDiagnostics.unmatchedNotices.length > 0 ? (
+                <details className="warnings-section warnings-section-collapsible" open>
+                  <summary className="warnings-section-summary">Unmatched Closure Notices</summary>
+                  <p className="muted">
+                    {closureDiagnostics.unmatchedNotices.length} closure notice(s) could not be matched to forests.
+                  </p>
+                  <ul className="warning-list">
+                    {closureDiagnostics.unmatchedNotices.map((notice) => (
+                      <li key={`unmatched-closure:${notice.id}`}>
+                        <a href={notice.detailUrl} target="_blank" rel="noopener noreferrer">
+                          {notice.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ) : null}
             </section>
           </div>
           {fireBanForestTableOpen ? (
@@ -1628,6 +1913,188 @@ export const App = () => {
             </section>
 
             <section className="filter-section">
+              <h3>
+                <a
+                  className="source-link"
+                  href={CLOSURES_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Closures & Notices
+                </a>
+              </h3>
+              <div className="tri-toggle-group closure-filter-group">
+                <button
+                  type="button"
+                  className={closureFilterMode === "ALL" ? "is-active" : ""}
+                  onClick={() => setClosureFilterMode("ALL")}
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  className={closureFilterMode === "OPEN_ONLY" ? "is-active" : ""}
+                  onClick={() => setClosureFilterMode("OPEN_ONLY")}
+                  data-testid="closure-filter-open-only"
+                >
+                  Open only
+                </button>
+                <button
+                  type="button"
+                  className={closureFilterMode === "NO_FULL_CLOSURES" ? "is-active" : ""}
+                  onClick={() => setClosureFilterMode("NO_FULL_CLOSURES")}
+                  data-testid="closure-filter-no-full"
+                >
+                  No full closures
+                </button>
+                <button
+                  type="button"
+                  className={closureFilterMode === "HAS_NOTICE" ? "is-active" : ""}
+                  onClick={() => setClosureFilterMode("HAS_NOTICE")}
+                  data-testid="closure-filter-has-notice"
+                >
+                  Has notices
+                </button>
+              </div>
+            </section>
+
+            {availableClosureTags.length ? (
+              <section className="filter-section">
+                <div className="filter-section-header">
+                  <h3>Closure tags</h3>
+                  <button type="button" className="text-btn" onClick={clearClosureTagModes}>
+                    Clear
+                  </button>
+                </div>
+                <ul className="facility-filter-list">
+                  {availableClosureTags.map((closureTag: ClosureTagDefinition) => {
+                    const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
+                    return (
+                      <li key={closureTag.key} className="facility-filter-row">
+                        <span className="facility-filter-label">
+                          <span>{closureTag.label}</span>
+                        </span>
+                        <span className="tri-toggle" role="group" aria-label={`${closureTag.label} filter`}>
+                          <button
+                            type="button"
+                            className={mode === "INCLUDE" ? "is-active include" : ""}
+                            onClick={() => toggleClosureTagMode(closureTag.key, "INCLUDE")}
+                            data-testid={`closure-tag-filter-${closureTag.key}-include`}
+                          >
+                            ✓
+                          </button>
+                          <button
+                            type="button"
+                            className={mode === "EXCLUDE" ? "is-active exclude" : ""}
+                            onClick={() => toggleClosureTagMode(closureTag.key, "EXCLUDE")}
+                            data-testid={`closure-tag-filter-${closureTag.key}-exclude`}
+                          >
+                            ✕
+                          </button>
+                          <button
+                            type="button"
+                            className={mode === "ANY" ? "is-active neutral" : ""}
+                            onClick={() => setSingleClosureTagMode(closureTag.key, "ANY")}
+                            data-testid={`closure-tag-filter-${closureTag.key}-any`}
+                          >
+                            ?
+                          </button>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ) : null}
+
+            <section className="filter-section">
+              <h3>Planning impact warnings</h3>
+              <p className="muted closure-filter-meta">
+                Highlight forests where notices suggest camping or access restrictions.
+              </p>
+              <div className="facility-filter-list">
+                <div className="facility-filter-row">
+                  <span className="facility-filter-label">
+                    <span>Camping</span>
+                  </span>
+                  <span className="tri-toggle" role="group" aria-label="Camping impact filter">
+                    <button
+                      type="button"
+                      className={impactCampingFilterMode === "INCLUDE" ? "is-active include" : ""}
+                      onClick={() =>
+                        setImpactCampingFilterMode((current) =>
+                          current === "INCLUDE" ? "ANY" : "INCLUDE"
+                        )
+                      }
+                      data-testid="impact-filter-camping-include"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      type="button"
+                      className={impactCampingFilterMode === "EXCLUDE" ? "is-active exclude" : ""}
+                      onClick={() =>
+                        setImpactCampingFilterMode((current) =>
+                          current === "EXCLUDE" ? "ANY" : "EXCLUDE"
+                        )
+                      }
+                      data-testid="impact-filter-camping-exclude"
+                    >
+                      ✕
+                    </button>
+                    <button
+                      type="button"
+                      className={impactCampingFilterMode === "ANY" ? "is-active neutral" : ""}
+                      onClick={() => setImpactCampingFilterMode("ANY")}
+                      data-testid="impact-filter-camping-any"
+                    >
+                      ?
+                    </button>
+                  </span>
+                </div>
+                <div className="facility-filter-row">
+                  <span className="facility-filter-label">
+                    <span>2WD/4WD access</span>
+                  </span>
+                  <span className="tri-toggle" role="group" aria-label="Access impact filter">
+                    <button
+                      type="button"
+                      className={impactAccessFilterMode === "INCLUDE" ? "is-active include" : ""}
+                      onClick={() =>
+                        setImpactAccessFilterMode((current) =>
+                          current === "INCLUDE" ? "ANY" : "INCLUDE"
+                        )
+                      }
+                      data-testid="impact-filter-access-include"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      type="button"
+                      className={impactAccessFilterMode === "EXCLUDE" ? "is-active exclude" : ""}
+                      onClick={() =>
+                        setImpactAccessFilterMode((current) =>
+                          current === "EXCLUDE" ? "ANY" : "EXCLUDE"
+                        )
+                      }
+                      data-testid="impact-filter-access-exclude"
+                    >
+                      ✕
+                    </button>
+                    <button
+                      type="button"
+                      className={impactAccessFilterMode === "ANY" ? "is-active neutral" : ""}
+                      onClick={() => setImpactAccessFilterMode("ANY")}
+                      data-testid="impact-filter-access-any"
+                    >
+                      ?
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <section className="filter-section">
               <div className="filter-section-header">
                 <h3>
                   <a
@@ -1757,6 +2224,7 @@ export const App = () => {
                       )}
                     </div>
                     <div className="status-block">
+                      <div className="status-pill-row">
                       <span
                         className={`status-pill ${getStatusClassName(forest.banStatus)}`}
                       >
@@ -1770,6 +2238,14 @@ export const App = () => {
                       >
                         {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
                       </a>
+                      {getForestClosureStatus(forest) !== "NONE" ? (
+                        <span
+                          className={`status-pill ${getForestClosureStatus(forest) === "CLOSED" ? "banned" : "unknown"}`}
+                        >
+                          {getClosureStatusLabel(getForestClosureStatus(forest))}
+                        </span>
+                      ) : null}
+                      </div>
                       <small className="muted" data-testid="distance-text">
                         {forest.distanceKm !== null
                           ? formatDriveSummary(
@@ -1783,6 +2259,16 @@ export const App = () => {
                   {availableFacilities.length ? (
                     <div className="facility-row" data-testid="facility-row">
                       {availableFacilities.map((facility) => {
+                        const impactSummary = getForestImpactSummary(forest);
+                        const facilityImpactTarget = inferFacilityImpactTarget(facility);
+                        const hasWarning =
+                          facilityImpactTarget === "CAMPING"
+                            ? isImpactWarning(impactSummary.campingImpact)
+                            : facilityImpactTarget === "ACCESS_2WD"
+                              ? isImpactWarning(impactSummary.access2wdImpact)
+                              : facilityImpactTarget === "ACCESS_4WD"
+                                ? isImpactWarning(impactSummary.access4wdImpact)
+                                : false;
                         const value = forest.facilities[facility.key];
                         const stateClass =
                           value === true ? "present" : value === false ? "absent" : "unknown";
@@ -1798,7 +2284,11 @@ export const App = () => {
                             duration={[0, 0]}
                             placement="top"
                           >
-                            <span className={`facility-indicator ${stateClass}`}>
+                            <span
+                              className={`facility-indicator ${stateClass}`}
+                              data-facility-key={facility.key}
+                              data-warning={hasWarning ? "true" : "false"}
+                            >
                               <FacilityIcon facility={facility} />
                             </span>
                           </Tippy>

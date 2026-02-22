@@ -1,3 +1,5 @@
+import { mkdtempSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
 
@@ -8,7 +10,13 @@ const nominatimBaseUrl = process.env.NOMINATIM_BASE_URL ?? "http://localhost:808
 
 describeLiveNominatim("live Nominatim integration", () => {
   it("returns sensible NSW coordinates for known area and forest", async () => {
+    const temporaryDirectoryPath = mkdtempSync(
+      join(process.cwd(), ".tmp_nominatim-live-test-")
+    );
+    const cacheDbPath = join(temporaryDirectoryPath, "coordinates.sqlite");
+
     const geocoder = new OSMGeocoder({
+      cacheDbPath,
       nominatimBaseUrl,
       googleApiKey: null,
       maxNewLookupsPerRun: 0,
@@ -18,34 +26,43 @@ describeLiveNominatim("live Nominatim integration", () => {
       retryBaseDelayMs: 200
     });
 
-    const areaResult = await geocoder.geocodeArea(
-      "South Coast",
-      "https://example.com/south-coast"
-    );
+    try {
+      const areaResult = await geocoder.geocodeArea(
+        "Riverina, New South Wales",
+        "https://example.com/riverina-new-south-wales-live-test"
+      );
 
-    expect(areaResult.provider).toBe("OSM_NOMINATIM");
-    expect(areaResult.latitude).not.toBeNull();
-    expect(areaResult.longitude).not.toBeNull();
+      expect(areaResult.provider).toBe("OSM_NOMINATIM");
+      expect(areaResult.latitude).not.toBeNull();
+      expect(areaResult.longitude).not.toBeNull();
+      expect(areaResult.displayName).toContain("New South Wales");
 
-    const forestResult = await geocoder.geocodeForest("Belanglo State Forest", "South Coast");
+      const forestResult = await geocoder.geocodeForest(
+        "Belanglo State Forest",
+        "South Coast"
+      );
 
-    expect(forestResult.provider).toBe("OSM_NOMINATIM");
-    expect(forestResult.latitude).not.toBeNull();
-    expect(forestResult.longitude).not.toBeNull();
+      expect(forestResult.provider).toBe("OSM_NOMINATIM");
+      expect(forestResult.latitude).not.toBeNull();
+      expect(forestResult.longitude).not.toBeNull();
+      expect(forestResult.displayName).toContain("New South Wales");
 
-    const areaLatitude = areaResult.latitude as number;
-    const areaLongitude = areaResult.longitude as number;
-    const forestLatitude = forestResult.latitude as number;
-    const forestLongitude = forestResult.longitude as number;
+      const areaLatitude = areaResult.latitude as number;
+      const areaLongitude = areaResult.longitude as number;
+      const forestLatitude = forestResult.latitude as number;
+      const forestLongitude = forestResult.longitude as number;
 
-    expect(areaLatitude).toBeGreaterThan(-38);
-    expect(areaLatitude).toBeLessThan(-28);
-    expect(areaLongitude).toBeGreaterThan(140);
-    expect(areaLongitude).toBeLessThan(154);
+      expect(areaLatitude).toBeGreaterThan(-38);
+      expect(areaLatitude).toBeLessThan(-28);
+      expect(areaLongitude).toBeGreaterThan(140);
+      expect(areaLongitude).toBeLessThan(154);
 
-    expect(forestLatitude).toBeGreaterThan(-38);
-    expect(forestLatitude).toBeLessThan(-28);
-    expect(forestLongitude).toBeGreaterThan(140);
-    expect(forestLongitude).toBeLessThan(154);
+      expect(forestLatitude).toBeGreaterThan(-38);
+      expect(forestLatitude).toBeLessThan(-28);
+      expect(forestLongitude).toBeGreaterThan(140);
+      expect(forestLongitude).toBeLessThan(154);
+    } finally {
+      rmSync(temporaryDirectoryPath, { recursive: true, force: true });
+    }
   });
 });

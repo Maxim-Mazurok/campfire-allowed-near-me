@@ -293,6 +293,250 @@ test("persists location and filters across reloads", async ({ page }) => {
   await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
 });
 
+test("shows closure badges and applies closure filters", async ({ page }) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [
+          {
+            key: "camping",
+            label: "Camping",
+            paramName: "camping",
+            iconKey: "camping"
+          },
+          {
+            key: "twowheeling",
+            label: "2WD access",
+            paramName: "twowheeling",
+            iconKey: "two-wheel-drive"
+          },
+          {
+            key: "fourwheeling",
+            label: "4WD tracks",
+            paramName: "fourwheeling",
+            iconKey: "four-wheel-drive"
+          }
+        ],
+        availableClosureTags: [
+          { key: "ROAD_ACCESS", label: "Road/trail access" },
+          { key: "CAMPING", label: "Camping impact" },
+          { key: "EVENT", label: "Event closure" },
+          { key: "OPERATIONS", label: "Operations/safety" }
+        ],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        closureDiagnostics: {
+          unmatchedNotices: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: {
+          id: "forest-open",
+          forestName: "Open Forest",
+          areaName: "Area 1",
+          distanceKm: 12.4
+        },
+        forests: [
+          {
+            id: "forest-open",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/open",
+            forestName: "Open Forest",
+            forestUrl: "https://example.com/open",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Open Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: 12.4,
+            facilities: {
+              camping: true,
+              twowheeling: true,
+              fourwheeling: true
+            },
+            closureStatus: "NONE",
+            closureNotices: [],
+            closureTags: {
+              ROAD_ACCESS: false,
+              CAMPING: false,
+              EVENT: false,
+              OPERATIONS: false
+            },
+            closureImpactSummary: {
+              campingImpact: "NONE",
+              access2wdImpact: "NONE",
+              access4wdImpact: "NONE"
+            }
+          },
+          {
+            id: "forest-closed",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/closed",
+            forestName: "Closed Forest",
+            forestUrl: "https://example.com/closed",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -34.1,
+            longitude: 151.3,
+            geocodeName: "Closed Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: 20.1,
+            facilities: {
+              camping: true,
+              twowheeling: true,
+              fourwheeling: true
+            },
+            closureStatus: "CLOSED",
+            closureNotices: [
+              {
+                id: "100",
+                title: "Closed Forest: Closed for event",
+                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=100",
+                listedAt: null,
+                listedAtText: null,
+                untilAt: null,
+                untilText: "further notice",
+                forestNameHint: "Closed Forest",
+                status: "CLOSED",
+                tags: ["ROAD_ACCESS", "EVENT"],
+                structuredImpact: {
+                  source: "LLM",
+                  confidence: "HIGH",
+                  campingImpact: "CLOSED",
+                  access2wdImpact: "CLOSED",
+                  access4wdImpact: "CLOSED",
+                  rationale: "Forest closed."
+                }
+              }
+            ],
+            closureTags: {
+              ROAD_ACCESS: true,
+              CAMPING: false,
+              EVENT: true,
+              OPERATIONS: false
+            },
+            closureImpactSummary: {
+              campingImpact: "CLOSED",
+              access2wdImpact: "CLOSED",
+              access4wdImpact: "CLOSED"
+            }
+          },
+          {
+            id: "forest-partial",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 2",
+            areaUrl: "https://example.com/partial",
+            forestName: "Partial Forest",
+            forestUrl: "https://example.com/partial",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            latitude: -34.3,
+            longitude: 151.4,
+            geocodeName: "Partial Forest",
+            geocodeConfidence: 0.8,
+            distanceKm: 25.5,
+            facilities: {
+              camping: true,
+              twowheeling: true,
+              fourwheeling: true
+            },
+            closureStatus: "PARTIAL",
+            closureNotices: [
+              {
+                id: "101",
+                title: "Partial Forest: Partial road closure",
+                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=101",
+                listedAt: null,
+                listedAtText: null,
+                untilAt: null,
+                untilText: "further notice",
+                forestNameHint: "Partial Forest",
+                status: "PARTIAL",
+                tags: ["ROAD_ACCESS"],
+                structuredImpact: {
+                  source: "LLM",
+                  confidence: "MEDIUM",
+                  campingImpact: "RESTRICTED",
+                  access2wdImpact: "RESTRICTED",
+                  access4wdImpact: "NONE",
+                  rationale: "Road and camping area restrictions."
+                }
+              }
+            ],
+            closureTags: {
+              ROAD_ACCESS: true,
+              CAMPING: false,
+              EVENT: false,
+              OPERATIONS: false
+            },
+            closureImpactSummary: {
+              campingImpact: "RESTRICTED",
+              access2wdImpact: "RESTRICTED",
+              access4wdImpact: "NONE"
+            }
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "Closures & Notices" })).toHaveAttribute(
+    "href",
+    "https://forestclosure.fcnsw.net"
+  );
+
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
+  await expect(page.locator("[data-testid='forest-row'] .status-pill", { hasText: "Closed" })).toHaveCount(1);
+  await expect(page.locator("[data-testid='forest-row'] .status-pill", { hasText: "Partial" })).toHaveCount(1);
+
+  await page.getByTestId("closure-filter-open-only").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await page.getByTestId("closure-filter-has-notice").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+
+  await page.getByTestId("closure-filter-no-full").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+
+  await page.getByTestId("closure-tag-filter-ROAD_ACCESS-include").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+
+  const partialRow = page
+    .locator("[data-testid='forest-row']")
+    .filter({ hasText: "Partial Forest" });
+  await expect(partialRow.locator("[data-facility-key='camping'][data-warning='true']")).toHaveCount(1);
+  await expect(partialRow.locator("[data-facility-key='twowheeling'][data-warning='true']")).toHaveCount(1);
+  await expect(partialRow.locator("[data-facility-key='fourwheeling'][data-warning='false']")).toHaveCount(1);
+
+  await page.getByTestId("closure-tag-filter-ROAD_ACCESS-any").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+
+  await page.getByTestId("impact-filter-camping-include").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+
+  await page.getByTestId("impact-filter-camping-exclude").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("forest-row").first()).toContainText("Open Forest");
+
+  await page.getByTestId("impact-filter-camping-any").click();
+  await page.getByTestId("impact-filter-access-include").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+});
+
 test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({
   page
 }) => {

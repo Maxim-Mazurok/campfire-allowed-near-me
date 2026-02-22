@@ -8,6 +8,7 @@ import {
   normalizeForestLabel
 } from "../utils/forest-name-validation.js";
 import { slugify } from "../utils/slugs.js";
+import { haversineDistanceKm } from "../utils/distance.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { ForestryScraper } from "./forestry-scraper.js";
 import {
@@ -28,10 +29,17 @@ import {
 } from "./google-routes.js";
 import type {
   BanStatus,
+  ClosureImpactLevel,
+  ClosureImpactSummary,
+  ClosureMatchDiagnostics,
+  ClosureStatus,
+  ClosureTagDefinition,
+  ClosureTagKey,
   FacilityMatchDiagnostics,
   FacilityValue,
   ForestApiResponse,
   ForestAreaWithForests,
+  ForestClosureNotice,
   ForestDataService,
   ForestDataServiceInput,
   ForestDirectorySnapshot,
@@ -67,7 +75,8 @@ const DEFAULT_OPTIONS: LiveForestDataServiceResolvedOptions = {
 };
 
 const FACILITY_MATCH_THRESHOLD = 0.62;
-const SNAPSHOT_FORMAT_VERSION = 5;
+const CLOSURE_MATCH_THRESHOLD = 0.68;
+const SNAPSHOT_FORMAT_VERSION = 7;
 const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on fire-ban pages";
 const UNKNOWN_FIRE_BAN_STATUS_TEXT =
@@ -76,6 +85,26 @@ const MISSING_GEOCODE_ATTEMPTS_MESSAGE =
   "No geocoding attempt diagnostics were captured in this snapshot.";
 const MISSING_TOTAL_FIRE_BAN_DIAGNOSTICS_MESSAGE =
   "No Total Fire Ban diagnostics were captured in this snapshot.";
+
+const CLOSURE_TAG_DEFINITIONS: ClosureTagDefinition[] = [
+  { key: "ROAD_ACCESS", label: "Road/trail access" },
+  { key: "CAMPING", label: "Camping impact" },
+  { key: "EVENT", label: "Event closure" },
+  { key: "OPERATIONS", label: "Operations/safety" }
+];
+
+const EMPTY_CLOSURE_DIAGNOSTICS: ClosureMatchDiagnostics = {
+  unmatchedNotices: [],
+  fuzzyMatches: []
+};
+
+const CLOSURE_IMPACT_ORDER: Record<ClosureImpactLevel, number> = {
+  NONE: 0,
+  ADVISORY: 1,
+  RESTRICTED: 2,
+  CLOSED: 3,
+  UNKNOWN: -1
+};
 
 interface FacilityMatchResult {
   facilities: Record<string, FacilityValue>;
@@ -212,6 +241,48 @@ export class LiveForestDataService implements ForestDataService {
     };
   }
 
+  private sanitizeClosureDiagnostics(
+    diagnostics: ClosureMatchDiagnostics | undefined
+  ): ClosureMatchDiagnostics {
+    const unmatchedNotices = [...(diagnostics?.unmatchedNotices ?? [])];
+    const fuzzyMatches = [...(diagnostics?.fuzzyMatches ?? [])]
+      .filter(
+        (match) =>
+          typeof match.noticeId === "string" &&
+          typeof match.noticeTitle === "string" &&
+          typeof match.matchedForestName === "string" &&
+          typeof match.score === "number"
+      )
+      .sort((left, right) => left.noticeTitle.localeCompare(right.noticeTitle));
+
+    return {
+      unmatchedNotices,
+      fuzzyMatches
+    };
+  }
+
+  private toClosureStatus(value: unknown): ClosureStatus {
+    if (value === "NONE" || value === "NOTICE" || value === "PARTIAL" || value === "CLOSED") {
+      return value;
+    }
+
+    return "NONE";
+  }
+
+  private toClosureImpactLevel(value: unknown): ClosureImpactLevel {
+    if (
+      value === "NONE" ||
+      value === "ADVISORY" ||
+      value === "RESTRICTED" ||
+      value === "CLOSED" ||
+      value === "UNKNOWN"
+    ) {
+      return value;
+    }
+
+    return "NONE";
+  }
+
   private sanitizeWarnings(warnings: string[]): string[] {
     return [...new Set(warnings)].filter((warning) => {
       if (/Facilities data could not be matched for/i.test(warning)) {
@@ -232,8 +303,10 @@ export class LiveForestDataService implements ForestDataService {
 
   private normalizeSnapshot(snapshot: PersistedSnapshot): PersistedSnapshot {
     const availableFacilities = snapshot.availableFacilities ?? [];
+    const availableClosureTags = snapshot.availableClosureTags ?? CLOSURE_TAG_DEFINITIONS;
     const facilityKeys = availableFacilities.map((facility) => facility.key);
     const matchDiagnostics = this.sanitizeMatchDiagnostics(snapshot.matchDiagnostics);
+    const closureDiagnostics = this.sanitizeClosureDiagnostics(snapshot.closureDiagnostics);
     const warnings = this.sanitizeWarnings(snapshot.warnings ?? []);
 
     const forests = snapshot.forests.map((forest) => {
@@ -307,6 +380,20 @@ export class LiveForestDataService implements ForestDataService {
             }
           : null;
 
+      const closureStatus = this.toClosureStatus(forest.closureStatus);
+      const closureNotices = Array.isArray(forest.closureNotices) ? forest.closureNotices : [];
+      const closureTags = Object.fromEntries(
+        CLOSURE_TAG_DEFINITIONS.map((definition) => [
+          definition.key,
+          forest.closureTags?.[definition.key] === true
+        ])
+      ) as Partial<Record<ClosureTagKey, boolean>>;
+      const closureImpactSummary: ClosureImpactSummary = {
+        campingImpact: this.toClosureImpactLevel(forest.closureImpactSummary?.campingImpact),
+        access2wdImpact: this.toClosureImpactLevel(forest.closureImpactSummary?.access2wdImpact),
+        access4wdImpact: this.toClosureImpactLevel(forest.closureImpactSummary?.access4wdImpact)
+      };
+
       return {
         ...forest,
         forestUrl: typeof forest.forestUrl === "string" ? forest.forestUrl : null,
@@ -314,7 +401,11 @@ export class LiveForestDataService implements ForestDataService {
         totalFireBanStatusText: normalizedTotalFireBanStatusText,
         totalFireBanDiagnostics: normalizedTotalFireBanDiagnostics,
         geocodeDiagnostics: normalizedGeocodeDiagnostics,
-        facilities
+        facilities,
+        closureStatus,
+        closureNotices,
+        closureTags,
+        closureImpactSummary
       };
     });
 
@@ -322,7 +413,9 @@ export class LiveForestDataService implements ForestDataService {
       ...snapshot,
       schemaVersion: typeof snapshot.schemaVersion === "number" ? snapshot.schemaVersion : 0,
       availableFacilities,
+      availableClosureTags,
       matchDiagnostics,
+      closureDiagnostics,
       warnings,
       forests
     };
@@ -553,6 +646,7 @@ export class LiveForestDataService implements ForestDataService {
         const forestResult = await this.buildForestPoints(
           scraped.areas,
           scraped.directory,
+          scraped.closures ?? [],
           totalFireBanSnapshot,
           warningSet,
           progressCallback
@@ -571,7 +665,9 @@ export class LiveForestDataService implements ForestDataService {
           stale: false,
           sourceName: this.options.sourceName,
           availableFacilities: scraped.directory.filters,
+          availableClosureTags: CLOSURE_TAG_DEFINITIONS,
           matchDiagnostics: forestResult.diagnostics,
+          closureDiagnostics: forestResult.closureDiagnostics,
           forests: forestResult.forests,
           warnings: [...warningSet]
         };
@@ -1013,15 +1109,170 @@ export class LiveForestDataService implements ForestDataService {
     };
   }
 
+  private isClosureNoticeActive(notice: ForestClosureNotice, nowMs: number): boolean {
+    const listedAtMs = notice.listedAt ? Date.parse(notice.listedAt) : Number.NaN;
+    if (!Number.isNaN(listedAtMs) && listedAtMs > nowMs) {
+      return false;
+    }
+
+    const untilAtMs = notice.untilAt ? Date.parse(notice.untilAt) : Number.NaN;
+    if (!Number.isNaN(untilAtMs) && untilAtMs < nowMs) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private mergeClosureImpactLevel(
+    leftImpact: ClosureImpactLevel,
+    rightImpact: ClosureImpactLevel
+  ): ClosureImpactLevel {
+    if (CLOSURE_IMPACT_ORDER[rightImpact] > CLOSURE_IMPACT_ORDER[leftImpact]) {
+      return rightImpact;
+    }
+
+    return leftImpact;
+  }
+
+  private buildClosureTagsFromNotices(
+    notices: ForestClosureNotice[]
+  ): Partial<Record<ClosureTagKey, boolean>> {
+    const tags: Partial<Record<ClosureTagKey, boolean>> = Object.fromEntries(
+      CLOSURE_TAG_DEFINITIONS.map((definition) => [definition.key, false])
+    ) as Partial<Record<ClosureTagKey, boolean>>;
+
+    for (const notice of notices) {
+      for (const tagKey of notice.tags) {
+        tags[tagKey] = true;
+      }
+    }
+
+    return tags;
+  }
+
+  private buildClosureStatusFromNotices(notices: ForestClosureNotice[]): ClosureStatus {
+    if (notices.some((notice) => notice.status === "CLOSED")) {
+      return "CLOSED";
+    }
+
+    if (notices.some((notice) => notice.status === "PARTIAL")) {
+      return "PARTIAL";
+    }
+
+    if (notices.length > 0) {
+      return "NOTICE";
+    }
+
+    return "NONE";
+  }
+
+  private buildClosureImpactSummaryFromNotices(
+    notices: ForestClosureNotice[]
+  ): ClosureImpactSummary {
+    const summary: ClosureImpactSummary = {
+      campingImpact: "NONE",
+      access2wdImpact: "NONE",
+      access4wdImpact: "NONE"
+    };
+
+    for (const notice of notices) {
+      const impact = notice.structuredImpact;
+      if (!impact) {
+        continue;
+      }
+
+      summary.campingImpact = this.mergeClosureImpactLevel(
+        summary.campingImpact,
+        impact.campingImpact
+      );
+      summary.access2wdImpact = this.mergeClosureImpactLevel(
+        summary.access2wdImpact,
+        impact.access2wdImpact
+      );
+      summary.access4wdImpact = this.mergeClosureImpactLevel(
+        summary.access4wdImpact,
+        impact.access4wdImpact
+      );
+    }
+
+    return summary;
+  }
+
+  private buildClosureAssignments(
+    notices: ForestClosureNotice[],
+    forestNames: string[]
+  ): {
+    byForestName: Map<string, ForestClosureNotice[]>;
+    diagnostics: ClosureMatchDiagnostics;
+  } {
+    const byForestName = new Map<string, ForestClosureNotice[]>();
+    for (const forestName of forestNames) {
+      byForestName.set(forestName, []);
+    }
+
+    const unmatchedNotices: ForestClosureNotice[] = [];
+    const fuzzyMatches: ClosureMatchDiagnostics["fuzzyMatches"] = [];
+    const nowMs = Date.now();
+
+    for (const notice of notices) {
+      if (!this.isClosureNoticeActive(notice, nowMs)) {
+        continue;
+      }
+
+      const hint = notice.forestNameHint ? normalizeForestLabel(notice.forestNameHint) : "";
+      if (!hint) {
+        unmatchedNotices.push(notice);
+        continue;
+      }
+
+      const exactMatchForestName = forestNames.find(
+        (forestName) => normalizeForestLabel(forestName) === hint
+      );
+
+      if (exactMatchForestName) {
+        const existing = byForestName.get(exactMatchForestName) ?? [];
+        existing.push(notice);
+        byForestName.set(exactMatchForestName, existing);
+        continue;
+      }
+
+      const fuzzyMatch = findBestForestNameMatch(hint, forestNames);
+      if (!fuzzyMatch || fuzzyMatch.score < CLOSURE_MATCH_THRESHOLD) {
+        unmatchedNotices.push(notice);
+        continue;
+      }
+
+      const existing = byForestName.get(fuzzyMatch.candidateName) ?? [];
+      existing.push(notice);
+      byForestName.set(fuzzyMatch.candidateName, existing);
+      fuzzyMatches.push({
+        noticeId: notice.id,
+        noticeTitle: notice.title,
+        matchedForestName: fuzzyMatch.candidateName,
+        score: fuzzyMatch.score
+      });
+    }
+
+    return {
+      byForestName,
+      diagnostics: {
+        unmatchedNotices,
+        fuzzyMatches
+      }
+    };
+  }
+
   private async buildForestPoints(
     areas: ForestAreaWithForests[],
     directory: ForestDirectorySnapshot,
+    closureNotices: ForestClosureNotice[],
     totalFireBanSnapshot: TotalFireBanSnapshot,
     warningSet: Set<string>,
     progressCallback?: ForestDataServiceInput["progressCallback"]
   ): Promise<{
     forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
     diagnostics: FacilityMatchDiagnostics;
+    closureDiagnostics: ClosureMatchDiagnostics;
   }> {
     const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
     const areaGeocodeMap = new Map<string, Awaited<ReturnType<OSMGeocoder["geocodeArea"]>>>();
@@ -1276,12 +1527,48 @@ export class LiveForestDataService implements ForestDataService {
       );
     }
 
+    const closureAssignments = this.buildClosureAssignments(
+      closureNotices,
+      points.map((point) => point.forestName)
+    );
+
+    const pointsWithClosures = points.map((point) => {
+      const notices = closureAssignments.byForestName.get(point.forestName) ?? [];
+      return {
+        ...point,
+        closureStatus: this.buildClosureStatusFromNotices(notices),
+        closureNotices: notices,
+        closureTags: this.buildClosureTagsFromNotices(notices),
+        closureImpactSummary: this.buildClosureImpactSummaryFromNotices(notices)
+      };
+    });
+
+    if (closureAssignments.diagnostics.unmatchedNotices.length) {
+      const sample = closureAssignments.diagnostics.unmatchedNotices
+        .slice(0, 6)
+        .map((notice) => notice.title);
+      const suffix =
+        closureAssignments.diagnostics.unmatchedNotices.length > sample.length
+          ? ` (+${closureAssignments.diagnostics.unmatchedNotices.length - sample.length} more)`
+          : "";
+      warningSet.add(
+        `Could not match ${closureAssignments.diagnostics.unmatchedNotices.length} closure notice(s) to fire-ban forest names: ${sample.join(", ")}${suffix}.`
+      );
+    }
+
+    if (closureAssignments.diagnostics.fuzzyMatches.length) {
+      warningSet.add(
+        `Applied fuzzy closure notice matching for ${closureAssignments.diagnostics.fuzzyMatches.length} notice(s) with minor naming differences.`
+      );
+    }
+
     return {
-      forests: points,
+      forests: pointsWithClosures,
       diagnostics: {
         unmatchedFacilitiesForests,
         fuzzyMatches: fuzzyMatchesList
-      }
+      },
+      closureDiagnostics: closureAssignments.diagnostics
     };
   }
 
@@ -1375,36 +1662,56 @@ export class LiveForestDataService implements ForestDataService {
     };
   }
 
-  private findNearestLegalSpot(forests: ForestPoint[]): NearestForest | null {
-    let nearest: ForestPoint | null = null;
+  private findNearestLegalSpot(
+    forests: ForestPoint[],
+    userLocation?: UserLocation
+  ): NearestForest | null {
+    let nearest: { forest: ForestPoint; effectiveDistanceKm: number } | null = null;
 
     for (const forest of forests) {
       if (
         forest.banStatus !== "NOT_BANNED" ||
-        forest.totalFireBanStatus !== "NOT_BANNED"
+        forest.totalFireBanStatus === "BANNED" ||
+        forest.closureStatus === "CLOSED"
       ) {
         continue;
       }
 
-      if (forest.distanceKm === null) {
+      const effectiveDistanceKm =
+        forest.distanceKm ??
+        (userLocation && forest.latitude !== null && forest.longitude !== null
+          ? haversineDistanceKm(
+              userLocation.latitude,
+              userLocation.longitude,
+              forest.latitude,
+              forest.longitude
+            )
+          : null);
+
+      if (effectiveDistanceKm === null) {
         continue;
       }
 
-      if (!nearest || (nearest.distanceKm ?? Infinity) > forest.distanceKm) {
-        nearest = forest;
+      if (!nearest || nearest.effectiveDistanceKm > effectiveDistanceKm) {
+        nearest = {
+          forest,
+          effectiveDistanceKm
+        };
       }
     }
 
-    if (!nearest || nearest.distanceKm === null) {
+    if (!nearest) {
       return null;
     }
 
+    const { forest } = nearest;
+
     return {
-      id: nearest.id,
-      forestName: nearest.forestName,
-      areaName: nearest.areaName,
-      distanceKm: nearest.distanceKm,
-      travelDurationMinutes: nearest.travelDurationMinutes
+      id: forest.id,
+      forestName: forest.forestName,
+      areaName: forest.areaName,
+      distanceKm: forest.distanceKm ?? nearest.effectiveDistanceKm,
+      travelDurationMinutes: forest.travelDurationMinutes
     };
   }
 
@@ -1419,10 +1726,12 @@ export class LiveForestDataService implements ForestDataService {
         stale: true,
         sourceName: this.options.sourceName,
         availableFacilities: [],
+        availableClosureTags: CLOSURE_TAG_DEFINITIONS,
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
         },
+        closureDiagnostics: EMPTY_CLOSURE_DIAGNOSTICS,
         forests: [],
         nearestLegalSpot: null,
         warnings: [
@@ -1448,9 +1757,11 @@ export class LiveForestDataService implements ForestDataService {
       stale: resolvedSnapshot.stale,
       sourceName: resolvedSnapshot.sourceName,
       availableFacilities: resolvedSnapshot.availableFacilities,
+      availableClosureTags: resolvedSnapshot.availableClosureTags ?? CLOSURE_TAG_DEFINITIONS,
       matchDiagnostics: resolvedSnapshot.matchDiagnostics,
+      closureDiagnostics: resolvedSnapshot.closureDiagnostics ?? EMPTY_CLOSURE_DIAGNOSTICS,
       forests,
-      nearestLegalSpot: this.findNearestLegalSpot(forests),
+      nearestLegalSpot: this.findNearestLegalSpot(forests, input?.userLocation),
       warnings: this.sanitizeWarnings([...(resolvedSnapshot.warnings ?? []), ...routeResult.warnings])
     };
   }
