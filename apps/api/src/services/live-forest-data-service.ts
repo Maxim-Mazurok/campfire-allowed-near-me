@@ -78,7 +78,7 @@ const FACILITY_MATCH_THRESHOLD = 0.62;
 const CLOSURE_MATCH_THRESHOLD = 0.68;
 const SNAPSHOT_FORMAT_VERSION = 7;
 const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
-const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on fire-ban pages";
+const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on Solid Fuel Fire Ban pages";
 const UNKNOWN_FIRE_BAN_STATUS_TEXT =
   "Unknown (not listed on Solid Fuel Fire Ban pages)";
 const MISSING_GEOCODE_ATTEMPTS_MESSAGE =
