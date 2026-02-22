@@ -1,5 +1,5 @@
 import Tippy from "@tippyjs/react";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
 import {
@@ -26,7 +26,124 @@ export type ForestListPanelProps = {
   payload: ForestApiResponse | null;
 };
 
-export const ForestListPanel = ({
+const ForestListItem = memo(({
+  forest,
+  availableFacilities
+}: {
+  forest: ForestApiResponse["forests"][number];
+  availableFacilities: FacilityDefinition[];
+}) => {
+  const forestClosureStatus = getForestClosureStatus(forest);
+  const impactSummary = getForestImpactSummary(forest);
+
+  return (
+    <li className="forest-row" data-testid="forest-row">
+      <div className="forest-main-row">
+        <div className="forest-title-block">
+          <strong>
+            {isHttpUrl(forest.forestUrl) ? (
+              <a
+                href={forest.forestUrl}
+                className="forest-name-link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {forest.forestName}
+              </a>
+            ) : (
+              forest.forestName
+            )}
+          </strong>
+          {isHttpUrl(forest.areaUrl) ? (
+            <a
+              href={buildTextHighlightUrl(forest.areaUrl, forest.forestName)}
+              className="muted forest-region-link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {forest.areaName}
+            </a>
+          ) : (
+            <div className="muted forest-region-link">{forest.areaName}</div>
+          )}
+        </div>
+        <div className="status-block">
+          <div className="status-pill-row">
+            <span className={`status-pill ${getStatusClassName(forest.banStatus)}`}>
+              {getSolidFuelStatusLabel(forest.banStatus)}
+            </span>
+            <a
+              href={buildTotalFireBanDetailsUrl(forest)}
+              target="_blank"
+              rel="noreferrer"
+              className={`status-pill ${getStatusClassName(forest.totalFireBanStatus)}`}
+            >
+              {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
+            </a>
+            {forestClosureStatus !== "NONE" ? (
+              <span
+                className={`status-pill ${forestClosureStatus === "CLOSED" ? "banned" : "unknown"}`}
+              >
+                {getClosureStatusLabel(forestClosureStatus)}
+              </span>
+            ) : null}
+          </div>
+          <small className="muted" data-testid="distance-text">
+            {forest.distanceKm !== null
+              ? formatDriveSummary(
+                  forest.distanceKm,
+                  forest.travelDurationMinutes
+                )
+              : "Drive distance unavailable"}
+          </small>
+        </div>
+      </div>
+      {availableFacilities.length ? (
+        <div className="facility-row" data-testid="facility-row">
+          {availableFacilities.map((facility) => {
+            const facilityImpactTarget = inferFacilityImpactTarget(facility);
+            const hasWarning =
+              facilityImpactTarget === "CAMPING"
+                ? isImpactWarning(impactSummary.campingImpact)
+                : facilityImpactTarget === "ACCESS_2WD"
+                  ? isImpactWarning(impactSummary.access2wdImpact)
+                  : facilityImpactTarget === "ACCESS_4WD"
+                    ? isImpactWarning(impactSummary.access4wdImpact)
+                    : false;
+            const value = forest.facilities[facility.key];
+            const stateClass =
+              value === true ? "present" : value === false ? "absent" : "unknown";
+
+            const statusText =
+              value === true ? "Yes" : value === false ? "No" : "Unknown";
+
+            return (
+              <Tippy
+                key={`${forest.id}:${facility.key}`}
+                content={`${facility.label}: ${statusText}`}
+                delay={[0, 0]}
+                duration={[0, 0]}
+                placement="top"
+              >
+                <span
+                  className={`facility-indicator ${stateClass}`}
+                  data-facility-key={facility.key}
+                  data-warning={hasWarning ? "true" : "false"}
+                >
+                  <FacilityIcon facility={facility} />
+                </span>
+              </Tippy>
+            );
+          })}
+        </div>
+      ) : null}
+    </li>
+  );
+});
+
+ForestListItem.displayName = "ForestListItem";
+
+export const ForestListPanel = memo(({
   matchingForests,
   availableFacilities,
   payload
@@ -45,115 +162,16 @@ export const ForestListPanel = ({
       </p>
 
       <ul className="forest-list" data-testid="forest-list">
-        {sortedMatchingForests.map((forest) => {
-          const forestClosureStatus = getForestClosureStatus(forest);
-          const impactSummary = getForestImpactSummary(forest);
-
-          return (
-            <li key={forest.id} className="forest-row" data-testid="forest-row">
-              <div className="forest-main-row">
-                <div className="forest-title-block">
-                  <strong>
-                    {isHttpUrl(forest.forestUrl) ? (
-                      <a
-                        href={forest.forestUrl}
-                        className="forest-name-link"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {forest.forestName}
-                      </a>
-                    ) : (
-                      forest.forestName
-                    )}
-                  </strong>
-                  {isHttpUrl(forest.areaUrl) ? (
-                    <a
-                      href={buildTextHighlightUrl(forest.areaUrl, forest.forestName)}
-                      className="muted forest-region-link"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {forest.areaName}
-                    </a>
-                  ) : (
-                    <div className="muted forest-region-link">{forest.areaName}</div>
-                  )}
-                </div>
-                <div className="status-block">
-                  <div className="status-pill-row">
-                    <span className={`status-pill ${getStatusClassName(forest.banStatus)}`}>
-                      {getSolidFuelStatusLabel(forest.banStatus)}
-                    </span>
-                    <a
-                      href={buildTotalFireBanDetailsUrl(forest)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`status-pill ${getStatusClassName(forest.totalFireBanStatus)}`}
-                    >
-                      {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
-                    </a>
-                    {forestClosureStatus !== "NONE" ? (
-                      <span
-                        className={`status-pill ${forestClosureStatus === "CLOSED" ? "banned" : "unknown"}`}
-                      >
-                        {getClosureStatusLabel(forestClosureStatus)}
-                      </span>
-                    ) : null}
-                  </div>
-                  <small className="muted" data-testid="distance-text">
-                    {forest.distanceKm !== null
-                      ? formatDriveSummary(
-                          forest.distanceKm,
-                          forest.travelDurationMinutes
-                        )
-                      : "Drive distance unavailable"}
-                  </small>
-                </div>
-              </div>
-              {availableFacilities.length ? (
-                <div className="facility-row" data-testid="facility-row">
-                  {availableFacilities.map((facility) => {
-                    const facilityImpactTarget = inferFacilityImpactTarget(facility);
-                    const hasWarning =
-                      facilityImpactTarget === "CAMPING"
-                        ? isImpactWarning(impactSummary.campingImpact)
-                        : facilityImpactTarget === "ACCESS_2WD"
-                          ? isImpactWarning(impactSummary.access2wdImpact)
-                          : facilityImpactTarget === "ACCESS_4WD"
-                            ? isImpactWarning(impactSummary.access4wdImpact)
-                            : false;
-                    const value = forest.facilities[facility.key];
-                    const stateClass =
-                      value === true ? "present" : value === false ? "absent" : "unknown";
-
-                    const statusText =
-                      value === true ? "Yes" : value === false ? "No" : "Unknown";
-
-                    return (
-                      <Tippy
-                        key={`${forest.id}:${facility.key}`}
-                        content={`${facility.label}: ${statusText}`}
-                        delay={[0, 0]}
-                        duration={[0, 0]}
-                        placement="top"
-                      >
-                        <span
-                          className={`facility-indicator ${stateClass}`}
-                          data-facility-key={facility.key}
-                          data-warning={hasWarning ? "true" : "false"}
-                        >
-                          <FacilityIcon facility={facility} />
-                        </span>
-                      </Tippy>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </li>
-          );
-        })}
+        {sortedMatchingForests.map((forest) => (
+          <ForestListItem
+            key={forest.id}
+            forest={forest}
+            availableFacilities={availableFacilities}
+          />
+        ))}
       </ul>
     </aside>
   );
-};
+});
+
+ForestListPanel.displayName = "ForestListPanel";

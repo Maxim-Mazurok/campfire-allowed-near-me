@@ -397,7 +397,7 @@ export const App = () => {
         loading={loading}
         payload={payload}
         userLocation={userLocation}
-        onRequestLocation={() => requestLocation()}
+        onRequestLocation={requestLocation}
       />
 
       <SettingsDialog

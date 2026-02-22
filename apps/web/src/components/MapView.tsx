@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import {
   CircleMarker,
   MapContainer,
@@ -76,7 +76,7 @@ const FitToForests = ({ forests }: { forests: ForestPoint[] }) => {
   return null;
 };
 
-export const MapView = ({
+export const MapView = memo(({
   forests,
   matchedForestIds,
   userLocation
@@ -85,18 +85,27 @@ export const MapView = ({
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
 }) => {
-  const centeredForests = useMemo(
+  const mappedForests = useMemo(
     () => forests.filter((forest) => forest.latitude !== null && forest.longitude !== null),
     [forests]
   );
-  const unmatchedForests = useMemo(
-    () => centeredForests.filter((forest) => !matchedForestIds.has(forest.id)),
-    [centeredForests, matchedForestIds]
-  );
-  const matchedForests = useMemo(
-    () => centeredForests.filter((forest) => matchedForestIds.has(forest.id)),
-    [centeredForests, matchedForestIds]
-  );
+  const { matchedForests, unmatchedForests } = useMemo(() => {
+    const nextMatchedForests: ForestPoint[] = [];
+    const nextUnmatchedForests: ForestPoint[] = [];
+
+    for (const forest of mappedForests) {
+      if (matchedForestIds.has(forest.id)) {
+        nextMatchedForests.push(forest);
+      } else {
+        nextUnmatchedForests.push(forest);
+      }
+    }
+
+    return {
+      matchedForests: nextMatchedForests,
+      unmatchedForests: nextUnmatchedForests
+    };
+  }, [mappedForests, matchedForestIds]);
 
   return (
     <MapContainer
@@ -104,6 +113,7 @@ export const MapView = ({
       zoom={6}
       scrollWheelZoom
       className="map"
+      preferCanvas
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -121,7 +131,7 @@ export const MapView = ({
             <Popup>Your location</Popup>
           </CircleMarker>
         </>
-      ) : <FitToForests forests={centeredForests} />}
+      ) : <FitToForests forests={mappedForests} />}
 
       <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
         {unmatchedForests.map((forest) => (
@@ -186,4 +196,6 @@ export const MapView = ({
       </Pane>
     </MapContainer>
   );
-};
+});
+
+MapView.displayName = "MapView";

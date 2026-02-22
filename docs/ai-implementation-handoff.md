@@ -39,6 +39,8 @@ Hard policy constraints:
 - Shared API and websocket contracts are now consumed from `packages/shared/src` by both API and web.
 - `App.tsx` has extracted dialog and domain helpers, plus dedicated `FilterPanel` and `ForestListPanel` components.
 - Reconnecting websocket callback handling is stabilized with ref-based callback wiring.
+- Map/list rendering path now includes memoized `MapView` and `ForestListPanel` plus a memoized `ForestListItem` row.
+- `MapView` now uses `preferCanvas` and single-pass matched/unmatched marker partitioning to reduce marker overhead.
 - Remaining high-impact decomposition target is map/list scaling behavior under larger forest sets.
 
 ### Step 4: Performance iteration
