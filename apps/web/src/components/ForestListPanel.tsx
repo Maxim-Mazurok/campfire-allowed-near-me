@@ -4,13 +4,15 @@ import type { CSSProperties } from "react";
 import { ForestCardContent } from "./ForestCardContent";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
 import {
-  sortForestsByDistance
+  compareForestsByListSortOption
 } from "../lib/app-domain-forest";
+import type { ForestListSortOption } from "../lib/app-domain-types";
 
 export type ForestListPanelProps = {
   matchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
   payload: ForestApiResponse | null;
+  avoidTolls: boolean;
 };
 
 const FOREST_LIST_VIRTUALIZATION_THRESHOLD = 120;
@@ -21,12 +23,14 @@ const FOREST_LIST_OVERSCAN_ITEM_COUNT = 8;
 const ForestListItem = memo(({
   forest,
   availableFacilities,
+  avoidTolls,
   listItemStyle,
   rowIndex,
   listItemReference
 }: {
   forest: ForestApiResponse["forests"][number];
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
   listItemStyle?: CSSProperties;
   rowIndex?: number;
   listItemReference?: (element: HTMLLIElement | null) => void;
@@ -39,7 +43,11 @@ const ForestListItem = memo(({
       style={listItemStyle}
       ref={listItemReference}
     >
-      <ForestCardContent forest={forest} availableFacilities={availableFacilities} />
+      <ForestCardContent
+        forest={forest}
+        availableFacilities={availableFacilities}
+        avoidTolls={avoidTolls}
+      />
     </li>
   );
 });
@@ -48,10 +56,12 @@ ForestListItem.displayName = "ForestListItem";
 
 const StandardForestList = memo(({
   sortedMatchingForests,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: {
   sortedMatchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 }) => {
   return (
     <ul className="forest-list" data-testid="forest-list">
@@ -60,6 +70,7 @@ const StandardForestList = memo(({
           key={forest.id}
           forest={forest}
           availableFacilities={availableFacilities}
+          avoidTolls={avoidTolls}
         />
       ))}
     </ul>
@@ -70,10 +81,12 @@ StandardForestList.displayName = "StandardForestList";
 
 const VirtualizedForestList = memo(({
   sortedMatchingForests,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: {
   sortedMatchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 }) => {
   const forestListScrollContainerReference = useRef<HTMLDivElement | null>(null);
 
@@ -116,6 +129,7 @@ const VirtualizedForestList = memo(({
               key={virtualForestRow.key}
               forest={forest}
               availableFacilities={availableFacilities}
+              avoidTolls={avoidTolls}
               rowIndex={virtualForestRow.index}
               listItemReference={forestListVirtualizer.measureElement}
               listItemStyle={{
@@ -138,16 +152,21 @@ VirtualizedForestList.displayName = "VirtualizedForestList";
 export const ForestListPanel = memo(({
   matchingForests,
   availableFacilities,
-  payload
+  payload,
+  avoidTolls
 }: ForestListPanelProps) => {
   const [forestSearchText, setForestSearchText] = useState("");
+  const [forestListSortOption, setForestListSortOption] =
+    useState<ForestListSortOption>("DRIVING_DISTANCE_ASC");
   const sortedMatchingForests = useMemo(() => {
     if (matchingForests.length <= 1) {
       return matchingForests;
     }
 
-    return [...matchingForests].sort(sortForestsByDistance);
-  }, [matchingForests]);
+    return [...matchingForests].sort((leftForest, rightForest) =>
+      compareForestsByListSortOption(leftForest, rightForest, forestListSortOption)
+    );
+  }, [forestListSortOption, matchingForests]);
 
   const normalizedForestSearchText = forestSearchText.trim().toLowerCase();
   const filteredMatchingForests = useMemo(() => {
@@ -186,15 +205,35 @@ export const ForestListPanel = memo(({
         placeholder="Filter by forest name"
       />
 
+      <label className="forest-sort-label" htmlFor="forest-sort-select">
+        Sort forests
+      </label>
+      <select
+        id="forest-sort-select"
+        data-testid="forest-sort-select"
+        className="forest-sort-select"
+        value={forestListSortOption}
+        onChange={(event) => {
+          setForestListSortOption(event.target.value as ForestListSortOption);
+        }}
+      >
+        <option value="DRIVING_DISTANCE_ASC">Driving distance (low to high)</option>
+        <option value="DRIVING_DISTANCE_DESC">Driving distance (high to low)</option>
+        <option value="DRIVING_TIME_ASC">Driving time (short to long)</option>
+        <option value="DRIVING_TIME_DESC">Driving time (long to short)</option>
+      </select>
+
       {shouldUseVirtualizedForestList ? (
         <VirtualizedForestList
           sortedMatchingForests={filteredMatchingForests}
           availableFacilities={availableFacilities}
+          avoidTolls={avoidTolls}
         />
       ) : (
         <StandardForestList
           sortedMatchingForests={filteredMatchingForests}
           availableFacilities={availableFacilities}
+          avoidTolls={avoidTolls}
         />
       )}
     </aside>

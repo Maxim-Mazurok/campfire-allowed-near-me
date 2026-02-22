@@ -507,8 +507,14 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
   );
 
   await expect(page.getByTestId("forest-row")).toHaveCount(3);
-  await expect(page.locator("[data-testid='forest-row'] .status-pill", { hasText: "Closed" })).toHaveCount(1);
-  await expect(page.locator("[data-testid='forest-row'] .status-pill", { hasText: "Partial" })).toHaveCount(1);
+  await expect(
+    page.locator("[data-testid='forest-row'] .status-pill").filter({ hasText: /^Closed$/ })
+  ).toHaveCount(1);
+  await expect(
+    page
+      .locator("[data-testid='forest-row'] .status-pill")
+      .filter({ hasText: /^Partly closed$/ })
+  ).toHaveCount(1);
 
   await page.getByTestId("closure-filter-open-only").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);

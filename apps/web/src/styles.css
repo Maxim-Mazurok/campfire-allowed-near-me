@@ -329,6 +329,16 @@ button {
   margin-bottom: 10px;
 }
 
+.forest-sort-label {
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.forest-sort-select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .forest-list {
   list-style: none;
   margin: 0;

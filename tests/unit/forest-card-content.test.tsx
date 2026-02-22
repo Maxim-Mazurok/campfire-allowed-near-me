@@ -56,7 +56,7 @@ describe("ForestCardContent", () => {
     const forest = buildForest();
 
     const html = renderToStaticMarkup(
-      <ForestCardContent forest={forest} availableFacilities={[]} />
+      <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
     );
 
     expect(html).toContain('data-testid="forest-notice-list"');
@@ -64,5 +64,6 @@ describe("ForestCardContent", () => {
     expect(html).toContain("Campground works in Forest A");
     expect(html).toContain("https://example.com/notices/forest-a/road-access");
     expect(html).toContain("https://example.com/notices/forest-a/campground-works");
+    expect(html).toContain("Google Maps estimate (Sat 10am, tolls: avoid)");
   });
 });

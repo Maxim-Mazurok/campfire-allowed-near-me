@@ -1,4 +1,5 @@
 import type { ForestApiResponse } from "./api";
+import type { ForestListSortOption } from "./app-domain-types";
 import { FORESTRY_BASE_URL, TOTAL_FIRE_BAN_SOURCE_URL } from "./app-domain-constants";
 
 export const isHttpUrl = (value?: string | null): value is string =>
@@ -21,6 +22,72 @@ export const sortForestsByDistance = (
   }
 
   return left.distanceKm - right.distanceKm;
+};
+
+const sortWithNullableMetric = (
+  leftValue: number | null,
+  rightValue: number | null,
+  sortDirection: "asc" | "desc"
+): number => {
+  if (leftValue === null && rightValue === null) {
+    return 0;
+  }
+
+  if (leftValue === null) {
+    return 1;
+  }
+
+  if (rightValue === null) {
+    return -1;
+  }
+
+  const metricDifference = leftValue - rightValue;
+  return sortDirection === "asc" ? metricDifference : -metricDifference;
+};
+
+export const compareForestsByListSortOption = (
+  left: ForestApiResponse["forests"][number],
+  right: ForestApiResponse["forests"][number],
+  forestListSortOption: ForestListSortOption
+): number => {
+  const compareByForestName = left.forestName.localeCompare(right.forestName);
+
+  switch (forestListSortOption) {
+    case "DRIVING_DISTANCE_ASC": {
+      const distanceComparison = sortWithNullableMetric(
+        left.distanceKm,
+        right.distanceKm,
+        "asc"
+      );
+      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
+    }
+    case "DRIVING_DISTANCE_DESC": {
+      const distanceComparison = sortWithNullableMetric(
+        left.distanceKm,
+        right.distanceKm,
+        "desc"
+      );
+      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
+    }
+    case "DRIVING_TIME_ASC": {
+      const durationComparison = sortWithNullableMetric(
+        left.travelDurationMinutes,
+        right.travelDurationMinutes,
+        "asc"
+      );
+      return durationComparison !== 0 ? durationComparison : compareByForestName;
+    }
+    case "DRIVING_TIME_DESC": {
+      const durationComparison = sortWithNullableMetric(
+        left.travelDurationMinutes,
+        right.travelDurationMinutes,
+        "desc"
+      );
+      return durationComparison !== 0 ? durationComparison : compareByForestName;
+    }
+    default:
+      return compareByForestName;
+  }
 };
 
 const formatDriveDuration = (durationMinutes: number | null): string => {

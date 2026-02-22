@@ -101,14 +101,20 @@ type SelectedForestPopupState = {
 
 const ForestPopupContent = ({
   forest,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: {
   forest: ForestWithCoordinates;
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 }) => {
   return (
     <div className="forest-popup-card" data-testid="forest-popup-card">
-      <ForestCardContent forest={forest} availableFacilities={availableFacilities} />
+      <ForestCardContent
+        forest={forest}
+        availableFacilities={availableFacilities}
+        avoidTolls={avoidTolls}
+      />
     </div>
   );
 };
@@ -149,11 +155,13 @@ const ForestMarker = memo(({
 const VisibleForestMarkers = ({
   matchedForests,
   unmatchedForests,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: {
   matchedForests: ForestWithCoordinates[];
   unmatchedForests: ForestWithCoordinates[];
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 }) => {
   const map = useMap();
   const [mapViewportSnapshot, setMapViewportSnapshot] =
@@ -316,6 +324,7 @@ const VisibleForestMarkers = ({
           <ForestPopupContent
             forest={selectedForestPopupState.forest}
             availableFacilities={availableFacilities}
+            avoidTolls={avoidTolls}
           />
         </Popup>
       ) : null}
@@ -329,12 +338,14 @@ export const MapView = memo(({
   forests,
   matchedForestIds,
   userLocation,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: {
   forests: ForestPoint[];
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 }) => {
   const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
     const nextMappedForests: ForestWithCoordinates[] = [];
@@ -398,6 +409,7 @@ export const MapView = memo(({
         matchedForests={matchedForests}
         unmatchedForests={unmatchedForests}
         availableFacilities={availableFacilities}
+        avoidTolls={avoidTolls}
       />
     </MapContainer>
   );

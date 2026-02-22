@@ -25,17 +25,20 @@ import {
 type ForestCardContentProps = {
   forest: ForestApiResponse["forests"][number];
   availableFacilities: FacilityDefinition[];
+  avoidTolls: boolean;
 };
 
 export const ForestCardContent = memo(({
   forest,
-  availableFacilities
+  availableFacilities,
+  avoidTolls
 }: ForestCardContentProps) => {
   const forestClosureStatus = getForestClosureStatus(forest);
   const impactSummary = getForestImpactSummary(forest);
   const googleMapsDrivingNavigationUrl =
     buildGoogleMapsDrivingNavigationUrl(forest);
   const closureNotices = forest.closureNotices ?? [];
+  const driveMetricTooltipText = `Google Maps estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}) for realistic distance/time.`;
 
   return (
     <>
@@ -102,14 +105,16 @@ export const ForestCardContent = memo(({
               </span>
             ) : null}
           </div>
-          <small className="muted" data-testid="distance-text">
-            {forest.distanceKm !== null
-              ? formatDriveSummary(
-                  forest.distanceKm,
-                  forest.travelDurationMinutes
-                )
-              : "Drive distance unavailable"}
-          </small>
+          <Tippy content={driveMetricTooltipText} delay={[0, 0]} duration={[0, 0]} placement="top">
+            <small className="muted" data-testid="distance-text" title={driveMetricTooltipText}>
+              {forest.distanceKm !== null
+                ? formatDriveSummary(
+                    forest.distanceKm,
+                    forest.travelDurationMinutes
+                  )
+                : "Drive distance unavailable"}
+            </small>
+          </Tippy>
         </div>
       </div>
       {closureNotices.length > 0 ? (

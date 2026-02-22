@@ -6,6 +6,11 @@ export type ClosureFilterMode = "ALL" | "OPEN_ONLY" | "NO_FULL_CLOSURES" | "HAS_
 export type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
 export type FireBanForestSortColumn = "forestName" | "areaName";
 export type SortDirection = "asc" | "desc";
+export type ForestListSortOption =
+  | "DRIVING_DISTANCE_ASC"
+  | "DRIVING_DISTANCE_DESC"
+  | "DRIVING_TIME_ASC"
+  | "DRIVING_TIME_DESC";
 
 export type UserPreferences = {
   solidFuelBanFilterMode?: BanFilterMode;

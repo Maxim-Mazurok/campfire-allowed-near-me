@@ -47,7 +47,6 @@ import {
   useWarningDialogData
 } from "./lib/hooks/use-warning-dialog-data";
 
-
 export const App = () => {
   const initialPreferencesRef = useRef<UserPreferences | null>(null);
   const getInitialPreferences = (): UserPreferences => {
@@ -484,6 +483,7 @@ export const App = () => {
               matchedForestIds={matchingForestIds}
               userLocation={userLocation}
               availableFacilities={availableFacilities}
+              avoidTolls={avoidTolls}
             />
           ) : null}
         </section>
@@ -492,6 +492,7 @@ export const App = () => {
           matchingForests={matchingForests}
           availableFacilities={availableFacilities}
           payload={payload}
+          avoidTolls={avoidTolls}
         />
       </section>
     </main>
