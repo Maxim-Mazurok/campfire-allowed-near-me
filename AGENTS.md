@@ -15,6 +15,18 @@ This file gives baseline instructions for AI coding agents collaborating in this
 - Run `npm run typecheck` and `npm test` before finalizing.
 - Keep map UX resilient: avoid regressions that hide all markers.
 
+## Architecture guardrails
+- Keep modules focused and small:
+	- Soft limit: 300 lines per file.
+	- Hard limit: 500 lines per file.
+	- If a touched file is above the hard limit, include a refactor step in the same task unless explicitly blocked.
+- Do not introduce or keep monolithic UI containers with business logic + rendering + networking mixed together.
+	- Extract selectors, hooks, and view components into separate files.
+- Frontend/backend contracts must be shared from a single source (types and websocket payloads).
+	- Avoid duplicating DTOs in API and web folders.
+- For websocket integrations, use typed message contracts and a reusable reconnecting hook pattern.
+- Prefer behavior-preserving refactors before adding new feature code in oversized files.
+
 ## Data and caching
 - Coordinate cache is SQLite-backed (`data/cache/coordinates.sqlite`).
 - Do not commit runtime cache DB files.

@@ -3,168 +3,79 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Tippy from "@tippyjs/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ApiWebSocketMessage } from "../../../packages/shared/src/websocket.js";
 import { FacilityIcon } from "./components/FacilityIcon";
 import { MapView } from "./components/MapView";
+import { SettingsDialog } from "./components/SettingsDialog";
+import { WarningsDialog } from "./components/WarningsDialog";
 import {
   fetchForests,
   fetchRefreshTaskStatus,
-  type ClosureImpactLevel,
+  type ClosureMatchDiagnostics,
   type ClosureTagDefinition,
   type ForestLoadProgressState,
+  type FacilityMatchDiagnostics,
   type ForestApiResponse,
   type RefreshTaskState
 } from "./lib/api";
+import {
+  useForestLoadProgress,
+  useForestLoadStatusText,
+  useRefreshTaskProgress,
+  useRefreshTaskStatusText
+} from "./lib/hooks/use-forest-progress";
+import { useReconnectingWebSocket } from "./lib/hooks/use-reconnecting-websocket";
 import {
   buildForestsQueryKey,
   forestsQueryFn,
   toLoadErrorMessage,
   type UserLocation
 } from "./lib/forests-query";
-
-type BanFilterMode = "ALL" | "NOT_BANNED" | "BANNED" | "UNKNOWN";
-type LegacyBanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
-type ClosureFilterMode = "ALL" | "OPEN_ONLY" | "NO_FULL_CLOSURES" | "HAS_NOTICE";
-type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
-type FireBanForestSortColumn = "forestName" | "areaName";
-type SortDirection = "asc" | "desc";
-type UserPreferences = {
-  solidFuelBanFilterMode?: BanFilterMode;
-  totalFireBanFilterMode?: BanFilterMode;
-  closureFilterMode?: ClosureFilterMode;
-  // Legacy key from older builds.
-  banFilterMode?: LegacyBanFilterMode;
-  facilityFilterModes?: Record<string, TriStateMode>;
-  closureTagFilterModes?: Record<string, TriStateMode>;
-  impactCampingFilterMode?: TriStateMode;
-  impactAccessFilterMode?: TriStateMode;
-  userLocation?: UserLocation | null;
-  avoidTolls?: boolean;
-};
-
-const SOLID_FUEL_FIRE_BAN_SOURCE_URL =
-  "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
-const TOTAL_FIRE_BAN_SOURCE_URL =
-  "https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans";
-const TOTAL_FIRE_BAN_RULES_URL =
-  "https://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans/total-fire-ban-rules";
-const FACILITIES_SOURCE_URL = "https://www.forestrycorporation.com.au/visit/forests";
-const CLOSURES_SOURCE_URL = "https://forestclosure.fcnsw.net";
-const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
-const ALPHABETICAL_COLLATOR = new Intl.Collator("en-AU", {
-  sensitivity: "base",
-  numeric: true
-});
-
-const isHttpUrl = (value?: string | null): value is string =>
-  typeof value === "string" && /^https?:\/\//i.test(value);
-
-const sortForestsByDistance = (
-  left: ForestApiResponse["forests"][number],
-  right: ForestApiResponse["forests"][number]
-): number => {
-  if (left.distanceKm === null && right.distanceKm === null) {
-    return left.forestName.localeCompare(right.forestName);
-  }
-
-  if (left.distanceKm === null) {
-    return 1;
-  }
-
-  if (right.distanceKm === null) {
-    return -1;
-  }
-
-  return left.distanceKm - right.distanceKm;
-};
-
-const formatDriveDuration = (durationMinutes: number | null): string => {
-  if (durationMinutes === null || !Number.isFinite(durationMinutes)) {
-    return "Drive time unavailable";
-  }
-
-  const roundedMinutes = Math.max(1, Math.round(durationMinutes));
-  const hours = Math.floor(roundedMinutes / 60);
-  const minutes = roundedMinutes % 60;
-
-  if (hours === 0) {
-    return `${minutes}m`;
-  }
-
-  if (minutes === 0) {
-    return `${hours}h`;
-  }
-
-  return `${hours}h ${minutes}m`;
-};
-
-const formatDriveSummary = (
-  distanceKm: number | null,
-  durationMinutes: number | null
-): string => {
-  if (distanceKm === null) {
-    return "Drive distance unavailable";
-  }
-
-  if (durationMinutes === null) {
-    return `${distanceKm.toFixed(1)} km`;
-  }
-
-  return `${distanceKm.toFixed(1)} km, ${formatDriveDuration(durationMinutes)}`;
-};
-
-const FORESTRY_BASE_URL = "https://www.forestrycorporation.com.au";
-
-const slugifyPathSegment = (value: string): string =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-");
-
-const buildFacilitiesForestUrl = (forestName: string): string =>
-  `${FORESTRY_BASE_URL}/visit/forests/${slugifyPathSegment(forestName)}`;
-
-const normalizeForestName = (value: string): string =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " ");
-
-const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string): string => {
-  const normalizedTextToHighlight = textToHighlight.trim();
-  if (!normalizedTextToHighlight) {
-    return baseUrl;
-  }
-
-  const encodedTextToHighlight = encodeURIComponent(normalizedTextToHighlight);
-  if (baseUrl.includes(":~:text=")) {
-    return baseUrl;
-  }
-
-  if (baseUrl.includes("#")) {
-    return `${baseUrl}:~:text=${encodedTextToHighlight}`;
-  }
-
-  return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
-};
-
-const buildTotalFireBanDetailsUrl = (
-  forest: ForestApiResponse["forests"][number]
-): string => {
-  const fullAddress = forest.geocodeName?.trim() ? forest.geocodeName : " ";
-  const placeIdentifier = " ";
-  const latitude =
-    typeof forest.latitude === "number" && Number.isFinite(forest.latitude)
-      ? String(forest.latitude)
-      : " ";
-  const longitude =
-    typeof forest.longitude === "number" && Number.isFinite(forest.longitude)
-      ? String(forest.longitude)
-      : " ";
-
-  return `${TOTAL_FIRE_BAN_SOURCE_URL}?fullAddress=${encodeURIComponent(fullAddress)}&lat=${encodeURIComponent(latitude)}&lng=${encodeURIComponent(longitude)}&placeId=${encodeURIComponent(placeIdentifier)}`;
-};
+import {
+  type BanFilterMode,
+  type ClosureFilterMode,
+  type FireBanForestSortColumn,
+  type SortDirection,
+  type TriStateMode,
+  type UserPreferences
+} from "./lib/app-domain-types";
+import {
+  ALPHABETICAL_COLLATOR,
+  CLOSURES_SOURCE_URL,
+  FACILITIES_SOURCE_URL,
+  FORESTRY_BASE_URL,
+  SOLID_FUEL_FIRE_BAN_SOURCE_URL,
+  TOTAL_FIRE_BAN_RULES_URL,
+  TOTAL_FIRE_BAN_SOURCE_URL
+} from "./lib/app-domain-constants";
+import {
+  buildFacilitiesForestUrl,
+  buildTextHighlightUrl,
+  buildTotalFireBanDetailsUrl,
+  formatDriveSummary,
+  isHttpUrl,
+  normalizeForestName,
+  sortForestsByDistance
+} from "./lib/app-domain-forest";
+import {
+  getClosureStatusLabel,
+  getForestClosureStatus,
+  getForestImpactSummary,
+  getSolidFuelStatusLabel,
+  getStatusClassName,
+  getTotalFireBanStatusLabel,
+  inferFacilityImpactTarget,
+  isImpactWarning,
+  matchesBanFilter
+} from "./lib/app-domain-status";
+import {
+  readUserPreferences,
+  writeUserPreferences
+} from "./lib/app-domain-preferences";
+import {
+  buildForestsWebSocketUrl,
+  buildRefreshWebSocketUrl
+} from "./lib/app-domain-websocket";
 
 const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
   const facilitiesPageLabel = "Facilities page";
@@ -203,314 +114,6 @@ const renderFacilitiesMismatchWarningSummary = (summaryText: string) => {
   );
 };
 
-const isBanFilterMode = (value: unknown): value is BanFilterMode =>
-  value === "ALL" ||
-  value === "NOT_BANNED" ||
-  value === "BANNED" ||
-  value === "UNKNOWN";
-
-const isLegacyBanFilterMode = (value: unknown): value is LegacyBanFilterMode =>
-  value === "ALL" || value === "ALLOWED" || value === "NOT_ALLOWED";
-
-const toModernBanFilterMode = (mode: LegacyBanFilterMode): BanFilterMode => {
-  if (mode === "ALLOWED") {
-    return "NOT_BANNED";
-  }
-
-  if (mode === "NOT_ALLOWED") {
-    return "BANNED";
-  }
-
-  return "ALL";
-};
-
-const matchesBanFilter = (
-  mode: BanFilterMode,
-  status: ForestApiResponse["forests"][number]["banStatus"]
-): boolean => {
-  if (mode === "ALL") {
-    return true;
-  }
-
-  return status === mode;
-};
-
-const getStatusClassName = (status: ForestApiResponse["forests"][number]["banStatus"]): string => {
-  if (status === "NOT_BANNED") {
-    return "allowed";
-  }
-
-  if (status === "BANNED") {
-    return "banned";
-  }
-
-  return "unknown";
-};
-
-const getSolidFuelStatusLabel = (
-  status: ForestApiResponse["forests"][number]["banStatus"]
-): string => {
-  if (status === "NOT_BANNED") {
-    return "Solid fuel: not banned";
-  }
-
-  if (status === "BANNED") {
-    return "Solid fuel: banned";
-  }
-
-  return "Solid fuel: unknown";
-};
-
-const getTotalFireBanStatusLabel = (
-  status: ForestApiResponse["forests"][number]["totalFireBanStatus"]
-): string => {
-  if (status === "NOT_BANNED") {
-    return "No Total Fire Ban";
-  }
-
-  if (status === "BANNED") {
-    return "Total Fire Ban";
-  }
-
-  return "Total Fire Ban: unknown";
-};
-
-const getForestClosureStatus = (
-  forest: ForestApiResponse["forests"][number]
-): "NONE" | "NOTICE" | "PARTIAL" | "CLOSED" => {
-  const status = forest.closureStatus;
-  if (status === "NONE" || status === "NOTICE" || status === "PARTIAL" || status === "CLOSED") {
-    return status;
-  }
-
-  return "NONE";
-};
-
-const getClosureStatusLabel = (status: "NONE" | "NOTICE" | "PARTIAL" | "CLOSED"): string => {
-  if (status === "CLOSED") {
-    return "Closed";
-  }
-
-  if (status === "PARTIAL") {
-    return "Partial";
-  }
-
-  if (status === "NOTICE") {
-    return "Notice";
-  }
-
-  return "No notice";
-};
-
-const CLOSURE_IMPACT_ORDER: Record<ClosureImpactLevel, number> = {
-  NONE: 0,
-  ADVISORY: 1,
-  RESTRICTED: 2,
-  CLOSED: 3,
-  UNKNOWN: -1
-};
-
-const mergeImpactLevel = (
-  leftImpact: ClosureImpactLevel,
-  rightImpact: ClosureImpactLevel
-): ClosureImpactLevel => {
-  if (CLOSURE_IMPACT_ORDER[rightImpact] > CLOSURE_IMPACT_ORDER[leftImpact]) {
-    return rightImpact;
-  }
-
-  return leftImpact;
-};
-
-const isImpactWarning = (impactLevel: ClosureImpactLevel): boolean =>
-  impactLevel === "RESTRICTED" || impactLevel === "CLOSED";
-
-type ForestImpactSummary = {
-  campingImpact: ClosureImpactLevel;
-  access2wdImpact: ClosureImpactLevel;
-  access4wdImpact: ClosureImpactLevel;
-};
-
-const getForestImpactSummary = (
-  forest: ForestApiResponse["forests"][number]
-): ForestImpactSummary => {
-  const summary = forest.closureImpactSummary;
-  if (summary) {
-    return {
-      campingImpact: summary.campingImpact,
-      access2wdImpact: summary.access2wdImpact,
-      access4wdImpact: summary.access4wdImpact
-    };
-  }
-
-  const fallback: ForestImpactSummary = {
-    campingImpact: "NONE",
-    access2wdImpact: "NONE",
-    access4wdImpact: "NONE"
-  };
-
-  for (const notice of forest.closureNotices ?? []) {
-    const impact = notice.structuredImpact;
-    if (!impact) {
-      continue;
-    }
-
-    fallback.campingImpact = mergeImpactLevel(fallback.campingImpact, impact.campingImpact);
-    fallback.access2wdImpact = mergeImpactLevel(fallback.access2wdImpact, impact.access2wdImpact);
-    fallback.access4wdImpact = mergeImpactLevel(fallback.access4wdImpact, impact.access4wdImpact);
-  }
-
-  return fallback;
-};
-
-type FacilityImpactTarget = "CAMPING" | "ACCESS_2WD" | "ACCESS_4WD" | null;
-
-const inferFacilityImpactTarget = (
-  facility: ForestApiResponse["availableFacilities"][number]
-): FacilityImpactTarget => {
-  const text = `${facility.iconKey} ${facility.label} ${facility.paramName}`.toLowerCase();
-
-  if (/camp/.test(text)) {
-    return "CAMPING";
-  }
-
-  if (/2wd|two.?wheel/.test(text)) {
-    return "ACCESS_2WD";
-  }
-
-  if (/4wd|four.?wheel/.test(text)) {
-    return "ACCESS_4WD";
-  }
-
-  return null;
-};
-
-const isClosureFilterMode = (value: unknown): value is ClosureFilterMode =>
-  value === "ALL" ||
-  value === "OPEN_ONLY" ||
-  value === "NO_FULL_CLOSURES" ||
-  value === "HAS_NOTICE";
-
-const isTriStateMode = (value: unknown): value is TriStateMode =>
-  value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
-
-const isFiniteNumber = (value: unknown): value is number =>
-  typeof value === "number" && Number.isFinite(value);
-
-const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
-
-const parseUserPreferences = (value: string | null): UserPreferences => {
-  if (!value) {
-    return {};
-  }
-
-  try {
-    const parsed = JSON.parse(value) as unknown;
-    if (typeof parsed !== "object" || parsed === null) {
-      return {};
-    }
-
-    const rawPreferences = parsed as Record<string, unknown>;
-    const preferences: UserPreferences = {};
-
-    if (isBanFilterMode(rawPreferences.solidFuelBanFilterMode)) {
-      preferences.solidFuelBanFilterMode = rawPreferences.solidFuelBanFilterMode;
-    } else if (isLegacyBanFilterMode(rawPreferences.banFilterMode)) {
-      preferences.solidFuelBanFilterMode = toModernBanFilterMode(rawPreferences.banFilterMode);
-      preferences.banFilterMode = rawPreferences.banFilterMode;
-    }
-
-    if (isBanFilterMode(rawPreferences.totalFireBanFilterMode)) {
-      preferences.totalFireBanFilterMode = rawPreferences.totalFireBanFilterMode;
-    }
-
-    if (isClosureFilterMode(rawPreferences.closureFilterMode)) {
-      preferences.closureFilterMode = rawPreferences.closureFilterMode;
-    }
-
-    if (
-      typeof rawPreferences.facilityFilterModes === "object" &&
-      rawPreferences.facilityFilterModes !== null
-    ) {
-      const nextFacilityFilterModes: Record<string, TriStateMode> = {};
-      for (const [key, mode] of Object.entries(rawPreferences.facilityFilterModes)) {
-        if (isTriStateMode(mode)) {
-          nextFacilityFilterModes[key] = mode;
-        }
-      }
-      preferences.facilityFilterModes = nextFacilityFilterModes;
-    }
-
-    if (
-      typeof rawPreferences.closureTagFilterModes === "object" &&
-      rawPreferences.closureTagFilterModes !== null
-    ) {
-      const nextClosureTagFilterModes: Record<string, TriStateMode> = {};
-      for (const [key, mode] of Object.entries(rawPreferences.closureTagFilterModes)) {
-        if (isTriStateMode(mode)) {
-          nextClosureTagFilterModes[key] = mode;
-        }
-      }
-      preferences.closureTagFilterModes = nextClosureTagFilterModes;
-    }
-
-    if (isTriStateMode(rawPreferences.impactCampingFilterMode)) {
-      preferences.impactCampingFilterMode = rawPreferences.impactCampingFilterMode;
-    }
-
-    if (isTriStateMode(rawPreferences.impactAccessFilterMode)) {
-      preferences.impactAccessFilterMode = rawPreferences.impactAccessFilterMode;
-    }
-
-    if (rawPreferences.userLocation === null) {
-      preferences.userLocation = null;
-    } else if (
-      typeof rawPreferences.userLocation === "object" &&
-      rawPreferences.userLocation !== null
-    ) {
-      const rawLocation = rawPreferences.userLocation as Record<string, unknown>;
-      if (isFiniteNumber(rawLocation.latitude) && isFiniteNumber(rawLocation.longitude)) {
-        preferences.userLocation = {
-          latitude: rawLocation.latitude,
-          longitude: rawLocation.longitude
-        };
-      }
-    }
-
-    if (isBoolean(rawPreferences.avoidTolls)) {
-      preferences.avoidTolls = rawPreferences.avoidTolls;
-    }
-
-    return preferences;
-  } catch {
-    return {};
-  }
-};
-
-const readUserPreferences = (): UserPreferences => {
-  try {
-    return parseUserPreferences(window.localStorage.getItem(USER_PREFERENCES_STORAGE_KEY));
-  } catch {
-    return {};
-  }
-};
-
-const writeUserPreferences = (preferences: UserPreferences) => {
-  try {
-    window.localStorage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
-  } catch {
-    return;
-  }
-};
-
-const buildRefreshWebSocketUrl = (): string => {
-  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  return `${protocol}://${window.location.host}/api/refresh/ws`;
-};
-
-const buildForestsWebSocketUrl = (): string => {
-  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  return `${protocol}://${window.location.host}/api/forests/ws`;
-};
 
 export const App = () => {
   const initialPreferencesRef = useRef<UserPreferences | null>(null);
@@ -674,109 +277,23 @@ export const App = () => {
     setRefreshTaskState(payload.refreshTask);
   }, [payload?.refreshTask]);
 
-  useEffect(() => {
-    let isMounted = true;
-    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-    let webSocket: WebSocket | null = null;
-
-    const connect = () => {
-      if (!isMounted) {
-        return;
+  useReconnectingWebSocket<ApiWebSocketMessage>({
+    webSocketUrl: buildRefreshWebSocketUrl(),
+    onMessage: (message) => {
+      if (message.type === "refresh-task") {
+        setRefreshTaskState(message.task);
       }
+    }
+  });
 
-      const webSocketUrl = buildRefreshWebSocketUrl();
-      webSocket = new WebSocket(webSocketUrl);
-
-      webSocket.addEventListener("message", (event) => {
-        if (!isMounted) {
-          return;
-        }
-
-        try {
-          const payload = JSON.parse(event.data as string) as {
-            type?: string;
-            task?: RefreshTaskState;
-          };
-
-          if (payload.type === "refresh-task" && payload.task) {
-            setRefreshTaskState(payload.task);
-          }
-        } catch {
-          return;
-        }
-      });
-
-      webSocket.addEventListener("close", () => {
-        if (!isMounted) {
-          return;
-        }
-
-        reconnectTimer = setTimeout(connect, 1500);
-      });
-    };
-
-    connect();
-
-    return () => {
-      isMounted = false;
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
+  useReconnectingWebSocket<ApiWebSocketMessage>({
+    webSocketUrl: buildForestsWebSocketUrl(),
+    onMessage: (message) => {
+      if (message.type === "forest-load-progress") {
+        setForestLoadProgressState(message.load);
       }
-      webSocket?.close();
-    };
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-    let webSocket: WebSocket | null = null;
-
-    const connect = () => {
-      if (!isMounted) {
-        return;
-      }
-
-      const webSocketUrl = buildForestsWebSocketUrl();
-      webSocket = new WebSocket(webSocketUrl);
-
-      webSocket.addEventListener("message", (event) => {
-        if (!isMounted) {
-          return;
-        }
-
-        try {
-          const payload = JSON.parse(event.data as string) as {
-            type?: string;
-            load?: ForestLoadProgressState;
-          };
-
-          if (payload.type === "forest-load-progress" && payload.load) {
-            setForestLoadProgressState(payload.load);
-          }
-        } catch {
-          return;
-        }
-      });
-
-      webSocket.addEventListener("close", () => {
-        if (!isMounted) {
-          return;
-        }
-
-        reconnectTimer = setTimeout(connect, 1500);
-      });
-    };
-
-    connect();
-
-    return () => {
-      isMounted = false;
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
-      }
-      webSocket?.close();
-    };
-  }, []);
+    }
+  });
 
   useEffect(() => {
     if (refreshTaskState?.status !== "RUNNING") {
@@ -791,99 +308,10 @@ export const App = () => {
     };
   }, [refreshTaskState?.status]);
 
-  const refreshTaskStatusText = useMemo(() => {
-    if (!refreshTaskState || refreshTaskState.status === "IDLE") {
-      return null;
-    }
-
-    if (refreshTaskState.status === "RUNNING") {
-      const completed = refreshTaskState.progress?.completed;
-      const total = refreshTaskState.progress?.total;
-      const progressText =
-        typeof completed === "number" && typeof total === "number"
-          ? ` (${completed}/${total})`
-          : "";
-      return `Refresh in progress: ${refreshTaskState.message}${progressText}`;
-    }
-
-    if (refreshTaskState.status === "FAILED") {
-      return `Refresh failed: ${refreshTaskState.error ?? "Unknown error"}`;
-    }
-
-    return "Refresh completed.";
-  }, [refreshTaskState]);
-
-  const refreshTaskProgress = useMemo(() => {
-    if (!refreshTaskState || refreshTaskState.status !== "RUNNING") {
-      return null;
-    }
-
-    const completed = refreshTaskState.progress?.completed ?? 0;
-    const total = refreshTaskState.progress?.total;
-
-    if (typeof total !== "number" || total <= 0) {
-      return {
-        phase: refreshTaskState.phase,
-        completed,
-        total: null,
-        percentage: null
-      };
-    }
-
-    return {
-      phase: refreshTaskState.phase,
-      completed,
-      total,
-      percentage: Math.max(0, Math.min(100, Math.round((completed / total) * 100)))
-    };
-  }, [refreshTaskState]);
-
-  const forestLoadStatusText = useMemo(() => {
-    if (!forestLoadProgressState || forestLoadProgressState.status === "IDLE") {
-      return null;
-    }
-
-    if (forestLoadProgressState.status === "RUNNING") {
-      const completed = forestLoadProgressState.progress?.completed;
-      const total = forestLoadProgressState.progress?.total;
-      const progressText =
-        typeof completed === "number" && typeof total === "number"
-          ? ` (${completed}/${total})`
-          : "";
-      return `Loading forests: ${forestLoadProgressState.message}${progressText}`;
-    }
-
-    if (forestLoadProgressState.status === "FAILED") {
-      return `Forest load failed: ${forestLoadProgressState.error ?? "Unknown error"}`;
-    }
-
-    return "Forest load completed.";
-  }, [forestLoadProgressState]);
-
-  const forestLoadProgress = useMemo(() => {
-    if (!forestLoadProgressState || forestLoadProgressState.status !== "RUNNING") {
-      return null;
-    }
-
-    const completed = forestLoadProgressState.progress?.completed ?? 0;
-    const total = forestLoadProgressState.progress?.total;
-
-    if (typeof total !== "number" || total <= 0) {
-      return {
-        phase: forestLoadProgressState.phase,
-        completed,
-        total: null,
-        percentage: null
-      };
-    }
-
-    return {
-      phase: forestLoadProgressState.phase,
-      completed,
-      total,
-      percentage: Math.max(0, Math.min(100, Math.round((completed / total) * 100)))
-    };
-  }, [forestLoadProgressState]);
+  const refreshTaskStatusText = useRefreshTaskStatusText(refreshTaskState);
+  const refreshTaskProgress = useRefreshTaskProgress(refreshTaskState);
+  const forestLoadStatusText = useForestLoadStatusText(forestLoadProgressState);
+  const forestLoadProgress = useForestLoadProgress(forestLoadProgressState);
 
   const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
     setFacilityFilterModes((current) => ({
@@ -1455,356 +883,46 @@ export const App = () => {
         </section>
       ) : null}
 
-      {settingsOpen ? (
-        <div
-          className="warnings-overlay settings-overlay"
-          data-testid="settings-overlay"
-          role="presentation"
-          onClick={closeSettingsDialog}
-        >
-          <section
-            className="panel settings-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="settings-title"
-            data-testid="settings-dialog"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="warnings-dialog-header">
-              <h2 id="settings-title">Route Settings</h2>
-              <button type="button" onClick={closeSettingsDialog}>
-                Close
-              </button>
-            </div>
-            <p className="muted">
-              Driving estimates use Google Routes traffic for the next Saturday at 10:00 AM
-              (calculated at request time).
-            </p>
-            <fieldset className="settings-options">
-              <legend>Toll roads</legend>
-              <label className="settings-option">
-                <input
-                  type="radio"
-                  name="toll-setting"
-                  checked={avoidTolls}
-                  onChange={() => setAvoidTolls(true)}
-                  data-testid="settings-tolls-avoid"
-                />
-                <span>No tolls (default)</span>
-              </label>
-              <label className="settings-option">
-                <input
-                  type="radio"
-                  name="toll-setting"
-                  checked={!avoidTolls}
-                  onChange={() => setAvoidTolls(false)}
-                  data-testid="settings-tolls-allow"
-                />
-                <span>Allow toll roads</span>
-              </label>
-            </fieldset>
-          </section>
-        </div>
-      ) : null}
+      <SettingsDialog
+        isOpen={settingsOpen}
+        avoidTolls={avoidTolls}
+        onClose={closeSettingsDialog}
+        setAvoidTolls={setAvoidTolls}
+      />
 
-      {warningsOpen ? (
-        <>
-          <div
-            className="warnings-overlay"
-            data-testid="warnings-overlay"
-            role="presentation"
-            onClick={closeWarningsDialog}
-          >
-            <section
-              className="panel warnings-dialog"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="warnings-title"
-              data-testid="warnings-dialog"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="warnings-dialog-header">
-                <h2 id="warnings-title">Warnings ({warningCount})</h2>
-                <button type="button" onClick={closeWarningsDialog}>
-                  Close
-                </button>
-              </div>
-
-              {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
-
-              {hasUnmappedForestWarning ? (
-                <details
-                  className="warnings-section warnings-section-collapsible"
-                  data-testid="warnings-unmapped-section"
-                  open
-                >
-                  <summary className="warnings-section-summary">
-                    Unmapped Forests (Distance Unavailable)
-                  </summary>
-                  <p className="muted">
-                    {unmappedForests.length} forest(s) could not be mapped to coordinates.
-                  </p>
-                  <ul className="warning-list warning-list-detailed">
-                    {unmappedForests.map((forest) => {
-                      const debugEntries =
-                        forest.geocodeDiagnostics?.debug?.length
-                          ? forest.geocodeDiagnostics.debug
-                          : ["No geocoding attempt diagnostics were captured in this snapshot."];
-                      const failureReason =
-                        forest.geocodeDiagnostics?.reason ??
-                        "Coordinates were unavailable after forest and area geocoding.";
-                      const linkTarget = getUnmappedForestLink(forest);
-
-                      return (
-                        <li key={forest.id} className="warning-list-item-detailed">
-                          <div>
-                            <a href={linkTarget.href} target="_blank" rel="noopener noreferrer">
-                              <mark className="warning-forest-highlight">{forest.forestName}</mark>
-                            </a>{" "}
-                            <span className="muted">({linkTarget.label})</span>
-                          </div>
-                          <div className="muted">Reason: {failureReason}</div>
-                          <details className="warning-debug">
-                            <summary>Debug info</summary>
-                            <ul className="warning-debug-list">
-                              {debugEntries.map((entry, index) => (
-                                <li key={`${forest.id}:debug:${index}`}>{entry}</li>
-                              ))}
-                            </ul>
-                          </details>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </details>
-              ) : null}
-
-              {hasUnknownTotalFireBanWarning ? (
-                <details
-                  className="warnings-section warnings-section-collapsible"
-                  data-testid="warnings-total-fire-ban-unknown-section"
-                  open
-                >
-                  <summary className="warnings-section-summary">
-                    Total Fire Ban Status Unknown
-                  </summary>
-                  <p className="muted">
-                    {forestsWithUnknownTotalFireBan.length} forest(s) have unknown Total Fire Ban status.
-                  </p>
-                  <ul className="warning-list warning-list-detailed">
-                    {forestsWithUnknownTotalFireBan.map((forest) => {
-                      const debugEntries =
-                        forest.totalFireBanDiagnostics?.debug?.length
-                          ? forest.totalFireBanDiagnostics.debug
-                          : ["No Total Fire Ban diagnostics were captured in this snapshot."];
-                      const failureReason =
-                        forest.totalFireBanDiagnostics?.reason ??
-                        "Total Fire Ban status could not be determined from available source data.";
-
-                      return (
-                        <li key={`${forest.id}:total-fire-ban-unknown`} className="warning-list-item-detailed">
-                          <div>
-                            <a
-                              href={buildTotalFireBanDetailsUrl(forest)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <mark className="warning-forest-highlight">{forest.forestName}</mark>
-                            </a>{" "}
-                            <span className="muted">(RFS Total Fire Ban details)</span>
-                          </div>
-                          <div className="muted">Reason: {failureReason}</div>
-                          <details className="warning-debug">
-                            <summary>Debug info</summary>
-                            <ul className="warning-debug-list">
-                              {debugEntries.map((entry, index) => (
-                                <li key={`${forest.id}:total-fire-ban-debug:${index}`}>{entry}</li>
-                              ))}
-                            </ul>
-                          </details>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </details>
-              ) : null}
-
-              {generalWarnings.length > 0 ? (
-                <details className="warnings-section warnings-section-collapsible" open>
-                  <summary className="warnings-section-summary">General</summary>
-                  <ul className="warning-list">
-                    {generalWarnings.map((warning) => (
-                      <li key={warning}>{warning}</li>
-                    ))}
-                  </ul>
-                </details>
-              ) : null}
-
-              {hasFacilitiesMismatchWarning || matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
-                <details className="warnings-section warnings-section-collapsible" open>
-                  <summary className="warnings-section-summary">
-                    Facilities Missing From Fire-Ban Pages
-                  </summary>
-                  <p className="muted">
-                    {renderFacilitiesMismatchWarningSummary(facilitiesMismatchWarningSummary)}
-                    {" "}
-                    <button
-                      type="button"
-                      className="text-btn"
-                      onClick={openFireBanForestTable}
-                      data-testid="open-fire-ban-forest-table-btn"
-                    >
-                      (see full list)
-                    </button>
-                  </p>
-                  {matchDiagnostics.unmatchedFacilitiesForests.length > 0 ? (
-                    <ul className="warning-list">
-                      {matchDiagnostics.unmatchedFacilitiesForests.map((forestName) => (
-                        <li key={forestName}>
-                          <a
-                            href={buildFacilitiesForestUrl(forestName)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {forestName}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </details>
-              ) : null}
-
-              {hasFuzzyMatchesWarning || matchDiagnostics.fuzzyMatches.length > 0 ? (
-                <details className="warnings-section warnings-section-collapsible" open>
-                  <summary className="warnings-section-summary">Fuzzy Facilities Matching</summary>
-                  <p className="muted">{fuzzyMatchesWarningText}</p>
-                  {matchDiagnostics.fuzzyMatches.length > 0 ? (
-                    <ul className="warning-list">
-                      {matchDiagnostics.fuzzyMatches.map((match) => (
-                        <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
-                          Facilities:{" "}
-                          <a
-                            href={buildFacilitiesForestUrl(match.facilitiesForestName)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {match.facilitiesForestName}
-                          </a>{" "}
-                          {"->"} Fire ban:{" "}
-                          <a
-                            href={getFireBanAreaUrl(match.fireBanForestName)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {match.fireBanForestName}
-                          </a>{" "}
-                          ({match.score.toFixed(2)})
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </details>
-              ) : null}
-
-              {closureDiagnostics.unmatchedNotices.length > 0 ? (
-                <details className="warnings-section warnings-section-collapsible" open>
-                  <summary className="warnings-section-summary">Unmatched Closure Notices</summary>
-                  <p className="muted">
-                    {closureDiagnostics.unmatchedNotices.length} closure notice(s) could not be matched to forests.
-                  </p>
-                  <ul className="warning-list">
-                    {closureDiagnostics.unmatchedNotices.map((notice) => (
-                      <li key={`unmatched-closure:${notice.id}`}>
-                        <a href={notice.detailUrl} target="_blank" rel="noopener noreferrer">
-                          {notice.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              ) : null}
-            </section>
-          </div>
-          {fireBanForestTableOpen ? (
-            <div
-              className="warnings-overlay fire-ban-forest-table-overlay"
-              data-testid="fire-ban-forest-table-overlay"
-              role="presentation"
-              onClick={closeFireBanForestTable}
-            >
-              <section
-                className="panel warnings-dialog fire-ban-forest-table-dialog"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="fire-ban-forest-table-title"
-                data-testid="fire-ban-forest-table-dialog"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <div className="warnings-dialog-header">
-                  <h2 id="fire-ban-forest-table-title">
-                    Solid Fuel Fire Ban Forests ({fireBanPageForests.length})
-                  </h2>
-                  <button type="button" onClick={closeFireBanForestTable}>
-                    Close
-                  </button>
-                </div>
-                <p className="muted fire-ban-forest-table-hint">
-                  Sort columns alphabetically by clicking the table headers.
-                </p>
-                <div className="fire-ban-forest-table-wrap">
-                  <table className="fire-ban-forest-table" data-testid="fire-ban-forest-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">
-                          <button
-                            type="button"
-                            className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "forestName" ? "is-active" : ""}`}
-                            data-testid="fire-ban-forest-table-forest-sort"
-                            onClick={() => toggleFireBanForestSort("forestName")}
-                          >
-                            Forest name{" "}
-                            {fireBanForestSortColumn === "forestName"
-                              ? `(${fireBanForestTableSortLabel})`
-                              : ""}
-                          </button>
-                        </th>
-                        <th scope="col">
-                          <button
-                            type="button"
-                            className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "areaName" ? "is-active" : ""}`}
-                            data-testid="fire-ban-forest-table-region-sort"
-                            onClick={() => toggleFireBanForestSort("areaName")}
-                          >
-                            Region name{" "}
-                            {fireBanForestSortColumn === "areaName"
-                              ? `(${fireBanForestTableSortLabel})`
-                              : ""}
-                          </button>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedFireBanPageForests.length > 0 ? (
-                        sortedFireBanPageForests.map((forest) => (
-                          <tr key={`${forest.id}:fire-ban-table`} data-testid="fire-ban-forest-table-row">
-                            <td>{forest.forestName}</td>
-                            <td>{forest.areaName}</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={2}>No forests are currently available from fire-ban pages.</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            </div>
-          ) : null}
-        </>
-      ) : null}
+      <WarningsDialog
+        isOpen={warningsOpen}
+        warningCount={warningCount}
+        closeWarningsDialog={closeWarningsDialog}
+        warningSections={{
+          hasUnmappedForestWarning,
+          unmappedForests,
+          getUnmappedForestLink,
+          hasUnknownTotalFireBanWarning,
+          forestsWithUnknownTotalFireBan,
+          buildTotalFireBanDetailsUrl,
+          generalWarnings,
+          hasFacilitiesMismatchWarning,
+          matchDiagnostics,
+          facilitiesMismatchWarningSummary,
+          renderFacilitiesMismatchWarningSummary,
+          openFireBanForestTable,
+          buildFacilitiesForestUrl,
+          hasFuzzyMatchesWarning,
+          fuzzyMatchesWarningText,
+          getFireBanAreaUrl,
+          closureDiagnostics
+        }}
+        fireBanForestTable={{
+          fireBanForestTableOpen,
+          closeFireBanForestTable,
+          fireBanPageForests,
+          sortedFireBanPageForests,
+          fireBanForestSortColumn,
+          fireBanForestTableSortLabel,
+          toggleFireBanForestSort
+        }}
+      />
       <section className="layout">
         <aside className="panel filter-panel">
           <h2>Filters</h2>

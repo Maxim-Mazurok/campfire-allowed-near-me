@@ -1,6 +1,10 @@
 import { createServer } from "node:http";
 import type { Duplex } from "node:stream";
 import { WebSocket, WebSocketServer } from "ws";
+import type {
+  ForestLoadProgressWebSocketMessage,
+  RefreshTaskWebSocketMessage
+} from "../../../packages/shared/src/websocket.js";
 import { createApp } from "./app.js";
 import { ForestLoadProgressBroker } from "./services/forest-load-progress-broker.js";
 import { LiveForestDataService } from "./services/live-forest-data-service.js";
@@ -58,12 +62,11 @@ refreshWebSocketServer.on("connection", (socket) => {
       return;
     }
 
-    socket.send(
-      JSON.stringify({
-        type: "refresh-task",
-        task: state
-      })
-    );
+    const message: RefreshTaskWebSocketMessage = {
+      type: "refresh-task",
+      task: state
+    };
+    socket.send(JSON.stringify(message));
   });
 
   socket.on("close", () => {
@@ -77,12 +80,11 @@ forestsWebSocketServer.on("connection", (socket) => {
       return;
     }
 
-    socket.send(
-      JSON.stringify({
-        type: "forest-load-progress",
-        load: state
-      })
-    );
+    const message: ForestLoadProgressWebSocketMessage = {
+      type: "forest-load-progress",
+      load: state
+    };
+    socket.send(JSON.stringify(message));
   });
 
   socket.on("close", () => {

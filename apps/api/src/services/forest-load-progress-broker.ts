@@ -1,20 +1,5 @@
 import { EventEmitter } from "node:events";
-import type { RefreshTaskProgress, RefreshTaskPhase } from "../types/domain.js";
-
-export type ForestLoadStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
-
-export interface ForestLoadProgressState {
-  requestId: string | null;
-  status: ForestLoadStatus;
-  phase: RefreshTaskPhase;
-  message: string;
-  startedAt: string | null;
-  updatedAt: string;
-  completedAt: string | null;
-  error: string | null;
-  progress: RefreshTaskProgress | null;
-  activeRequestCount: number;
-}
+import type { ForestLoadProgressState, RefreshTaskProgress } from "../types/domain.js";
 
 interface ForestLoadRequestHandle {
   requestId: string;

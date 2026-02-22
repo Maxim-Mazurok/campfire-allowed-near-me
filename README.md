@@ -183,6 +183,7 @@ Workflow file: `.github/workflows/ci.yml`.
 - `docs/performance-and-scalability-plan.md`: performance bottlenecks and scaling plan.
 - `docs/data-source-expansion-and-llm-plan.md`: multi-source and LLM enrichment architecture plan.
 - `docs/ai-implementation-handoff.md`: implementation order and safety checklist for AI agents.
+- `docs/api-websocket-contract-strategy.md`: shared REST/websocket contracts and pragmatic tRPC adoption strategy.
 
 ## Notes on Source Reliability
 Forestry endpoints are Cloudflare-protected for non-browser HTTP clients. This app uses Playwright-rendered scraping and cache fallback to stay operational when direct fetches are blocked.
