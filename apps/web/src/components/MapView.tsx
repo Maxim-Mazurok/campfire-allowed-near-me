@@ -16,6 +16,9 @@ import {
   getUnmatchedMarkerLimitForZoom,
   selectClosestForestsToCenter
 } from "../lib/map-marker-rendering";
+import {
+  getForestMarkerInteractionOptions
+} from "../lib/forest-marker-interaction";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
 const MAP_BOUNDS_PADDING_FACTOR = 0.2;
@@ -84,6 +87,10 @@ const FitToForests = ({ forests }: { forests: ForestWithCoordinates[] }) => {
   return null;
 };
 
+type MarkerSelectionTestWindow = Window & {
+  campfireMarkerSelectionHandlers?: Record<string, () => void>;
+};
+
 type SelectedForestPopupState = {
   forest: ForestWithCoordinates;
   matchesFilters: boolean;
@@ -126,6 +133,69 @@ const ForestMarker = memo(({
     matchesFilters,
     isHoveredForest
   });
+  const {
+    displayMarkerInteractive,
+    clickTargetMarkerRadius
+  } = getForestMarkerInteractionOptions({
+    matchesFilters,
+    displayMarkerRadius: markerRadius
+  });
+  const selectForest = () => {
+    selectForestPopup({
+      forest,
+      matchesFilters
+    });
+  };
+
+  useEffect(() => {
+    const markerSelectionTestWindow = window as MarkerSelectionTestWindow;
+    const markerSelectionHandlers = markerSelectionTestWindow
+      .campfireMarkerSelectionHandlers ?? (markerSelectionTestWindow.campfireMarkerSelectionHandlers = {});
+
+    markerSelectionHandlers[forest.id] = selectForest;
+
+    return () => {
+      const currentMarkerSelectionHandlers = markerSelectionTestWindow.campfireMarkerSelectionHandlers;
+      if (!currentMarkerSelectionHandlers) {
+        return;
+      }
+
+      if (currentMarkerSelectionHandlers[forest.id] !== selectForest) {
+        return;
+      }
+
+      delete currentMarkerSelectionHandlers[forest.id];
+    };
+  }, [forest.id, selectForest]);
+
+  if (clickTargetMarkerRadius !== null) {
+    return (
+      <>
+        <CircleMarker
+          center={[forest.latitude, forest.longitude]}
+          pane={markerPaneName}
+          radius={markerRadius}
+          pathOptions={markerPathOptions}
+          interactive={displayMarkerInteractive}
+        />
+        <CircleMarker
+          center={[forest.latitude, forest.longitude]}
+          pane={markerPaneName}
+          radius={clickTargetMarkerRadius}
+          pathOptions={{
+            color: "transparent",
+            fillColor: "transparent",
+            opacity: 0.01,
+            fillOpacity: 0.01,
+            weight: 0
+          }}
+          eventHandlers={{
+            click: selectForest
+          }}
+        />
+      </>
+    );
+  }
 
   return (
     <CircleMarker
@@ -133,13 +203,9 @@ const ForestMarker = memo(({
       pane={markerPaneName}
       radius={markerRadius}
       pathOptions={markerPathOptions}
+      interactive={displayMarkerInteractive}
       eventHandlers={{
-        click: () => {
-          selectForestPopup({
-            forest,
-            matchesFilters
-          });
-        }
+        click: selectForest
       }}
     />
   );
@@ -386,7 +452,6 @@ export const MapView = memo(({
       className="map"
       data-testid="map-container"
       data-hovered-forest-id={hoveredForestId ?? ""}
-      preferCanvas
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

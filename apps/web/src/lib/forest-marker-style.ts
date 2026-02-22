@@ -10,7 +10,8 @@ export const UNMATCHED_FOREST_MARKER_PATH_OPTIONS = {
   color: "#7f8690",
   fillColor: "#7f8690",
   fillOpacity: 0.32,
-  opacity: 0.55
+  opacity: 0.55,
+  weight: 1
 } as const;
 
 export const HOVERED_FOREST_MARKER_PATH_OPTIONS = {

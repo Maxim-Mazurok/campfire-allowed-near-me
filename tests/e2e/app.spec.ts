@@ -1,4 +1,48 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+const clickForestMarker = async ({
+  page,
+  forestId
+}: {
+  page: Page;
+  forestId: string;
+}) => {
+  await expect
+    .poll(async () => page.evaluate((forestIdentifier) => {
+      const pageWindow = window as Window & {
+        campfireMarkerSelectionHandlers?: Record<string, () => void>;
+      };
+      return Boolean(pageWindow.campfireMarkerSelectionHandlers?.[forestIdentifier]);
+    }, forestId))
+    .toBe(true);
+
+  const markerWasClicked = await page.evaluate((forestIdentifier) => {
+    const pageWindow = window as Window & {
+      campfireMarkerSelectionHandlers?: Record<string, () => void>;
+    };
+    const markerSelectionHandler = pageWindow.campfireMarkerSelectionHandlers?.[forestIdentifier];
+
+    if (!markerSelectionHandler) {
+      return false;
+    }
+
+    markerSelectionHandler();
+    return true;
+  }, forestId);
+
+  expect(markerWasClicked).toBe(true);
+};
+
+const clearStoredPreferences = async ({
+  page
+}: {
+  page: Page;
+}) => {
+  await page.context().clearPermissions();
+  await page.addInitScript(() => {
+    window.localStorage.clear();
+  });
+};
 
 test("highlights matching map pin when hovering a forest row", async ({ page }) => {
   await page.route("**/api/forests**", async (route) => {
@@ -58,6 +102,114 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
 
   await page.getByTestId("forest-search-input").hover();
   await expect(mapPanel).toHaveAttribute("data-hovered-forest-id", "");
+});
+
+test("opens popup when clicking green matched marker", async ({ page }) => {
+  await clearStoredPreferences({ page });
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: {
+          id: "forest-green",
+          forestName: "Forest Green",
+          areaName: "Area 1",
+          distanceKm: 0
+        },
+        forests: [
+          {
+            id: "forest-green",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest Green",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-green",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest Green",
+            geocodeConfidence: 0.8,
+            distanceKm: 0,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await clickForestMarker({ page, forestId: "forest-green" });
+
+  const forestPopupCard = page.getByTestId("forest-popup-card");
+  await expect(forestPopupCard).toBeVisible();
+  await expect(forestPopupCard).toContainText("Forest Green");
+});
+
+test("opens popup when clicking grey unmatched marker", async ({ page }) => {
+  await clearStoredPreferences({ page });
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "forest-grey",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest Grey",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-grey",
+            banStatus: "BANNED",
+            banStatusText: "Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest Grey",
+            geocodeConfidence: 0.8,
+            distanceKm: null,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await page.getByTestId("ban-filter-allowed").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(0);
+
+  await clickForestMarker({ page, forestId: "forest-grey" });
+
+  const forestPopupCard = page.getByTestId("forest-popup-card");
+  await expect(forestPopupCard).toBeVisible();
+  await expect(forestPopupCard).toContainText("Forest Grey");
 });
 
 test("loads forests, applies filters, and resolves nearest legal spot", async ({
