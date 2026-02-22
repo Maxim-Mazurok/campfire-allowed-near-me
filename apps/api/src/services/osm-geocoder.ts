@@ -1,49 +1,13 @@
 import { GeocoderSqliteCache } from "./geocoder-sqlite-cache.js";
 import type { GeocodeHit, GeocodeProvider } from "./geocoder-sqlite-cache.js";
+import type { GeocodeLookupAttempt } from "./geocoder-provider-lookup.js";
+import {
+  buildAttempt,
+  lookupGooglePlaces,
+  lookupNominatim
+} from "./geocoder-provider-lookup.js";
 export type { GeocodeProvider } from "./geocoder-sqlite-cache.js";
-
-interface NominatimRow {
-  lat: string;
-  lon: string;
-  display_name: string;
-  importance?: number;
-}
-
-interface GooglePlacesSearchResponse {
-  places?: Array<{
-    id?: string;
-    formattedAddress?: string;
-    displayName?: {
-      text?: string;
-      languageCode?: string;
-    };
-    location?: {
-      latitude?: number;
-      longitude?: number;
-    };
-  }>;
-}
-
-export type GeocodeLookupOutcome =
-  | "CACHE_HIT"
-  | "LOOKUP_SUCCESS"
-  | "LIMIT_REACHED"
-  | "HTTP_ERROR"
-  | "REQUEST_FAILED"
-  | "EMPTY_RESULT"
-  | "INVALID_COORDINATES"
-  | "GOOGLE_API_KEY_MISSING";
-
-export interface GeocodeLookupAttempt {
-  provider: GeocodeProvider | "CACHE";
-  query: string;
-  aliasKey: string | null;
-  cacheKey: string;
-  outcome: GeocodeLookupOutcome;
-  httpStatus: number | null;
-  resultCount: number | null;
-  errorMessage: string | null;
-}
+export type { GeocodeLookupOutcome, GeocodeLookupAttempt } from "./geocoder-provider-lookup.js";
 
 export interface GeocodeResponse {
   latitude: number | null;
@@ -59,7 +23,6 @@ const GOOGLE_FALLBACK_WARNING =
   "Google Places geocoding failed for one or more lookups; OpenStreetMap fallback coordinates were used where available.";
 const GOOGLE_KEY_MISSING_WARNING =
   "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap fallback geocoding is active.";
-const DEFAULT_NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
 const DEFAULT_LOCAL_NOMINATIM_PORT = "8080";
 const DEFAULT_LOCAL_NOMINATIM_DELAY_MS = 200;
 const DEFAULT_LOCAL_NOMINATIM_HTTP_429_RETRIES = 4;
@@ -73,39 +36,6 @@ const resolvePreferredNominatimBaseUrl = (): string => {
 
   const nominatimPort = process.env.NOMINATIM_PORT?.trim() || DEFAULT_LOCAL_NOMINATIM_PORT;
   return `http://localhost:${nominatimPort}`;
-};
-
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-const toErrorMessage = (value: unknown): string => {
-  if (value instanceof Error && value.message.trim()) {
-    return value.message.trim();
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    return value.trim();
-  }
-
-  return "Unknown error";
-};
-
-const shouldRetryHttpStatus = (httpStatus: number): boolean =>
-  httpStatus === 408 || httpStatus === 429 || httpStatus >= 500;
-
-const isLocalNominatimBaseUrl = (baseUrl: string): boolean => {
-  try {
-    const parsedUrl = new URL(baseUrl);
-    const hostname = parsedUrl.hostname.toLowerCase();
-    return (
-      hostname === "localhost" ||
-      hostname === "127.0.0.1" ||
-      hostname === "::1" ||
-      hostname === "host.docker.internal"
-    );
-  } catch {
-    return false;
-  }
 };
 
 export class OSMGeocoder {
@@ -203,371 +133,44 @@ export class OSMGeocoder {
     };
   }
 
-  private buildAttempt(
-    provider: GeocodeProvider | "CACHE",
+  private lookupGooglePlaces(
     query: string,
     aliasKey: string | null,
-    cacheKey: string,
-    outcome: GeocodeLookupOutcome,
-    options?: {
-      httpStatus?: number | null;
-      resultCount?: number | null;
-      errorMessage?: string | null;
-    }
-  ): GeocodeLookupAttempt {
-    return {
-      provider,
+    cacheKey: string
+  ) {
+    return lookupGooglePlaces(
+      {
+        googleApiKey: this.googleApiKey,
+        requestTimeoutMs: this.requestTimeoutMs,
+        retryAttempts: this.retryAttempts,
+        retryBaseDelayMs: this.retryBaseDelayMs
+      },
       query,
       aliasKey,
-      cacheKey,
-      outcome,
-      httpStatus: options?.httpStatus ?? null,
-      resultCount: options?.resultCount ?? null,
-      errorMessage: options?.errorMessage ?? null
-    };
-  }
-
-  private async fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
-    const abortController = new AbortController();
-    const timeoutHandle = setTimeout(() => {
-      abortController.abort();
-    }, this.requestTimeoutMs);
-
-    try {
-      return await fetch(url, {
-        ...init,
-        signal: abortController.signal
-      });
-    } finally {
-      clearTimeout(timeoutHandle);
-    }
-  }
-
-  private async runWithRetries(
-    executeAttempt: () => Promise<Response>
-  ): Promise<{ response: Response | null; error: string | null }> {
-    let lastError: string | null = null;
-
-    for (let attemptNumber = 1; attemptNumber <= this.retryAttempts; attemptNumber += 1) {
-      try {
-        const response = await executeAttempt();
-
-        if (shouldRetryHttpStatus(response.status) && attemptNumber < this.retryAttempts) {
-          const backoffDelayMs = this.retryBaseDelayMs * 2 ** (attemptNumber - 1);
-          await sleep(backoffDelayMs);
-          continue;
-        }
-
-        return {
-          response,
-          error: null
-        };
-      } catch (error) {
-        lastError = toErrorMessage(error);
-        if (attemptNumber < this.retryAttempts) {
-          const backoffDelayMs = this.retryBaseDelayMs * 2 ** (attemptNumber - 1);
-          await sleep(backoffDelayMs);
-          continue;
-        }
-      }
-    }
-
-    return {
-      response: null,
-      error: lastError
-    };
-  }
-
-  private async lookupGooglePlaces(
-    query: string,
-    aliasKey: string | null,
-    cacheKey: string
-  ): Promise<{ hit: GeocodeHit | null; attempt: GeocodeLookupAttempt }> {
-    const googleApiKey = this.googleApiKey;
-    if (!googleApiKey) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
-          query,
-          aliasKey,
-          cacheKey,
-          "GOOGLE_API_KEY_MISSING"
-        )
-      };
-    }
-
-    const body = {
-      textQuery: query,
-      maxResultCount: 1,
-      languageCode: "en",
-      regionCode: "AU"
-    };
-
-    const googleRequest = await this.runWithRetries(() =>
-      this.fetchWithTimeout("https://places.googleapis.com/v1/places:searchText", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": googleApiKey,
-          "X-Goog-FieldMask":
-            "places.id,places.displayName,places.formattedAddress,places.location"
-        },
-        body: JSON.stringify(body)
-      })
+      cacheKey
     );
-
-    if (!googleRequest.response) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
-          query,
-          aliasKey,
-          cacheKey,
-          "REQUEST_FAILED",
-          {
-            errorMessage: googleRequest.error
-          }
-        )
-      };
-    }
-
-    const response = googleRequest.response;
-
-    if (!response.ok) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt("GOOGLE_PLACES", query, aliasKey, cacheKey, "HTTP_ERROR", {
-          httpStatus: response.status
-        })
-      };
-    }
-
-    let rows: GooglePlacesSearchResponse;
-    try {
-      rows = (await response.json()) as GooglePlacesSearchResponse;
-    } catch (error) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
-          query,
-          aliasKey,
-          cacheKey,
-          "REQUEST_FAILED",
-          {
-            errorMessage: `Invalid JSON response: ${toErrorMessage(error)}`
-          }
-        )
-      };
-    }
-
-    const places = rows.places ?? [];
-    const first = places[0];
-
-    if (!first?.location) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
-          query,
-          aliasKey,
-          cacheKey,
-          "EMPTY_RESULT",
-          {
-            resultCount: places.length
-          }
-        )
-      };
-    }
-
-    const latitude = Number(first.location.latitude);
-    const longitude = Number(first.location.longitude);
-
-    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
-          query,
-          aliasKey,
-          cacheKey,
-          "INVALID_COORDINATES",
-          {
-            resultCount: places.length
-          }
-        )
-      };
-    }
-
-    const displayName =
-      first.displayName?.text?.trim() ||
-      first.formattedAddress?.trim() ||
-      query;
-
-    const hit: GeocodeHit = {
-      latitude,
-      longitude,
-      displayName,
-      importance: 1,
-      provider: "GOOGLE_PLACES",
-      updatedAt: new Date().toISOString()
-    };
-
-    return {
-      hit,
-      attempt: this.buildAttempt("GOOGLE_PLACES", query, aliasKey, cacheKey, "LOOKUP_SUCCESS", {
-        resultCount: places.length
-      })
-    };
   }
 
-  private async lookupNominatim(
+  private lookupNominatim(
     query: string,
     aliasKey: string | null,
     cacheKey: string
-  ): Promise<{ hit: GeocodeHit | null; attempt: GeocodeLookupAttempt }> {
-    const nominatimBaseUrls = [this.nominatimBaseUrl, DEFAULT_NOMINATIM_BASE_URL];
-    const uniqueNominatimBaseUrls = [...new Set(nominatimBaseUrls.map((baseUrl) => baseUrl.trim()))]
-      .filter(Boolean);
-
-    let lastHttpStatus: number | null = null;
-    let lastErrorMessage: string | null = null;
-
-    for (const baseUrl of uniqueNominatimBaseUrls) {
-      const isLocalNominatim = isLocalNominatimBaseUrl(baseUrl);
-      let localNominatimHttp429RetryCount = 0;
-
-      while (true) {
-      const url = new URL("/search", baseUrl);
-      url.searchParams.set("q", query);
-      url.searchParams.set("format", "jsonv2");
-      url.searchParams.set("countrycodes", "au");
-      url.searchParams.set("limit", "1");
-
-      const nominatimRequest = await this.runWithRetries(() =>
-        this.fetchWithTimeout(url.toString(), {
-          headers: {
-            "User-Agent":
-              "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
-            Accept: "application/json"
-          }
-        })
-      );
-
-      if (isLocalNominatim && this.localNominatimDelayMs > 0) {
-        await sleep(this.localNominatimDelayMs);
-      }
-
-      if (!isLocalNominatim && this.requestDelayMs > 0) {
-        await sleep(this.requestDelayMs);
-      }
-
-      if (!nominatimRequest.response) {
-        lastErrorMessage = nominatimRequest.error;
-        break;
-      }
-
-      const response = nominatimRequest.response;
-
-      if (!response.ok) {
-        if (
-          isLocalNominatim &&
-          response.status === 429 &&
-          localNominatimHttp429RetryCount < this.localNominatimHttp429Retries
-        ) {
-          localNominatimHttp429RetryCount += 1;
-
-          if (this.localNominatimHttp429RetryDelayMs > 0) {
-            await sleep(this.localNominatimHttp429RetryDelayMs);
-          }
-
-          continue;
-        }
-
-        lastHttpStatus = response.status;
-        break;
-      }
-
-      let rows: NominatimRow[];
-      try {
-        rows = (await response.json()) as NominatimRow[];
-      } catch (error) {
-        lastErrorMessage = `Invalid JSON response: ${toErrorMessage(error)}`;
-        break;
-      }
-
-      const resultCount = rows.length;
-      const top = rows[0];
-
-      if (!top?.lat || !top?.lon) {
-        lastErrorMessage = `Empty result from ${baseUrl}`;
-        break;
-      }
-
-      const latitude = Number(top.lat);
-      const longitude = Number(top.lon);
-      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-        lastErrorMessage = `Invalid coordinates from ${baseUrl}`;
-        break;
-      }
-
-      const hit: GeocodeHit = {
-        latitude,
-        longitude,
-        displayName: top.display_name,
-        importance: top.importance ?? 0,
-        provider: "OSM_NOMINATIM",
-        updatedAt: new Date().toISOString()
-      };
-
-      return {
-        hit,
-        attempt: this.buildAttempt(
-          "OSM_NOMINATIM",
-          query,
-          aliasKey,
-          cacheKey,
-          "LOOKUP_SUCCESS",
-          {
-            resultCount
-          }
-        )
-      };
-    }
-    }
-
-    if (lastHttpStatus !== null) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt("OSM_NOMINATIM", query, aliasKey, cacheKey, "HTTP_ERROR", {
-          httpStatus: lastHttpStatus,
-          errorMessage: lastErrorMessage
-        })
-      };
-    }
-
-    if (lastErrorMessage) {
-      return {
-        hit: null,
-        attempt: this.buildAttempt(
-          "OSM_NOMINATIM",
-          query,
-          aliasKey,
-          cacheKey,
-          "REQUEST_FAILED",
-          {
-            errorMessage: lastErrorMessage
-          }
-        )
-      };
-    }
-
-    return {
-      hit: null,
-      attempt: this.buildAttempt("OSM_NOMINATIM", query, aliasKey, cacheKey, "EMPTY_RESULT")
-    };
+  ) {
+    return lookupNominatim(
+      {
+        nominatimBaseUrl: this.nominatimBaseUrl,
+        requestTimeoutMs: this.requestTimeoutMs,
+        requestDelayMs: this.requestDelayMs,
+        retryAttempts: this.retryAttempts,
+        retryBaseDelayMs: this.retryBaseDelayMs,
+        localNominatimDelayMs: this.localNominatimDelayMs,
+        localNominatimHttp429Retries: this.localNominatimHttp429Retries,
+        localNominatimHttp429RetryDelayMs: this.localNominatimHttp429RetryDelayMs
+      },
+      query,
+      aliasKey,
+      cacheKey
+    );
   }
 
   private async geocodeQuery(query: string, aliasKey?: string): Promise<GeocodeResponse> {
@@ -594,7 +197,7 @@ export class OSMGeocoder {
 
       return this.toGeocodeResponse(
         cached,
-        [this.buildAttempt("CACHE", query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")],
+        [buildAttempt("CACHE", query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")],
         cached.provider === "OSM_NOMINATIM"
           ? [this.googleApiKey ? GOOGLE_FALLBACK_WARNING : GOOGLE_KEY_MISSING_WARNING]
           : undefined
@@ -622,7 +225,7 @@ export class OSMGeocoder {
       this.newLookupsThisRun >= this.maxNewLookupsPerRun
         ? {
             hit: null,
-            attempt: this.buildAttempt(
+            attempt: buildAttempt(
               "GOOGLE_PLACES",
               query,
               aliasKeyNormalized,
