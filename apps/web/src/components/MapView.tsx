@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import {
   CircleMarker,
   MapContainer,
+  Pane,
   Popup,
   TileLayer,
   useMap
@@ -43,28 +44,26 @@ const FitToForests = ({ forests }: { forests: ForestPoint[] }) => {
   return null;
 };
 
-const markerColor = (status: ForestPoint["banStatus"]): string => {
-  if (status === "NOT_BANNED") {
-    return "#1f9d55";
-  }
-
-  if (status === "BANNED") {
-    return "#d64545";
-  }
-
-  return "#718096";
-};
-
 export const MapView = ({
   forests,
+  matchedForestIds,
   userLocation
 }: {
   forests: ForestPoint[];
+  matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
 }) => {
   const centeredForests = useMemo(
     () => forests.filter((forest) => forest.latitude !== null && forest.longitude !== null),
     [forests]
+  );
+  const unmatchedForests = useMemo(
+    () => centeredForests.filter((forest) => !matchedForestIds.has(forest.id)),
+    [centeredForests, matchedForestIds]
+  );
+  const matchedForests = useMemo(
+    () => centeredForests.filter((forest) => matchedForestIds.has(forest.id)),
+    [centeredForests, matchedForestIds]
   );
 
   return (
@@ -92,32 +91,71 @@ export const MapView = ({
         </>
       ) : <FitToForests forests={centeredForests} />}
 
-      {centeredForests.map((forest) => (
-        <CircleMarker
-          key={forest.id}
-          center={[forest.latitude!, forest.longitude!]}
-          radius={6}
-          pathOptions={{
-            color: markerColor(forest.banStatus),
-            fillColor: markerColor(forest.banStatus),
-            fillOpacity: 0.75
-          }}
-        >
-          <Popup>
-            <strong>{forest.forestName}</strong>
-            <br />
-            Area: {forest.areaName}
-            <br />
-            Status: {forest.banStatusText}
-            {forest.distanceKm !== null ? (
-              <>
-                <br />
-                Distance: {forest.distanceKm.toFixed(1)} km
-              </>
-            ) : null}
-          </Popup>
-        </CircleMarker>
-      ))}
+      <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
+        {unmatchedForests.map((forest) => (
+          <CircleMarker
+            key={forest.id}
+            center={[forest.latitude!, forest.longitude!]}
+            pane="unmatched-forests"
+            radius={4}
+            pathOptions={{
+              color: "#7f8690",
+              fillColor: "#7f8690",
+              fillOpacity: 0.32,
+              opacity: 0.55
+            }}
+          >
+            <Popup>
+              <strong>{forest.forestName}</strong>
+              <br />
+              Area: {forest.areaName}
+              <br />
+              Status: {forest.banStatusText}
+              <br />
+              Matches filters: No
+              {forest.distanceKm !== null ? (
+                <>
+                  <br />
+                  Distance: {forest.distanceKm.toFixed(1)} km
+                </>
+              ) : null}
+            </Popup>
+          </CircleMarker>
+        ))}
+      </Pane>
+
+      <Pane name="matched-forests" style={{ zIndex: 660 }}>
+        {matchedForests.map((forest) => (
+          <CircleMarker
+            key={forest.id}
+            center={[forest.latitude!, forest.longitude!]}
+            pane="matched-forests"
+            radius={9}
+            pathOptions={{
+              color: "#00e85a",
+              fillColor: "#00e85a",
+              fillOpacity: 0.95,
+              opacity: 1
+            }}
+          >
+            <Popup>
+              <strong>{forest.forestName}</strong>
+              <br />
+              Area: {forest.areaName}
+              <br />
+              Status: {forest.banStatusText}
+              <br />
+              Matches filters: Yes
+              {forest.distanceKm !== null ? (
+                <>
+                  <br />
+                  Distance: {forest.distanceKm.toFixed(1)} km
+                </>
+              ) : null}
+            </Popup>
+          </CircleMarker>
+        ))}
+      </Pane>
     </MapContainer>
   );
 };

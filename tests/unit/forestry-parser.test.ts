@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   parseAreaForestNames,
   parseBanStatus,
+  parseForestDirectoryFilters,
+  parseForestDirectoryForestNames,
   parseMainFireBanPage
 } from "../../apps/api/src/services/forestry-parser.js";
 
@@ -85,5 +87,188 @@ describe("parseAreaForestNames", () => {
       "Bargo State Forest",
       "Yerranderie State Forest"
     ]);
+  });
+
+  it("prefers include lists and ignores excluded-list sections", () => {
+    const html = `
+      <p>State forests of the South Coast include:</p>
+      <ul>
+        <li>Bermagui State Forest</li>
+        <li>Bodalla State Forest</li>
+        <li>Currambene State Forest</li>
+      </ul>
+      <p>
+        The following State forests are excluded in this list and sit in the Southern Highlands area list:
+      </p>
+      <ul>
+        <li>Belanglo State Forest</li>
+        <li>Wingello State Forest</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual([
+      "Bermagui State Forest",
+      "Bodalla State Forest",
+      "Currambene State Forest"
+    ]);
+  });
+
+  it("ignores non-forest noise entries in include lists", () => {
+    const html = `
+      <p>This area includes the following State forests:</p>
+      <ul>
+        <li>Find a State forest</li>
+        <li>Defined State forest area</li>
+        <li>Includes: Mountain Biking in Glenwood State Forest</li>
+        <li>Coolangubra State Forest</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual(["Coolangubra State Forest"]);
+  });
+});
+
+describe("parseForestDirectoryFilters", () => {
+  it("extracts all facility filters from the Forestry forests directory form", () => {
+    const html = `
+      <form>
+        <h3>Facilities</h3>
+        <label for="camping">Camping</label>
+        <input id="camping" type="checkbox" name="camping" value="Yes" />
+        <label for="walking">Walking track</label>
+        <input id="walking" type="checkbox" name="walking" value="Yes" />
+        <label for="fourwheeling">4WD tracks</label>
+        <input id="fourwheeling" type="checkbox" name="fourwheeling" value="Yes" />
+        <label for="cycling">Designated mntn bike track</label>
+        <input id="cycling" type="checkbox" name="cycling" value="Yes" />
+        <label for="horse">Designated horse riding track</label>
+        <input id="horse" type="checkbox" name="horse" value="Yes" />
+        <label for="canoeing">Canoeing/kayaking</label>
+        <input id="canoeing" type="checkbox" name="canoeing" value="Yes" />
+        <label for="waterways">Waterways</label>
+        <input id="waterways" type="checkbox" name="waterways" value="Yes" />
+        <label for="fishing">Fishing</label>
+        <input id="fishing" type="checkbox" name="fishing" value="Yes" />
+        <label for="caravan">Caravan site</label>
+        <input id="caravan" type="checkbox" name="caravan" value="Yes" />
+        <label for="picnicing">Picnic area</label>
+        <input id="picnicing" type="checkbox" name="picnicing" value="Yes" />
+        <label for="lookout">Lookouts</label>
+        <input id="lookout" type="checkbox" name="lookout" value="Yes" />
+        <label for="adventure">Adventure</label>
+        <input id="adventure" type="checkbox" name="adventure" value="Yes" />
+        <label for="hunting">Authorised hunting</label>
+        <input id="hunting" type="checkbox" name="hunting" value="Yes" />
+        <label for="cabin">Cabins or huts available</label>
+        <input id="cabin" type="checkbox" name="cabin" value="Yes" />
+        <label for="fireplace">Fireplace</label>
+        <input id="fireplace" type="checkbox" name="fireplace" value="Yes" />
+        <label for="twowheeling">2WD access</label>
+        <input id="twowheeling" type="checkbox" name="twowheeling" value="Yes" />
+        <label for="toilets">Toilets</label>
+        <input id="toilets" type="checkbox" name="toilets" value="Yes" />
+        <label for="wheelchair">Wheelchair access</label>
+        <input id="wheelchair" type="checkbox" name="wheelchair" value="Yes" />
+      </form>
+    `;
+
+    const facilities = parseForestDirectoryFilters(html);
+    expect(facilities).toHaveLength(18);
+    expect(facilities.map((facility) => facility.label)).toEqual([
+      "Camping",
+      "Walking track",
+      "4WD tracks",
+      "Designated mntn bike track",
+      "Designated horse riding track",
+      "Canoeing/kayaking",
+      "Waterways",
+      "Fishing",
+      "Caravan site",
+      "Picnic area",
+      "Lookouts",
+      "Adventure",
+      "Authorised hunting",
+      "Cabins or huts available",
+      "Fireplace",
+      "2WD access",
+      "Toilets",
+      "Wheelchair access"
+    ]);
+    expect(facilities[0]).toMatchObject({
+      key: "camping",
+      paramName: "camping",
+      iconKey: "camping"
+    });
+  });
+});
+
+describe("parseForestDirectoryForestNames", () => {
+  it("extracts state forest names from directory results", () => {
+    const html = `
+      <ul>
+        <li><a href="/visit/forests/awaba-state-forest">Awaba State Forest</a></li>
+        <li><a href="/visit/forests/chichester-state-forest-allyn-river">Chichester State Forest (Allyn River)</a></li>
+        <li><a href="/visit/forests/chichester-state-forest-corkscrew">Chichester State Forest (Corkscrew)</a></li>
+      </ul>
+    `;
+
+    expect(parseForestDirectoryForestNames(html)).toEqual([
+      "Awaba State Forest",
+      "Chichester State Forest (Allyn River)",
+      "Chichester State Forest (Corkscrew)"
+    ]);
+  });
+
+  it("parses relative detail links and ignores generic forest-directory links", () => {
+    const html = `
+      <a href="https://www.forestrycorporation.com.au/visiting/forests">Look up a State forest</a>
+      <div class="mb-4">
+        <div>
+          <strong><a href="forests/bondi-state-forest">Bondi State Forest</a></strong>
+          <a href="#" onclick="showOnMap(1);return false;">show on map</a>
+        </div>
+        <div>Includes: Bondi Forest Park</div>
+      </div>
+      <div class="mb-4">
+        <strong><a href="/visiting/forests/cowarra-state-forest">Cowarra State Forest</a></strong>
+      </div>
+    `;
+
+    expect(parseForestDirectoryForestNames(html)).toEqual([
+      "Bondi State Forest",
+      "Cowarra State Forest"
+    ]);
+  });
+
+  it("falls back to map marker scripts when anchor tags are unavailable", () => {
+    const html = `
+      <script type="text/javascript">
+        addMarker("<h3><a href='https://www.forestrycorporation.com.au/visiting/forests/double-duke'>Double Duke State Forest</a></h3>", "-29.1", "153.2", 1)
+      </script>
+      <script type="text/javascript">
+        addMarker("<h3><a href='https://www.forestrycorporation.com.au/visiting/forests/bondi-state-forest'>Bondi State Forest</a></h3>", "-37.1", "149.2", 2)
+      </script>
+    `;
+
+    expect(parseForestDirectoryForestNames(html)).toEqual([
+      "Double Duke State Forest",
+      "Bondi State Forest"
+    ]);
+  });
+
+  it("ignores non-forest labels even when they contain 'state forest' text", () => {
+    const html = `
+      <div>
+        <a href="/visiting/forests/glenwood-state-forest">Includes: Mountain Biking in Glenwood State Forest</a>
+      </div>
+      <div>
+        <a href="/visiting/forests/woodburn-state-forest">Includes: Woodburn State Forest MTB Park</a>
+      </div>
+      <div>
+        <a href="/visiting/forests/coolangubra-state-forest">Coolangubra State Forest</a>
+      </div>
+    `;
+
+    expect(parseForestDirectoryForestNames(html)).toEqual(["Coolangubra State Forest"]);
   });
 });

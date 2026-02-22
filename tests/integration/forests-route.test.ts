@@ -10,6 +10,18 @@ const responseFixture: ForestApiResponse = {
   fetchedAt: "2026-02-21T10:00:00.000Z",
   stale: false,
   sourceName: "Forestry Corporation NSW",
+  availableFacilities: [
+    {
+      key: "fishing",
+      label: "Fishing",
+      paramName: "fishing",
+      iconKey: "fishing"
+    }
+  ],
+  matchDiagnostics: {
+    unmatchedFacilitiesForests: [],
+    fuzzyMatches: []
+  },
   warnings: [],
   nearestLegalSpot: {
     id: "forest-a",
@@ -30,6 +42,9 @@ const responseFixture: ForestApiResponse = {
       longitude: 151.1,
       geocodeName: "Forest A",
       geocodeConfidence: 0.8,
+      facilities: {
+        fishing: true
+      },
       distanceKm: 14.2
     }
   ]

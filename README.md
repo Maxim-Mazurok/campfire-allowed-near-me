@@ -7,11 +7,17 @@ This project was developed with **Codex using the GPT-5.3.-Codex model**.
 
 ## Features
 - Scrapes Forestry Corporation NSW fire-ban page and linked area pages.
+- Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
 - Uses **Solid Fuel Fire Ban** status only for burn legality.
 - Ignores Firewood collection status for campfire legality.
 - Maps forests with OpenStreetMap + Leaflet.
-- Shows filters for `All`, `Only banned`, `Only allowed`.
+- Sidebar filters:
+  - Fire ban status (`All`, `Allowed`, `Not allowed`)
+  - Tri-state facilities (`with`, `without`, `doesn't matter`)
+- Matches Forestry fire-ban forests to directory forests with fuzzy name scoring for minor naming differences/typos.
 - Uses browser geolocation and computes nearest legal spot.
+- Shows matching forests as large red map pins and non-matching forests as smaller grey pins.
+- Shows per-forest facility icon rows in the list for quick vertical scanning.
 - Persists coordinates in local SQLite cache (`data/cache/coordinates.sqlite`).
 - Falls back to stale snapshot if live scraping is temporarily blocked.
 
@@ -70,6 +76,7 @@ npm run warm:coordinates
 ## Environment Variables
 - `PORT` (default `8787`)
 - `FORESTRY_ENTRY_URL` (default Forestry Corporation solid-fuel-fire-ban URL)
+- `FORESTRY_DIRECTORY_URL` (default Forestry Corporation forests directory URL)
 - `SCRAPE_TTL_MS` (default `900000`)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
 - `GEOCODE_DELAY_MS` (default `1200`)

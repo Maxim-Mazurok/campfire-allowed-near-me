@@ -1,18 +1,44 @@
-import { useEffect, useMemo, useState } from "react";
+import Tippy from "@tippyjs/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FacilityIcon } from "./components/FacilityIcon";
 import { MapView } from "./components/MapView";
 import { fetchForests, type ForestApiResponse } from "./lib/api";
 
-type FilterMode = "ALL" | "ONLY_BANNED" | "ONLY_ALLOWED";
+type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
+type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
+
+const sortForestsByDistance = (
+  left: ForestApiResponse["forests"][number],
+  right: ForestApiResponse["forests"][number]
+): number => {
+  if (left.distanceKm === null && right.distanceKm === null) {
+    return left.forestName.localeCompare(right.forestName);
+  }
+
+  if (left.distanceKm === null) {
+    return 1;
+  }
+
+  if (right.distanceKm === null) {
+    return -1;
+  }
+
+  return left.distanceKm - right.distanceKm;
+};
 
 export const App = () => {
   const [payload, setPayload] = useState<ForestApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterMode, setFilterMode] = useState<FilterMode>("ALL");
+  const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>("ALL");
+  const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
+    {}
+  );
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
+  const autoLocateRequestedRef = useRef(false);
 
   const loadData = async (options?: {
     location?: { latitude: number; longitude: number };
@@ -37,25 +63,114 @@ export const App = () => {
   }, []);
 
   const forests = payload?.forests ?? [];
+  const availableFacilities = payload?.availableFacilities ?? [];
+  const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
 
-  const filteredForests = useMemo(() => {
-    if (filterMode === "ONLY_BANNED") {
-      return forests.filter((forest) => forest.banStatus === "BANNED");
-    }
+  useEffect(() => {
+    setFacilityFilterModes((current) => {
+      const next: Record<string, TriStateMode> = {};
+      for (const facility of availableFacilities) {
+        next[facility.key] = current[facility.key] ?? "ANY";
+      }
+      return next;
+    });
+  }, [facilitySignature, availableFacilities]);
 
-    if (filterMode === "ONLY_ALLOWED") {
-      return forests.filter((forest) => forest.banStatus === "NOT_BANNED");
-    }
+  const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
+    setFacilityFilterModes((current) => ({
+      ...current,
+      [key]: mode
+    }));
+  };
 
-    return forests;
-  }, [filterMode, forests]);
-  const mappableForestCount = filteredForests.filter(
+  const toggleFacilityMode = (key: string, mode: Exclude<TriStateMode, "ANY">) => {
+    setFacilityFilterModes((current) => ({
+      ...current,
+      [key]: current[key] === mode ? "ANY" : mode
+    }));
+  };
+
+  const clearFacilityModes = () => {
+    setFacilityFilterModes((current) =>
+      Object.fromEntries(
+        Object.keys(current).map((key) => [key, "ANY"])
+      ) as Record<string, TriStateMode>
+    );
+  };
+
+  const matchingForests = useMemo(() => {
+    return forests.filter((forest) => {
+      if (banFilterMode === "ALLOWED" && forest.banStatus !== "NOT_BANNED") {
+        return false;
+      }
+
+      if (banFilterMode === "NOT_ALLOWED" && forest.banStatus !== "BANNED") {
+        return false;
+      }
+
+      for (const facility of availableFacilities) {
+        const mode = facilityFilterModes[facility.key] ?? "ANY";
+        if (mode === "ANY") {
+          continue;
+        }
+
+        const value = forest.facilities[facility.key];
+        if (mode === "INCLUDE" && value !== true) {
+          return false;
+        }
+
+        if (mode === "EXCLUDE" && value !== false) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [availableFacilities, banFilterMode, facilityFilterModes, forests]);
+
+  const matchingForestIds = useMemo(
+    () => new Set(matchingForests.map((forest) => forest.id)),
+    [matchingForests]
+  );
+
+  const mappableMatchingForestCount = matchingForests.filter(
     (forest) => forest.latitude !== null && forest.longitude !== null
   ).length;
+  const mappableForestCount = forests.filter(
+    (forest) => forest.latitude !== null && forest.longitude !== null
+  ).length;
+  const matchDiagnostics = payload?.matchDiagnostics ?? {
+    unmatchedFacilitiesForests: [],
+    fuzzyMatches: []
+  };
+  const baseWarnings = (payload?.warnings ?? []).filter(
+    (warning) => !/Facilities data could not be matched for/i.test(warning)
+  );
+  const warningLines = [...baseWarnings];
 
-  const requestLocation = () => {
+  if (
+    matchDiagnostics.unmatchedFacilitiesForests.length > 0 &&
+    !warningLines.some((warning) => /not present on the Solid Fuel Fire Ban pages/i.test(warning))
+  ) {
+    warningLines.push(
+      `Facilities page includes ${matchDiagnostics.unmatchedFacilitiesForests.length} forest(s) not present on the Solid Fuel Fire Ban pages.`
+    );
+  }
+
+  if (
+    matchDiagnostics.fuzzyMatches.length > 0 &&
+    !warningLines.some((warning) => /Applied fuzzy facilities matching/i.test(warning))
+  ) {
+    warningLines.push(
+      `Applied fuzzy facilities matching for ${matchDiagnostics.fuzzyMatches.length} forest name(s) with minor naming differences.`
+    );
+  }
+
+  const requestLocation = (options?: { silent?: boolean }) => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by this browser.");
+      if (!options?.silent) {
+        setError("Geolocation is not supported by this browser.");
+      }
       return;
     }
 
@@ -70,10 +185,22 @@ export const App = () => {
         void loadData({ location });
       },
       (geoError) => {
-        setError(`Unable to read your location: ${geoError.message}`);
+        if (!options?.silent) {
+          setError(`Unable to read your location: ${geoError.message}`);
+        }
       }
     );
   };
+
+  useEffect(() => {
+    if (autoLocateRequestedRef.current) {
+      return;
+    }
+
+    autoLocateRequestedRef.current = true;
+    requestLocation({ silent: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="app-shell">
@@ -85,19 +212,7 @@ export const App = () => {
         </p>
 
         <div className="controls">
-          <label htmlFor="filterMode">Filter</label>
-          <select
-            id="filterMode"
-            value={filterMode}
-            onChange={(event) => setFilterMode(event.target.value as FilterMode)}
-            data-testid="filter-select"
-          >
-            <option value="ALL">Show all forests</option>
-            <option value="ONLY_BANNED">Only banned</option>
-            <option value="ONLY_ALLOWED">Only allowed</option>
-          </select>
-
-          <button type="button" onClick={requestLocation} data-testid="locate-btn">
+          <button type="button" onClick={() => requestLocation()} data-testid="locate-btn">
             Use my current location
           </button>
           <button type="button" onClick={() => void loadData({ refresh: true })}>
@@ -118,77 +233,220 @@ export const App = () => {
         </section>
       ) : null}
 
-      {payload?.warnings.length ? (
+      {warningLines.length ? (
         <section className="panel warning" data-testid="warning-banner">
-          {payload.warnings.join(" ")}
+          <ul className="warning-list">
+            {warningLines.map((warning) => (
+              <li key={warning}>
+                {warning}
+                {/Applied fuzzy facilities matching/i.test(warning) &&
+                matchDiagnostics.fuzzyMatches.length > 0 ? (
+                  <Tippy
+                    interactive
+                    maxWidth={540}
+                    content={
+                      <div className="warning-popover">
+                        <strong>Fuzzy Match Details</strong>
+                        <ul className="warning-popover-list">
+                          {matchDiagnostics.fuzzyMatches.map((match) => (
+                            <li key={`${match.facilitiesForestName}:${match.fireBanForestName}`}>
+                              Facilities: <strong>{match.facilitiesForestName}</strong> {"->"} Fire ban:{" "}
+                              <strong>{match.fireBanForestName}</strong> ({match.score.toFixed(2)})
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    }
+                    delay={[0, 0]}
+                    duration={[0, 0]}
+                    placement="bottom-start"
+                  >
+                    <button type="button" className="inline-popover-btn">
+                      details
+                    </button>
+                  </Tippy>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
-
       <section className="layout">
+        <aside className="panel filter-panel">
+          <h2>Filters</h2>
+          <p className="meta">
+            Matching {matchingForests.length} of {forests.length} forests.
+          </p>
+          <div className="filter-panel-scroll">
+            <section className="filter-section">
+              <h3>Fire Ban</h3>
+              <div className="tri-toggle-group">
+                <button
+                  type="button"
+                  className={banFilterMode === "ALL" ? "is-active" : ""}
+                  onClick={() => setBanFilterMode("ALL")}
+                  data-testid="ban-filter-all"
+                >
+                  All
+                </button>
+                <button
+                  type="button"
+                  className={banFilterMode === "ALLOWED" ? "is-active" : ""}
+                  onClick={() => setBanFilterMode("ALLOWED")}
+                  data-testid="ban-filter-allowed"
+                >
+                  Allowed
+                </button>
+                <button
+                  type="button"
+                  className={banFilterMode === "NOT_ALLOWED" ? "is-active" : ""}
+                  onClick={() => setBanFilterMode("NOT_ALLOWED")}
+                  data-testid="ban-filter-not-allowed"
+                >
+                  Not allowed
+                </button>
+              </div>
+            </section>
+
+            <section className="filter-section">
+              <div className="filter-section-header">
+                <h3>Facilities</h3>
+                <button type="button" className="text-btn" onClick={clearFacilityModes}>
+                  Clear
+                </button>
+              </div>
+              {availableFacilities.length ? (
+                <ul className="facility-filter-list" data-testid="facility-filter-list">
+                  {availableFacilities.map((facility) => {
+                    const mode = facilityFilterModes[facility.key] ?? "ANY";
+                    return (
+                      <li key={facility.key} className="facility-filter-row">
+                        <span className="facility-filter-label">
+                          <FacilityIcon facility={facility} />
+                          <span>{facility.label}</span>
+                        </span>
+                        <span className="tri-toggle" role="group" aria-label={`${facility.label} filter`}>
+                          <button
+                            type="button"
+                            className={mode === "INCLUDE" ? "is-active include" : ""}
+                            onClick={() => toggleFacilityMode(facility.key, "INCLUDE")}
+                            aria-label={`Only show forests with ${facility.label.toLowerCase()}`}
+                            data-testid={`facility-filter-${facility.key}-include`}
+                          >
+                            ✓
+                          </button>
+                          <button
+                            type="button"
+                            className={mode === "EXCLUDE" ? "is-active exclude" : ""}
+                            onClick={() => toggleFacilityMode(facility.key, "EXCLUDE")}
+                            aria-label={`Only show forests without ${facility.label.toLowerCase()}`}
+                            data-testid={`facility-filter-${facility.key}-exclude`}
+                          >
+                            ✕
+                          </button>
+                          <button
+                            type="button"
+                            className={mode === "ANY" ? "is-active neutral" : ""}
+                            onClick={() => setSingleFacilityMode(facility.key, "ANY")}
+                            aria-label={`${facility.label} does not matter`}
+                            data-testid={`facility-filter-${facility.key}-any`}
+                          >
+                            ?
+                          </button>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="muted">Facilities data is unavailable right now.</p>
+              )}
+            </section>
+          </div>
+        </aside>
+
         <section className="panel map-panel">
           <p className="meta map-meta" data-testid="mapped-count">
-            Showing {mappableForestCount} mapped forests out of {filteredForests.length}.
+            Showing {mappableMatchingForestCount} matching mapped forests out of{" "}
+            {mappableForestCount} mapped forests.
           </p>
           {loading ? <p>Loading forests...</p> : null}
           {error ? <p className="error">{error}</p> : null}
-          {!loading && !error && mappableForestCount === 0 ? (
+          {!loading && !error && mappableMatchingForestCount === 0 ? (
             <p className="warning-inline">
-              Forests are loaded, but map coordinates are unavailable right now.
-              This can happen temporarily due to geocoding limits.
+              No mapped forests match your current filters.
             </p>
           ) : null}
           {!loading && !error ? (
-            <MapView forests={filteredForests} userLocation={userLocation} />
+            <MapView
+              forests={forests}
+              matchedForestIds={matchingForestIds}
+              userLocation={userLocation}
+            />
           ) : null}
         </section>
 
         <aside className="panel list-panel">
-          <h2>Forests ({filteredForests.length})</h2>
+          <h2>Forests ({matchingForests.length})</h2>
           <p className="meta">
             Last fetched: {payload ? new Date(payload.fetchedAt).toLocaleString() : "-"}
             {payload?.stale ? " (stale cache)" : ""}
           </p>
 
           <ul className="forest-list" data-testid="forest-list">
-            {filteredForests
+            {matchingForests
               .slice()
-              .sort((a, b) => {
-                if (a.distanceKm === null && b.distanceKm === null) {
-                  return a.forestName.localeCompare(b.forestName);
-                }
-
-                if (a.distanceKm === null) {
-                  return 1;
-                }
-
-                if (b.distanceKm === null) {
-                  return -1;
-                }
-
-                return a.distanceKm - b.distanceKm;
-              })
+              .sort(sortForestsByDistance)
               .map((forest) => (
                 <li key={forest.id} className="forest-row" data-testid="forest-row">
-                  <div>
-                    <strong>{forest.forestName}</strong>
-                    <div className="muted">{forest.areaName}</div>
+                  <div className="forest-main-row">
+                    <div>
+                      <strong>{forest.forestName}</strong>
+                      <div className="muted">{forest.areaName}</div>
+                    </div>
+                    <div className="status-block">
+                      <span
+                        className={`status-pill ${forest.banStatus === "NOT_BANNED" ? "allowed" : forest.banStatus === "BANNED" ? "banned" : "unknown"}`}
+                      >
+                        {forest.banStatus === "NOT_BANNED"
+                          ? "No ban"
+                          : forest.banStatus === "BANNED"
+                            ? "Banned"
+                            : "Unknown"}
+                      </span>
+                      <small className="muted" data-testid="distance-text">
+                        {forest.distanceKm !== null
+                          ? `${forest.distanceKm.toFixed(1)} km`
+                          : "Distance unavailable"}
+                      </small>
+                    </div>
                   </div>
-                  <div className="status-block">
-                    <span
-                      className={`status-pill ${forest.banStatus === "NOT_BANNED" ? "allowed" : forest.banStatus === "BANNED" ? "banned" : "unknown"}`}
-                    >
-                      {forest.banStatus === "NOT_BANNED"
-                        ? "No ban"
-                        : forest.banStatus === "BANNED"
-                          ? "Banned"
-                          : "Unknown"}
-                    </span>
-                    <small className="muted" data-testid="distance-text">
-                      {forest.distanceKm !== null
-                        ? `${forest.distanceKm.toFixed(1)} km`
-                        : "Distance unavailable"}
-                    </small>
-                  </div>
+                  {availableFacilities.length ? (
+                    <div className="facility-row" data-testid="facility-row">
+                      {availableFacilities.map((facility) => {
+                        const value = forest.facilities[facility.key];
+                        const stateClass =
+                          value === true ? "present" : value === false ? "absent" : "unknown";
+
+                        const statusText =
+                          value === true ? "Yes" : value === false ? "No" : "Unknown";
+
+                        return (
+                          <Tippy
+                            key={`${forest.id}:${facility.key}`}
+                            content={`${facility.label}: ${statusText}`}
+                            delay={[0, 0]}
+                            duration={[0, 0]}
+                            placement="top"
+                          >
+                            <span className={`facility-indicator ${stateClass}`}>
+                              <FacilityIcon facility={facility} />
+                            </span>
+                          </Tippy>
+                        );
+                      })}
+                    </div>
+                  ) : null}
                 </li>
               ))}
           </ul>

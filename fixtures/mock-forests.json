@@ -3,6 +3,36 @@
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "warnings": [],
+  "matchDiagnostics": {
+    "unmatchedFacilitiesForests": [],
+    "fuzzyMatches": []
+  },
+  "availableFacilities": [
+    {
+      "key": "camping",
+      "label": "Camping",
+      "paramName": "camping",
+      "iconKey": "camping"
+    },
+    {
+      "key": "fishing",
+      "label": "Fishing",
+      "paramName": "fishing",
+      "iconKey": "fishing"
+    },
+    {
+      "key": "cycling",
+      "label": "Designated mntn bike track",
+      "paramName": "cycling",
+      "iconKey": "cycling"
+    },
+    {
+      "key": "lookout",
+      "label": "Lookouts",
+      "paramName": "lookout",
+      "iconKey": "lookout"
+    }
+  ],
   "forests": [
     {
       "id": "sydney-sandstone-marramarra",
@@ -15,7 +45,13 @@
       "latitude": -33.531,
       "longitude": 151.113,
       "geocodeName": "Marramarra National Park",
-      "geocodeConfidence": 0.6
+      "geocodeConfidence": 0.6,
+      "facilities": {
+        "camping": true,
+        "fishing": true,
+        "cycling": false,
+        "lookout": true
+      }
     },
     {
       "id": "sydney-sandstone-wattamolla",
@@ -28,7 +64,13 @@
       "latitude": -34.133,
       "longitude": 151.111,
       "geocodeName": "Wattamolla",
-      "geocodeConfidence": 0.5
+      "geocodeConfidence": 0.5,
+      "facilities": {
+        "camping": false,
+        "fishing": true,
+        "cycling": true,
+        "lookout": false
+      }
     },
     {
       "id": "southern-highlands-belanglo",
@@ -41,7 +83,13 @@
       "latitude": -34.512,
       "longitude": 150.361,
       "geocodeName": "Belanglo State Forest",
-      "geocodeConfidence": 0.75
+      "geocodeConfidence": 0.75,
+      "facilities": {
+        "camping": true,
+        "fishing": false,
+        "cycling": true,
+        "lookout": false
+      }
     },
     {
       "id": "north-coast-jackadgery",
@@ -54,7 +102,13 @@
       "latitude": -29.613,
       "longitude": 152.705,
       "geocodeName": "Jackadgery",
-      "geocodeConfidence": 0.49
+      "geocodeConfidence": 0.49,
+      "facilities": {
+        "camping": false,
+        "fishing": false,
+        "cycling": false,
+        "lookout": true
+      }
     }
   ]
 }

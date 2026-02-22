@@ -54,7 +54,6 @@ body {
   align-items: center;
 }
 
-select,
 button {
   border-radius: 8px;
   border: 1px solid #a8b9ad;
@@ -69,9 +68,131 @@ button {
 
 .layout {
   display: grid;
-  grid-template-columns: 1.7fr 1fr;
+  grid-template-columns: 280px 1.6fr 1fr;
   min-height: 0;
   gap: 14px;
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.filter-panel h2 {
+  margin: 0;
+}
+
+.filter-panel-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.filter-section {
+  border-top: 1px solid #dfe8de;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.filter-section h3 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+.filter-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.text-btn {
+  border: none;
+  background: transparent;
+  color: #2f855a;
+  padding: 2px 4px;
+}
+
+.tri-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.tri-toggle-group button {
+  padding: 5px 8px;
+  line-height: 1;
+}
+
+.tri-toggle button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.tri-toggle-group button.is-active,
+.tri-toggle button.is-active {
+  border-color: #2f855a;
+  background: #f0fff4;
+}
+
+.tri-toggle button.include.is-active {
+  border-color: #2b9348;
+  background: #e6f7ec;
+}
+
+.tri-toggle button.exclude.is-active {
+  border-color: #b23a48;
+  background: #fdecef;
+}
+
+.tri-toggle button.neutral.is-active {
+  border-color: #52606d;
+  background: #eef2f7;
+}
+
+.facility-filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.facility-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.facility-filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.86rem;
+}
+
+.facility-filter-label > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tri-toggle {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 4px;
 }
 
 .map-panel {
@@ -119,11 +240,17 @@ button {
 
 .forest-row {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 7px;
   border: 1px solid #e0e7df;
   border-radius: 10px;
-  padding: 8px;
+  padding: 9px 10px;
+}
+
+.forest-main-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .status-block {
@@ -151,6 +278,76 @@ button {
 
 .status-pill.unknown {
   background: #64748b;
+}
+
+.facility-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.facility-indicator {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid #dde5dd;
+  background: #f7faf8;
+  line-height: 1;
+  padding: 2px 0;
+}
+
+.facility-indicator.present {
+  opacity: 1;
+  color: #1d4e89;
+  border-color: #8ab5e3;
+  background: #eef5ff;
+}
+
+.facility-indicator.absent,
+.facility-indicator.unknown {
+  opacity: 0.35;
+  color: #515f71;
+}
+
+.facility-icon-glyph {
+  font-size: 0.92rem;
+}
+
+.warning-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.warning-list li {
+  margin-bottom: 6px;
+}
+
+.inline-popover-btn {
+  margin-left: 8px;
+  padding: 2px 7px;
+  font-size: 0.74rem;
+}
+
+.warning-popover {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.warning-popover-list {
+  margin: 7px 0 0;
+  padding-left: 16px;
+}
+
+.tippy-box {
+  font-size: 0.74rem;
+  transition-duration: 0ms !important;
+}
+
+.tippy-content {
+  padding: 4px 7px;
 }
 
 .warning {
@@ -191,8 +388,12 @@ button {
 
   .layout {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(320px, 46dvh) minmax(320px, auto);
+    grid-template-rows: auto minmax(320px, 46dvh) minmax(320px, auto);
     min-height: auto;
+  }
+
+  .filter-panel {
+    min-height: 240px;
   }
 
   .map-panel,
@@ -202,5 +403,9 @@ button {
 
   .map {
     min-height: 280px;
+  }
+
+  .facility-icon-glyph {
+    font-size: 0.9rem;
   }
 }

@@ -1,5 +1,12 @@
 export type BanStatus = "BANNED" | "NOT_BANNED" | "UNKNOWN";
 
+export interface FacilityDefinition {
+  key: string;
+  label: string;
+  paramName: string;
+  iconKey: string;
+}
+
 export interface ForestPoint {
   id: string;
   source: string;
@@ -12,13 +19,25 @@ export interface ForestPoint {
   longitude: number | null;
   geocodeName: string | null;
   geocodeConfidence: number | null;
+  facilities: Record<string, boolean | null>;
   distanceKm: number | null;
+}
+
+export interface FacilityMatchDiagnostics {
+  unmatchedFacilitiesForests: string[];
+  fuzzyMatches: Array<{
+    fireBanForestName: string;
+    facilitiesForestName: string;
+    score: number;
+  }>;
 }
 
 export interface ForestApiResponse {
   fetchedAt: string;
   stale: boolean;
   sourceName: string;
+  availableFacilities: FacilityDefinition[];
+  matchDiagnostics: FacilityMatchDiagnostics;
   forests: ForestPoint[];
   nearestLegalSpot: {
     id: string;
