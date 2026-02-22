@@ -33,6 +33,80 @@ const clickForestMarker = async ({
   expect(markerWasClicked).toBe(true);
 };
 
+const readMapCenter = async ({
+  page
+}: {
+  page: Page;
+}) => {
+  const mapCenter = await page.evaluate(() => {
+    const pageWindow = window as Window & {
+      campfireLeafletMap?: {
+        getCenter: () => { lat: number; lng: number };
+      };
+    };
+
+    const map = pageWindow.campfireLeafletMap;
+    if (!map) {
+      throw new Error("Leaflet map bridge is unavailable");
+    }
+
+    const center = map.getCenter();
+    return {
+      latitude: center.lat,
+      longitude: center.lng
+    };
+  });
+
+  return mapCenter;
+};
+
+const readPopupLifecycle = async ({
+  page
+}: {
+  page: Page;
+}) => {
+  const popupLifecycle = await page.evaluate(() => {
+    const pageWindow = window as Window & {
+      campfireForestPopupLifecycle?: {
+        mountCount: number;
+        unmountCount: number;
+      };
+    };
+
+    return pageWindow.campfireForestPopupLifecycle ?? {
+      mountCount: 0,
+      unmountCount: 0
+    };
+  });
+
+  return popupLifecycle;
+};
+
+const panMap = async ({
+  page,
+  offsetX,
+  offsetY
+}: {
+  page: Page;
+  offsetX: number;
+  offsetY: number;
+}) => {
+  const mapContainer = page.locator(".leaflet-container").first();
+  await expect(mapContainer).toBeVisible();
+  const mapContainerBounds = await mapContainer.boundingBox();
+  if (!mapContainerBounds) {
+    throw new Error("Map container bounds are unavailable");
+  }
+
+  const dragStartX = mapContainerBounds.x + mapContainerBounds.width / 2;
+  const dragStartY = mapContainerBounds.y + mapContainerBounds.height / 2;
+
+  await page.mouse.move(dragStartX, dragStartY);
+  await page.mouse.down();
+  await page.mouse.move(dragStartX + offsetX, dragStartY + offsetY, { steps: 20 });
+  await page.mouse.up();
+};
+
 const clearStoredPreferences = async ({
   page
 }: {
@@ -210,6 +284,182 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
   const forestPopupCard = page.getByTestId("forest-popup-card");
   await expect(forestPopupCard).toBeVisible();
   await expect(forestPopupCard).toContainText("Forest Grey");
+});
+
+test("keeps map position after panning with popup open", async ({ page }) => {
+  await clearStoredPreferences({ page });
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: {
+          id: "forest-pan",
+          forestName: "Forest Pan",
+          areaName: "Area 1",
+          distanceKm: 0
+        },
+        forests: [
+          {
+            id: "forest-pan",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest Pan",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-pan",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest Pan",
+            geocodeConfidence: 0.8,
+            distanceKm: 0,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await clickForestMarker({ page, forestId: "forest-pan" });
+  await expect(page.getByTestId("forest-popup-card")).toBeVisible();
+
+  const initialMapCenter = await readMapCenter({ page });
+  const popupLifecycleBeforePan = await readPopupLifecycle({ page });
+
+  await panMap({ page, offsetX: 200, offsetY: 120 });
+
+  await expect
+    .poll(async () => {
+      const movedMapCenter = await readMapCenter({ page });
+      return Math.hypot(
+        movedMapCenter.latitude - initialMapCenter.latitude,
+        movedMapCenter.longitude - initialMapCenter.longitude
+      );
+    })
+    .toBeGreaterThan(0.02);
+
+  const movedMapCenter = await readMapCenter({ page });
+  await page.waitForTimeout(700);
+  const settledMapCenter = await readMapCenter({ page });
+  const settledDistanceFromInitial = Math.hypot(
+    settledMapCenter.latitude - initialMapCenter.latitude,
+    settledMapCenter.longitude - initialMapCenter.longitude
+  );
+  const snapBackDistance = Math.hypot(
+    settledMapCenter.latitude - movedMapCenter.latitude,
+    settledMapCenter.longitude - movedMapCenter.longitude
+  );
+  const popupLifecycleAfterPan = await readPopupLifecycle({ page });
+
+  expect(settledDistanceFromInitial).toBeGreaterThan(0.02);
+  expect(snapBackDistance).toBeLessThan(0.02);
+  expect(popupLifecycleAfterPan.mountCount).toBe(popupLifecycleBeforePan.mountCount);
+  expect(popupLifecycleAfterPan.unmountCount).toBe(popupLifecycleBeforePan.unmountCount);
+});
+
+test("keeps popup stable while hovering forest list", async ({ page }) => {
+  await clearStoredPreferences({ page });
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: {
+          id: "forest-a",
+          forestName: "Forest A",
+          areaName: "Area 1",
+          distanceKm: 0
+        },
+        forests: [
+          {
+            id: "forest-a",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest A",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest A",
+            geocodeConfidence: 0.8,
+            distanceKm: 0,
+            facilities: {}
+          },
+          {
+            id: "forest-b",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/b",
+            forestName: "Forest B",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.2633,
+            longitude: 147.1166,
+            geocodeName: "Forest B",
+            geocodeConfidence: 0.8,
+            distanceKm: 12,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await clickForestMarker({ page, forestId: "forest-a" });
+  await expect(page.getByTestId("forest-popup-card")).toBeVisible();
+
+  const popupLifecycleBeforeHover = await readPopupLifecycle({ page });
+  const mapCenterBeforeHover = await readMapCenter({ page });
+
+  const forestRows = page.getByTestId("forest-row");
+  await expect(forestRows).toHaveCount(2);
+  await forestRows.nth(1).hover();
+  await forestRows.nth(0).hover();
+  await page.getByTestId("forest-search-input").hover();
+
+  await expect(page.getByTestId("forest-popup-card")).toBeVisible();
+  await expect(page.getByTestId("forest-popup-card")).toContainText("Forest A");
+
+  const popupLifecycleAfterHover = await readPopupLifecycle({ page });
+  const mapCenterAfterHover = await readMapCenter({ page });
+  const mapCenterShift = Math.hypot(
+    mapCenterAfterHover.latitude - mapCenterBeforeHover.latitude,
+    mapCenterAfterHover.longitude - mapCenterBeforeHover.longitude
+  );
+
+  expect(popupLifecycleAfterHover.mountCount).toBe(popupLifecycleBeforeHover.mountCount);
+  expect(popupLifecycleAfterHover.unmountCount).toBe(popupLifecycleBeforeHover.unmountCount);
+  expect(mapCenterShift).toBeLessThan(0.001);
 });
 
 test("loads forests, applies filters, and resolves nearest legal spot", async ({

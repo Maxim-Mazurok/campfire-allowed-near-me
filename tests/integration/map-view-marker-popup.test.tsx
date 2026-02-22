@@ -13,6 +13,7 @@ import type { ForestPoint } from "../../apps/web/src/lib/api";
 const mockedMap = {
   setView: vi.fn(),
   fitBounds: vi.fn(),
+  panInside: vi.fn(),
   on: vi.fn(),
   off: vi.fn(),
   getZoom: vi.fn(() => 8),
@@ -77,6 +78,14 @@ afterEach(() => {
   cleanup();
 });
 
+const resetMockedMapSpies = () => {
+  mockedMap.setView.mockClear();
+  mockedMap.fitBounds.mockClear();
+  mockedMap.panInside.mockClear();
+  mockedMap.on.mockClear();
+  mockedMap.off.mockClear();
+};
+
 const buildForestPoint = ({
   id,
   forestName,
@@ -107,6 +116,8 @@ const buildForestPoint = ({
 
 describe("MapView marker popup interactions", () => {
   it("opens popup when clicking a green matched marker", () => {
+    resetMockedMapSpies();
+
     render(
       <MapView
         forests={[
@@ -124,7 +135,7 @@ describe("MapView marker popup interactions", () => {
       />
     );
 
-    fireEvent.click(screen.getByTestId("circle-marker-matched-forests-interactive"));
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
 
     const forestPopupCard = screen.getByTestId("forest-popup-card");
     expect(forestPopupCard).toBeTruthy();
@@ -132,6 +143,8 @@ describe("MapView marker popup interactions", () => {
   });
 
   it("opens popup when clicking a grey unmatched marker", () => {
+    resetMockedMapSpies();
+
     render(
       <MapView
         forests={[
@@ -154,5 +167,51 @@ describe("MapView marker popup interactions", () => {
     const forestPopupCard = screen.getByTestId("forest-popup-card");
     expect(forestPopupCard).toBeTruthy();
     expect(forestPopupCard.textContent).toContain("Forest Grey");
+  });
+
+  it("keeps popup stable during hover-driven rerender", () => {
+    resetMockedMapSpies();
+
+    const forests = [
+      buildForestPoint({
+        id: "forest-a",
+        forestName: "Forest A",
+        banStatus: "NOT_BANNED"
+      }),
+      buildForestPoint({
+        id: "forest-b",
+        forestName: "Forest B",
+        banStatus: "NOT_BANNED"
+      })
+    ];
+
+    const { rerender } = render(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+      />
+    );
+
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    expect(screen.getByTestId("forest-popup-card").textContent).toContain("Forest A");
+    expect(mockedMap.panInside).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId="forest-b"
+      />
+    );
+
+    expect(screen.getByTestId("forest-popup-card").textContent).toContain("Forest A");
+    expect(mockedMap.panInside).toHaveBeenCalledTimes(1);
   });
 });

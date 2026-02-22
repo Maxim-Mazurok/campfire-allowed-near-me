@@ -19,6 +19,10 @@ import {
 import {
   getForestMarkerInteractionOptions
 } from "../lib/forest-marker-interaction";
+import {
+  buildSelectedForestPopupPosition,
+  isSelectedForestStillAvailable
+} from "../lib/forest-popup-behavior";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
 const MAP_BOUNDS_PADDING_FACTOR = 0.2;
@@ -89,6 +93,28 @@ const FitToForests = ({ forests }: { forests: ForestWithCoordinates[] }) => {
 
 type MarkerSelectionTestWindow = Window & {
   campfireMarkerSelectionHandlers?: Record<string, () => void>;
+  campfireLeafletMap?: ReturnType<typeof useMap>;
+  campfireForestPopupLifecycle?: {
+    mountCount: number;
+    unmountCount: number;
+  };
+};
+
+const MapTestBridge = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const markerSelectionTestWindow = window as MarkerSelectionTestWindow;
+    markerSelectionTestWindow.campfireLeafletMap = map;
+
+    return () => {
+      if (markerSelectionTestWindow.campfireLeafletMap === map) {
+        delete markerSelectionTestWindow.campfireLeafletMap;
+      }
+    };
+  }, [map]);
+
+  return null;
 };
 
 type SelectedForestPopupState = {
@@ -105,6 +131,23 @@ const ForestPopupContent = ({
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
 }) => {
+  useEffect(() => {
+    const markerSelectionTestWindow = window as MarkerSelectionTestWindow;
+    const popupLifecycle = markerSelectionTestWindow.campfireForestPopupLifecycle ?? {
+      mountCount: 0,
+      unmountCount: 0
+    };
+
+    popupLifecycle.mountCount += 1;
+    markerSelectionTestWindow.campfireForestPopupLifecycle = popupLifecycle;
+
+    return () => {
+      const currentPopupLifecycle = markerSelectionTestWindow.campfireForestPopupLifecycle ?? popupLifecycle;
+      currentPopupLifecycle.unmountCount += 1;
+      markerSelectionTestWindow.campfireForestPopupLifecycle = currentPopupLifecycle;
+    };
+  }, []);
+
   return (
     <div className="forest-popup-card" data-testid="forest-popup-card">
       <ForestCardContent
@@ -328,17 +371,37 @@ const VisibleForestMarkers = ({
       return;
     }
 
-    const forestsToCheck = selectedForestPopupState.matchesFilters
-      ? visibleMatchedForests
-      : renderedUnmatchedForests;
-    const selectedForestStillVisible = forestsToCheck.some(
-      (forest) => forest.id === selectedForestPopupState.forest.id
-    );
+    const selectedForestStillExists = isSelectedForestStillAvailable({
+      selectedForestId: selectedForestPopupState.forest.id,
+      matchedForests,
+      unmatchedForests
+    });
 
-    if (!selectedForestStillVisible) {
+    if (!selectedForestStillExists) {
       setSelectedForestPopupState(null);
     }
-  }, [renderedUnmatchedForests, selectedForestPopupState, visibleMatchedForests]);
+  }, [matchedForests, selectedForestPopupState, unmatchedForests]);
+
+  const selectedForestPopupPosition = useMemo(() => {
+    return buildSelectedForestPopupPosition({
+      selectedForestPopupSnapshot: selectedForestPopupState
+    });
+  }, [
+    selectedForestPopupState?.forest.id,
+    selectedForestPopupState?.forest.latitude,
+    selectedForestPopupState?.forest.longitude
+  ]);
+
+  useEffect(() => {
+    if (!selectedForestPopupPosition) {
+      return;
+    }
+
+    map.panInside(selectedForestPopupPosition, {
+      animate: true,
+      padding: [220, 220]
+    });
+  }, [map, selectedForestPopupPosition]);
 
   return (
     <>
@@ -368,15 +431,14 @@ const VisibleForestMarkers = ({
 
       <Pane name="selected-forest-popup" style={{ zIndex: 900 }} />
 
-      {selectedForestPopupState ? (
+      {selectedForestPopupState && selectedForestPopupPosition ? (
         <Popup
-          position={[
-            selectedForestPopupState.forest.latitude,
-            selectedForestPopupState.forest.longitude
-          ]}
+          position={selectedForestPopupPosition}
           className="forest-popup"
           minWidth={420}
           maxWidth={510}
+          autoPan={false}
+          keepInView={false}
           pane="selected-forest-popup"
           eventHandlers={{
             remove: () => {
@@ -457,6 +519,8 @@ export const MapView = memo(({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      <MapTestBridge />
 
       {userLocation ? (
         <>
