@@ -1,3 +1,5 @@
+import { faCrosshairs } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tippy from "@tippyjs/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FacilityIcon } from "./components/FacilityIcon";
@@ -66,20 +68,55 @@ export const App = () => {
     longitude: number;
   } | null>(null);
   const autoLocateRequestedRef = useRef(false);
+  const latestLoadRequestRef = useRef(0);
+
+  const requestLocationIfPermissionGranted = async () => {
+    if (!("permissions" in navigator)) {
+      return;
+    }
+
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: "geolocation"
+      });
+
+      if (permissionStatus.state === "granted") {
+        requestLocation({ silent: true });
+      }
+    } catch {
+      return;
+    }
+  };
 
   const loadData = async (options?: {
     location?: { latitude: number; longitude: number };
     refresh?: boolean;
   }) => {
+    const loadRequestId = latestLoadRequestRef.current + 1;
+    latestLoadRequestRef.current = loadRequestId;
+
     setLoading(true);
     setError(null);
 
     try {
       const response = await fetchForests(options?.location ?? userLocation ?? undefined, options?.refresh ?? false);
+
+      if (loadRequestId !== latestLoadRequestRef.current) {
+        return;
+      }
+
       setPayload(response);
     } catch (loadError) {
+      if (loadRequestId !== latestLoadRequestRef.current) {
+        return;
+      }
+
       setError(loadError instanceof Error ? loadError.message : "Unknown load error");
     } finally {
+      if (loadRequestId !== latestLoadRequestRef.current) {
+        return;
+      }
+
       setLoading(false);
     }
   };
@@ -234,13 +271,30 @@ export const App = () => {
     );
   };
 
+  const locationButtonLabel = userLocation
+    ? "Refresh current location"
+    : "Enable current location";
+
+  const renderLocationButton = () => (
+    <button
+      type="button"
+      className="location-action-btn"
+      onClick={() => requestLocation()}
+      data-testid="locate-btn"
+      aria-label={locationButtonLabel}
+      title={locationButtonLabel}
+    >
+      <FontAwesomeIcon icon={faCrosshairs} fixedWidth />
+    </button>
+  );
+
   useEffect(() => {
     if (autoLocateRequestedRef.current) {
       return;
     }
 
     autoLocateRequestedRef.current = true;
-    requestLocation({ silent: true });
+    void requestLocationIfPermissionGranted();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -254,9 +308,6 @@ export const App = () => {
         </p>
 
         <div className="controls">
-          <button type="button" onClick={() => requestLocation()} data-testid="locate-btn">
-            Use my current location
-          </button>
           <button type="button" onClick={() => void loadData({ refresh: true })}>
             Refresh from source
           </button>
@@ -274,15 +325,35 @@ export const App = () => {
         </div>
       </header>
 
-      {payload?.nearestLegalSpot ? (
+      {!loading && payload && !userLocation ? (
+        <section className="panel warning" data-testid="location-required">
+          <p className="location-inline-row">
+            {renderLocationButton()}
+            <span>Enable location to find the closest legal campfire spot near you.</span>
+          </p>
+        </section>
+      ) : null}
+      {payload?.nearestLegalSpot && userLocation ? (
         <section className="panel nearest" data-testid="nearest-spot">
-          Closest legal campfire spot: <strong>{payload.nearestLegalSpot.forestName}</strong> in{" "}
-          {payload.nearestLegalSpot.areaName} ({payload.nearestLegalSpot.distanceKm.toFixed(1)} km)
+          <p className="location-inline-row">
+            {renderLocationButton()}
+            <span>Using your current location. Click to refresh if you move.</span>
+          </p>
+          <p className="nearest-copy">
+            Closest legal campfire spot: <strong>{payload.nearestLegalSpot.forestName}</strong> in{" "}
+            {payload.nearestLegalSpot.areaName} ({payload.nearestLegalSpot.distanceKm.toFixed(1)} km)
+          </p>
         </section>
       ) : null}
       {!loading && userLocation && payload && !payload.nearestLegalSpot ? (
         <section className="panel warning" data-testid="nearest-empty">
-          No legal campfire spot could be determined from currently mapped forests.
+          <p className="location-inline-row">
+            {renderLocationButton()}
+            <span>Using your current location. Click to refresh if you move.</span>
+          </p>
+          <p className="nearest-copy">
+            No legal campfire spot could be determined from currently mapped forests.
+          </p>
         </section>
       ) : null}
 

@@ -77,6 +77,28 @@ body {
   font-weight: 700;
 }
 
+.location-inline-row {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.location-action-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nearest-copy {
+  margin: 8px 0 0;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid #a8b9ad;
