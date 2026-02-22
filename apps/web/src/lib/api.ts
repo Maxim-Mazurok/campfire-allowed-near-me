@@ -51,9 +51,12 @@ export interface ForestApiResponse {
 
 export const fetchForests = async (
   location?: { latitude: number; longitude: number },
-  refresh = false
+  refresh = false,
+  signal?: AbortSignal
 ): Promise<ForestApiResponse> => {
-  const url = new URL("/api/forests", window.location.origin);
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  const url = new URL("/api/forests", origin);
   if (location) {
     url.searchParams.set("lat", String(location.latitude));
     url.searchParams.set("lng", String(location.longitude));
@@ -63,7 +66,7 @@ export const fetchForests = async (
     url.searchParams.set("refresh", "1");
   }
 
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), { signal });
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as
       | { message?: string }

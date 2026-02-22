@@ -1,17 +1,20 @@
 import { faCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Tippy from "@tippyjs/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FacilityIcon } from "./components/FacilityIcon";
 import { MapView } from "./components/MapView";
-import { fetchForests, type ForestApiResponse } from "./lib/api";
+import type { ForestApiResponse } from "./lib/api";
+import {
+  buildForestsQueryKey,
+  forestsQueryFn,
+  toLoadErrorMessage,
+  type UserLocation
+} from "./lib/forests-query";
 
 type BanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
 type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
-type UserLocation = {
-  latitude: number;
-  longitude: number;
-};
 type UserPreferences = {
   banFilterMode?: BanFilterMode;
   facilityFilterModes?: Record<string, TriStateMode>;
@@ -171,9 +174,8 @@ export const App = () => {
     return preferences;
   };
 
-  const [payload, setPayload] = useState<ForestApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [warningsOpen, setWarningsOpen] = useState(false);
   const [banFilterMode, setBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().banFilterMode ?? "ALL"
@@ -184,64 +186,19 @@ export const App = () => {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
     () => getInitialPreferences().userLocation ?? null
   );
-  const autoLocateRequestedRef = useRef(false);
-  const latestLoadRequestRef = useRef(0);
+  const forestsQueryKey = useMemo(
+    () => buildForestsQueryKey(userLocation),
+    [userLocation?.latitude, userLocation?.longitude]
+  );
+  const forestsQuery = useQuery({
+    queryKey: forestsQueryKey,
+    queryFn: forestsQueryFn(userLocation)
+  });
 
-  const requestLocationIfPermissionGranted = async () => {
-    if (!("permissions" in navigator)) {
-      return;
-    }
-
-    try {
-      const permissionStatus = await navigator.permissions.query({
-        name: "geolocation"
-      });
-
-      if (permissionStatus.state === "granted") {
-        requestLocation({ silent: true });
-      }
-    } catch {
-      return;
-    }
-  };
-
-  const loadData = async (options?: {
-    location?: { latitude: number; longitude: number };
-    refresh?: boolean;
-  }) => {
-    const loadRequestId = latestLoadRequestRef.current + 1;
-    latestLoadRequestRef.current = loadRequestId;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetchForests(options?.location ?? userLocation ?? undefined, options?.refresh ?? false);
-
-      if (loadRequestId !== latestLoadRequestRef.current) {
-        return;
-      }
-
-      setPayload(response);
-    } catch (loadError) {
-      if (loadRequestId !== latestLoadRequestRef.current) {
-        return;
-      }
-
-      setError(loadError instanceof Error ? loadError.message : "Unknown load error");
-    } finally {
-      if (loadRequestId !== latestLoadRequestRef.current) {
-        return;
-      }
-
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const payload = forestsQuery.data ?? null;
+  const loading = forestsQuery.isFetching;
+  const queryErrorMessage = toLoadErrorMessage(forestsQuery.error);
+  const error = locationError ?? queryErrorMessage;
 
   const forests = payload?.forests ?? [];
   const availableFacilities = payload?.availableFacilities ?? [];
@@ -377,10 +334,20 @@ export const App = () => {
       forestName
     );
 
+  const refreshFromSource = () => {
+    setLocationError(null);
+    void queryClient
+      .fetchQuery({
+        queryKey: forestsQueryKey,
+        queryFn: forestsQueryFn(userLocation, true)
+      })
+      .catch(() => undefined);
+  };
+
   const requestLocation = (options?: { silent?: boolean }) => {
     if (!navigator.geolocation) {
       if (!options?.silent) {
-        setError("Geolocation is not supported by this browser.");
+        setLocationError("Geolocation is not supported by this browser.");
       }
       return;
     }
@@ -392,12 +359,16 @@ export const App = () => {
           longitude: position.coords.longitude
         };
 
+        setLocationError(null);
         setUserLocation(location);
-        void loadData({ location });
+        void queryClient.invalidateQueries({
+          queryKey: buildForestsQueryKey(location),
+          exact: true
+        });
       },
       (geoError) => {
         if (!options?.silent) {
-          setError(`Unable to read your location: ${geoError.message}`);
+          setLocationError(`Unable to read your location: ${geoError.message}`);
         }
       }
     );
@@ -420,12 +391,25 @@ export const App = () => {
     </button>
   );
 
-  useEffect(() => {
-    if (autoLocateRequestedRef.current) {
+  const requestLocationIfPermissionGranted = async () => {
+    if (!("permissions" in navigator)) {
       return;
     }
 
-    autoLocateRequestedRef.current = true;
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: "geolocation"
+      });
+
+      if (permissionStatus.state === "granted") {
+        requestLocation({ silent: true });
+      }
+    } catch {
+      return;
+    }
+  };
+
+  useEffect(() => {
     void requestLocationIfPermissionGranted();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -440,7 +424,7 @@ export const App = () => {
         </p>
 
         <div className="controls">
-          <button type="button" onClick={() => void loadData({ refresh: true })}>
+          <button type="button" onClick={refreshFromSource}>
             Refresh from source
           </button>
           <button
