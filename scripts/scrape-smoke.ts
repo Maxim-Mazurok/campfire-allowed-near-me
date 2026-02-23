@@ -66,6 +66,11 @@ const main = async () => {
   const page = await context.newPage();
 
   try {
+    // Capture HTTP responses before navigation errors hide them
+    page.on("response", (interceptedResponse) => {
+      console.log(`  [response] ${interceptedResponse.status()} ${interceptedResponse.url().slice(0, 100)}`);
+    });
+
     // Try a simple page first to test proxy connectivity
     console.log("[2] Testing proxy connectivity with httpbin...");
     try {
