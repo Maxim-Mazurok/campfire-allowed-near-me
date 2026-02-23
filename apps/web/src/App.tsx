@@ -397,6 +397,7 @@ export const App = () => {
         refreshTaskProgress={refreshTaskProgress}
         forestLoadStatusText={forestLoadStatusText}
         forestLoadProgress={forestLoadProgress}
+        snapshotFetchedAt={payload?.fetchedAt ?? null}
       />
 
       <LocationStatusPanels

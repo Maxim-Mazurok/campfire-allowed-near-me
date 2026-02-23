@@ -1,6 +1,30 @@
 import { Button, Group, Progress, Stack, Text, Title } from "@mantine/core";
 import { IconRefresh, IconSettings, IconAlertTriangle } from "@tabler/icons-react";
 import type { ProgressViewModel } from "../lib/hooks/use-forest-progress";
+import { isStaticMode } from "../lib/forests-query";
+
+const formatTimeSince = (isoTimestamp: string): string => {
+  const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
+  const totalMinutes = Math.floor(elapsedMs / 60_000);
+
+  if (totalMinutes < 1) return "just now";
+  if (totalMinutes < 60) return `${totalMinutes}m ago`;
+
+  const hours = Math.floor(totalMinutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
+
+const SnapshotFreshness = ({ fetchedAt }: { fetchedAt: string }) => {
+  const timeSince = formatTimeSince(fetchedAt);
+  return (
+    <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
+      Data updated: {timeSince}
+    </Text>
+  );
+};
 
 const ProgressBar = ({
   dataTestId,
@@ -42,6 +66,7 @@ export type AppHeaderProps = {
   refreshTaskProgress: ProgressViewModel | null;
   forestLoadStatusText: string | null;
   forestLoadProgress: ProgressViewModel | null;
+  snapshotFetchedAt: string | null;
 };
 
 export const AppHeader = ({
@@ -52,7 +77,8 @@ export const AppHeader = ({
   refreshTaskStatusText,
   refreshTaskProgress,
   forestLoadStatusText,
-  forestLoadProgress
+  forestLoadProgress,
+  snapshotFetchedAt
 }: AppHeaderProps) => {
   return (
     <header className="panel">
@@ -63,14 +89,16 @@ export const AppHeader = ({
       </Text>
 
       <Group gap="sm" wrap="wrap">
-        <Button
-          variant="default"
-          size="xs"
-          leftSection={<IconRefresh size={14} />}
-          onClick={onRefreshFromSource}
-        >
-          Refresh from source
-        </Button>
+        {!isStaticMode ? (
+          <Button
+            variant="default"
+            size="xs"
+            leftSection={<IconRefresh size={14} />}
+            onClick={onRefreshFromSource}
+          >
+            Refresh from source
+          </Button>
+        ) : null}
         <Button
           variant="default"
           size="xs"
@@ -96,6 +124,9 @@ export const AppHeader = ({
       </Group>
 
       <Stack gap={4} mt={8}>
+        {isStaticMode && snapshotFetchedAt ? (
+          <SnapshotFreshness fetchedAt={snapshotFetchedAt} />
+        ) : null}
         {refreshTaskStatusText ? (
           <Text size="xs" c="dimmed" data-testid="refresh-task-status">
             {refreshTaskStatusText}

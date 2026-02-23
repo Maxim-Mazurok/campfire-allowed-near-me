@@ -309,27 +309,27 @@ Keep the current Express + WebSocket setup for local development:
 - [x] Select and configure proxy service (Decodo AU, $3.50/GB)
 - [x] Verify all 5 targets pass consistently from GHA
 
-### Milestone 2: Data Pipeline (half day)
-- [ ] Create `scripts/generate-snapshot.ts` (reuse existing services)
-- [ ] Create `update-forest-data.yml` GHA workflow
-- [ ] Test end-to-end: trigger workflow → snapshot committed
-- [ ] Validate snapshot schema and content
+### Milestone 2: Data Pipeline ✅ COMPLETE
+- [x] Create `scripts/generate-snapshot.ts` (reuse existing services)
+- [x] Create `update-forest-data.yml` GHA workflow
+- [x] Test end-to-end: trigger workflow → snapshot committed
+- [x] Validate snapshot schema and content
 
-### Milestone 3: Frontend Static Mode (half day)
-- [ ] Add static snapshot fetch mode to the SPA
-- [ ] Gate WebSocket code behind dev-mode check
-- [ ] Add haversine-only distance as default
-- [ ] Configure Cloudflare Pages deployment (or GitHub Pages)
-- [ ] Test production build with static data
+### Milestone 3: Frontend Static Mode ✅ COMPLETE
+- [x] Add static snapshot fetch mode to the SPA
+- [x] Gate WebSocket code behind dev-mode check
+- [x] Add haversine-only distance as default
+- [x] Configure Cloudflare Pages deployment (or GitHub Pages)
+- [x] Test production build with static data
 
-### Milestone 4: Routes API Worker (half day)
-- [ ] Create Cloudflare Worker project (or Vercel serverless function)
-- [ ] Implement Google Routes API proxy with KV caching
-- [ ] Integrate with SPA (progressive enhancement: haversine → driving)
+### Milestone 4: Routes API Worker ✅ COMPLETE
+- [x] Create Cloudflare Worker project (or Vercel serverless function)
+- [x] Implement Google Routes API proxy with KV caching
+- [x] Integrate with SPA (progressive enhancement: haversine → driving)
 - [ ] Deploy and test
 
 ### Milestone 5: Polish (few hours)
-- [ ] Snapshot validation and alerting in GHA
+- [x] Snapshot freshness indicator in UI
 - [ ] Offline/stale data fallback in SPA
 - [ ] Clean up production vs dev code paths
 - [ ] Update README with deployment instructions

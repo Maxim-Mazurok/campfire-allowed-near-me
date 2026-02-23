@@ -1,0 +1,77 @@
+name: Update Forest Data
+
+on:
+  schedule:
+    # Twice daily: 6 AM and 6 PM UTC (~4-5 PM / 4-5 AM AEST)
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx -y playwright install --with-deps chromium
+
+      - name: Restore geocoding cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache/coordinates.sqlite
+          key: geocoding-cache-${{ runner.os }}-v1
+
+      - name: Generate snapshot
+        run: xvfb-run --auto-servernum -- npx -y tsx scripts/generate-snapshot.ts
+        env:
+          PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          NOMINATIM_BASE_URL: https://nominatim.openstreetmap.org
+
+      - name: Check for snapshot changes
+        id: check-changes
+        run: |
+          if git diff --quiet apps/web/public/forests-snapshot.json 2>/dev/null; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected in snapshot."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Snapshot has changed."
+          fi
+
+      - name: Commit and push snapshot
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/forests-snapshot.json
+          git add apps/web/public/forests-snapshot.meta.json
+          git commit -m "chore: update forest data snapshot [skip ci]"
+          git push
+
+      - name: Upload snapshot artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-snapshot
+          path: |
+            apps/web/public/forests-snapshot.json
+            apps/web/public/forests-snapshot.meta.json
+          retention-days: 7
+          if-no-files-found: ignore

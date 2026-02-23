@@ -32,9 +32,17 @@ interface ForestryScraperOptions {
   rawPageCacheTtlMs: number;
 }
 
+interface BrowserContextFactoryResult {
+  context: BrowserContext;
+  cleanup: () => Promise<void>;
+}
+
+export type BrowserContextFactory = () => Promise<BrowserContextFactoryResult>;
+
 interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptions> {
   rawPageCache?: RawPageCache;
   closureImpactEnricher?: ClosureImpactEnricher;
+  browserContextFactory?: BrowserContextFactory;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
@@ -81,6 +89,8 @@ export class ForestryScraper {
 
   private readonly closureImpactEnricher: ClosureImpactEnricher;
 
+  private readonly browserContextFactory: BrowserContextFactory | null;
+
   constructor(options?: ForestryScraperConstructorOptions) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
     this.rawPageCache = options?.rawPageCache ??
@@ -89,6 +99,7 @@ export class ForestryScraper {
         ttlMs: this.options.rawPageCacheTtlMs
       });
     this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
+    this.browserContextFactory = options?.browserContextFactory ?? null;
   }
 
   private async fetchHtml(
@@ -420,13 +431,25 @@ export class ForestryScraper {
   }
 
   async scrape(): Promise<ForestryScrapeResult> {
-    const runtime: { browser: Browser | null; context: BrowserContext | null } = {
+    const runtime: {
+      browser: Browser | null;
+      context: BrowserContext | null;
+      externalCleanup: (() => Promise<void>) | null;
+    } = {
       browser: null,
-      context: null
+      context: null,
+      externalCleanup: null
     };
 
     const getContext = async (): Promise<BrowserContext> => {
       if (runtime.context) {
+        return runtime.context;
+      }
+
+      if (this.browserContextFactory) {
+        const factoryResult = await this.browserContextFactory();
+        runtime.context = factoryResult.context;
+        runtime.externalCleanup = factoryResult.cleanup;
         return runtime.context;
       }
 
@@ -454,14 +477,18 @@ export class ForestryScraper {
         warnings: [...new Set([...directory.warnings, ...closuresResult.warnings])]
       };
     } finally {
-      const activeContext = runtime.context;
-      if (activeContext) {
-        await activeContext.close();
-      }
+      if (runtime.externalCleanup) {
+        await runtime.externalCleanup();
+      } else {
+        const activeContext = runtime.context;
+        if (activeContext) {
+          await activeContext.close();
+        }
 
-      const activeBrowser = runtime.browser;
-      if (activeBrowser) {
-        await activeBrowser.close();
+        const activeBrowser = runtime.browser;
+        if (activeBrowser) {
+          await activeBrowser.close();
+        }
       }
     }
   }

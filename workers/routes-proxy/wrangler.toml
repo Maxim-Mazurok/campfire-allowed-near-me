@@ -1,0 +1,6 @@
+name = "campfire-routes-proxy"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+SNAPSHOT_URL = "https://campfire-allowed-near-me.pages.dev/forests-snapshot.json"

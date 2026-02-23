@@ -7,7 +7,7 @@ import {
   type ForestLoadProgressState,
   type RefreshTaskState
 } from "../api";
-import { buildForestsQueryKey, type UserLocation } from "../forests-query";
+import { buildForestsQueryKey, isStaticMode, type UserLocation } from "../forests-query";
 import {
   buildForestsWebSocketUrl,
   buildRefreshWebSocketUrl
@@ -83,6 +83,7 @@ export const useRefreshAndLocation = ({
 
   useReconnectingWebSocket<ApiWebSocketMessage>({
     webSocketUrl: buildRefreshWebSocketUrl(),
+    isEnabled: !isStaticMode,
     onMessage: (message) => {
       if (message.type === "refresh-task") {
         setRefreshTaskState(message.task);
@@ -92,6 +93,7 @@ export const useRefreshAndLocation = ({
 
   useReconnectingWebSocket<ApiWebSocketMessage>({
     webSocketUrl: buildForestsWebSocketUrl(),
+    isEnabled: !isStaticMode,
     onMessage: (message) => {
       if (message.type === "forest-load-progress") {
         setForestLoadProgressState(message.load);

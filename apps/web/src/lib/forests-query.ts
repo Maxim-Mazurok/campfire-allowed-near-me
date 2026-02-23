@@ -1,5 +1,6 @@
 import type { QueryFunctionContext } from "@tanstack/react-query";
 import { fetchForests, type ForestApiResponse } from "./api";
+import { fetchStaticSnapshot } from "./static-snapshot";
 
 export type UserLocation = {
   latitude: number;
@@ -9,6 +10,9 @@ export type UserLocation = {
 export type RoutePreferences = {
   avoidTolls: boolean;
 };
+
+export const isStaticMode =
+  !import.meta.env.DEV && import.meta.env.VITE_ENABLE_API !== "true";
 
 export const buildForestsQueryKey = (
   location: UserLocation | null,
@@ -29,12 +33,17 @@ export const forestsQueryFn =
     routePreferences: RoutePreferences,
     refresh = false
   ) =>
-  ({ signal }: QueryFunctionContext<ForestsQueryKey>): Promise<ForestApiResponse> =>
-    fetchForests(
+  ({ signal }: QueryFunctionContext<ForestsQueryKey>): Promise<ForestApiResponse> => {
+    if (isStaticMode) {
+      return fetchStaticSnapshot(location ?? undefined, signal);
+    }
+
+    return fetchForests(
       location ?? undefined,
       { refresh, avoidTolls: routePreferences.avoidTolls },
       signal
     );
+  };
 
 export const toLoadErrorMessage = (error: unknown): string | null => {
   if (!error) {

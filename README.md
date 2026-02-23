@@ -170,6 +170,28 @@ npm run warm:coordinates
 - Route cache prevents re-fetching hundreds of route calculations when the user location only changes slightly.
 - If cached coordinates become stale/incorrect, run `npm run cache:reset` and then refresh from source.
 
+## Production Deployment
+
+The app runs in production as a **zero-server static site** on Cloudflare Pages:
+
+- **Live site**: [campfire-allowed-near-me.pages.dev](https://campfire-allowed-near-me.pages.dev)
+- **Data pipeline**: A scheduled GitHub Actions workflow ([update-forest-data.yml](.github/workflows/update-forest-data.yml)) runs twice daily, scrapes all data sources, and commits a fresh `forests-snapshot.json` to the repo.
+- **Frontend**: In production mode, the SPA loads forest data from the static snapshot instead of calling an API. Haversine (straight-line) distances are calculated client-side.
+- **Driving distances**: An optional Cloudflare Worker (`workers/routes-proxy/`) proxies Google Routes API requests to compute driving distances while keeping the API key server-side.
+- **WebSockets**: Disabled in production (no live refresh needed for static data).
+- **Cost**: ~$3.65/year for proxy bandwidth. Everything else is free tier.
+
+See [docs/production-deployment-plan.md](docs/production-deployment-plan.md) for the full architecture and implementation details.
+
+### Deploying the Worker (optional)
+
+```bash
+cd workers/routes-proxy
+npm install
+npx -y wrangler secret put GOOGLE_MAPS_API_KEY
+npx -y wrangler deploy
+```
+
 ## CI
 GitHub Actions workflow runs on push and pull request:
 - Install dependencies
@@ -181,6 +203,8 @@ GitHub Actions workflow runs on push and pull request:
 Workflow file: `.github/workflows/ci.yml`.
 
 ## Project Documentation
+- `docs/production-deployment-plan.md`: zero-server production architecture, phased deployment, and cost analysis.
+- `docs/scraping-findings.md`: scraping strategy validation results across 6 iterations.
 - `docs/architecture-audit-and-roadmap.md`: architecture audit, risks, and phased roadmap.
 - `docs/technical-business-brief.md`: product/technical goals and pragmatic delivery direction.
 - `docs/quality-and-simplification-plan.md`: DRY/YAGNI-focused refactor sequence.
