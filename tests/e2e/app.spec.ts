@@ -128,6 +128,7 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -189,6 +190,7 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -245,6 +247,7 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -276,7 +279,7 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
   });
 
   await page.goto("/");
-  await page.getByTestId("ban-filter-allowed").click();
+  await page.getByRole("radiogroup", { name: "Solid fuel fire ban filter" }).getByText("Not banned").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(0);
 
   await clickForestMarker({ page, forestId: "forest-grey" });
@@ -297,6 +300,7 @@ test("keeps map position after panning with popup open", async ({ page }) => {
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -351,16 +355,20 @@ test("keeps map position after panning with popup open", async ({ page }) => {
     })
     .toBeGreaterThan(0.02);
 
-  const movedMapCenter = await readMapCenter({ page });
-  await page.waitForTimeout(700);
+  // Wait for Leaflet inertial scrolling to finish before measuring the pan result
+  await page.waitForTimeout(1000);
   const settledMapCenter = await readMapCenter({ page });
   const settledDistanceFromInitial = Math.hypot(
     settledMapCenter.latitude - initialMapCenter.latitude,
     settledMapCenter.longitude - initialMapCenter.longitude
   );
+
+  // Wait again and verify no snap-back occurs
+  await page.waitForTimeout(700);
+  const finalMapCenter = await readMapCenter({ page });
   const snapBackDistance = Math.hypot(
-    settledMapCenter.latitude - movedMapCenter.latitude,
-    settledMapCenter.longitude - movedMapCenter.longitude
+    finalMapCenter.latitude - settledMapCenter.latitude,
+    finalMapCenter.longitude - settledMapCenter.longitude
   );
   const popupLifecycleAfterPan = await readPopupLifecycle({ page });
 
@@ -381,6 +389,7 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -487,6 +496,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             iconKey: "camping"
           }
         ],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -610,35 +620,38 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   await page.getByTestId("forest-search-input").fill("");
   await expect(page.getByTestId("forest-row")).toHaveCount(totalRows);
 
-  await page.getByTestId("ban-filter-not-allowed").click();
+  const solidFuelBanFilter = page.getByRole("radiogroup", { name: "Solid fuel fire ban filter" });
+  const totalFireBanFilter = page.getByRole("radiogroup", { name: "Total fire ban filter" });
+
+  await solidFuelBanFilter.getByText("Banned", { exact: true }).click();
   const bannedRows = await page.getByTestId("forest-row").count();
   expect(bannedRows).toBeLessThanOrEqual(totalRows);
   if (bannedRows > 0) {
     const bannedStatuses = await page
-      .locator("[data-testid='forest-row'] .status-block .status-pill:first-child")
+      .locator("[data-testid='forest-row'] .status-pill-row > *:first-child")
       .allTextContents();
     expect(bannedStatuses.every((text) => text.includes("Solid fuel: banned"))).toBe(true);
   }
 
-  await page.getByTestId("ban-filter-allowed").click();
+  await solidFuelBanFilter.getByText("Not banned").click();
   const allowedRows = await page.getByTestId("forest-row").count();
   expect(allowedRows).toBeLessThanOrEqual(totalRows);
   if (allowedRows > 0) {
     const allowedStatuses = await page
-      .locator("[data-testid='forest-row'] .status-block .status-pill:first-child")
+      .locator("[data-testid='forest-row'] .status-pill-row > *:first-child")
       .allTextContents();
     expect(allowedStatuses.every((text) => text.includes("Solid fuel: not banned"))).toBe(true);
   }
 
-  await page.getByTestId("ban-filter-all").click();
-  await page.getByTestId("total-fire-ban-filter-banned").click();
+  await solidFuelBanFilter.getByText("All", { exact: true }).click();
+  await totalFireBanFilter.getByText("Banned", { exact: true }).click();
   const totalFireBanRows = await page.getByTestId("forest-row").count();
   expect(totalFireBanRows).toBe(1);
   const totalFireBanStatuses = await page
-    .locator("[data-testid='forest-row'] .status-block .status-pill:nth-child(2)")
+    .locator("[data-testid='forest-row'] .status-pill-row > *:nth-child(2)")
     .allTextContents();
   expect(totalFireBanStatuses.every((text) => text.includes("Total Fire Ban"))).toBe(true);
-  await page.getByTestId("total-fire-ban-filter-all").click();
+  await totalFireBanFilter.getByText("All", { exact: true }).click();
 
   await page.getByTestId("facility-filter-fishing-include").click();
   const fishingRows = await page.getByTestId("forest-row").count();
@@ -690,6 +703,7 @@ test("persists location and filters across reloads", async ({ page }) => {
             iconKey: "fishing"
           }
         ],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -752,15 +766,18 @@ test("persists location and filters across reloads", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
 
-  await page.getByTestId("ban-filter-not-allowed").click();
+  const solidFuelBanFilter = page.getByRole("radiogroup", { name: "Solid fuel fire ban filter" });
+
+  await solidFuelBanFilter.getByText("Banned", { exact: true }).click();
   await page.getByTestId("facility-filter-fishing-include").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
 
   await page.context().clearPermissions();
   await page.reload();
 
-  await expect(page.getByTestId("ban-filter-not-allowed")).toHaveClass(/is-active/);
-  await expect(page.getByTestId("facility-filter-fishing-include")).toHaveClass(/is-active/);
+  await expect(solidFuelBanFilter.locator("input[value='BANNED']")
+  ).toBeChecked();
+  await expect(page.getByTestId("facility-filter-fishing-include")).toHaveClass(/mantine-active/);
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
   await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
 });
@@ -970,21 +987,21 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
 
   await expect(page.getByTestId("forest-row")).toHaveCount(3);
   await expect(
-    page.locator("[data-testid='forest-row'] .status-pill").filter({ hasText: /^Closed$/ })
+    page.locator("[data-testid='forest-row'] .status-pill-row").getByText("Closed", { exact: true })
   ).toHaveCount(1);
   await expect(
-    page
-      .locator("[data-testid='forest-row'] .status-pill")
-      .filter({ hasText: /^Partly closed$/ })
+    page.locator("[data-testid='forest-row'] .status-pill-row").getByText("Partly closed", { exact: true })
   ).toHaveCount(1);
 
-  await page.getByTestId("closure-filter-open-only").click();
+  const closureFilter = page.getByRole("radiogroup", { name: "Closure filter" });
+
+  await closureFilter.getByText("Open only").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
 
-  await page.getByTestId("closure-filter-has-notice").click();
+  await closureFilter.getByText("Has notices").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
-  await page.getByTestId("closure-filter-no-full").click();
+  await closureFilter.getByText("No full closures").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
   await page.getByTestId("closure-tag-filter-ROAD_ACCESS-include").click();
@@ -1027,6 +1044,7 @@ test("shows stale warning in warnings dialog when upstream scrape falls back to 
         stale: true,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1062,6 +1080,7 @@ test("does not request geolocation on page load when permission is not granted",
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1090,6 +1109,7 @@ test("shows refresh progress status text when refresh task is running", async ({
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1199,6 +1219,7 @@ test("uses current location on page load when permission is already granted", as
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1260,6 +1281,7 @@ test("keeps nearest spot when non-location response resolves after location resp
           stale: false,
           sourceName: "Forestry Corporation NSW",
           availableFacilities: [],
+          availableClosureTags: [],
           matchDiagnostics: {
             unmatchedFacilitiesForests: [],
             fuzzyMatches: []
@@ -1304,6 +1326,7 @@ test("keeps nearest spot when non-location response resolves after location resp
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1333,6 +1356,7 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: ["Coolangubra State Forest", "Bermagui State Forest"],
           fuzzyMatches: [
@@ -1426,6 +1450,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: ["Coolangubra State Forest"],
           fuzzyMatches: []
@@ -1548,6 +1573,7 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1656,6 +1682,7 @@ test("prompts for location access when geolocation is unavailable", async ({
         stale: false,
         sourceName: "Forestry Corporation NSW",
         availableFacilities: [],
+        availableClosureTags: [],
         matchDiagnostics: {
           unmatchedFacilitiesForests: [],
           fuzzyMatches: []
@@ -1677,4 +1704,157 @@ test("prompts for location access when geolocation is unavailable", async ({
   await expect(page.locator(".error")).toContainText(
     "Unable to read your location: Location access blocked for test."
   );
+});
+
+test("settings dialog is visible above the map and interactable by coordinates", async ({
+  page
+}) => {
+  await clearStoredPreferences({ page });
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "forest-ztest",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest Z-Test",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-ztest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest Z-Test",
+            geocodeConfidence: 0.8,
+            distanceKm: 10,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await page.getByTestId("settings-btn").click();
+  const settingsDialog = page.getByTestId("settings-dialog");
+  await expect(settingsDialog).toBeVisible();
+
+  const avoidTollsRadio = page.getByTestId("settings-tolls-avoid");
+  const radioBox = await avoidTollsRadio.boundingBox();
+  expect(radioBox).not.toBeNull();
+
+  await page.mouse.click(radioBox!.x + radioBox!.width / 2, radioBox!.y + radioBox!.height / 2);
+  await expect(avoidTollsRadio).toBeChecked();
+
+  const allowTollsRadio = page.getByTestId("settings-tolls-allow");
+  const allowRadioBox = await allowTollsRadio.boundingBox();
+  expect(allowRadioBox).not.toBeNull();
+
+  await page.mouse.click(
+    allowRadioBox!.x + allowRadioBox!.width / 2,
+    allowRadioBox!.y + allowRadioBox!.height / 2
+  );
+  await expect(allowTollsRadio).toBeChecked();
+  await expect(avoidTollsRadio).not.toBeChecked();
+
+  const closeButton = settingsDialog.getByRole("button", { name: "Close" });
+  const closeButtonBox = await closeButton.boundingBox();
+  expect(closeButtonBox).not.toBeNull();
+  await page.mouse.click(
+    closeButtonBox!.x + closeButtonBox!.width / 2,
+    closeButtonBox!.y + closeButtonBox!.height / 2
+  );
+  await expect(settingsDialog).not.toBeVisible();
+});
+
+test("warnings dialog is visible above the map and interactable by coordinates", async ({
+  page
+}) => {
+  await page.route("**/api/forests**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: true,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: ["Forestry site anti-bot verification blocked scraping."],
+        nearestLegalSpot: null,
+        forests: [
+          {
+            id: "forest-wtest",
+            source: "Forestry Corporation NSW",
+            areaName: "Area 1",
+            areaUrl: "https://example.com/a",
+            forestName: "Forest W-Test",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-wtest",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.1633,
+            longitude: 147.0166,
+            geocodeName: "Forest W-Test",
+            geocodeConfidence: 0.8,
+            distanceKm: 10,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  const warningsButton = page.getByTestId("warnings-btn");
+  await expect(warningsButton).toBeEnabled();
+  const warningsButtonBox = await warningsButton.boundingBox();
+  expect(warningsButtonBox).not.toBeNull();
+  await page.mouse.click(
+    warningsButtonBox!.x + warningsButtonBox!.width / 2,
+    warningsButtonBox!.y + warningsButtonBox!.height / 2
+  );
+
+  const warningsDialog = page.getByTestId("warnings-dialog");
+  await expect(warningsDialog).toBeVisible();
+  await expect(warningsDialog).toContainText("anti-bot verification blocked scraping");
+
+  const dialogBox = await warningsDialog.boundingBox();
+  expect(dialogBox).not.toBeNull();
+  expect(dialogBox!.width).toBeGreaterThan(100);
+  expect(dialogBox!.height).toBeGreaterThan(50);
+
+  const closeButton = warningsDialog.getByRole("button", { name: "Close" });
+  const closeButtonBox = await closeButton.boundingBox();
+  expect(closeButtonBox).not.toBeNull();
+  await page.mouse.click(
+    closeButtonBox!.x + closeButtonBox!.width / 2,
+    closeButtonBox!.y + closeButtonBox!.height / 2
+  );
+  await expect(warningsDialog).not.toBeVisible();
 });

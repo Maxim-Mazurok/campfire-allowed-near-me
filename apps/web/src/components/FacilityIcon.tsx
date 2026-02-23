@@ -1,48 +1,47 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
-  faBinoculars,
-  faCampground,
-  faCarSide,
-  faCaravan,
-  faCompass,
-  faCrosshairs,
-  faFireFlameCurved,
-  faFish,
-  faHorse,
-  faHouseChimney,
-  faMapPin,
-  faPersonBiking,
-  faPersonHiking,
-  faShip,
-  faToilet,
-  faTruckPickup,
-  faUtensils,
-  faWater,
-  faWheelchair
-} from "@fortawesome/free-solid-svg-icons";
+  IconBinoculars,
+  IconCampfire,
+  IconCar,
+  IconCamper,
+  IconCompass,
+  IconFish,
+  IconHorseToy,
+  IconBike,
+  IconWalk,
+  IconSailboat,
+  IconDroplet,
+  IconToolsKitchen2,
+  IconMapPin,
+  IconTarget,
+  IconHome,
+  IconFlame,
+  IconTruck,
+  IconToiletPaper,
+  IconWheelchair,
+  type Icon,
+} from "@tabler/icons-react";
 import type { FacilityDefinition } from "../lib/api";
 
-const iconByKey: Record<string, IconDefinition> = {
-  camping: faCampground,
-  walking: faPersonHiking,
-  "four-wheel-drive": faTruckPickup,
-  cycling: faPersonBiking,
-  "horse-riding": faHorse,
-  canoeing: faShip,
-  waterways: faWater,
-  fishing: faFish,
-  caravan: faCaravan,
-  picnic: faUtensils,
-  lookout: faBinoculars,
-  adventure: faCompass,
-  hunting: faCrosshairs,
-  cabin: faHouseChimney,
-  fireplace: faFireFlameCurved,
-  "two-wheel-drive": faCarSide,
-  toilets: faToilet,
-  wheelchair: faWheelchair,
-  facility: faMapPin
+const iconByKey: Record<string, Icon> = {
+  camping: IconCampfire,
+  walking: IconWalk,
+  "four-wheel-drive": IconTruck,
+  cycling: IconBike,
+  "horse-riding": IconHorseToy,
+  canoeing: IconSailboat,
+  waterways: IconDroplet,
+  fishing: IconFish,
+  caravan: IconCamper,
+  picnic: IconToolsKitchen2,
+  lookout: IconBinoculars,
+  adventure: IconCompass,
+  hunting: IconTarget,
+  cabin: IconHome,
+  fireplace: IconFlame,
+  "two-wheel-drive": IconCar,
+  toilets: IconToiletPaper,
+  wheelchair: IconWheelchair,
+  facility: IconMapPin,
 };
 
 const inferIconKey = (facility: FacilityDefinition): string => {
@@ -125,11 +124,11 @@ const inferIconKey = (facility: FacilityDefinition): string => {
 
 export const FacilityIcon = ({ facility }: { facility: FacilityDefinition }) => {
   const key = inferIconKey(facility);
-  const icon = iconByKey[key] ?? faMapPin;
+  const ResolvedIcon = iconByKey[key] ?? IconMapPin;
 
   return (
-    <span className="facility-icon-glyph" aria-label={facility.label}>
-      <FontAwesomeIcon icon={icon} fixedWidth />
+    <span className="facility-icon-glyph" role="img" aria-label={facility.label}>
+      <ResolvedIcon size={16} stroke={1.5} />
     </span>
   );
 };

@@ -3,10 +3,10 @@ import React from "react";
 import {
   cleanup,
   fireEvent,
-  render,
   screen
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithMantine } from "../test-utils";
 import { MapView } from "../../apps/web/src/components/MapView";
 import type { ForestPoint } from "../../apps/web/src/lib/api";
 
@@ -118,7 +118,7 @@ describe("MapView marker popup interactions", () => {
   it("opens popup when clicking a green matched marker", () => {
     resetMockedMapSpies();
 
-    render(
+    renderWithMantine(
       <MapView
         forests={[
           buildForestPoint({
@@ -145,7 +145,7 @@ describe("MapView marker popup interactions", () => {
   it("opens popup when clicking a grey unmatched marker", () => {
     resetMockedMapSpies();
 
-    render(
+    renderWithMantine(
       <MapView
         forests={[
           buildForestPoint({
@@ -185,7 +185,7 @@ describe("MapView marker popup interactions", () => {
       })
     ];
 
-    const { rerender } = render(
+    const { rerender } = renderWithMantine(
       <MapView
         forests={forests}
         matchedForestIds={new Set(["forest-a", "forest-b"])}

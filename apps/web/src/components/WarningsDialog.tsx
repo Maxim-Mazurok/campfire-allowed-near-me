@@ -1,3 +1,5 @@
+import { Badge, Group, Modal, Text } from "@mantine/core";
+import { IconAlertTriangle } from "@tabler/icons-react";
 import { FireBanForestTableDialog } from "./warnings/FireBanForestTableDialog";
 import { WarningsSections } from "./warnings/WarningsSections";
 import type { FireBanForestTableProps, WarningSectionProps } from "./warnings/WarningsTypes";
@@ -17,38 +19,27 @@ export const WarningsDialog = ({
   warningSections,
   fireBanForestTable
 }: WarningsDialogProperties) => {
-  if (!isOpen) {
-    return null;
-  }
-
   return (
     <>
-      <div
-        className="warnings-overlay"
-        data-testid="warnings-overlay"
-        role="presentation"
-        onClick={closeWarningsDialog}
+      <Modal
+        opened={isOpen}
+        onClose={closeWarningsDialog}
+        title={
+          <Group gap="xs">
+            <IconAlertTriangle size={20} stroke={1.5} color="var(--mantine-color-warning-8)" />
+            <Text fw={600}>Warnings</Text>
+            <Badge size="lg" variant="filled" color="warning" circle>{warningCount}</Badge>
+          </Group>
+        }
+        // @ts-expect-error Mantine v8 attributes prop works at runtime but ModalRootFactory types don't expose it
+        attributes={{ content: { "data-testid": "warnings-dialog" } }}
+        closeButtonProps={{ "aria-label": "Close" }}
+        size="lg"
+        centered
       >
-        <section
-          className="panel warnings-dialog"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="warnings-title"
-          data-testid="warnings-dialog"
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="warnings-dialog-header">
-            <h2 id="warnings-title">Warnings ({warningCount})</h2>
-            <button type="button" onClick={closeWarningsDialog}>
-              Close
-            </button>
-          </div>
-
-          {warningCount === 0 ? <p className="muted">No warnings right now.</p> : null}
-
-          <WarningsSections {...warningSections} />
-        </section>
-      </div>
+        {warningCount === 0 ? <Text c="dimmed">No warnings right now.</Text> : null}
+        <WarningsSections {...warningSections} />
+      </Modal>
       <FireBanForestTableDialog {...fireBanForestTable} />
     </>
   );

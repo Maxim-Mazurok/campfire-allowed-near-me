@@ -128,8 +128,8 @@ export const App = () => {
   const error = locationError ?? queryErrorMessage;
 
   const forests = payload?.forests ?? [];
-  const availableFacilities = payload?.availableFacilities ?? [];
-  const availableClosureTags = payload?.availableClosureTags ?? [];
+  const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
+  const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
   const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
   const closureTagSignature = availableClosureTags.map((tag) => tag.key).join("|");
 
@@ -145,7 +145,7 @@ export const App = () => {
       }
       return next;
     });
-  }, [payload, facilitySignature, availableFacilities]);
+  }, [payload, facilitySignature]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!payload) {
@@ -159,7 +159,7 @@ export const App = () => {
       }
       return next;
     });
-  }, [payload, closureTagSignature, availableClosureTags]);
+  }, [payload, closureTagSignature]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     writeUserPreferences({

@@ -12,20 +12,6 @@ export const matchesBanFilter = (
   return status === mode;
 };
 
-export const getStatusClassName = (
-  status: ForestApiResponse["forests"][number]["banStatus"]
-): string => {
-  if (status === "NOT_BANNED") {
-    return "allowed";
-  }
-
-  if (status === "BANNED") {
-    return "banned";
-  }
-
-  return "unknown";
-};
-
 export const getSolidFuelStatusLabel = (
   status: ForestApiResponse["forests"][number]["banStatus"]
 ): string => {

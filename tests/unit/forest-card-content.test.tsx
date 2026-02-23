@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import React from "react";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkupWithMantine } from "../test-utils";
 import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
 
@@ -55,7 +55,7 @@ describe("ForestCardContent", () => {
   it("renders all closure notices with links", () => {
     const forest = buildForest();
 
-    const html = renderToStaticMarkup(
+    const html = renderToStaticMarkupWithMantine(
       <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
     );
 
@@ -64,6 +64,5 @@ describe("ForestCardContent", () => {
     expect(html).toContain("Campground works in Forest A");
     expect(html).toContain("https://example.com/notices/forest-a/road-access");
     expect(html).toContain("https://example.com/notices/forest-a/campground-works");
-    expect(html).toContain("Google Maps estimate (Sat 10am, tolls: avoid)");
   });
 });

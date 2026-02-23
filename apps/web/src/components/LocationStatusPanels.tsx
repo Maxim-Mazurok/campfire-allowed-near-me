@@ -1,5 +1,4 @@
-import { faCrosshairs } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconCurrentLocation } from "@tabler/icons-react";
 import type { ForestApiResponse } from "../lib/api";
 import { formatDriveSummary } from "../lib/app-domain-forest";
 import type { UserLocation } from "../lib/forests-query";
@@ -30,7 +29,7 @@ export const LocationStatusPanels = ({
       aria-label={locationButtonLabel}
       title={locationButtonLabel}
     >
-      <FontAwesomeIcon icon={faCrosshairs} fixedWidth />
+      <IconCurrentLocation size={18} stroke={1.5} />
     </button>
   );
 

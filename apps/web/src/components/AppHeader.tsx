@@ -1,3 +1,5 @@
+import { Button, Group, Progress, Stack, Text, Title } from "@mantine/core";
+import { IconRefresh, IconSettings, IconAlertTriangle } from "@tabler/icons-react";
 import type { ProgressViewModel } from "../lib/hooks/use-forest-progress";
 
 const ProgressBar = ({
@@ -7,25 +9,25 @@ const ProgressBar = ({
   dataTestId: string;
   progressViewModel: ProgressViewModel;
 }) => {
+  const percentage = progressViewModel.percentage;
+
   return (
-    <div className="refresh-progress" data-testid={dataTestId}>
-      <div className="refresh-progress-meta">
-        <span>{progressViewModel.phase.replaceAll("_", " ")}</span>
-        {typeof progressViewModel.percentage === "number" ? (
-          <span>{progressViewModel.percentage}%</span>
-        ) : (
-          <span>In progress</span>
-        )}
-      </div>
-      {typeof progressViewModel.percentage === "number" ? (
-        <progress
-          className="refresh-progress-bar"
+    <div data-testid={dataTestId}>
+      <Group justify="space-between" mb={4}>
+        <Text size="xs" c="dimmed">{progressViewModel.phase.replaceAll("_", " ")}</Text>
+        <Text size="xs" c="dimmed">
+          {typeof percentage === "number" ? `${percentage}%` : "In progress"}
+        </Text>
+      </Group>
+      {typeof percentage === "number" ? (
+        <Progress
           data-testid={`${dataTestId}-bar`}
-          value={progressViewModel.completed}
-          max={progressViewModel.total ?? 1}
+          value={percentage}
+          size="sm"
+          radius="xl"
         />
       ) : (
-        <progress className="refresh-progress-bar" data-testid={`${dataTestId}-bar`} />
+        <Progress data-testid={`${dataTestId}-bar`} value={100} size="sm" radius="xl" animated />
       )}
     </div>
   );
@@ -53,54 +55,64 @@ export const AppHeader = ({
   forestLoadProgress
 }: AppHeaderProps) => {
   return (
-    <header className="panel header">
-      <h1>Campfire Allowed Near Me</h1>
-      <p>
+    <header className="panel">
+      <Title order={1} size="h3">Campfire Allowed Near Me</Title>
+      <Text size="sm" c="dimmed" mt={6} mb={10}>
         NSW forestry checker combining Solid Fuel Fire Ban data (Forestry Corporation NSW)
         and Total Fire Ban data (NSW Rural Fire Service).
-      </p>
+      </Text>
 
-      <div className="controls">
-        <button type="button" onClick={onRefreshFromSource}>
+      <Group gap="sm" wrap="wrap">
+        <Button
+          variant="default"
+          size="xs"
+          leftSection={<IconRefresh size={14} />}
+          onClick={onRefreshFromSource}
+        >
           Refresh from source
-        </button>
-        <button
-          type="button"
-          className="settings-btn"
+        </Button>
+        <Button
+          variant="default"
+          size="xs"
+          leftSection={<IconSettings size={14} />}
           data-testid="settings-btn"
           onClick={onOpenSettings}
+          ml="auto"
         >
           Settings
-        </button>
-        <button
-          type="button"
-          className="warnings-btn"
+        </Button>
+        <Button
+          variant="outline"
+          size="xs"
+          color="warning.8"
           data-testid="warnings-btn"
           aria-label={`Warnings (${warningCount})`}
           onClick={onOpenWarnings}
           disabled={warningCount === 0}
+          leftSection={<IconAlertTriangle size={14} />}
         >
-          <span aria-hidden="true">⚠</span>
-          <span className="warnings-btn-count">{warningCount}</span>
-        </button>
-      </div>
+          {warningCount}
+        </Button>
+      </Group>
 
-      {refreshTaskStatusText ? (
-        <p className="muted refresh-task-status" data-testid="refresh-task-status">
-          {refreshTaskStatusText}
-        </p>
-      ) : null}
-      {refreshTaskProgress ? (
-        <ProgressBar dataTestId="refresh-progress" progressViewModel={refreshTaskProgress} />
-      ) : null}
-      {forestLoadStatusText ? (
-        <p className="muted refresh-task-status" data-testid="forest-load-status">
-          {forestLoadStatusText}
-        </p>
-      ) : null}
-      {forestLoadProgress ? (
-        <ProgressBar dataTestId="forest-load-progress" progressViewModel={forestLoadProgress} />
-      ) : null}
+      <Stack gap={4} mt={8}>
+        {refreshTaskStatusText ? (
+          <Text size="xs" c="dimmed" data-testid="refresh-task-status">
+            {refreshTaskStatusText}
+          </Text>
+        ) : null}
+        {refreshTaskProgress ? (
+          <ProgressBar dataTestId="refresh-progress" progressViewModel={refreshTaskProgress} />
+        ) : null}
+        {forestLoadStatusText ? (
+          <Text size="xs" c="dimmed" data-testid="forest-load-status">
+            {forestLoadStatusText}
+          </Text>
+        ) : null}
+        {forestLoadProgress ? (
+          <ProgressBar dataTestId="forest-load-progress" progressViewModel={forestLoadProgress} />
+        ) : null}
+      </Stack>
     </header>
   );
 };

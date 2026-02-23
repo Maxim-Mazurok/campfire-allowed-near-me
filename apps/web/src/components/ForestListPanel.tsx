@@ -1,6 +1,8 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { NativeSelect, Text, TextInput, Title } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 import { ForestCardContent } from "./ForestCardContent";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
 import {
@@ -229,44 +231,41 @@ export const ForestListPanel = memo(({
 
   return (
     <aside className="panel list-panel">
-      <h2>Forests ({filteredMatchingForests.length})</h2>
-      <p className="meta">
+      <Title order={2} size="h4">Forests ({filteredMatchingForests.length})</Title>
+      <Text size="sm" c="dimmed" mt={4} mb={8}>
         Last fetched: {payload ? new Date(payload.fetchedAt).toLocaleString() : "-"}
         {payload?.stale ? " (stale cache)" : ""}
-      </p>
+      </Text>
 
-      <label className="forest-search-label" htmlFor="forest-search-input">
-        Search forests
-      </label>
-      <input
-        id="forest-search-input"
+      <TextInput
         data-testid="forest-search-input"
-        type="search"
-        className="forest-search-input"
+        placeholder="Filter by forest name"
+        aria-label="Filter by forest name"
+        leftSection={<IconSearch size={16} />}
+        size="sm"
+        mb={8}
         value={forestSearchText}
         onChange={(event) => {
-          setForestSearchText(event.target.value);
+          setForestSearchText(event.currentTarget.value);
         }}
-        placeholder="Filter by forest name"
       />
 
-      <label className="forest-sort-label" htmlFor="forest-sort-select">
-        Sort forests
-      </label>
-      <select
-        id="forest-sort-select"
+      <NativeSelect
         data-testid="forest-sort-select"
-        className="forest-sort-select"
+        aria-label="Sort forests by"
+        size="sm"
+        mb={8}
         value={forestListSortOption}
         onChange={(event) => {
-          onForestListSortOptionChange(event.target.value as ForestListSortOption);
+          onForestListSortOptionChange(event.currentTarget.value as ForestListSortOption);
         }}
-      >
-        <option value="DRIVING_DISTANCE_ASC">Driving distance (low to high)</option>
-        <option value="DRIVING_DISTANCE_DESC">Driving distance (high to low)</option>
-        <option value="DRIVING_TIME_ASC">Driving time (short to long)</option>
-        <option value="DRIVING_TIME_DESC">Driving time (long to short)</option>
-      </select>
+        data={[
+          { label: "Driving distance (low to high)", value: "DRIVING_DISTANCE_ASC" },
+          { label: "Driving distance (high to low)", value: "DRIVING_DISTANCE_DESC" },
+          { label: "Driving time (short to long)", value: "DRIVING_TIME_ASC" },
+          { label: "Driving time (long to short)", value: "DRIVING_TIME_DESC" },
+        ]}
+      />
 
       {shouldUseVirtualizedForestList ? (
         <VirtualizedForestList

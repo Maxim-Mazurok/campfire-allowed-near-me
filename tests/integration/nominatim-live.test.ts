@@ -66,7 +66,7 @@ describeLiveNominatim("live Nominatim integration", () => {
     }
   });
 
-  it("attempts geocoding Brewombenia State Forest and captures diagnostics", async () => {
+  it("attempts geocoding Brewombenia State Forest and captures diagnostics", { timeout: 30_000 }, async () => {
     const temporaryDirectoryPath = mkdtempSync(
       join(process.cwd(), ".tmp_nominatim-brewombenia-live-test-")
     );

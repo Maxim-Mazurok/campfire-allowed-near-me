@@ -1,6 +1,5 @@
-import { faCar } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Tippy from "@tippyjs/react";
+import { IconCar } from "@tabler/icons-react";
+import { Badge, Tooltip } from "@mantine/core";
 import { memo } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
@@ -16,7 +15,6 @@ import {
   getForestClosureStatus,
   getForestImpactSummary,
   getSolidFuelStatusLabel,
-  getStatusClassName,
   getTotalFireBanStatusLabel,
   inferFacilityImpactTarget,
   isImpactWarning
@@ -54,7 +52,7 @@ export const ForestCardContent = memo(({
               title="Open driving navigation in Google Maps"
               data-testid="forest-navigation-link"
             >
-              <FontAwesomeIcon icon={faCar} fixedWidth />
+              <IconCar size={14} stroke={1.5} />
             </a>
             <strong>
               {isHttpUrl(forest.forestUrl) ? (
@@ -86,27 +84,40 @@ export const ForestCardContent = memo(({
         </div>
         <div className="status-block">
           <div className="status-pill-row">
-            <span className={`status-pill ${getStatusClassName(forest.banStatus)}`}>
+            <Badge
+              color={forest.banStatus === "NOT_BANNED" ? "green" : forest.banStatus === "BANNED" ? "red" : "gray"}
+              variant="filled"
+              size="sm"
+              radius="xl"
+            >
               {getSolidFuelStatusLabel(forest.banStatus)}
-            </span>
-            <a
+            </Badge>
+            <Badge
+              component="a"
               href={buildTotalFireBanDetailsUrl(forest)}
               target="_blank"
               rel="noreferrer"
-              className={`status-pill ${getStatusClassName(forest.totalFireBanStatus)}`}
+              color={forest.totalFireBanStatus === "NOT_BANNED" ? "green" : forest.totalFireBanStatus === "BANNED" ? "red" : "gray"}
+              variant="filled"
+              size="sm"
+              radius="xl"
+              style={{ cursor: "pointer", textDecoration: "none" }}
             >
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
-            </a>
+            </Badge>
             {forestClosureStatus === "CLOSED" || forestClosureStatus === "PARTIAL" ? (
-              <span
-                className={`status-pill ${forestClosureStatus === "CLOSED" ? "banned" : "partial-closed"}`}
+              <Badge
+                color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                variant="filled"
+                size="sm"
+                radius="xl"
               >
                 {getClosureStatusLabel(forestClosureStatus)}
-              </span>
+              </Badge>
             ) : null}
           </div>
-          <Tippy content={driveMetricTooltipText} delay={[0, 0]} duration={[0, 0]} placement="top">
-            <small className="muted" data-testid="distance-text" title={driveMetricTooltipText}>
+          <Tooltip label={driveMetricTooltipText} position="top" openDelay={0} closeDelay={0}>
+            <small className="muted" data-testid="distance-text">
               {forest.distanceKm !== null
                 ? formatDriveSummary(
                     forest.distanceKm,
@@ -114,7 +125,7 @@ export const ForestCardContent = memo(({
                   )
                 : "Drive distance unavailable"}
             </small>
-          </Tippy>
+          </Tooltip>
         </div>
       </div>
       {closureNotices.length > 0 ? (
@@ -160,12 +171,12 @@ export const ForestCardContent = memo(({
               value === true ? "Yes" : value === false ? "No" : "Unknown";
 
             return (
-              <Tippy
+              <Tooltip
                 key={`${forest.id}:${facility.key}`}
-                content={`${facility.label}: ${statusText}`}
-                delay={[0, 0]}
-                duration={[0, 0]}
-                placement="top"
+                label={`${facility.label}: ${statusText}`}
+                openDelay={0}
+                closeDelay={0}
+                position="top"
               >
                 <span
                   className={`facility-indicator ${stateClass}`}
@@ -174,7 +185,7 @@ export const ForestCardContent = memo(({
                 >
                   <FacilityIcon facility={facility} />
                 </span>
-              </Tippy>
+              </Tooltip>
             );
           })}
         </div>

@@ -1,3 +1,4 @@
+import { Button, Modal, Table, Text } from "@mantine/core";
 import type { FireBanForestTableProps } from "./WarningsTypes";
 
 export const FireBanForestTableDialog = ({
@@ -9,85 +10,70 @@ export const FireBanForestTableDialog = ({
   fireBanForestTableSortLabel,
   toggleFireBanForestSort
 }: FireBanForestTableProps) => {
-  if (!fireBanForestTableOpen) {
-    return null;
-  }
-
   return (
-    <div
-      className="warnings-overlay fire-ban-forest-table-overlay"
-      data-testid="fire-ban-forest-table-overlay"
-      role="presentation"
-      onClick={closeFireBanForestTable}
+    <Modal
+      opened={fireBanForestTableOpen}
+      onClose={closeFireBanForestTable}
+      title={`Solid Fuel Fire Ban Forests (${fireBanPageForests.length})`}
+      // @ts-expect-error Mantine v8 attributes prop works at runtime but ModalRootFactory types don't expose it
+      attributes={{ content: { "data-testid": "fire-ban-forest-table-dialog" } }}
+      closeButtonProps={{ "aria-label": "Close" }}
+      size="xl"
+      centered
     >
-      <section
-        className="panel warnings-dialog fire-ban-forest-table-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="fire-ban-forest-table-title"
-        data-testid="fire-ban-forest-table-dialog"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="warnings-dialog-header">
-          <h2 id="fire-ban-forest-table-title">
-            Solid Fuel Fire Ban Forests ({fireBanPageForests.length})
-          </h2>
-          <button type="button" onClick={closeFireBanForestTable}>
-            Close
-          </button>
-        </div>
-        <p className="muted fire-ban-forest-table-hint">
-          Sort columns alphabetically by clicking the table headers.
-        </p>
-        <div className="fire-ban-forest-table-wrap">
-          <table className="fire-ban-forest-table" data-testid="fire-ban-forest-table">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <button
-                    type="button"
-                    className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "forestName" ? "is-active" : ""}`}
-                    data-testid="fire-ban-forest-table-forest-sort"
-                    onClick={() => toggleFireBanForestSort("forestName")}
-                  >
-                    Forest name{" "}
-                    {fireBanForestSortColumn === "forestName"
-                      ? `(${fireBanForestTableSortLabel})`
-                      : ""}
-                  </button>
-                </th>
-                <th scope="col">
-                  <button
-                    type="button"
-                    className={`fire-ban-forest-sort-btn ${fireBanForestSortColumn === "areaName" ? "is-active" : ""}`}
-                    data-testid="fire-ban-forest-table-region-sort"
-                    onClick={() => toggleFireBanForestSort("areaName")}
-                  >
-                    Region name{" "}
-                    {fireBanForestSortColumn === "areaName"
-                      ? `(${fireBanForestTableSortLabel})`
-                      : ""}
-                  </button>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedFireBanPageForests.length > 0 ? (
-                sortedFireBanPageForests.map((forest) => (
-                  <tr key={`${forest.id}:fire-ban-table`} data-testid="fire-ban-forest-table-row">
-                    <td>{forest.forestName}</td>
-                    <td>{forest.areaName}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2}>No forests are currently available from Solid Fuel Fire Ban pages.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
+      <Text size="sm" c="dimmed" mb="sm">
+        Sort columns alphabetically by clicking the table headers.
+      </Text>
+      <Table striped highlightOnHover data-testid="fire-ban-forest-table">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>
+              <Button
+                variant="subtle"
+                size="compact-xs"
+                fw={700}
+                color={fireBanForestSortColumn === "forestName" ? "blue" : "gray"}
+                data-testid="fire-ban-forest-table-forest-sort"
+                onClick={() => toggleFireBanForestSort("forestName")}
+              >
+                Forest name{" "}
+                {fireBanForestSortColumn === "forestName"
+                  ? `(${fireBanForestTableSortLabel})`
+                  : ""}
+              </Button>
+            </Table.Th>
+            <Table.Th>
+              <Button
+                variant="subtle"
+                size="compact-xs"
+                fw={700}
+                color={fireBanForestSortColumn === "areaName" ? "blue" : "gray"}
+                data-testid="fire-ban-forest-table-region-sort"
+                onClick={() => toggleFireBanForestSort("areaName")}
+              >
+                Region name{" "}
+                {fireBanForestSortColumn === "areaName"
+                  ? `(${fireBanForestTableSortLabel})`
+                  : ""}
+              </Button>
+            </Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {sortedFireBanPageForests.length > 0 ? (
+            sortedFireBanPageForests.map((forest) => (
+              <Table.Tr key={`${forest.id}:fire-ban-table`} data-testid="fire-ban-forest-table-row">
+                <Table.Td>{forest.forestName}</Table.Td>
+                <Table.Td>{forest.areaName}</Table.Td>
+              </Table.Tr>
+            ))
+          ) : (
+            <Table.Tr>
+              <Table.Td colSpan={2}>No forests are currently available from Solid Fuel Fire Ban pages.</Table.Td>
+            </Table.Tr>
+          )}
+        </Table.Tbody>
+      </Table>
+    </Modal>
   );
 };

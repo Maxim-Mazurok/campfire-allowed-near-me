@@ -1,3 +1,7 @@
+/* ================================================================
+   Global & Reset
+   ================================================================ */
+
 :root {
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
   color: #1f2933;
@@ -19,6 +23,10 @@ body {
   overflow: hidden;
 }
 
+/* ================================================================
+   App Shell & Layout
+   ================================================================ */
+
 .app-shell {
   height: 100dvh;
   max-height: 100dvh;
@@ -37,71 +45,16 @@ body {
   box-shadow: 0 4px 14px rgba(47, 72, 66, 0.08);
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 1.45rem;
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1.6fr 1fr;
+  min-height: 0;
+  gap: 14px;
 }
 
-.header p {
-  margin-top: 6px;
-  margin-bottom: 10px;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.warnings-btn {
-  margin-left: 0;
-  min-width: 64px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-color: #d59f2f;
-  background: #fff9e8;
-}
-
-.settings-btn {
-  margin-left: auto;
-  border-color: #7e9ab5;
-  background: #f2f7fc;
-}
-
-.refresh-task-status {
-  margin: 8px 0 0;
-}
-
-.refresh-progress {
-  margin-top: 6px;
-}
-
-.refresh-progress-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  margin-bottom: 4px;
-}
-
-.refresh-progress-bar {
-  width: 100%;
-  height: 8px;
-}
-
-.warnings-btn:disabled {
-  border-color: #c5c9c5;
-  background: #f6f7f6;
-  color: #7a8380;
-  cursor: default;
-}
-
-.warnings-btn-count {
-  font-size: 0.82rem;
-  font-weight: 700;
-}
+/* ================================================================
+   Location Status Panels
+   ================================================================ */
 
 .location-inline-row {
   margin: 0;
@@ -125,24 +78,9 @@ body {
   margin: 8px 0 0;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid #a8b9ad;
-  padding: 7px 10px;
-  background: #fff;
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 280px 1.6fr 1fr;
-  min-height: 0;
-  gap: 14px;
-}
+/* ================================================================
+   Filter Panel
+   ================================================================ */
 
 .filter-panel {
   display: flex;
@@ -151,142 +89,9 @@ button {
   overflow: hidden;
 }
 
-.filter-panel h2 {
-  margin: 0;
-}
-
-.filter-panel-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  padding-right: 3px;
-}
-
-.filter-section {
-  border-top: 1px solid #dfe8de;
-  padding-top: 10px;
-  margin-top: 10px;
-}
-
-.filter-section h3 {
-  margin: 0 0 8px;
-  font-size: 0.95rem;
-}
-
-.source-link {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.filter-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.text-btn {
-  border: none;
-  background: transparent;
-  color: #2f855a;
-  padding: 2px 4px;
-}
-
-.tri-toggle-group {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.tri-toggle-group button {
-  padding: 5px 8px;
-  line-height: 1;
-}
-
-.filter-subnote {
-  margin: 0 0 8px;
-  font-size: 0.8rem;
-}
-
-.closure-filter-group {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-bottom: 8px;
-}
-
-.closure-filter-meta {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 0.82rem;
-}
-
-.tri-toggle button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.tri-toggle-group button.is-active,
-.tri-toggle button.is-active {
-  border-color: #2f855a;
-  background: #f0fff4;
-}
-
-.tri-toggle button.include.is-active {
-  border-color: #2b9348;
-  background: #e6f7ec;
-}
-
-.tri-toggle button.exclude.is-active {
-  border-color: #b23a48;
-  background: #fdecef;
-}
-
-.tri-toggle button.neutral.is-active {
-  border-color: #52606d;
-  background: #eef2f7;
-}
-
-.facility-filter-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.facility-filter-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.facility-filter-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  font-size: 0.86rem;
-}
-
-.facility-filter-label > span:last-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tri-toggle {
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  gap: 4px;
-}
+/* ================================================================
+   Map Panel
+   ================================================================ */
 
 .map-panel {
   min-height: 0;
@@ -301,42 +106,22 @@ button {
   min-height: 0;
   border-radius: 10px;
   overflow: hidden;
+  isolation: isolate;
 }
+
+.map-meta {
+  margin-top: 0;
+}
+
+/* ================================================================
+   Forest List Panel
+   ================================================================ */
 
 .list-panel {
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-}
-
-.list-panel h2 {
-  margin: 0;
-}
-
-.meta {
-  margin-top: 6px;
-  margin-bottom: 12px;
-}
-
-.forest-search-label {
-  font-size: 0.82rem;
-  margin-bottom: 4px;
-}
-
-.forest-search-input {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.forest-sort-label {
-  font-size: 0.82rem;
-  margin-bottom: 4px;
-}
-
-.forest-sort-select {
-  width: 100%;
-  margin-bottom: 10px;
 }
 
 .forest-list {
@@ -364,6 +149,10 @@ button {
   overflow: visible;
   position: relative;
 }
+
+/* ================================================================
+   Forest Card / Row
+   ================================================================ */
 
 .forest-row {
   display: flex;
@@ -441,41 +230,9 @@ button {
   gap: 4px;
 }
 
-.status-pill {
-  display: inline-flex;
-  border-radius: 999px;
-  padding: 3px 9px;
-  color: #fff;
-  font-size: 0.78rem;
-  white-space: nowrap;
-}
-
-a.status-pill {
-  color: #fff;
-  text-decoration: none;
-}
-
-.status-pill.allowed {
-  background: #1f9d55;
-}
-
-.status-pill.banned {
-  background: #d64545;
-}
-
-.status-pill.unknown {
-  background: #64748b;
-}
-
-.status-pill.partial-closed {
-  background: #d97706;
-}
-
-.facility-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+/* ================================================================
+   Forest Notices
+   ================================================================ */
 
 .forest-notice-list-wrap {
   padding-bottom: 6px;
@@ -511,6 +268,16 @@ a.status-pill {
   color: #123a63;
 }
 
+/* ================================================================
+   Facilities
+   ================================================================ */
+
+.facility-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .facility-indicator {
   flex: 1 1 0;
   min-width: 0;
@@ -539,6 +306,18 @@ a.status-pill {
 
 .facility-icon-glyph {
   font-size: 0.92rem;
+}
+
+/* ================================================================
+   Warnings Sections (inside Modal – Accordion panels)
+   ================================================================ */
+
+.warnings-section a {
+  color: #1c4a76;
+}
+
+.warnings-section a:hover {
+  color: #123a63;
 }
 
 .warning-list {
@@ -596,185 +375,9 @@ a.status-pill {
   word-break: break-word;
 }
 
-.warnings-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1400;
-  background: rgba(17, 24, 39, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-}
-
-.warnings-dialog {
-  width: min(780px, 100%);
-  max-height: min(82dvh, 760px);
-  overflow: auto;
-}
-
-.warnings-dialog,
-.fire-ban-forest-table-dialog,
-.settings-dialog {
-  background: #fff;
-}
-
-.warnings-dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.warnings-dialog-header h2 {
-  margin: 0;
-  font-size: 1.05rem;
-}
-
-.warnings-section {
-  border-top: 1px solid #dfe8de;
-  margin-top: 10px;
-  padding-top: 10px;
-}
-
-.warnings-section-collapsible {
-  padding-top: 8px;
-}
-
-.warnings-section-summary {
-  cursor: pointer;
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.warnings-section h3 {
-  margin: 0 0 6px;
-  font-size: 0.92rem;
-}
-
-.warnings-section a {
-  color: #1c4a76;
-}
-
-.warnings-section a:hover {
-  color: #123a63;
-}
-
-.fire-ban-forest-table-overlay {
-  z-index: 1500;
-}
-
-.fire-ban-forest-table-dialog {
-  width: min(860px, 100%);
-}
-
-.settings-overlay {
-  z-index: 1450;
-}
-
-.settings-dialog {
-  width: min(560px, 100%);
-  max-height: min(82dvh, 540px);
-  overflow: auto;
-}
-
-.settings-options {
-  border: 1px solid #d8e0d8;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-top: 10px;
-}
-
-.settings-options legend {
-  font-weight: 600;
-  padding: 0 4px;
-}
-
-.settings-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.settings-option:first-of-type {
-  margin-top: 0;
-}
-
-.fire-ban-forest-table-hint {
-  margin-top: 0;
-  margin-bottom: 8px;
-}
-
-.fire-ban-forest-table-wrap {
-  border: 1px solid #dfe8de;
-  border-radius: 10px;
-  overflow: auto;
-}
-
-.fire-ban-forest-table {
-  width: 100%;
-  min-width: 480px;
-  border-collapse: collapse;
-}
-
-.fire-ban-forest-table th,
-.fire-ban-forest-table td {
-  text-align: left;
-  padding: 8px 10px;
-  border-bottom: 1px solid #e5ebe6;
-  vertical-align: top;
-}
-
-.fire-ban-forest-table th {
-  position: sticky;
-  top: 0;
-  background: #f5f9f6;
-  z-index: 1;
-}
-
-.fire-ban-forest-sort-btn {
-  border: none;
-  background: transparent;
-  padding: 0;
-  font-weight: 700;
-  color: #3a4752;
-}
-
-.fire-ban-forest-sort-btn.is-active {
-  color: #1d4e89;
-}
-
-.fire-ban-forest-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.tippy-box {
-  font-size: 0.74rem;
-  transition-duration: 0ms !important;
-}
-
-.tippy-content {
-  padding: 4px 7px;
-}
-
-.warning {
-  border-color: #d59f2f;
-  background: #fff5df;
-}
-
-.error {
-  color: #c53030;
-}
-
-.muted {
-  color: #536070;
-}
-
-.map-meta {
-  margin-top: 0;
-}
+/* ================================================================
+   Leaflet Popup Overrides
+   ================================================================ */
 
 .forest-popup-card {
   min-width: 420px;
@@ -838,12 +441,21 @@ a.status-pill {
   color: inherit;
 }
 
-.leaflet-popup-content a.status-pill,
-.leaflet-popup-content a.status-pill:visited,
-.leaflet-popup-content a.status-pill:hover,
-.leaflet-popup-content a.status-pill:active,
-.leaflet-popup-content a.status-pill:focus-visible {
-  color: #fff !important;
+/* ================================================================
+   Utility Classes
+   ================================================================ */
+
+.warning {
+  border-color: #d59f2f;
+  background: #fff5df;
+}
+
+.error {
+  color: #c53030;
+}
+
+.muted {
+  color: #536070;
 }
 
 .warning-inline {
@@ -851,6 +463,10 @@ a.status-pill {
   margin-bottom: 10px;
   color: #7b341e;
 }
+
+/* ================================================================
+   Responsive
+   ================================================================ */
 
 @media (max-width: 960px) {
   body {

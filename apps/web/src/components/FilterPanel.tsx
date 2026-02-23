@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
+import { Anchor, Button, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title } from "@mantine/core";
 import { FacilityIcon } from "./FacilityIcon";
+import { TriStateToggle } from "./TriStateToggle";
 import type { ClosureTagDefinition, FacilityDefinition } from "../lib/api";
 import {
   type BanFilterMode,
@@ -65,357 +67,203 @@ export const FilterPanel = ({
 }: FilterPanelProps) => {
   return (
     <aside className="panel filter-panel">
-      <h2>Filters</h2>
-      <p className="meta">
+      <Title order={2} size="h4">Filters</Title>
+      <Text size="sm" c="dimmed" mt={6} mb={12}>
         Matching {matchingForestsCount} of {forestsCount} forests.
-      </p>
-      <div className="filter-panel-scroll">
-        <section className="filter-section">
-          <h3>
-            <a
-              className="source-link"
-              href={SOLID_FUEL_FIRE_BAN_SOURCE_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Solid Fuel Fire Ban
-            </a>
-          </h3>
-          <div className="tri-toggle-group">
-            <button
-              type="button"
-              className={solidFuelBanFilterMode === "ALL" ? "is-active" : ""}
-              onClick={() => setSolidFuelBanFilterMode("ALL")}
-              data-testid="ban-filter-all"
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={solidFuelBanFilterMode === "NOT_BANNED" ? "is-active" : ""}
-              onClick={() => setSolidFuelBanFilterMode("NOT_BANNED")}
-              data-testid="ban-filter-allowed"
-            >
-              Not banned
-            </button>
-            <button
-              type="button"
-              className={solidFuelBanFilterMode === "BANNED" ? "is-active" : ""}
-              onClick={() => setSolidFuelBanFilterMode("BANNED")}
-              data-testid="ban-filter-not-allowed"
-            >
-              Banned
-            </button>
-            <button
-              type="button"
-              className={solidFuelBanFilterMode === "UNKNOWN" ? "is-active" : ""}
-              onClick={() => setSolidFuelBanFilterMode("UNKNOWN")}
-              data-testid="ban-filter-unknown"
-            >
-              Unknown
-            </button>
+      </Text>
+      <ScrollArea style={{ flex: 1 }} offsetScrollbars>
+        <Stack gap="md">
+          <Divider />
+          <div>
+            <Title order={3} size="sm" mb={8}>
+              <Anchor href={SOLID_FUEL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                Solid Fuel Fire Ban
+              </Anchor>
+            </Title>
+            <SegmentedControl
+              aria-label="Solid fuel fire ban filter"
+              fullWidth
+              size="xs"
+              value={solidFuelBanFilterMode}
+              onChange={(value) => setSolidFuelBanFilterMode(value as BanFilterMode)}
+              data={[
+                { label: "All", value: "ALL" },
+                { label: "Not banned", value: "NOT_BANNED" },
+                { label: "Banned", value: "BANNED" },
+                { label: "Unknown", value: "UNKNOWN" },
+              ]}
+            />
           </div>
-        </section>
 
-        <section className="filter-section">
-          <h3>
-            <a
-              className="source-link"
-              href={TOTAL_FIRE_BAN_SOURCE_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Total Fire Ban
-            </a>
-          </h3>
-          <p className="muted filter-subnote">
-            <a className="source-link" href={TOTAL_FIRE_BAN_RULES_URL} target="_blank" rel="noreferrer">
-              Rules
-            </a>{" "}
-            apply to all outdoor fire use during a declared Total Fire Ban.
-          </p>
-          <div className="tri-toggle-group">
-            <button
-              type="button"
-              className={totalFireBanFilterMode === "ALL" ? "is-active" : ""}
-              onClick={() => setTotalFireBanFilterMode("ALL")}
-              data-testid="total-fire-ban-filter-all"
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={totalFireBanFilterMode === "NOT_BANNED" ? "is-active" : ""}
-              onClick={() => setTotalFireBanFilterMode("NOT_BANNED")}
-              data-testid="total-fire-ban-filter-not-banned"
-            >
-              No ban
-            </button>
-            <button
-              type="button"
-              className={totalFireBanFilterMode === "BANNED" ? "is-active" : ""}
-              onClick={() => setTotalFireBanFilterMode("BANNED")}
-              data-testid="total-fire-ban-filter-banned"
-            >
-              Banned
-            </button>
-            <button
-              type="button"
-              className={totalFireBanFilterMode === "UNKNOWN" ? "is-active" : ""}
-              onClick={() => setTotalFireBanFilterMode("UNKNOWN")}
-              data-testid="total-fire-ban-filter-unknown"
-            >
-              Unknown
-            </button>
+          <Divider />
+          <div>
+            <Title order={3} size="sm" mb={4}>
+              <Anchor href={TOTAL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                Total Fire Ban
+              </Anchor>
+            </Title>
+            <Text size="xs" c="dimmed" mb={8}>
+              <Anchor href={TOTAL_FIRE_BAN_RULES_URL} target="_blank" rel="noreferrer" size="xs">
+                Rules
+              </Anchor>{" "}
+              apply to all outdoor fire use during a declared Total Fire Ban.
+            </Text>
+            <SegmentedControl
+              aria-label="Total fire ban filter"
+              fullWidth
+              size="xs"
+              value={totalFireBanFilterMode}
+              onChange={(value) => setTotalFireBanFilterMode(value as BanFilterMode)}
+              data={[
+                { label: "All", value: "ALL" },
+                { label: "No ban", value: "NOT_BANNED" },
+                { label: "Banned", value: "BANNED" },
+                { label: "Unknown", value: "UNKNOWN" },
+              ]}
+            />
           </div>
-        </section>
 
-        <section className="filter-section">
-          <h3>
-            <a
-              className="source-link"
-              href={CLOSURES_SOURCE_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Closures & Notices
-            </a>
-          </h3>
-          <div className="tri-toggle-group closure-filter-group">
-            <button
-              type="button"
-              className={closureFilterMode === "ALL" ? "is-active" : ""}
-              onClick={() => setClosureFilterMode("ALL")}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={closureFilterMode === "OPEN_ONLY" ? "is-active" : ""}
-              onClick={() => setClosureFilterMode("OPEN_ONLY")}
-              data-testid="closure-filter-open-only"
-            >
-              Open only
-            </button>
-            <button
-              type="button"
-              className={closureFilterMode === "NO_FULL_CLOSURES" ? "is-active" : ""}
-              onClick={() => setClosureFilterMode("NO_FULL_CLOSURES")}
-              data-testid="closure-filter-no-full"
-            >
-              No full closures
-            </button>
-            <button
-              type="button"
-              className={closureFilterMode === "HAS_NOTICE" ? "is-active" : ""}
-              onClick={() => setClosureFilterMode("HAS_NOTICE")}
-              data-testid="closure-filter-has-notice"
-            >
-              Has notices
-            </button>
+          <Divider />
+          <div>
+            <Title order={3} size="sm" mb={8}>
+              <Anchor href={CLOSURES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                Closures & Notices
+              </Anchor>
+            </Title>
+            <SegmentedControl
+              aria-label="Closure filter"
+              fullWidth
+              size="xs"
+              value={closureFilterMode}
+              onChange={(value) => setClosureFilterMode(value as ClosureFilterMode)}
+              data={[
+                { label: "All", value: "ALL" },
+                { label: "Open only", value: "OPEN_ONLY" },
+                { label: "No full closures", value: "NO_FULL_CLOSURES" },
+                { label: "Has notices", value: "HAS_NOTICE" },
+              ]}
+            />
           </div>
-        </section>
 
-        {availableClosureTags.length ? (
-          <section className="filter-section">
-            <div className="filter-section-header">
-              <h3>Closure tags</h3>
-              <button type="button" className="text-btn" onClick={clearClosureTagModes}>
+          {availableClosureTags.length ? (
+            <>
+              <Divider />
+              <div>
+                <Group justify="space-between" mb={8}>
+                  <Title order={3} size="sm">Closure tags</Title>
+                  <Button variant="subtle" size="compact-xs" onClick={clearClosureTagModes}>
+                    Clear
+                  </Button>
+                </Group>
+                <Stack gap={7}>
+                  {availableClosureTags.map((closureTag) => {
+                    const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
+                    return (
+                      <Group key={closureTag.key} justify="space-between" gap="xs">
+                        <Text size="xs" style={{ minWidth: 0 }}>{closureTag.label}</Text>
+                        <TriStateToggle
+                          mode={mode}
+                          onToggle={(targetMode) => toggleClosureTagMode(closureTag.key, targetMode)}
+                          onReset={() => setSingleClosureTagMode(closureTag.key, "ANY")}
+                          label={closureTag.label}
+                          includeTestId={`closure-tag-filter-${closureTag.key}-include`}
+                          excludeTestId={`closure-tag-filter-${closureTag.key}-exclude`}
+                          anyTestId={`closure-tag-filter-${closureTag.key}-any`}
+                        />
+                      </Group>
+                    );
+                  })}
+                </Stack>
+              </div>
+            </>
+          ) : null}
+
+          <Divider />
+          <div>
+            <Title order={3} size="sm" mb={4}>Planning impact warnings</Title>
+            <Text size="xs" c="dimmed" mb={8}>
+              Highlight forests where notices suggest camping or access restrictions.
+            </Text>
+            <Stack gap={7}>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">Camping</Text>
+                <TriStateToggle
+                  mode={impactCampingFilterMode}
+                  onToggle={(targetMode) =>
+                    setImpactCampingFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setImpactCampingFilterMode("ANY")}
+                  label="Camping impact"
+                  includeTestId="impact-filter-camping-include"
+                  excludeTestId="impact-filter-camping-exclude"
+                  anyTestId="impact-filter-camping-any"
+                />
+              </Group>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">2WD/4WD access</Text>
+                <TriStateToggle
+                  mode={impactAccessFilterMode}
+                  onToggle={(targetMode) =>
+                    setImpactAccessFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setImpactAccessFilterMode("ANY")}
+                  label="Access impact"
+                  includeTestId="impact-filter-access-include"
+                  excludeTestId="impact-filter-access-exclude"
+                  anyTestId="impact-filter-access-any"
+                />
+              </Group>
+            </Stack>
+          </div>
+
+          <Divider />
+          <div>
+            <Group justify="space-between" mb={8}>
+              <Title order={3} size="sm">
+                <Anchor href={FACILITIES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                  Facilities
+                </Anchor>
+              </Title>
+              <Button variant="subtle" size="compact-xs" onClick={clearFacilityModes}>
                 Clear
-              </button>
-            </div>
-            <ul className="facility-filter-list">
-              {availableClosureTags.map((closureTag) => {
-                const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
-                return (
-                  <li key={closureTag.key} className="facility-filter-row">
-                    <span className="facility-filter-label">
-                      <span>{closureTag.label}</span>
-                    </span>
-                    <span className="tri-toggle" role="group" aria-label={`${closureTag.label} filter`}>
-                      <button
-                        type="button"
-                        className={mode === "INCLUDE" ? "is-active include" : ""}
-                        onClick={() => toggleClosureTagMode(closureTag.key, "INCLUDE")}
-                        data-testid={`closure-tag-filter-${closureTag.key}-include`}
-                      >
-                        ✓
-                      </button>
-                      <button
-                        type="button"
-                        className={mode === "EXCLUDE" ? "is-active exclude" : ""}
-                        onClick={() => toggleClosureTagMode(closureTag.key, "EXCLUDE")}
-                        data-testid={`closure-tag-filter-${closureTag.key}-exclude`}
-                      >
-                        ✕
-                      </button>
-                      <button
-                        type="button"
-                        className={mode === "ANY" ? "is-active neutral" : ""}
-                        onClick={() => setSingleClosureTagMode(closureTag.key, "ANY")}
-                        data-testid={`closure-tag-filter-${closureTag.key}-any`}
-                      >
-                        ?
-                      </button>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ) : null}
-
-        <section className="filter-section">
-          <h3>Planning impact warnings</h3>
-          <p className="muted closure-filter-meta">
-            Highlight forests where notices suggest camping or access restrictions.
-          </p>
-          <div className="facility-filter-list">
-            <div className="facility-filter-row">
-              <span className="facility-filter-label">
-                <span>Camping</span>
-              </span>
-              <span className="tri-toggle" role="group" aria-label="Camping impact filter">
-                <button
-                  type="button"
-                  className={impactCampingFilterMode === "INCLUDE" ? "is-active include" : ""}
-                  onClick={() =>
-                    setImpactCampingFilterMode((current) =>
-                      current === "INCLUDE" ? "ANY" : "INCLUDE"
-                    )
-                  }
-                  data-testid="impact-filter-camping-include"
-                >
-                  ✓
-                </button>
-                <button
-                  type="button"
-                  className={impactCampingFilterMode === "EXCLUDE" ? "is-active exclude" : ""}
-                  onClick={() =>
-                    setImpactCampingFilterMode((current) =>
-                      current === "EXCLUDE" ? "ANY" : "EXCLUDE"
-                    )
-                  }
-                  data-testid="impact-filter-camping-exclude"
-                >
-                  ✕
-                </button>
-                <button
-                  type="button"
-                  className={impactCampingFilterMode === "ANY" ? "is-active neutral" : ""}
-                  onClick={() => setImpactCampingFilterMode("ANY")}
-                  data-testid="impact-filter-camping-any"
-                >
-                  ?
-                </button>
-              </span>
-            </div>
-            <div className="facility-filter-row">
-              <span className="facility-filter-label">
-                <span>2WD/4WD access</span>
-              </span>
-              <span className="tri-toggle" role="group" aria-label="Access impact filter">
-                <button
-                  type="button"
-                  className={impactAccessFilterMode === "INCLUDE" ? "is-active include" : ""}
-                  onClick={() =>
-                    setImpactAccessFilterMode((current) =>
-                      current === "INCLUDE" ? "ANY" : "INCLUDE"
-                    )
-                  }
-                  data-testid="impact-filter-access-include"
-                >
-                  ✓
-                </button>
-                <button
-                  type="button"
-                  className={impactAccessFilterMode === "EXCLUDE" ? "is-active exclude" : ""}
-                  onClick={() =>
-                    setImpactAccessFilterMode((current) =>
-                      current === "EXCLUDE" ? "ANY" : "EXCLUDE"
-                    )
-                  }
-                  data-testid="impact-filter-access-exclude"
-                >
-                  ✕
-                </button>
-                <button
-                  type="button"
-                  className={impactAccessFilterMode === "ANY" ? "is-active neutral" : ""}
-                  onClick={() => setImpactAccessFilterMode("ANY")}
-                  data-testid="impact-filter-access-any"
-                >
-                  ?
-                </button>
-              </span>
-            </div>
+              </Button>
+            </Group>
+            {availableFacilities.length ? (
+              <Stack gap={7} data-testid="facility-filter-list">
+                {availableFacilities.map((facility) => {
+                  const mode = facilityFilterModes[facility.key] ?? "ANY";
+                  return (
+                    <Group key={facility.key} justify="space-between" gap="xs">
+                      <Group gap={6} style={{ minWidth: 0 }} wrap="nowrap">
+                        <FacilityIcon facility={facility} />
+                        <Text size="xs" truncate>{facility.label}</Text>
+                      </Group>
+                      <TriStateToggle
+                        mode={mode}
+                        onToggle={(targetMode) => toggleFacilityMode(facility.key, targetMode)}
+                        onReset={() => setSingleFacilityMode(facility.key, "ANY")}
+                        label={facility.label}
+                        includeTestId={`facility-filter-${facility.key}-include`}
+                        excludeTestId={`facility-filter-${facility.key}-exclude`}
+                        anyTestId={`facility-filter-${facility.key}-any`}
+                        includeAriaLabel={`Only show forests with ${facility.label.toLowerCase()}`}
+                        excludeAriaLabel={`Only show forests without ${facility.label.toLowerCase()}`}
+                        anyAriaLabel={`${facility.label} does not matter`}
+                      />
+                    </Group>
+                  );
+                })}
+              </Stack>
+            ) : (
+              <Text size="sm" c="dimmed">Facilities data is unavailable right now.</Text>
+            )}
           </div>
-        </section>
-
-        <section className="filter-section">
-          <div className="filter-section-header">
-            <h3>
-              <a
-                className="source-link"
-                href={FACILITIES_SOURCE_URL}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Facilities
-              </a>
-            </h3>
-            <button type="button" className="text-btn" onClick={clearFacilityModes}>
-              Clear
-            </button>
-          </div>
-          {availableFacilities.length ? (
-            <ul className="facility-filter-list" data-testid="facility-filter-list">
-              {availableFacilities.map((facility) => {
-                const mode = facilityFilterModes[facility.key] ?? "ANY";
-                return (
-                  <li key={facility.key} className="facility-filter-row">
-                    <span className="facility-filter-label">
-                      <FacilityIcon facility={facility} />
-                      <span>{facility.label}</span>
-                    </span>
-                    <span className="tri-toggle" role="group" aria-label={`${facility.label} filter`}>
-                      <button
-                        type="button"
-                        className={mode === "INCLUDE" ? "is-active include" : ""}
-                        onClick={() => toggleFacilityMode(facility.key, "INCLUDE")}
-                        aria-label={`Only show forests with ${facility.label.toLowerCase()}`}
-                        data-testid={`facility-filter-${facility.key}-include`}
-                      >
-                        ✓
-                      </button>
-                      <button
-                        type="button"
-                        className={mode === "EXCLUDE" ? "is-active exclude" : ""}
-                        onClick={() => toggleFacilityMode(facility.key, "EXCLUDE")}
-                        aria-label={`Only show forests without ${facility.label.toLowerCase()}`}
-                        data-testid={`facility-filter-${facility.key}-exclude`}
-                      >
-                        ✕
-                      </button>
-                      <button
-                        type="button"
-                        className={mode === "ANY" ? "is-active neutral" : ""}
-                        onClick={() => setSingleFacilityMode(facility.key, "ANY")}
-                        aria-label={`${facility.label} does not matter`}
-                        data-testid={`facility-filter-${facility.key}-any`}
-                      >
-                        ?
-                      </button>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p className="muted">Facilities data is unavailable right now.</p>
-          )}
-        </section>
-      </div>
+        </Stack>
+      </ScrollArea>
     </aside>
   );
 };

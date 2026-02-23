@@ -3,11 +3,11 @@ import React from "react";
 import {
   cleanup,
   fireEvent,
-  render,
   screen,
   waitFor
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithMantine } from "../test-utils";
 import { ForestListPanel } from "../../apps/web/src/components/ForestListPanel";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
 
@@ -42,7 +42,7 @@ describe("ForestListPanel hover behavior", () => {
   it("emits hovered forest id on mouse enter and null on mouse leave", () => {
     const onHoveredForestIdChange = vi.fn<(hoveredForestId: string | null) => void>();
 
-    render(
+    renderWithMantine(
       <ForestListPanel
         matchingForests={[buildForest("forest-a", "Forest A")]}
         availableFacilities={[]}
@@ -50,6 +50,8 @@ describe("ForestListPanel hover behavior", () => {
         avoidTolls={true}
         hoveredForestId={null}
         onHoveredForestIdChange={onHoveredForestIdChange}
+        forestListSortOption="DRIVING_DISTANCE_ASC"
+        onForestListSortOptionChange={() => {}}
       />
     );
 
@@ -64,7 +66,7 @@ describe("ForestListPanel hover behavior", () => {
   it("clears hovered forest id when the hovered forest is filtered out", async () => {
     const onHoveredForestIdChange = vi.fn<(hoveredForestId: string | null) => void>();
 
-    render(
+    renderWithMantine(
       <ForestListPanel
         matchingForests={[
           buildForest("forest-a", "Forest A"),
@@ -75,10 +77,12 @@ describe("ForestListPanel hover behavior", () => {
         avoidTolls={true}
         hoveredForestId="forest-a"
         onHoveredForestIdChange={onHoveredForestIdChange}
+        forestListSortOption="DRIVING_DISTANCE_ASC"
+        onForestListSortOptionChange={() => {}}
       />
     );
 
-    const forestSearchInput = screen.getByTestId("forest-search-input");
+    const forestSearchInput = screen.getByPlaceholderText("Filter by forest name");
     fireEvent.change(forestSearchInput, { target: { value: "Forest B" } });
 
     await waitFor(() => {

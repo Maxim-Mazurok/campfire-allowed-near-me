@@ -14,6 +14,7 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
 - Extracts structured closure impacts (camping, 2WD, 4WD) from notice prose using deterministic rules, with optional Azure OpenAI enrichment.
 - Uses **Solid Fuel Fire Ban** and **Total Fire Ban** data in forest status, and excludes fully closed forests from nearest legal recommendations.
 - Ignores Firewood collection status for campfire legality.
+- UI built with **Mantine v8** component library and **@tabler/icons-react** icons.
 - Resolves forest coordinates with local Nominatim first for fast initial results, then enriches/upgrades coordinates in the background with Google Places.
 - Supports optional local Nominatim fallback (`NOMINATIM_BASE_URL`) for high-volume/local development geocoding.
 - Maps forests with OpenStreetMap + Leaflet.

@@ -22,10 +22,23 @@ This file gives baseline instructions for AI coding agents collaborating in this
 	- If a touched file is above the hard limit, include a refactor step in the same task unless explicitly blocked.
 - Do not introduce or keep monolithic UI containers with business logic + rendering + networking mixed together.
 	- Extract selectors, hooks, and view components into separate files.
+- Prefer pure selectors/helpers for filtering/sorting/warning derivations.
 - Frontend/backend contracts must be shared from a single source (types and websocket payloads).
 	- Avoid duplicating DTOs in API and web folders.
 - For websocket integrations, use typed message contracts and a reusable reconnecting hook pattern.
 - Prefer behavior-preserving refactors before adding new feature code in oversized files.
+
+## UI library (Mantine)
+- **Read `.github/mantine-guide.md` before any UI work.** It contains the full component/hook catalogue, styling guide, anti-patterns, and project-specific setup.
+- The web app uses **Mantine v8** (`@mantine/core`, `@mantine/hooks`) with `@tabler/icons-react` for icons.
+- Do not use FontAwesome or tippy.js — they have been removed.
+- Use Mantine components (Modal, Button, Badge, TextInput, SegmentedControl, etc.) instead of hand-rolled HTML+CSS.
+- Theme is in `apps/web/src/theme.ts`; **do not modify it without explicit user approval**.
+- **Do not use custom hex/RGB/HSL color values** — always use Mantine's built-in named colors.
+- Prefer semantic theme colors where the intent matches the semantics (e.g. use `color="warning"` for warning indicators, not for unrelated orange UI). Do not repurpose semantic colors for purely decorative or unrelated uses.
+- For jsdom tests rendering Mantine components, use `renderWithMantine` from `tests/test-utils.tsx`.
+- The vitest setup file `tests/vitest-jsdom-setup.ts` polyfills `window.matchMedia` and `ResizeObserver` for jsdom tests.
+- For detailed Mantine API lookups at runtime, use `mcp_context7` with library ID `/llmstxt/mantine_dev_llms_txt`.
 
 ## Data and caching
 - Coordinate cache is SQLite-backed (`data/cache/coordinates.sqlite`).

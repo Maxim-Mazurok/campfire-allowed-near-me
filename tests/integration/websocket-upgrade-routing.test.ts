@@ -33,6 +33,14 @@ describe("websocket upgrade routing", () => {
   let forestsWebSocketServer: WebSocketServer | null = null;
 
   afterEach(async () => {
+    for (const webSocketServer of [refreshWebSocketServer, forestsWebSocketServer]) {
+      if (webSocketServer) {
+        for (const client of webSocketServer.clients) {
+          client.terminate();
+        }
+      }
+    }
+
     await new Promise<void>((resolve) => {
       refreshWebSocketServer?.close(() => resolve());
       if (!refreshWebSocketServer) {
