@@ -82,7 +82,8 @@ const waitForReadyContent = async (
         log(`[waitForReady] ${label} matched ${elapsed}s (#${pollCount})`);
         return html;
       }
-      if (/<body/i.test(html) && html.length > 5000) {
+      // Body fallback only when no specific pattern required
+      if (!expectedPattern && /<body/i.test(html) && html.length > 5000) {
         log(`[waitForReady] ${label} body fallback ${elapsed}s (${html.length}B)`);
         return html;
       }
@@ -136,20 +137,10 @@ export class ForestryScraper {
     const page = await context.newPage();
     try {
       this.log(`[fetchHtml] → ${url}`);
-      let navigationResponse: Awaited<ReturnType<Page["goto"]>> = null;
-      try {
-        navigationResponse = await page.goto(url, {
-          waitUntil: "domcontentloaded",
-          timeout: this.options.timeoutMs
-        });
-      } catch (navigationError) {
-        // net::ERR_HTTP_RESPONSE_CODE_FAILURE means the server returned an
-        // error HTTP status. The page may still contain a CF challenge that
-        // resolves after JS execution, so we continue instead of re-throwing.
-        if (errorMessage(navigationError).includes("ERR_HTTP_RESPONSE_CODE_FAILURE")) {
-          this.log(`[fetchHtml] goto error (non-fatal, will poll): ${errorMessage(navigationError)}`);
-        } else { throw navigationError; }
-      }
+      const navigationResponse = await page.goto(url, {
+        waitUntil: "domcontentloaded",
+        timeout: this.options.timeoutMs
+      });
       if (navigationResponse) {
         const headers = navigationResponse.headers();
         this.log(
@@ -177,10 +168,7 @@ export class ForestryScraper {
 
       if (!isCloudflareChallengeHtml(html)) {
         try {
-          await this.rawPageCache.set(url, {
-            finalUrl,
-            html
-          });
+          await this.rawPageCache.set(url, { finalUrl, html });
         } catch {
           // Keep scrape success even if cache write fails.
         }

@@ -55,7 +55,7 @@ const MAX_GEOCODE_LOOKUPS_PER_RUN = Number(
   process.env.MAX_GEOCODE_LOOKUPS_PER_RUN ?? "300"
 );
 const MAX_PROXY_RETRIES = Number(
-  process.env.MAX_PROXY_RETRIES ?? "3"
+  process.env.MAX_PROXY_RETRIES ?? "5"
 );
 
 const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
@@ -151,7 +151,8 @@ const attemptScrape = async (
 ) => {
   const scraper = new ForestryScraper({
     browserContextFactory: createProxyBrowserContextFactory(proxyPort),
-    verbose: true
+    verbose: true,
+    rawPageCacheTtlMs: 0 // Disable caching — each attempt must fetch fresh pages
   });
 
   const forestDataService = new LiveForestDataService({
