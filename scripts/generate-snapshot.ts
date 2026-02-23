@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -172,7 +172,10 @@ const main = async () => {
     scraper,
     geocoder,
     totalFireBanService,
-    snapshotPath: SNAPSHOT_OUTPUT_PATH
+    // snapshotPath is intentionally null so that LiveForestDataService does NOT
+    // read the placeholder snapshot as a stale fallback (which would silently
+    // swallow scraping errors and return 0 forests). We persist manually below.
+    snapshotPath: null
   });
 
   // Generate snapshot (scrape → geocode → build → persist)
@@ -191,15 +194,34 @@ const main = async () => {
   console.log("");
   console.log(`[2/4] Snapshot generated: ${response.forests.length} forests`);
 
-  // Read back the persisted snapshot for validation
-  if (!existsSync(SNAPSHOT_OUTPUT_PATH)) {
-    console.error("ERROR: Snapshot was not persisted to disk.");
-    process.exit(1);
+  if (response.warnings.length) {
+    console.log("  Scrape warnings:");
+    for (const warning of response.warnings) {
+      console.log(`    ⚠ ${warning}`);
+    }
   }
 
-  const savedSnapshot = JSON.parse(
-    readFileSync(SNAPSHOT_OUTPUT_PATH, "utf-8")
-  ) as PersistedSnapshot;
+  if (response.stale) {
+    console.log("  ⚠ Response is marked as stale.");
+  }
+
+  // Build and persist the snapshot ourselves
+  const savedSnapshot: PersistedSnapshot = {
+    schemaVersion: 7,
+    fetchedAt: response.fetchedAt,
+    stale: response.stale,
+    sourceName: response.sourceName,
+    availableFacilities: response.availableFacilities,
+    availableClosureTags: response.availableClosureTags,
+    matchDiagnostics: response.matchDiagnostics,
+    closureDiagnostics: response.closureDiagnostics,
+    forests: response.forests.map(
+      ({ distanceKm: _distanceKm, travelDurationMinutes: _travelDurationMinutes, ...forest }) => forest
+    ),
+    warnings: response.warnings
+  };
+
+  writeFileSync(SNAPSHOT_OUTPUT_PATH, JSON.stringify(savedSnapshot, null, 2));
 
   console.log(`[3/4] Validating snapshot...`);
   const validationErrors = validateSnapshot(savedSnapshot);

@@ -71,7 +71,7 @@ const waitForReadyContent = async (
         return html;
       }
 
-      if (/<body/i.test(html) && html.length > 2000) {
+      if (/<body/i.test(html) && html.length > 5000) {
         return html;
       }
     }
@@ -128,6 +128,13 @@ export class ForestryScraper {
         waitUntil: "domcontentloaded",
         timeout: this.options.timeoutMs
       });
+
+      // Wait for network to settle so Cloudflare challenge JS can execute
+      try {
+        await page.waitForLoadState("networkidle", { timeout: 15_000 });
+      } catch {
+        // networkidle timeout is not fatal — proceed with content check
+      }
 
       const html = await waitForReadyContent(
         page,
