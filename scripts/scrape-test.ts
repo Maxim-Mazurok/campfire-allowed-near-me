@@ -96,6 +96,17 @@ const testPlainFetch = async (
     clearTimeout(timeoutId);
 
     const html = await response.text();
+
+    // Log response details for debugging
+    console.log(`    [plain-fetch] HTTP ${response.status} ${response.url}`);
+    const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
+    for (const header of relevantHeaders) {
+      const value = response.headers.get(header);
+      if (value) {
+        console.log(`    [plain-fetch]   ${header}: ${value}`);
+      }
+    }
+
     const cloudflareBlocked = isCloudflareChallengeHtml(html);
     const matchesExpected = target.expectedPattern.test(html);
 
@@ -144,10 +155,28 @@ const testPlaywrightVariant = async (
     const page = await context.newPage();
 
     try {
-      await page.goto(target.url, {
+      const response = await page.goto(target.url, {
         waitUntil: "domcontentloaded",
         timeout: 60_000,
       });
+
+      if (response) {
+        console.log(`    [${method}] HTTP ${response.status()} ${response.url()}`);
+        const responseHeaders = response.headers();
+        const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
+        for (const header of relevantHeaders) {
+          if (responseHeaders[header]) {
+            console.log(`    [${method}]   ${header}: ${responseHeaders[header]}`);
+          }
+        }
+      }
+
+      // For SPA-like sites, also wait for network to settle
+      try {
+        await page.waitForLoadState("networkidle", { timeout: 15_000 });
+      } catch {
+        // networkidle timeout is not fatal
+      }
 
       const html = await waitForCloudflareResolution(page, 30_000);
       const cloudflareBlocked = isCloudflareChallengeHtml(html);
@@ -192,6 +221,22 @@ const formatStatus = (result: MethodResult): string => {
   return "FAIL";
 };
 
+const logResponseBody = (result: MethodResult): void => {
+  if (result.success) return;
+  if (!result.html) return;
+
+  const MAX_BODY_LOG = 2_000;
+  const body = result.html.length > MAX_BODY_LOG
+    ? `${result.html.slice(0, MAX_BODY_LOG)}\n... (truncated, ${result.html.length} bytes total)`
+    : result.html;
+
+  console.log(`    ── Response body ──`);
+  for (const line of body.split("\n")) {
+    console.log(`    │ ${line}`);
+  }
+  console.log(`    ──────────────────`);
+};
+
 const main = async () => {
   mkdirSync(ARTIFACT_DIRECTORY, { recursive: true });
 
@@ -213,6 +258,7 @@ const main = async () => {
     const plainResult = await testPlainFetch(target);
     methodResults.push(plainResult);
     console.log(`    → ${formatStatus(plainResult)} (${plainResult.contentLength ?? 0} bytes)`);
+    logResponseBody(plainResult);
 
     if (plainResult.html) {
       writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-plain-fetch.html`), plainResult.html);
@@ -227,6 +273,7 @@ const main = async () => {
     );
     methodResults.push(playwrightResult);
     console.log(`    → ${formatStatus(playwrightResult)} (${playwrightResult.contentLength ?? 0} bytes)`);
+    logResponseBody(playwrightResult);
 
     if (playwrightResult.html) {
       writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-playwright.html`), playwrightResult.html);
@@ -241,6 +288,7 @@ const main = async () => {
     );
     methodResults.push(stealthResult);
     console.log(`    → ${formatStatus(stealthResult)} (${stealthResult.contentLength ?? 0} bytes)`);
+    logResponseBody(stealthResult);
 
     if (stealthResult.html) {
       writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth.html`), stealthResult.html);
@@ -255,6 +303,7 @@ const main = async () => {
     );
     methodResults.push(headedStealthResult);
     console.log(`    → ${formatStatus(headedStealthResult)} (${headedStealthResult.contentLength ?? 0} bytes)`);
+    logResponseBody(headedStealthResult);
 
     if (headedStealthResult.html) {
       writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth-headed.html`), headedStealthResult.html);
