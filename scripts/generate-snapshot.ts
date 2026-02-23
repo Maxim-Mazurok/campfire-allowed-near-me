@@ -150,7 +150,8 @@ const attemptScrape = async (
   totalFireBanService: TotalFireBanService
 ) => {
   const scraper = new ForestryScraper({
-    browserContextFactory: createProxyBrowserContextFactory(proxyPort)
+    browserContextFactory: createProxyBrowserContextFactory(proxyPort),
+    verbose: true
   });
 
   const forestDataService = new LiveForestDataService({

@@ -43,6 +43,7 @@ interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptio
   rawPageCache?: RawPageCache;
   closureImpactEnricher?: ClosureImpactEnricher;
   browserContextFactory?: BrowserContextFactory;
+  verbose?: boolean;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
@@ -61,7 +62,8 @@ const waitForReadyContent = async (
   page: Page,
   expectedPattern: RegExp | null,
   timeoutMs: number,
-  label: string
+  label: string,
+  log: (message: string) => void
 ): Promise<string> => {
   const start = Date.now();
   let pollCount = 0;
@@ -70,48 +72,39 @@ const waitForReadyContent = async (
     pollCount += 1;
     const html = await page.content();
     const isCloudflare = isCloudflareChallengeHtml(html);
-    const elapsedSeconds = ((Date.now() - start) / 1000).toFixed(1);
+    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 
     if (pollCount === 1 || pollCount % 5 === 0) {
-      console.log(
-        `  [waitForReady] ${label} poll #${pollCount} (${elapsedSeconds}s) — ` +
-        `CF=${isCloudflare}, bodyLen=${html.length}, ` +
-        `pattern=${expectedPattern ? expectedPattern.test(html) : "n/a"}`
-      );
+      log(`[waitForReady] ${label} #${pollCount} (${elapsed}s) CF=${isCloudflare} len=${html.length}`);
     }
-
     if (!isCloudflare) {
       if (!expectedPattern || expectedPattern.test(html)) {
-        console.log(`  [waitForReady] ${label} matched after ${elapsedSeconds}s (poll #${pollCount})`);
+        log(`[waitForReady] ${label} matched ${elapsed}s (#${pollCount})`);
         return html;
       }
-
       if (/<body/i.test(html) && html.length > 5000) {
-        console.log(`  [waitForReady] ${label} body fallback after ${elapsedSeconds}s (${html.length} bytes)`);
+        log(`[waitForReady] ${label} body fallback ${elapsed}s (${html.length}B)`);
         return html;
       }
     }
-
     await page.waitForTimeout(2000);
   }
 
   const finalHtml = await page.content();
-  const totalSeconds = ((Date.now() - start) / 1000).toFixed(1);
-  console.log(
-    `  [waitForReady] ${label} TIMED OUT after ${totalSeconds}s (${pollCount} polls, ` +
-    `CF=${isCloudflareChallengeHtml(finalHtml)}, bodyLen=${finalHtml.length})`
-  );
+  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+  log(`[waitForReady] ${label} TIMED OUT ${elapsed}s (#${pollCount} CF=${isCloudflareChallengeHtml(finalHtml)} len=${finalHtml.length})`);
   return finalHtml;
 };
 
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 export class ForestryScraper {
   private readonly options: ForestryScraperOptions;
-
   private readonly rawPageCache: RawPageCache;
-
   private readonly closureImpactEnricher: ClosureImpactEnricher;
-
   private readonly browserContextFactory: BrowserContextFactory | null;
+  private readonly log: (message: string) => void;
 
   constructor(options?: ForestryScraperConstructorOptions) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
@@ -122,6 +115,7 @@ export class ForestryScraper {
       });
     this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
     this.browserContextFactory = options?.browserContextFactory ?? null;
+    this.log = options?.verbose ? (message) => console.log(`  ${message}`) : () => {};
   }
 
   private async fetchHtml(
@@ -146,34 +140,33 @@ export class ForestryScraper {
     const context = await getContext();
     const page = await context.newPage();
     try {
-      console.log(`  [fetchHtml] Navigating to ${url}`);
+      this.log(`[fetchHtml] → ${url}`);
       const navigationResponse = await page.goto(url, {
         waitUntil: "domcontentloaded",
         timeout: this.options.timeoutMs
       });
       if (navigationResponse) {
-        console.log(`  [fetchHtml] HTTP ${navigationResponse.status()} ${navigationResponse.url()}`);
-        const responseHeaders = navigationResponse.headers();
-        for (const headerName of ["content-type", "server", "cf-ray"]) {
-          if (responseHeaders[headerName]) {
-            console.log(`  [fetchHtml]   ${headerName}: ${responseHeaders[headerName]}`);
-          }
-        }
+        const headers = navigationResponse.headers();
+        this.log(
+          `[fetchHtml] HTTP ${navigationResponse.status()} ` +
+          `server=${headers["server"] ?? "?"} cf-ray=${headers["cf-ray"] ?? "?"}`
+        );
       }
 
       // Wait for network to settle — helps Cloudflare challenge JS to resolve
       try {
         await page.waitForLoadState("networkidle", { timeout: 15_000 });
-        console.log(`  [fetchHtml] networkidle reached`);
+        this.log(`[fetchHtml] networkidle reached`);
       } catch {
-        console.log(`  [fetchHtml] networkidle timeout (non-fatal)`);
+        this.log(`[fetchHtml] networkidle timeout (non-fatal)`);
       }
 
       const html = await waitForReadyContent(
         page,
         expectedPattern,
         this.options.timeoutMs,
-        url
+        url,
+        this.log
       );
       const finalUrl = page.url();
 
@@ -260,11 +253,17 @@ export class ForestryScraper {
     ].filter((value, index, list) => list.indexOf(value) === index);
 
     for (const url of urls) {
-      const response = await this.fetchHtml(
-        getContext,
-        url,
-        /facilit|state forests list|showing \d+ results/i
-      );
+      let response: { html: string; url: string };
+      try {
+        response = await this.fetchHtml(
+          getContext,
+          url,
+          /facilit|state forests list|showing \d+ results/i
+        );
+      } catch (directoryFetchError) {
+        console.error(`  [loadDirectoryBasePage] ${url}: ${errorMessage(directoryFetchError)}`);
+        continue;
+      }
 
       if (isCloudflareChallengeHtml(response.html)) {
         continue;
@@ -299,26 +298,15 @@ export class ForestryScraper {
     const makeDefaultFacilities = (): Record<string, boolean> =>
       Object.fromEntries(facilityKeys.map((key) => [key, false]));
 
-    const byForestName = new Map<
-      string,
-      { facilities: Record<string, boolean>; forestUrl: string | null }
-    >();
-    const ensureForest = (
-      forestName: string,
-      forestUrl?: string | null
-    ): { facilities: Record<string, boolean>; forestUrl: string | null } => {
+    type ForestRow = { facilities: Record<string, boolean>; forestUrl: string | null };
+    const byForestName = new Map<string, ForestRow>();
+    const ensureForest = (forestName: string, forestUrl?: string | null): ForestRow => {
       const existing = byForestName.get(forestName);
       if (existing) {
-        if (!existing.forestUrl && forestUrl) {
-          existing.forestUrl = forestUrl;
-        }
+        if (!existing.forestUrl && forestUrl) existing.forestUrl = forestUrl;
         return existing;
       }
-
-      const created = {
-        facilities: makeDefaultFacilities(),
-        forestUrl: forestUrl ?? null
-      };
+      const created: ForestRow = { facilities: makeDefaultFacilities(), forestUrl: forestUrl ?? null };
       byForestName.set(forestName, created);
       return created;
     };
@@ -337,13 +325,21 @@ export class ForestryScraper {
           filterUrl.search = "";
           filterUrl.searchParams.set(filter.paramName, "Yes");
 
-          const filteredHtml = (
-            await this.fetchHtml(
-              getContext,
-              filterUrl.toString(),
-              /state forest|showing \d+ results/i
-            )
-          ).html;
+          let filteredHtml: string;
+          try {
+            filteredHtml = (
+              await this.fetchHtml(
+                getContext,
+                filterUrl.toString(),
+                /state forest|showing \d+ results/i
+              )
+            ).html;
+          } catch (filterError) {
+            const message = errorMessage(filterError);
+            console.error(`  [scrapeDirectory] Filter "${filter.label}" failed: ${message}`);
+            warnings.add(`Facilities filter "${filter.label}" could not be loaded: ${message}`);
+            return;
+          }
 
           if (isCloudflareChallengeHtml(filteredHtml)) {
             warnings.add(
@@ -382,30 +378,24 @@ export class ForestryScraper {
     closures: ForestryScrapeResult["closures"];
     warnings: string[];
   }> {
-    const response = await this.fetchHtml(
-      getContext,
-      this.options.closuresUrl,
-      /forest closures|closuredetails/i
-    );
-    const html = response.html;
-
-    if (isCloudflareChallengeHtml(html)) {
-      return {
-        closures: [],
-        warnings: [
-          "Could not load Forestry closures/notices page due to anti-bot verification."
-        ]
-      };
+    let response: { html: string; url: string };
+    try {
+      response = await this.fetchHtml(
+        getContext,
+        this.options.closuresUrl,
+        /forest closures|closuredetails/i
+      );
+    } catch (closuresFetchError) {
+      const message = errorMessage(closuresFetchError);
+      console.error(`  [scrapeClosures] ${message}`);
+      return { closures: [], warnings: [`Could not load Forestry closures/notices page: ${message}`] };
     }
-
-    const closures = parseClosureNoticesPage(html, response.url);
+    if (isCloudflareChallengeHtml(response.html)) {
+      return { closures: [], warnings: ["Could not load Forestry closures/notices page due to anti-bot verification."] };
+    }
+    const closures = parseClosureNoticesPage(response.html, response.url);
     if (!closures.length) {
-      return {
-        closures: [],
-        warnings: [
-          "No closure notices were parsed from Forestry closures/notices page."
-        ]
-      };
+      return { closures: [], warnings: ["No closure notices were parsed from Forestry closures/notices page."] };
     }
 
     const detailLimit = pLimit(this.options.maxClosureConcurrency);
@@ -417,77 +407,44 @@ export class ForestryScraper {
         detailLimit(async (): Promise<ForestClosureNotice> => {
           try {
             const detailResponse = await this.fetchHtml(
-              getContext,
-              closure.detailUrl,
+              getContext, closure.detailUrl,
               /more information|go to forest closures list|closures and notices/i
             );
-            const detailHtml = detailResponse.html;
-            if (isCloudflareChallengeHtml(detailHtml)) {
+            if (isCloudflareChallengeHtml(detailResponse.html)) {
               detailChallengeCount += 1;
-              return {
-                ...closure,
-                detailText: null
-              };
+              return { ...closure, detailText: null };
             }
-
-            const detailText = parseClosureNoticeDetailPage(detailHtml);
+            const detailText = parseClosureNoticeDetailPage(detailResponse.html);
             const mergedTags = [...new Set([
-              ...closure.tags,
-              ...classifyClosureNoticeTags(detailText ?? "")
+              ...closure.tags, ...classifyClosureNoticeTags(detailText ?? "")
             ])];
-
-            return {
-              ...closure,
-              detailText,
-              tags: mergedTags
-            };
+            return { ...closure, detailText, tags: mergedTags };
           } catch {
             detailFailureCount += 1;
-            return {
-              ...closure,
-              detailText: null
-            };
+            return { ...closure, detailText: null };
           }
         })
       )
     );
 
     const structured = await this.closureImpactEnricher.enrichNotices(closuresWithDetails);
-    const warnings = new Set<string>(structured.warnings);
+    const closureWarnings = new Set<string>(structured.warnings);
     if (detailChallengeCount > 0) {
-      warnings.add(
-        `Could not load ${detailChallengeCount} closure detail page(s) due to anti-bot verification.`
-      );
+      closureWarnings.add(`Could not load ${detailChallengeCount} closure detail page(s) due to anti-bot verification.`);
     }
     if (detailFailureCount > 0) {
-      warnings.add(
-        `Could not load ${detailFailureCount} closure detail page(s); list titles were used instead.`
-      );
+      closureWarnings.add(`Could not load ${detailFailureCount} closure detail page(s); list titles were used instead.`);
     }
-
-    return {
-      closures: structured.notices,
-      warnings: [...warnings]
-    };
+    return { closures: structured.notices, warnings: [...closureWarnings] };
   }
 
   async scrape(): Promise<ForestryScrapeResult> {
-    const runtime: {
-      browser: Browser | null;
-      context: BrowserContext | null;
-      externalCleanup: (() => Promise<void>) | null;
-    } = {
-      browser: null,
-      context: null,
-      externalCleanup: null
-    };
+    const runtime: { browser: Browser | null; context: BrowserContext | null; externalCleanup: (() => Promise<void>) | null } =
+      { browser: null, context: null, externalCleanup: null };
 
     let contextPromise: Promise<BrowserContext> | null = null;
-
     const getContext = async (): Promise<BrowserContext> => {
-      if (runtime.context) {
-        return runtime.context;
-      }
+      if (runtime.context) return runtime.context;
 
       if (!contextPromise) {
         contextPromise = (async () => {
@@ -497,18 +454,14 @@ export class ForestryScraper {
             runtime.externalCleanup = factoryResult.cleanup;
             return runtime.context;
           }
-
           runtime.browser = await chromium.launch({ headless: true });
           runtime.context = await runtime.browser.newContext({
-            userAgent:
-              "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
+            userAgent: "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
             locale: "en-AU"
           });
-
           return runtime.context;
         })();
       }
-
       return contextPromise;
     };
 
@@ -530,15 +483,8 @@ export class ForestryScraper {
       if (runtime.externalCleanup) {
         await runtime.externalCleanup();
       } else {
-        const activeContext = runtime.context;
-        if (activeContext) {
-          await activeContext.close();
-        }
-
-        const activeBrowser = runtime.browser;
-        if (activeBrowser) {
-          await activeBrowser.close();
-        }
+        if (runtime.context) await runtime.context.close();
+        if (runtime.browser) await runtime.browser.close();
       }
     }
   }
