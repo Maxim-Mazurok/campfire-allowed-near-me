@@ -69,10 +69,36 @@ const main = async () => {
     console.log("[2] Navigating to target...");
     const startTime = Date.now();
 
-    const response = await page.goto(TARGET_URL, {
-      waitUntil: "domcontentloaded",
-      timeout: 90_000
-    });
+    let response: Awaited<ReturnType<typeof page.goto>> = null;
+    try {
+      response = await page.goto(TARGET_URL, {
+        waitUntil: "domcontentloaded",
+        timeout: 90_000
+      });
+    } catch (navigationError) {
+      const message = navigationError instanceof Error ? navigationError.message : String(navigationError);
+      if (message.includes("ERR_HTTP_RESPONSE_CODE_FAILURE")) {
+        console.log(`[2] goto threw ERR_HTTP_RESPONSE_CODE_FAILURE (proxy/site returned HTTP error)`);
+        console.log(`[2] Attempting to read page content after error...`);
+        const errorHtml = await page.content();
+        console.log(`[2] Page content after error: ${errorHtml.length} bytes`);
+        console.log(`[2] CF challenge: ${isCloudflareChallengeHtml(errorHtml)}`);
+        const textSnippet = errorHtml
+          .replace(/<[^>]+>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 500);
+        console.log(`[2] Text snippet: ${textSnippet.slice(0, 300)}`);
+        if (errorHtml.length < 2000) {
+          console.log(`[2] Full HTML:\n${errorHtml}`);
+        }
+        console.log("");
+        console.log("✗ FAILED — proxy returned HTTP error before page could load.");
+        process.exitCode = 1;
+        return;
+      }
+      throw navigationError;
+    }
 
     const navigationTime = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`[2] Navigation done in ${navigationTime}s`);
