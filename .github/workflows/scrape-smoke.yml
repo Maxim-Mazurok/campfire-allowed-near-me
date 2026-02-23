@@ -1,0 +1,26 @@
+name: Scrape Smoke Test
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke test
+        run: xvfb-run --auto-servernum -- npx -y tsx scripts/scrape-smoke.ts
+        env:
+          PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}

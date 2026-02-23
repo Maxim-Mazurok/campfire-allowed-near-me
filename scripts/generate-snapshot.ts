@@ -55,7 +55,7 @@ const MAX_GEOCODE_LOOKUPS_PER_RUN = Number(
   process.env.MAX_GEOCODE_LOOKUPS_PER_RUN ?? "300"
 );
 const MAX_PROXY_RETRIES = Number(
-  process.env.MAX_PROXY_RETRIES ?? String(PROXY_PORTS.length)
+  process.env.MAX_PROXY_RETRIES ?? "3"
 );
 
 const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
@@ -211,12 +211,13 @@ const main = async () => {
 
   const totalFireBanService = new TotalFireBanService();
 
-  // Retry loop — rotate through proxy ports on failure
+  // Retry loop — pick a random proxy port each attempt
+  const shuffledPorts = [...PROXY_PORTS].sort(() => Math.random() - 0.5);
   let response: Awaited<ReturnType<typeof attemptScrape>> | undefined;
   let lastError: unknown;
 
   for (let attempt = 0; attempt < MAX_PROXY_RETRIES; attempt++) {
-    const proxyPort = PROXY_PORTS[attempt % PROXY_PORTS.length];
+    const proxyPort = shuffledPorts[attempt % shuffledPorts.length];
     console.log(
       `\n--- Attempt ${attempt + 1}/${MAX_PROXY_RETRIES} (port ${proxyPort}) ---\n`
     );

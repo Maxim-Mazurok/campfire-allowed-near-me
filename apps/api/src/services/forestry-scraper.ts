@@ -49,7 +49,7 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   entryUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
   closuresUrl: "https://forestclosure.fcnsw.net",
-  timeoutMs: 60_000,
+  timeoutMs: 90_000,
   maxAreaConcurrency: 1,
   maxFilterConcurrency: 1,
   maxClosureConcurrency: 1,
@@ -60,26 +60,48 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
 const waitForReadyContent = async (
   page: Page,
   expectedPattern: RegExp | null,
-  timeoutMs: number
+  timeoutMs: number,
+  label: string
 ): Promise<string> => {
   const start = Date.now();
+  let pollCount = 0;
 
   while (Date.now() - start < timeoutMs) {
+    pollCount += 1;
     const html = await page.content();
-    if (!isCloudflareChallengeHtml(html)) {
+    const isCloudflare = isCloudflareChallengeHtml(html);
+    const elapsedSeconds = ((Date.now() - start) / 1000).toFixed(1);
+
+    if (pollCount === 1 || pollCount % 5 === 0) {
+      console.log(
+        `  [waitForReady] ${label} poll #${pollCount} (${elapsedSeconds}s) — ` +
+        `CF=${isCloudflare}, bodyLen=${html.length}, ` +
+        `pattern=${expectedPattern ? expectedPattern.test(html) : "n/a"}`
+      );
+    }
+
+    if (!isCloudflare) {
       if (!expectedPattern || expectedPattern.test(html)) {
+        console.log(`  [waitForReady] ${label} matched after ${elapsedSeconds}s (poll #${pollCount})`);
         return html;
       }
 
       if (/<body/i.test(html) && html.length > 5000) {
+        console.log(`  [waitForReady] ${label} body fallback after ${elapsedSeconds}s (${html.length} bytes)`);
         return html;
       }
     }
 
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
   }
 
-  return page.content();
+  const finalHtml = await page.content();
+  const totalSeconds = ((Date.now() - start) / 1000).toFixed(1);
+  console.log(
+    `  [waitForReady] ${label} TIMED OUT after ${totalSeconds}s (${pollCount} polls, ` +
+    `CF=${isCloudflareChallengeHtml(finalHtml)}, bodyLen=${finalHtml.length})`
+  );
+  return finalHtml;
 };
 
 export class ForestryScraper {
@@ -124,15 +146,34 @@ export class ForestryScraper {
     const context = await getContext();
     const page = await context.newPage();
     try {
-      await page.goto(url, {
+      console.log(`  [fetchHtml] Navigating to ${url}`);
+      const navigationResponse = await page.goto(url, {
         waitUntil: "domcontentloaded",
         timeout: this.options.timeoutMs
       });
+      if (navigationResponse) {
+        console.log(`  [fetchHtml] HTTP ${navigationResponse.status()} ${navigationResponse.url()}`);
+        const responseHeaders = navigationResponse.headers();
+        for (const headerName of ["content-type", "server", "cf-ray"]) {
+          if (responseHeaders[headerName]) {
+            console.log(`  [fetchHtml]   ${headerName}: ${responseHeaders[headerName]}`);
+          }
+        }
+      }
+
+      // Wait for network to settle — helps Cloudflare challenge JS to resolve
+      try {
+        await page.waitForLoadState("networkidle", { timeout: 15_000 });
+        console.log(`  [fetchHtml] networkidle reached`);
+      } catch {
+        console.log(`  [fetchHtml] networkidle timeout (non-fatal)`);
+      }
 
       const html = await waitForReadyContent(
         page,
         expectedPattern,
-        this.options.timeoutMs
+        this.options.timeoutMs,
+        url
       );
       const finalUrl = page.url();
 
