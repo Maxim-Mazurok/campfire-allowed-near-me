@@ -48,6 +48,16 @@ This file gives baseline instructions for AI coding agents collaborating in this
 	- Preserve existing container data and start the existing container if it is stopped.
 	- Recreate only when explicitly requested by the user in the current session.
 
+## Scraping and proxy
+- Production scraping uses three methods depending on target (see `docs/scraping-findings.md`):
+	- Forestry Corp (Cloudflare): `playwright-extra` + stealth + Decodo AU residential proxy + headed mode.
+	- FCNSW closures (AWS API Gateway): `fetch()` + Decodo proxy via `undici.ProxyAgent`.
+	- RFS (public): plain `fetch()`, no proxy needed.
+- Always use a shared `BrowserContext` for multiple pages on the same Cloudflare-protected domain.
+- Proxy credentials are in GitHub Secrets (`DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`). Never hardcode them.
+- Do not route RFS requests through the proxy — it wastes bandwidth unnecessarily.
+- The scrape-test workflow (`.github/workflows/scrape-test.yml`) is the validation tool. Run it after any scraping changes.
+
 ## Documentation
 - Keep README quick starts current for users and developers.
 - Mention any required external setup (for example `npx playwright install chromium`).

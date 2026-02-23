@@ -1,6 +1,6 @@
 # AI Implementation Handoff Guide
 
-Last updated: 2026-02-23
+Last updated: 2026-02-24
 
 This guide is optimized for AI coding agents making iterative changes safely.
 
@@ -40,6 +40,17 @@ These are continuous standards (not a one-time phase plan):
 - `ForestListPanel` now skips clone/sort work when 0–1 forests are present.
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
+
+### Production scraping (validated 2026-02-24)
+
+Scraping all 5 data sources from GitHub Actions is validated. See [docs/scraping-findings.md](scraping-findings.md) for full details.
+
+- **Forestry Corp pages** (fire bans + forests directory): `playwright-extra` + `puppeteer-extra-plugin-stealth` + Decodo AU residential proxy + headed mode (`xvfb-run`). Shared `BrowserContext` required for same-domain pages.
+- **Forest closures** (fcnsw.net): `fetch()` through Decodo AU proxy via `undici.ProxyAgent`. No browser needed.
+- **RFS endpoints** (fire danger): Plain `fetch()`, no proxy needed.
+- **Proxy service**: Decodo (Smartproxy), `au.decodo.com:30000`, $3.50/GB Pay-As-You-Go. GitHub Secrets: `DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`.
+- **Cost**: ~$3.65/year at 2x/day schedule (~1.55 MB/run for proxy targets).
+- **Test workflow**: `.github/workflows/scrape-test.yml` (manual dispatch), `scripts/scrape-test.ts`.
 
 ## Future AI operating mode
 

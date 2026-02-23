@@ -10,9 +10,10 @@
 |---|---|---|
 | Frontend | Vite React SPA | Dev mode proxies to local API |
 | API | Express + WebSocket (single process) | Runs locally on port 8787 |
-| Scraping (fire bans) | Playwright (headless Chromium) | `forestrycorporation.com.au` — behind Cloudflare |
-| Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net` — behind Cloudflare |
-| Total Fire Ban data | Direct `fetch()` to RFS XML/GeoJSON | `rfs.nsw.gov.au` — public API, no auth |
+| Scraping (fire bans) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
+| Scraping (forests dir) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
+| Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net` — AWS API Gateway IP block |
+| Total Fire Ban data | Direct `fetch()` to RFS XML/GeoJSON | `rfs.nsw.gov.au` — public, no auth |
 | Geocoding | Local Nominatim Docker + Google Places fallback | SQLite cache |
 | Driving routes | Google Routes API (`computeRoutes`) | SQLite cache, needs `GOOGLE_MAPS_API_KEY` |
 | Data persistence | JSON snapshots on disk + SQLite caches | `data/cache/` directory |
@@ -26,11 +27,13 @@
 ┌─────────────────────────────────────┐
 │  GitHub Actions (scheduled, 2x/day) │
 │                                     │
-│  1. Scrape Forestry NSW (Playwright)│
-│  2. Fetch RFS Total Fire Ban data   │
-│  3. Geocode forests (public APIs)   │
-│  4. Produce forests-snapshot.json   │
-│  5. Commit to data branch / R2      │
+│  1. Scrape Forestry NSW (Playwright │
+│     + stealth + Decodo AU proxy)    │
+│  2. Scrape closures (proxy fetch)   │
+│  3. Fetch RFS Total Fire Ban data   │
+│  4. Geocode forests (public APIs)   │
+│  5. Produce forests-snapshot.json   │
+│  6. Commit to data branch / R2      │
 └──────────┬──────────────────────────┘
            │
            ▼
@@ -58,40 +61,43 @@
 
 ---
 
-## Phase 1: Validate Scraping in CI (Immediate)
+## Phase 1: Validate Scraping in CI ✅ COMPLETE
 
-### Goal
-Determine if Playwright scraping works from GitHub Actions runners (datacenter IPs), or if we get blocked by Cloudflare.
+> Validated 2026-02-24 across 6 iterations of `scripts/scrape-test.ts`.
+> Full findings: [docs/scraping-findings.md](scraping-findings.md)
 
-### Action Items
+### Result
 
-1. **Create a GHA workflow `scrape-test.yml`** that:
-   - Installs Playwright Chromium
-   - Runs a test script that attempts to fetch all three source URLs:
-     - `https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans` (main fire ban page)
-     - `https://www.forestrycorporation.com.au/visiting/forests` (facilities directory)
-     - `https://forestclosure.fcnsw.net` (closure notices)
-   - Logs whether Cloudflare challenge was served (using existing `isCloudflareChallengeHtml`)
-   - Also tests plain `fetch()` (no browser) to see if simple HTTP works
-   - Also tests the RFS endpoints with plain `fetch()` (these should work — they are public XML/JSON APIs)
-   - Uploads scraped HTML as artifacts for inspection
-   - Runs on `workflow_dispatch` (manual trigger) so we can test at will
+All 5 data sources are scrapeable from GitHub Actions. Three different methods are needed:
 
-2. **Expected outcomes**:
-   - **RFS endpoints**: Should work with plain `fetch()`. No Cloudflare. These are government data feeds.
-   - **Forestry Corporation**: Likely needs Playwright (Cloudflare protected). May work from GitHub Actions datacenter IPs since Cloudflare's free/basic bot protection often allows headless browsers from clean IPs. If blocked, we need `playwright-extra` + stealth plugin.
-   - **Forest closures (fcnsw.net)**: Same as above — Cloudflare protected, test with Playwright.
+| Target | Method | Why |
+|---|---|---|
+| forestrycorporation.com.au (2 pages) | Playwright + stealth + Decodo AU residential proxy (headed mode via xvfb) | Cloudflare Turnstile JS challenge requires both a real browser and a residential IP |
+| forestclosure.fcnsw.net | `fetch()` through Decodo AU residential proxy (`undici.ProxyAgent`) | AWS API Gateway blocks datacenter IPs; no browser needed |
+| rfs.nsw.gov.au (2 endpoints) | Plain `fetch()` | No bot protection |
 
-3. **Fallback plan if GHA is blocked**:
-   - Try `playwright-extra` with `puppeteer-extra-plugin-stealth` (patches `navigator.webdriver` and other fingerprint signals)
-   - If still blocked: Use a residential proxy service (e.g., Bright Data free trial, or a cheap provider) — cost would be negligible for 2 requests/day
-   - Last resort: Switch to a self-hosted runner on a VPS (but this defeats the "free" goal)
+### Key Findings
 
-### Why not plain HTTP?
-The code already has `isCloudflareChallengeHtml` detection everywhere, indicating the Forestry sites use Cloudflare bot protection. The current Playwright-based scraper exists specifically for this reason. However, it is worth re-testing from GHA since:
-- Cloudflare's challenge behavior varies by IP reputation
-- GitHub Actions runners use well-known Microsoft/Azure IP ranges with generally good reputation
-- The sites may have loosened their bot protection since the scraper was written
+- **Plain `fetch()` from GHA**: blocked by Cloudflare (403) and AWS API Gateway (403 `{"message":"Forbidden"}`).
+- **Playwright headless + stealth from GHA**: still blocked by Cloudflare (detects headless mode).
+- **Playwright headed + stealth from GHA (no proxy)**: fire-bans page passed ~2/3 of the time, forests-directory never passed.
+- **Residential proxy + `fetch()` (no browser)**: solved fcnsw.net, but Cloudflare still blocked (requires JS execution).
+- **Residential proxy + Playwright headed + stealth**: all targets pass consistently.
+- **Shared browser context**: critical for same-domain targets — reusing the context from fire-bans (easier challenge) lets forests-directory skip the challenge entirely.
+
+### Proxy Service Chosen: Decodo (formerly Smartproxy)
+
+- **Endpoint**: `au.decodo.com:30000` (Australian residential IPs)
+- **Cost**: $3.50/GB Pay-As-You-Go, traffic valid for 12 months
+- **Per-run bandwidth**: ~1.55 MB (3 proxy targets)
+- **Annual cost**: ~$3.65/year at 2x/day
+- **GitHub Secrets**: `DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`
+
+### Artifacts
+
+- Workflow: `.github/workflows/scrape-test.yml` (manual trigger)
+- Script: `scripts/scrape-test.ts` (3 methods: `direct-fetch`, `proxy-fetch`, `proxy-browser`)
+- Dependencies: `playwright-extra`, `puppeteer-extra-plugin-stealth`
 
 ---
 
@@ -116,10 +122,12 @@ jobs:
       - checkout
       - setup Node 25
       - npm ci
-      - install Playwright Chromium
-      - run: npx tsx scripts/generate-snapshot.ts
+      - install Playwright Chromium (npx playwright install --with-deps chromium)
+      - run: xvfb-run --auto-servernum -- npx tsx scripts/generate-snapshot.ts
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
       - commit & push snapshot to `data` branch (or upload to R2)
 ```
 
@@ -131,6 +139,11 @@ This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `O
 - Skips driving route computation (that is user-specific and done client-side or via Worker)
 - Includes all forest points with coordinates, ban statuses, facilities, closure data
 - Saves to `data/forests-snapshot.json`
+
+**Scraping approach** (validated in Phase 1):
+- Forestry Corp pages: `playwright-extra` + stealth plugin + Decodo AU residential proxy + headed mode (xvfb). Shared `BrowserContext` for same-domain pages.
+- Forest closures: `fetch()` through `undici.ProxyAgent` with Decodo proxy.
+- RFS endpoints: Plain `fetch()` (no proxy needed).
 
 ### Data flow
 
@@ -276,22 +289,25 @@ Keep the current Express + WebSocket setup for local development:
 | Service | Free Tier | Our Usage | Cost |
 |---|---|---|---|
 | GitHub Actions | 2,000 min/month (free for public repos: unlimited) | ~30 min/month (2 runs/day × ~5 min × 30 days = ~300 min worst case) | **$0** |
+| Decodo residential proxy | Pay-As-You-Go $3.50/GB, 12-month expiry | ~1.55 MB/run × 2/day × 365 = ~1.13 GB/year | **~$3.65/year** |
 | Cloudflare Pages | Unlimited bandwidth, unlimited sites | 1 site, low traffic | **$0** |
 | Cloudflare Workers | 100K requests/day | A few hundred/day at most | **$0** |
 | Cloudflare KV | 1GB storage, 100K reads/day | Tiny | **$0** |
 | Google Routes API | $200/month free credit | ~$0.75-$2.25 per user load × maybe 50 users/month = $37-$112 | **$0** (covered by credit) |
 | Google Places API | Part of $200/month credit | Negligible (forests are geocoded once) | **$0** |
 | Public Nominatim | Free (rate limited) | ~200 lookups per snapshot rebuild (only for new forests) | **$0** |
-| **Total** | | | **$0/month** |
+| **Total** | | | **~$3.65/year** |
 
 ---
 
 ## Implementation Order
 
-### Milestone 1: Validate (1-2 hours)
-- [ ] Create `scrape-test.yml` GHA workflow
-- [ ] Run it and analyze results
-- [ ] Determine if stealth plugin or proxies are needed
+### Milestone 1: Validate ✅ COMPLETE
+- [x] Create `scrape-test.yml` GHA workflow
+- [x] Run it and analyze results (6 iterations)
+- [x] Determine scraping strategy: stealth + residential proxy + headed browser
+- [x] Select and configure proxy service (Decodo AU, $3.50/GB)
+- [x] Verify all 5 targets pass consistently from GHA
 
 ### Milestone 2: Data Pipeline (half day)
 - [ ] Create `scripts/generate-snapshot.ts` (reuse existing services)
@@ -326,6 +342,11 @@ Keep the current Express + WebSocket setup for local development:
 | Decision | Choice | Rationale |
 |---|---|---|
 | Data update frequency | 2x/day | Forest fire bans change seasonally, not hourly |
+| Scraping: Forestry Corp | Playwright + stealth + Decodo AU proxy (headed/xvfb) | Cloudflare Turnstile requires residential IP + real browser with JS execution |
+| Scraping: FCNSW closures | `fetch()` + Decodo AU proxy (`undici.ProxyAgent`) | AWS API Gateway blocks datacenter IPs; no browser needed |
+| Scraping: RFS | Plain `fetch()` | No bot protection; proxy would waste bandwidth |
+| Proxy service | Decodo (Smartproxy) Pay-As-You-Go | Cheapest per-GB ($3.50) for low-volume; AU residential endpoint; 12-month expiry |
+| Browser context | Shared per-domain | Reuse session across same-domain pages; avoids re-challenging on harder pages |
 | Frontend hosting | Cloudflare Pages (or GitHub Pages) | Free, fast, no maintenance |
 | Driving routes | Cloudflare Worker + Google Routes API | Need to hide API key; $200/month free credit is sufficient |
 | Default distance | Haversine (client-side) | Free, instant, no API needed |
@@ -340,8 +361,11 @@ Keep the current Express + WebSocket setup for local development:
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Cloudflare blocks scraping from GHA | No data updates | Try stealth plugin; fall back to residential proxy; worst case: manual local scrape + commit |
+| Cloudflare tightens bot detection | Proxy-browser method stops working | Monitor scrape-test results; try different proxy regions; try different stealth plugin versions; worst case: manual local scrape + commit |
+| Decodo proxy service outage or shutdown | Scraping fails for 3/5 targets | Switch to alternative proxy (IPRoyal, Bright Data); credentials are easily rotated via GitHub Secrets |
+| Proxy IP gets flagged by Cloudflare | Intermittent failures | Decodo rotates residential IPs per-request; retry logic in pipeline; different session on each run |
 | Forestry Corporation changes page structure | Parser breaks, no data | Schema validation in GHA alerts via GitHub issue; parsers are already robust with fuzzy matching |
 | Google API cost exceeds $200/month | Small bill | Set billing alerts; use Essentials tier ($0.005/req); or switch to OSRM (free) |
 | Public Nominatim rate limits | Slow geocoding | Coordinates are cached; only new forests need geocoding; can also use Google Places |
 | GHA scheduled runs are delayed | Data slightly stale | Acceptable for fire ban data; manual dispatch as backup |
+| Proxy bandwidth costs increase | Annual cost rises | Current usage is ~1.13 GB/year; even at 2x price ($7/GB) would be ~$8/year |
