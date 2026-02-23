@@ -1,6 +1,10 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { chromium } from "playwright-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
+
+chromium.use(StealthPlugin());
 
 const ARTIFACT_DIRECTORY = process.env.SCRAPE_TEST_ARTIFACT_DIR ?? "scrape-artifacts";
 
@@ -11,40 +15,49 @@ const PROXY_PORT = process.env.PROXY_PORT ?? "30000";
 
 const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 
+/**
+ * needsBrowser: true = Cloudflare JS challenge, requires a browser to solve
+ * needsProxy: true = IP-blocked, requires residential proxy to bypass
+ */
 const TARGETS = [
   {
     name: "forestry-fire-bans",
     url: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
     expectedPattern: /solid fuel fire ban|forest area/i,
     needsProxy: true,
+    needsBrowser: true,
   },
   {
     name: "forestry-forests-directory",
     url: "https://www.forestrycorporation.com.au/visiting/forests",
     expectedPattern: /facilit|state forests list|showing \d+ results/i,
     needsProxy: true,
+    needsBrowser: true,
   },
   {
     name: "forest-closures",
     url: "https://forestclosure.fcnsw.net",
     expectedPattern: /forest closures|closuredetails/i,
     needsProxy: true,
+    needsBrowser: false,
   },
   {
     name: "rfs-fire-danger-ratings",
     url: "https://www.rfs.nsw.gov.au/_designs/xml/fire-danger-ratings/fire-danger-ratings-v2",
     expectedPattern: /fireWeatherArea|FireDangerMap/i,
     needsProxy: false,
+    needsBrowser: false,
   },
   {
     name: "rfs-fire-danger-geojson",
     url: "https://www.rfs.nsw.gov.au/_designs/geojson/fire-danger-ratings-geojson",
     expectedPattern: /FeatureCollection|features/i,
     needsProxy: false,
+    needsBrowser: false,
   },
 ];
 
-type MethodName = "direct-fetch" | "proxy-fetch";
+type MethodName = "direct-fetch" | "proxy-fetch" | "proxy-browser";
 
 interface MethodResult {
   method: MethodName;
@@ -70,13 +83,27 @@ const BROWSER_HEADERS = {
   "Accept-Language": "en-AU,en;q=0.9",
 };
 
-const logHeaders = (label: string, status: number, url: string, headers: Headers): void => {
+const logFetchHeaders = (label: string, status: number, url: string, headers: Headers): void => {
   console.log(`    [${label}] HTTP ${status} ${url}`);
   const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
   for (const header of relevantHeaders) {
     const value = headers.get(header);
     if (value) {
       console.log(`    [${label}]   ${header}: ${value}`);
+    }
+  }
+};
+
+const logPlaywrightHeaders = (
+  label: string,
+  response: import("playwright").Response
+): void => {
+  console.log(`    [${label}] HTTP ${response.status()} ${response.url()}`);
+  const responseHeaders = response.headers();
+  const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
+  for (const header of relevantHeaders) {
+    if (responseHeaders[header]) {
+      console.log(`    [${label}]   ${header}: ${responseHeaders[header]}`);
     }
   }
 };
@@ -98,6 +125,21 @@ const logResponseBody = (result: MethodResult): void => {
   console.log("    ──────────────────");
 };
 
+const waitForCloudflareResolution = async (
+  page: { content: () => Promise<string>; waitForTimeout: (timeout: number) => Promise<void> },
+  maxWaitMilliseconds: number
+): Promise<string> => {
+  const startTime = Date.now();
+  let html = await page.content();
+
+  while (isCloudflareChallengeHtml(html) && Date.now() - startTime < maxWaitMilliseconds) {
+    await page.waitForTimeout(2_000);
+    html = await page.content();
+  }
+
+  return html;
+};
+
 const testDirectFetch = async (
   target: (typeof TARGETS)[number]
 ): Promise<MethodResult> => {
@@ -112,7 +154,7 @@ const testDirectFetch = async (
 
     clearTimeout(timeoutId);
     const html = await response.text();
-    logHeaders("direct-fetch", response.status, response.url, response.headers);
+    logFetchHeaders("direct-fetch", response.status, response.url, response.headers);
 
     const cloudflareBlocked = isCloudflareChallengeHtml(html);
     const matchesExpected = target.expectedPattern.test(html);
@@ -130,53 +172,6 @@ const testDirectFetch = async (
   } catch (error) {
     return {
       method: "direct-fetch",
-      success: false,
-      statusCode: null,
-      cloudflareBlocked: false,
-      contentLength: null,
-      matchesExpected: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-      html: null,
-    };
-  }
-};
-
-const testProxyFetch = async (
-  target: (typeof TARGETS)[number]
-): Promise<MethodResult> => {
-  try {
-    const proxyUrl = `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_HOST}:${PROXY_PORT}`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60_000);
-
-    const response = await fetch(target.url, {
-      signal: controller.signal,
-      headers: BROWSER_HEADERS,
-      // @ts-expect-error -- Node.js 25 supports undici proxy dispatcher via env or agent
-      dispatcher: await createProxyDispatcher(proxyUrl),
-    });
-
-    clearTimeout(timeoutId);
-    const html = await response.text();
-    logHeaders("proxy-fetch", response.status, response.url, response.headers);
-
-    const cloudflareBlocked = isCloudflareChallengeHtml(html);
-    const matchesExpected = target.expectedPattern.test(html);
-
-    return {
-      method: "proxy-fetch",
-      success: response.ok && matchesExpected,
-      statusCode: response.status,
-      cloudflareBlocked,
-      contentLength: html.length,
-      matchesExpected,
-      error: response.ok ? null : `HTTP ${response.status}`,
-      html,
-    };
-  } catch (error) {
-    return {
-      method: "proxy-fetch",
       success: false,
       statusCode: null,
       cloudflareBlocked: false,
@@ -191,6 +186,132 @@ const testProxyFetch = async (
 const createProxyDispatcher = async (proxyUrl: string) => {
   const { ProxyAgent } = await import("undici");
   return new ProxyAgent(proxyUrl);
+};
+
+const testProxyFetch = async (
+  target: (typeof TARGETS)[number]
+): Promise<MethodResult> => {
+  try {
+    const proxyUrl = `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_HOST}:${PROXY_PORT}`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60_000);
+
+    const response = await fetch(target.url, {
+      signal: controller.signal,
+      headers: BROWSER_HEADERS,
+      // @ts-expect-error -- Node.js undici supports proxy dispatcher
+      dispatcher: await createProxyDispatcher(proxyUrl),
+    });
+
+    clearTimeout(timeoutId);
+    const html = await response.text();
+    logFetchHeaders("proxy-fetch", response.status, response.url, response.headers);
+
+    const cloudflareBlocked = isCloudflareChallengeHtml(html);
+    const matchesExpected = target.expectedPattern.test(html);
+
+    return {
+      method: "proxy-fetch",
+      success: response.ok && matchesExpected,
+      statusCode: response.status,
+      cloudflareBlocked,
+      contentLength: html.length,
+      matchesExpected,
+      error: response.ok ? null : `HTTP ${response.status}`,
+      html,
+    };
+  } catch (error) {
+    return {
+      method: "proxy-fetch",
+      success: false,
+      statusCode: null,
+      cloudflareBlocked: false,
+      contentLength: null,
+      matchesExpected: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      html: null,
+    };
+  }
+};
+
+const testProxyBrowser = async (
+  target: (typeof TARGETS)[number]
+): Promise<MethodResult> => {
+  let browser: import("playwright").Browser | null = null;
+
+  try {
+    browser = await chromium.launch({
+      headless: false, // headed mode helps bypass Cloudflare
+      args: ["--no-sandbox"],
+    });
+
+    const context = await browser.newContext({
+      proxy: {
+        server: `http://${PROXY_HOST}:${PROXY_PORT}`,
+        username: PROXY_USERNAME,
+        password: PROXY_PASSWORD,
+      },
+      userAgent:
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      locale: "en-AU",
+      viewport: { width: 1920, height: 1080 },
+      timezoneId: "Australia/Sydney",
+    });
+
+    const page = await context.newPage();
+
+    try {
+      const response = await page.goto(target.url, {
+        waitUntil: "domcontentloaded",
+        timeout: 60_000,
+      });
+
+      if (response) {
+        logPlaywrightHeaders("proxy-browser", response);
+      }
+
+      // Wait for network to settle (SPA/JS-rendered content)
+      try {
+        await page.waitForLoadState("networkidle", { timeout: 15_000 });
+      } catch {
+        // networkidle timeout is not fatal
+      }
+
+      const html = await waitForCloudflareResolution(page, 30_000);
+      const cloudflareBlocked = isCloudflareChallengeHtml(html);
+      const matchesExpected = target.expectedPattern.test(html);
+
+      return {
+        method: "proxy-browser",
+        success: !cloudflareBlocked && matchesExpected,
+        statusCode: response?.status() ?? null,
+        cloudflareBlocked,
+        contentLength: html.length,
+        matchesExpected,
+        error: null,
+        html,
+      };
+    } finally {
+      await page.close();
+      await context.close();
+    }
+  } catch (error) {
+    return {
+      method: "proxy-browser",
+      success: false,
+      statusCode: null,
+      cloudflareBlocked: false,
+      contentLength: null,
+      matchesExpected: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      html: null,
+    };
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 };
 
 const formatStatus = (result: MethodResult): string => {
@@ -208,9 +329,7 @@ const main = async () => {
   if (hasProxy) {
     console.log(`Proxy endpoint: ${PROXY_HOST}:${PROXY_PORT}`);
   }
-
-  const methodCount = hasProxy ? 2 : 1;
-  console.log(`Testing ${TARGETS.length} targets with ${methodCount} method(s)...\n`);
+  console.log();
 
   const results: TargetResult[] = [];
 
@@ -218,11 +337,12 @@ const main = async () => {
     console.log(`\n${"=".repeat(60)}`);
     console.log(`Target: ${target.name}`);
     console.log(`URL: ${target.url}`);
+    console.log(`Needs: ${[target.needsProxy && "proxy", target.needsBrowser && "browser"].filter(Boolean).join(" + ") || "nothing special"}`);
     console.log("=".repeat(60));
 
     const methodResults: MethodResult[] = [];
 
-    // Method 1: Direct fetch (no proxy)
+    // Method 1: Direct fetch (always run as baseline)
     console.log("\n  [1] Direct fetch...");
     const directResult = await testDirectFetch(target);
     methodResults.push(directResult);
@@ -233,8 +353,8 @@ const main = async () => {
       writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-direct.html`), directResult.html);
     }
 
-    // Method 2: Proxy fetch (only for targets that need it, and only if proxy is configured)
-    if (hasProxy && target.needsProxy) {
+    // Method 2: Proxy fetch (for IP-blocked, non-browser targets)
+    if (hasProxy && target.needsProxy && !target.needsBrowser) {
       console.log("  [2] Proxy fetch (residential)...");
       const proxyResult = await testProxyFetch(target);
       methodResults.push(proxyResult);
@@ -243,6 +363,19 @@ const main = async () => {
 
       if (proxyResult.html) {
         writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy.html`), proxyResult.html);
+      }
+    }
+
+    // Method 3: Proxy + browser (for Cloudflare JS challenge targets)
+    if (hasProxy && target.needsProxy && target.needsBrowser) {
+      console.log("  [2] Proxy + browser (stealth, headed)...");
+      const proxyBrowserResult = await testProxyBrowser(target);
+      methodResults.push(proxyBrowserResult);
+      console.log(`    → ${formatStatus(proxyBrowserResult)} (${proxyBrowserResult.contentLength ?? 0} bytes)`);
+      logResponseBody(proxyBrowserResult);
+
+      if (proxyBrowserResult.html) {
+        writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy-browser.html`), proxyBrowserResult.html);
       }
     }
 
@@ -255,23 +388,18 @@ const main = async () => {
 
   // Summary table
   console.log("\n\n=== Summary ===\n");
-
-  if (hasProxy) {
-    console.log("| Target | Direct | Proxy |");
-    console.log("|---|---|---|");
-  } else {
-    console.log("| Target | Direct |");
-    console.log("|---|---|");
-  }
+  console.log("| Target | Direct | Best Method |");
+  console.log("|---|---|---|");
 
   for (const result of results) {
     const directStatus = formatStatus(result.methods[0]);
-    if (hasProxy && result.methods.length > 1) {
-      const proxyStatus = formatStatus(result.methods[1]);
-      console.log(`| ${result.name} | ${directStatus} | ${proxyStatus} |`);
-    } else {
-      console.log(`| ${result.name} | ${directStatus} |`);
-    }
+    const bestMethod = result.methods.find((method) => method.success);
+    const bestStatus = bestMethod
+      ? `OK (${bestMethod.method})`
+      : result.methods.length > 1
+        ? formatStatus(result.methods[result.methods.length - 1])
+        : "—";
+    console.log(`| ${result.name} | ${directStatus} | ${bestStatus} |`);
   }
 
   // Save results JSON
@@ -284,28 +412,26 @@ const main = async () => {
   console.log(`\nArtifacts saved to ${ARTIFACT_DIRECTORY}/`);
 
   // Determine overall outcome
-  const forestryTargets = results.filter(
+  const proxyTargets = results.filter(
     (result) => TARGETS.find((target) => target.name === result.name)?.needsProxy
   );
 
-  const allProxyTargetsSucceeded = forestryTargets.every((result) =>
+  const allProxyTargetsSucceeded = proxyTargets.every((result) =>
     result.methods.some((method) => method.success)
   );
 
   if (hasProxy) {
     if (allProxyTargetsSucceeded) {
-      console.log("\nSUCCESS: All proxy-dependent targets succeeded!");
+      console.log("\nSUCCESS: All targets succeeded!");
     } else {
-      const failedTargets = forestryTargets
+      const failedTargets = proxyTargets
         .filter((result) => !result.methods.some((method) => method.success))
         .map((result) => result.name);
-      console.log(`\nWARNING: Some targets still failed with proxy: ${failedTargets.join(", ")}`);
+      console.log(`\nFAILURE: These targets still failed: ${failedTargets.join(", ")}`);
       process.exit(1);
     }
   } else {
-    const directFailures = forestryTargets.filter(
-      (result) => !result.methods[0].success
-    );
+    const directFailures = proxyTargets.filter((result) => !result.methods[0].success);
     if (directFailures.length > 0) {
       console.log("\nINFO: Some targets blocked without proxy (expected from datacenter IPs):");
       for (const failure of directFailures) {
