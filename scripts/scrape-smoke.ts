@@ -66,64 +66,75 @@ const main = async () => {
   const page = await context.newPage();
 
   try {
-    console.log("[2] Navigating to target...");
+    // Try a simple page first to test proxy connectivity
+    console.log("[2] Testing proxy connectivity with httpbin...");
+    try {
+      const probeResponse = await page.goto("https://httpbin.org/ip", {
+        waitUntil: "domcontentloaded",
+        timeout: 30_000
+      });
+      const probeContent = await page.content();
+      console.log(`[2] Proxy probe: HTTP ${probeResponse?.status() ?? "?"} (${probeContent.length} bytes)`);
+      const ipMatch = probeContent.match(/"origin":\s*"([^"]+)"/);
+      if (ipMatch) console.log(`[2] Proxy IP: ${ipMatch[1]}`);
+    } catch (probeError) {
+      console.log(`[2] Proxy probe failed: ${probeError instanceof Error ? probeError.message : probeError}`);
+      console.log("[2] Proxy may be down or credentials may be wrong.");
+    }
+
+    console.log("[3] Navigating to target...");
     const startTime = Date.now();
 
     let response: Awaited<ReturnType<typeof page.goto>> = null;
-    try {
-      response = await page.goto(TARGET_URL, {
-        waitUntil: "domcontentloaded",
-        timeout: 90_000
-      });
-    } catch (navigationError) {
-      const message = navigationError instanceof Error ? navigationError.message : String(navigationError);
-      if (message.includes("ERR_HTTP_RESPONSE_CODE_FAILURE")) {
-        console.log(`[2] goto threw ERR_HTTP_RESPONSE_CODE_FAILURE (proxy/site returned HTTP error)`);
-        console.log(`[2] Attempting to read page content after error...`);
-        const errorHtml = await page.content();
-        console.log(`[2] Page content after error: ${errorHtml.length} bytes`);
-        console.log(`[2] CF challenge: ${isCloudflareChallengeHtml(errorHtml)}`);
-        const textSnippet = errorHtml
-          .replace(/<[^>]+>/g, " ")
-          .replace(/\s+/g, " ")
-          .trim()
-          .slice(0, 500);
-        console.log(`[2] Text snippet: ${textSnippet.slice(0, 300)}`);
-        if (errorHtml.length < 2000) {
-          console.log(`[2] Full HTML:\n${errorHtml}`);
+    const maxNavigationRetries = 3;
+    for (let navigationAttempt = 0; navigationAttempt < maxNavigationRetries; navigationAttempt++) {
+      try {
+        response = await page.goto(TARGET_URL, {
+          waitUntil: "domcontentloaded",
+          timeout: 90_000
+        });
+        break; // success
+      } catch (navigationError) {
+        const message = navigationError instanceof Error ? navigationError.message : String(navigationError);
+        if (message.includes("ERR_HTTP_RESPONSE_CODE_FAILURE")) {
+          console.log(`[3] Attempt ${navigationAttempt + 1}: ERR_HTTP_RESPONSE_CODE_FAILURE`);
+          if (navigationAttempt < maxNavigationRetries - 1) {
+            console.log(`[3] Waiting 10s before retrying...`);
+            await page.waitForTimeout(10_000);
+            continue;
+          }
+          console.log("✗ FAILED — all navigation attempts got ERR_HTTP_RESPONSE_CODE_FAILURE");
+          process.exitCode = 1;
+          return;
         }
-        console.log("");
-        console.log("✗ FAILED — proxy returned HTTP error before page could load.");
-        process.exitCode = 1;
-        return;
+        throw navigationError;
       }
-      throw navigationError;
     }
 
     const navigationTime = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(`[2] Navigation done in ${navigationTime}s`);
+    console.log(`[3] Navigation done in ${navigationTime}s`);
 
     if (response) {
-      console.log(`[2] HTTP ${response.status()} ${response.url()}`);
+      console.log(`[3] HTTP ${response.status()} ${response.url()}`);
       const responseHeaders = response.headers();
       for (const headerName of ["content-type", "server", "cf-ray", "cf-cache-status"]) {
         if (responseHeaders[headerName]) {
-          console.log(`[2]   ${headerName}: ${responseHeaders[headerName]}`);
+          console.log(`[3]   ${headerName}: ${responseHeaders[headerName]}`);
         }
       }
     }
 
     // Wait for networkidle
-    console.log("[3] Waiting for networkidle...");
+    console.log("[4] Waiting for networkidle...");
     try {
       await page.waitForLoadState("networkidle", { timeout: 15_000 });
-      console.log("[3] networkidle reached");
+      console.log("[4] networkidle reached");
     } catch {
-      console.log("[3] networkidle timeout (non-fatal)");
+      console.log("[4] networkidle timeout (non-fatal)");
     }
 
     // Poll for Cloudflare resolution
-    console.log("[4] Polling for content readiness...");
+    console.log("[5] Polling for content readiness...");
     const pollStart = Date.now();
     let html = await page.content();
     let pollCount = 0;
@@ -137,7 +148,7 @@ const main = async () => {
       const elapsedSeconds = ((Date.now() - pollStart) / 1000).toFixed(1);
 
       console.log(
-        `[4] Poll #${pollCount} (${elapsedSeconds}s): ` +
+        `[5] Poll #${pollCount} (${elapsedSeconds}s): ` +
           `CF=${isCloudflare}, bodyLen=${html.length}, patternMatch=${bodyMatch}`
       );
 

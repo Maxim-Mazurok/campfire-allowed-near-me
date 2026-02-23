@@ -234,7 +234,9 @@ const main = async () => {
         error instanceof Error ? error.message : error
       );
       if (attempt < MAX_PROXY_RETRIES - 1) {
-        console.log("Retrying with next proxy port...\n");
+        const delaySeconds = 5 + attempt * 5; // 5s, 10s, 15s, ...
+        console.log(`Waiting ${delaySeconds}s before retrying with next proxy port...\n`);
+        await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
       }
     }
   }
