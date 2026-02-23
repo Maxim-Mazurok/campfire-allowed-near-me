@@ -6,7 +6,7 @@ on:
 jobs:
   test-scraping:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -21,13 +21,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Chromium
-        run: npx -y playwright install --with-deps chromium
-
-      - name: Run scrape test (with xvfb for headed mode)
-        run: xvfb-run --auto-servernum -- npx -y tsx scripts/scrape-test.ts
+      - name: Run scrape test
+        run: npx -y tsx scripts/scrape-test.ts
         env:
           SCRAPE_TEST_ARTIFACT_DIR: scrape-artifacts
+          PROXY_USERNAME: ${{ secrets.` }}
+          PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
 
       - name: Upload scraped HTML artifacts
         if: always()

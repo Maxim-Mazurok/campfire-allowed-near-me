@@ -1,48 +1,50 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { chromium } from "playwright";
-import { chromium as stealthChromium } from "playwright-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
-
-stealthChromium.use(StealthPlugin());
 
 const ARTIFACT_DIRECTORY = process.env.SCRAPE_TEST_ARTIFACT_DIR ?? "scrape-artifacts";
 
-const FORESTRY_TARGETS = [
+const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
+const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
+const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
+const PROXY_PORT = process.env.PROXY_PORT ?? "30000";
+
+const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+
+const TARGETS = [
   {
     name: "forestry-fire-bans",
     url: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
     expectedPattern: /solid fuel fire ban|forest area/i,
+    needsProxy: true,
   },
   {
     name: "forestry-forests-directory",
     url: "https://www.forestrycorporation.com.au/visiting/forests",
     expectedPattern: /facilit|state forests list|showing \d+ results/i,
+    needsProxy: true,
   },
   {
     name: "forest-closures",
     url: "https://forestclosure.fcnsw.net",
     expectedPattern: /forest closures|closuredetails/i,
+    needsProxy: true,
   },
-];
-
-const RFS_TARGETS = [
   {
     name: "rfs-fire-danger-ratings",
     url: "https://www.rfs.nsw.gov.au/_designs/xml/fire-danger-ratings/fire-danger-ratings-v2",
     expectedPattern: /fireWeatherArea|FireDangerMap/i,
+    needsProxy: false,
   },
   {
     name: "rfs-fire-danger-geojson",
     url: "https://www.rfs.nsw.gov.au/_designs/geojson/fire-danger-ratings-geojson",
     expectedPattern: /FeatureCollection|features/i,
+    needsProxy: false,
   },
 ];
 
-const ALL_TARGETS = [...FORESTRY_TARGETS, ...RFS_TARGETS];
-
-type MethodName = "plain-fetch" | "playwright" | "playwright-stealth" | "playwright-stealth-headed";
+type MethodName = "direct-fetch" | "proxy-fetch";
 
 interface MethodResult {
   method: MethodName;
@@ -61,23 +63,43 @@ interface TargetResult {
   methods: MethodResult[];
 }
 
-const waitForCloudflareResolution = async (
-  page: { content: () => Promise<string>; waitForTimeout: (timeout: number) => Promise<void> },
-  maxWaitMs: number
-): Promise<string> => {
-  const startTime = Date.now();
-  let html = await page.content();
-
-  while (isCloudflareChallengeHtml(html) && Date.now() - startTime < maxWaitMs) {
-    await page.waitForTimeout(2_000);
-    html = await page.content();
-  }
-
-  return html;
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "en-AU,en;q=0.9",
 };
 
-const testPlainFetch = async (
-  target: (typeof ALL_TARGETS)[number]
+const logHeaders = (label: string, status: number, url: string, headers: Headers): void => {
+  console.log(`    [${label}] HTTP ${status} ${url}`);
+  const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
+  for (const header of relevantHeaders) {
+    const value = headers.get(header);
+    if (value) {
+      console.log(`    [${label}]   ${header}: ${value}`);
+    }
+  }
+};
+
+const logResponseBody = (result: MethodResult): void => {
+  if (result.success) return;
+  if (!result.html) return;
+
+  const MAX_BODY_LOG = 2_000;
+  const body =
+    result.html.length > MAX_BODY_LOG
+      ? `${result.html.slice(0, MAX_BODY_LOG)}\n... (truncated, ${result.html.length} bytes total)`
+      : result.html;
+
+  console.log("    ── Response body ──");
+  for (const line of body.split("\n")) {
+    console.log(`    │ ${line}`);
+  }
+  console.log("    ──────────────────");
+};
+
+const testDirectFetch = async (
+  target: (typeof TARGETS)[number]
 ): Promise<MethodResult> => {
   try {
     const controller = new AbortController();
@@ -85,33 +107,18 @@ const testPlainFetch = async (
 
     const response = await fetch(target.url, {
       signal: controller.signal,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-AU,en;q=0.9",
-      },
+      headers: BROWSER_HEADERS,
     });
 
     clearTimeout(timeoutId);
-
     const html = await response.text();
-
-    // Log response details for debugging
-    console.log(`    [plain-fetch] HTTP ${response.status} ${response.url}`);
-    const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
-    for (const header of relevantHeaders) {
-      const value = response.headers.get(header);
-      if (value) {
-        console.log(`    [plain-fetch]   ${header}: ${value}`);
-      }
-    }
+    logHeaders("direct-fetch", response.status, response.url, response.headers);
 
     const cloudflareBlocked = isCloudflareChallengeHtml(html);
     const matchesExpected = target.expectedPattern.test(html);
 
     return {
-      method: "plain-fetch",
+      method: "direct-fetch",
       success: response.ok && matchesExpected,
       statusCode: response.status,
       cloudflareBlocked,
@@ -122,7 +129,7 @@ const testPlainFetch = async (
     };
   } catch (error) {
     return {
-      method: "plain-fetch",
+      method: "direct-fetch",
       success: false,
       statusCode: null,
       cloudflareBlocked: false,
@@ -134,71 +141,42 @@ const testPlainFetch = async (
   }
 };
 
-const testPlaywrightVariant = async (
-  target: (typeof ALL_TARGETS)[number],
-  method: MethodName,
-  launchBrowser: () => Promise<import("playwright").Browser>
+const testProxyFetch = async (
+  target: (typeof TARGETS)[number]
 ): Promise<MethodResult> => {
-  let browser: import("playwright").Browser | null = null;
-
   try {
-    browser = await launchBrowser();
+    const proxyUrl = `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_HOST}:${PROXY_PORT}`;
 
-    const context = await browser.newContext({
-      userAgent:
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      locale: "en-AU",
-      viewport: { width: 1920, height: 1080 },
-      timezoneId: "Australia/Sydney",
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60_000);
+
+    const response = await fetch(target.url, {
+      signal: controller.signal,
+      headers: BROWSER_HEADERS,
+      // @ts-expect-error -- Node.js 25 supports undici proxy dispatcher via env or agent
+      dispatcher: await createProxyDispatcher(proxyUrl),
     });
 
-    const page = await context.newPage();
+    clearTimeout(timeoutId);
+    const html = await response.text();
+    logHeaders("proxy-fetch", response.status, response.url, response.headers);
 
-    try {
-      const response = await page.goto(target.url, {
-        waitUntil: "domcontentloaded",
-        timeout: 60_000,
-      });
+    const cloudflareBlocked = isCloudflareChallengeHtml(html);
+    const matchesExpected = target.expectedPattern.test(html);
 
-      if (response) {
-        console.log(`    [${method}] HTTP ${response.status()} ${response.url()}`);
-        const responseHeaders = response.headers();
-        const relevantHeaders = ["content-type", "server", "x-powered-by", "location", "cf-ray"];
-        for (const header of relevantHeaders) {
-          if (responseHeaders[header]) {
-            console.log(`    [${method}]   ${header}: ${responseHeaders[header]}`);
-          }
-        }
-      }
-
-      // For SPA-like sites, also wait for network to settle
-      try {
-        await page.waitForLoadState("networkidle", { timeout: 15_000 });
-      } catch {
-        // networkidle timeout is not fatal
-      }
-
-      const html = await waitForCloudflareResolution(page, 30_000);
-      const cloudflareBlocked = isCloudflareChallengeHtml(html);
-      const matchesExpected = target.expectedPattern.test(html);
-
-      return {
-        method,
-        success: !cloudflareBlocked && matchesExpected,
-        statusCode: null,
-        cloudflareBlocked,
-        contentLength: html.length,
-        matchesExpected,
-        error: null,
-        html,
-      };
-    } finally {
-      await page.close();
-      await context.close();
-    }
+    return {
+      method: "proxy-fetch",
+      success: response.ok && matchesExpected,
+      statusCode: response.status,
+      cloudflareBlocked,
+      contentLength: html.length,
+      matchesExpected,
+      error: response.ok ? null : `HTTP ${response.status}`,
+      html,
+    };
   } catch (error) {
     return {
-      method,
+      method: "proxy-fetch",
       success: false,
       statusCode: null,
       cloudflareBlocked: false,
@@ -207,11 +185,12 @@ const testPlaywrightVariant = async (
       error: error instanceof Error ? error.message : "Unknown error",
       html: null,
     };
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
   }
+};
+
+const createProxyDispatcher = async (proxyUrl: string) => {
+  const { ProxyAgent } = await import("undici");
+  return new ProxyAgent(proxyUrl);
 };
 
 const formatStatus = (result: MethodResult): string => {
@@ -221,31 +200,21 @@ const formatStatus = (result: MethodResult): string => {
   return "FAIL";
 };
 
-const logResponseBody = (result: MethodResult): void => {
-  if (result.success) return;
-  if (!result.html) return;
-
-  const MAX_BODY_LOG = 2_000;
-  const body = result.html.length > MAX_BODY_LOG
-    ? `${result.html.slice(0, MAX_BODY_LOG)}\n... (truncated, ${result.html.length} bytes total)`
-    : result.html;
-
-  console.log(`    ── Response body ──`);
-  for (const line of body.split("\n")) {
-    console.log(`    │ ${line}`);
-  }
-  console.log(`    ──────────────────`);
-};
-
 const main = async () => {
   mkdirSync(ARTIFACT_DIRECTORY, { recursive: true });
 
-  console.log("=== Scrape Test (with stealth) ===\n");
-  console.log(`Testing ${ALL_TARGETS.length} targets with 4 methods...\n`);
+  console.log("=== Scrape Test ===\n");
+  console.log(`Proxy configured: ${hasProxy ? "YES" : "NO"}`);
+  if (hasProxy) {
+    console.log(`Proxy endpoint: ${PROXY_HOST}:${PROXY_PORT}`);
+  }
+
+  const methodCount = hasProxy ? 2 : 1;
+  console.log(`Testing ${TARGETS.length} targets with ${methodCount} method(s)...\n`);
 
   const results: TargetResult[] = [];
 
-  for (const target of ALL_TARGETS) {
+  for (const target of TARGETS) {
     console.log(`\n${"=".repeat(60)}`);
     console.log(`Target: ${target.name}`);
     console.log(`URL: ${target.url}`);
@@ -253,60 +222,28 @@ const main = async () => {
 
     const methodResults: MethodResult[] = [];
 
-    // Method 1: Plain fetch
-    console.log("\n  [1/4] Plain fetch...");
-    const plainResult = await testPlainFetch(target);
-    methodResults.push(plainResult);
-    console.log(`    → ${formatStatus(plainResult)} (${plainResult.contentLength ?? 0} bytes)`);
-    logResponseBody(plainResult);
+    // Method 1: Direct fetch (no proxy)
+    console.log("\n  [1] Direct fetch...");
+    const directResult = await testDirectFetch(target);
+    methodResults.push(directResult);
+    console.log(`    → ${formatStatus(directResult)} (${directResult.contentLength ?? 0} bytes)`);
+    logResponseBody(directResult);
 
-    if (plainResult.html) {
-      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-plain-fetch.html`), plainResult.html);
+    if (directResult.html) {
+      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-direct.html`), directResult.html);
     }
 
-    // Method 2: Standard Playwright (headless)
-    console.log("  [2/4] Playwright (headless)...");
-    const playwrightResult = await testPlaywrightVariant(
-      target,
-      "playwright",
-      () => chromium.launch({ headless: true })
-    );
-    methodResults.push(playwrightResult);
-    console.log(`    → ${formatStatus(playwrightResult)} (${playwrightResult.contentLength ?? 0} bytes)`);
-    logResponseBody(playwrightResult);
+    // Method 2: Proxy fetch (only for targets that need it, and only if proxy is configured)
+    if (hasProxy && target.needsProxy) {
+      console.log("  [2] Proxy fetch (residential)...");
+      const proxyResult = await testProxyFetch(target);
+      methodResults.push(proxyResult);
+      console.log(`    → ${formatStatus(proxyResult)} (${proxyResult.contentLength ?? 0} bytes)`);
+      logResponseBody(proxyResult);
 
-    if (playwrightResult.html) {
-      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-playwright.html`), playwrightResult.html);
-    }
-
-    // Method 3: Playwright-extra with stealth (headless)
-    console.log("  [3/4] Playwright + stealth (headless)...");
-    const stealthResult = await testPlaywrightVariant(
-      target,
-      "playwright-stealth",
-      () => stealthChromium.launch({ headless: true })
-    );
-    methodResults.push(stealthResult);
-    console.log(`    → ${formatStatus(stealthResult)} (${stealthResult.contentLength ?? 0} bytes)`);
-    logResponseBody(stealthResult);
-
-    if (stealthResult.html) {
-      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth.html`), stealthResult.html);
-    }
-
-    // Method 4: Playwright-extra with stealth (headed via xvfb)
-    console.log("  [4/4] Playwright + stealth (headed/xvfb)...");
-    const headedStealthResult = await testPlaywrightVariant(
-      target,
-      "playwright-stealth-headed",
-      () => stealthChromium.launch({ headless: false })
-    );
-    methodResults.push(headedStealthResult);
-    console.log(`    → ${formatStatus(headedStealthResult)} (${headedStealthResult.contentLength ?? 0} bytes)`);
-    logResponseBody(headedStealthResult);
-
-    if (headedStealthResult.html) {
-      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth-headed.html`), headedStealthResult.html);
+      if (proxyResult.html) {
+        writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy.html`), proxyResult.html);
+      }
     }
 
     results.push({
@@ -318,53 +255,64 @@ const main = async () => {
 
   // Summary table
   console.log("\n\n=== Summary ===\n");
-  console.log("| Target | Plain Fetch | Playwright | Stealth | Stealth+Headed |");
-  console.log("|---|---|---|---|---|");
 
-  for (const result of results) {
-    const statuses = result.methods.map(formatStatus);
-    console.log(`| ${result.name} | ${statuses.join(" | ")} |`);
+  if (hasProxy) {
+    console.log("| Target | Direct | Proxy |");
+    console.log("|---|---|---|");
+  } else {
+    console.log("| Target | Direct |");
+    console.log("|---|---|");
   }
 
-  // Save results JSON (without html content for smaller file)
+  for (const result of results) {
+    const directStatus = formatStatus(result.methods[0]);
+    if (hasProxy && result.methods.length > 1) {
+      const proxyStatus = formatStatus(result.methods[1]);
+      console.log(`| ${result.name} | ${directStatus} | ${proxyStatus} |`);
+    } else {
+      console.log(`| ${result.name} | ${directStatus} |`);
+    }
+  }
+
+  // Save results JSON
   const jsonResults = results.map((result) => ({
     ...result,
     methods: result.methods.map(({ html: _html, ...rest }) => rest),
   }));
 
-  writeFileSync(
-    join(ARTIFACT_DIRECTORY, "results.json"),
-    JSON.stringify(jsonResults, null, 2)
-  );
-
+  writeFileSync(join(ARTIFACT_DIRECTORY, "results.json"), JSON.stringify(jsonResults, null, 2));
   console.log(`\nArtifacts saved to ${ARTIFACT_DIRECTORY}/`);
 
   // Determine overall outcome
-  const forestryResults = results.filter(
-    (result) => result.name.startsWith("forestry") || result.name === "forest-closures"
+  const forestryTargets = results.filter(
+    (result) => TARGETS.find((target) => target.name === result.name)?.needsProxy
   );
 
-  const anyForestryMethodWorked = forestryResults.some((result) =>
+  const allProxyTargetsSucceeded = forestryTargets.every((result) =>
     result.methods.some((method) => method.success)
   );
 
-  if (!anyForestryMethodWorked && forestryResults.length > 0) {
-    console.log(
-      "\nWARNING: No method succeeded for any Forestry target. Residential proxies may be needed."
+  if (hasProxy) {
+    if (allProxyTargetsSucceeded) {
+      console.log("\nSUCCESS: All proxy-dependent targets succeeded!");
+    } else {
+      const failedTargets = forestryTargets
+        .filter((result) => !result.methods.some((method) => method.success))
+        .map((result) => result.name);
+      console.log(`\nWARNING: Some targets still failed with proxy: ${failedTargets.join(", ")}`);
+      process.exit(1);
+    }
+  } else {
+    const directFailures = forestryTargets.filter(
+      (result) => !result.methods[0].success
     );
-    console.log("Consider:");
-    console.log("  1. Using a residential proxy service (Bright Data, IPRoyal, etc.)");
-    console.log("  2. Running the scraper on a self-hosted runner with a residential IP");
-    console.log("  3. Switching to a manual/local scrape + commit workflow");
-    process.exit(1);
-  }
-
-  if (anyForestryMethodWorked) {
-    const workingMethods = forestryResults
-      .flatMap((result) => result.methods.filter((method) => method.success))
-      .map((method) => method.method);
-    const uniqueMethods = [...new Set(workingMethods)];
-    console.log(`\nSUCCESS: Working methods for Forestry targets: ${uniqueMethods.join(", ")}`);
+    if (directFailures.length > 0) {
+      console.log("\nINFO: Some targets blocked without proxy (expected from datacenter IPs):");
+      for (const failure of directFailures) {
+        console.log(`  - ${failure.name}`);
+      }
+      console.log("Set PROXY_USERNAME and PROXY_PASSWORD to test with residential proxy.");
+    }
   }
 };
 
