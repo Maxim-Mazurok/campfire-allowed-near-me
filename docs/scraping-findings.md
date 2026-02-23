@@ -96,7 +96,7 @@ Evaluated several residential proxy providers:
 
 ### Configuration
 
-- **Endpoint**: `au.decodo.com:30000` (Australian residential IPs)
+- **Endpoint**: `au.decodo.com:30001–30010` (Australian residential IPs, 10-port pool for retry rotation)
 - **Authentication**: Username/password (stored in GitHub Secrets as `DECODO_PROXY_USERNAME` and `DECODO_PROXY_PASSWORD`)
 - **Protocol**: HTTP proxy (works with both `undici.ProxyAgent` for fetch and Playwright's built-in proxy config)
 

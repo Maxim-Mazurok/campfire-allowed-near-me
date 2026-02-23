@@ -37,7 +37,12 @@ chromium.use(StealthPlugin());
 const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
 const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
 const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
-const PROXY_PORT = process.env.PROXY_PORT ?? "30000";
+const PROXY_PORTS = (
+  process.env.PROXY_PORTS ?? "30001,30002,30003,30004,30005,30006,30007,30008,30009,30010"
+)
+  .split(",")
+  .map((port) => port.trim())
+  .filter(Boolean);
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
 const NOMINATIM_BASE_URL =
   process.env.NOMINATIM_BASE_URL ?? "https://nominatim.openstreetmap.org";
@@ -49,6 +54,9 @@ const GEOCODE_CACHE_PATH =
 const MAX_GEOCODE_LOOKUPS_PER_RUN = Number(
   process.env.MAX_GEOCODE_LOOKUPS_PER_RUN ?? "300"
 );
+const MAX_PROXY_RETRIES = Number(
+  process.env.MAX_PROXY_RETRIES ?? String(PROXY_PORTS.length)
+);
 
 const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 
@@ -56,7 +64,7 @@ const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 // Browser context factory (stealth + residential proxy)
 // ---------------------------------------------------------------------------
 
-const createProxyBrowserContextFactory = () => {
+const createProxyBrowserContextFactory = (proxyPort: string) => {
   if (!hasProxy) {
     console.log(
       "⚠ No proxy credentials found. Using plain browser (may be blocked by Cloudflare)."
@@ -65,7 +73,7 @@ const createProxyBrowserContextFactory = () => {
   }
 
   return async () => {
-    console.log("Launching stealth browser with residential proxy...");
+    console.log(`Launching stealth browser with residential proxy (${PROXY_HOST}:${proxyPort})...`);
     const browser = await chromium.launch({
       headless: false,
       args: ["--no-sandbox"]
@@ -73,7 +81,7 @@ const createProxyBrowserContextFactory = () => {
 
     const context = await browser.newContext({
       proxy: {
-        server: `http://${PROXY_HOST}:${PROXY_PORT}`,
+        server: `http://${PROXY_HOST}:${proxyPort}`,
         username: PROXY_USERNAME,
         password: PROXY_PASSWORD
       },
@@ -133,6 +141,44 @@ const validateSnapshot = (snapshot: PersistedSnapshot): string[] => {
 };
 
 // ---------------------------------------------------------------------------
+// Scrape attempt (one proxy port)
+// ---------------------------------------------------------------------------
+
+const attemptScrape = async (
+  proxyPort: string,
+  geocoder: OSMGeocoder,
+  totalFireBanService: TotalFireBanService
+) => {
+  const scraper = new ForestryScraper({
+    browserContextFactory: createProxyBrowserContextFactory(proxyPort)
+  });
+
+  const forestDataService = new LiveForestDataService({
+    scraper,
+    geocoder,
+    totalFireBanService,
+    // snapshotPath is intentionally null so that LiveForestDataService does NOT
+    // read the placeholder snapshot as a stale fallback (which would silently
+    // swallow scraping errors and return 0 forests). We persist manually below.
+    snapshotPath: null
+  });
+
+  console.log("[1/4] Scraping source pages...");
+  const response = await forestDataService.getForestData({
+    forceRefresh: true,
+    progressCallback: (progress) => {
+      const totalSuffix =
+        progress.total !== null ? `/${progress.total}` : "";
+      console.log(
+        `  [${progress.phase}] ${progress.message} (${progress.completed}${totalSuffix})`
+      );
+    }
+  });
+
+  return response;
+};
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -140,7 +186,8 @@ const main = async () => {
   const startTime = Date.now();
   console.log("=== Forest Snapshot Generator ===");
   console.log(`Output: ${SNAPSHOT_OUTPUT_PATH}`);
-  console.log(`Proxy: ${hasProxy ? `${PROXY_HOST}:${PROXY_PORT}` : "none"}`);
+  console.log(`Proxy: ${hasProxy ? `${PROXY_HOST} (ports: ${PROXY_PORTS.join(", ")})` : "none"}`);
+  console.log(`Max retries: ${MAX_PROXY_RETRIES}`);
   console.log(`Nominatim: ${NOMINATIM_BASE_URL}`);
   console.log(
     `Google API key: ${GOOGLE_MAPS_API_KEY ? "configured" : "not configured"}`
@@ -153,11 +200,7 @@ const main = async () => {
     mkdirSync(outputDirectory, { recursive: true });
   }
 
-  // Set up services
-  const scraper = new ForestryScraper({
-    browserContextFactory: createProxyBrowserContextFactory()
-  });
-
+  // Set up shared services (geocoder + TFB are reusable across retries)
   const geocoder = new OSMGeocoder({
     cacheDbPath: GEOCODE_CACHE_PATH,
     nominatimBaseUrl: NOMINATIM_BASE_URL,
@@ -168,28 +211,37 @@ const main = async () => {
 
   const totalFireBanService = new TotalFireBanService();
 
-  const forestDataService = new LiveForestDataService({
-    scraper,
-    geocoder,
-    totalFireBanService,
-    // snapshotPath is intentionally null so that LiveForestDataService does NOT
-    // read the placeholder snapshot as a stale fallback (which would silently
-    // swallow scraping errors and return 0 forests). We persist manually below.
-    snapshotPath: null
-  });
+  // Retry loop — rotate through proxy ports on failure
+  let response: Awaited<ReturnType<typeof attemptScrape>> | undefined;
+  let lastError: unknown;
 
-  // Generate snapshot (scrape → geocode → build → persist)
-  console.log("[1/4] Scraping source pages...");
-  const response = await forestDataService.getForestData({
-    forceRefresh: true,
-    progressCallback: (progress) => {
-      const totalSuffix =
-        progress.total !== null ? `/${progress.total}` : "";
-      console.log(
-        `  [${progress.phase}] ${progress.message} (${progress.completed}${totalSuffix})`
+  for (let attempt = 0; attempt < MAX_PROXY_RETRIES; attempt++) {
+    const proxyPort = PROXY_PORTS[attempt % PROXY_PORTS.length];
+    console.log(
+      `\n--- Attempt ${attempt + 1}/${MAX_PROXY_RETRIES} (port ${proxyPort}) ---\n`
+    );
+
+    try {
+      response = await attemptScrape(proxyPort, geocoder, totalFireBanService);
+      break; // success — exit retry loop
+    } catch (error) {
+      lastError = error;
+      console.error(
+        `Attempt ${attempt + 1} failed:`,
+        error instanceof Error ? error.message : error
       );
+      if (attempt < MAX_PROXY_RETRIES - 1) {
+        console.log("Retrying with next proxy port...\n");
+      }
     }
-  });
+  }
+
+  if (!response) {
+    console.error(
+      `\nAll ${MAX_PROXY_RETRIES} proxy attempts failed. Last error:`
+    );
+    throw lastError;
+  }
 
   console.log("");
   console.log(`[2/4] Snapshot generated: ${response.forests.length} forests`);

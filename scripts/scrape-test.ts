@@ -11,7 +11,7 @@ const ARTIFACT_DIRECTORY = process.env.SCRAPE_TEST_ARTIFACT_DIR ?? "scrape-artif
 const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
 const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
 const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
-const PROXY_PORT = process.env.PROXY_PORT ?? "30000";
+const PROXY_PORT = process.env.PROXY_PORT ?? "30001";
 
 const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 
