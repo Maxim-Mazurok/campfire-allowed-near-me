@@ -129,13 +129,6 @@ export class ForestryScraper {
         timeout: this.options.timeoutMs
       });
 
-      // Wait for network to settle so Cloudflare challenge JS can execute
-      try {
-        await page.waitForLoadState("networkidle", { timeout: 15_000 });
-      } catch {
-        // networkidle timeout is not fatal — proceed with content check
-      }
-
       const html = await waitForReadyContent(
         page,
         expectedPattern,
