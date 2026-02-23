@@ -8,6 +8,26 @@ import { TotalFireBanService } from "../apps/api/src/services/total-fire-ban-ser
 import { LiveForestDataService } from "../apps/api/src/services/live-forest-data-service.js";
 import type { PersistedSnapshot } from "../packages/shared/src/contracts.js";
 
+// ---------------------------------------------------------------------------
+// playwright-extra stealth plugin workaround
+// ---------------------------------------------------------------------------
+// The stealth plugin's puppeteer compatibility shim sends CDP commands
+// asynchronously when pages are created. When a page closes before the CDP
+// command resolves, the resulting rejection is unhandled and crashes Node.
+// This is a known playwright-extra issue — suppress the specific error.
+// ---------------------------------------------------------------------------
+process.on("unhandledRejection", (reason: unknown) => {
+  const message = reason instanceof Error ? reason.message : String(reason);
+  if (message.includes("Target page, context or browser has been closed")) {
+    console.warn(
+      "[playwright-extra] Suppressed CDP session race (page already closed)."
+    );
+    return;
+  }
+  // Re-throw anything else so it still crashes on real errors
+  throw reason;
+});
+
 chromium.use(StealthPlugin());
 
 // ---------------------------------------------------------------------------

@@ -50,9 +50,9 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
   closuresUrl: "https://forestclosure.fcnsw.net",
   timeoutMs: 60_000,
-  maxAreaConcurrency: 3,
-  maxFilterConcurrency: 4,
-  maxClosureConcurrency: 4,
+  maxAreaConcurrency: 1,
+  maxFilterConcurrency: 1,
+  maxClosureConcurrency: 1,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000
 };
@@ -472,11 +472,12 @@ export class ForestryScraper {
     };
 
     try {
-      const [areas, directory, closuresResult] = await Promise.all([
-        this.scrapeAreas(getContext),
-        this.scrapeDirectory(getContext),
-        this.scrapeClosures(getContext)
-      ]);
+      // Sequential scraping avoids CDP session races in playwright-extra's
+      // stealth plugin when multiple pages are opened concurrently on the
+      // same BrowserContext.
+      const areas = await this.scrapeAreas(getContext);
+      const directory = await this.scrapeDirectory(getContext);
+      const closuresResult = await this.scrapeClosures(getContext);
 
       return {
         areas,
