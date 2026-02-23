@@ -12,6 +12,8 @@ permissions:
 jobs:
   update-snapshot:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
     timeout-minutes: 20
 
     steps:
@@ -26,9 +28,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Install Playwright Chromium
-        run: npx -y playwright install --with-deps chromium
 
       - name: Restore geocoding cache
         uses: actions/cache@v4
