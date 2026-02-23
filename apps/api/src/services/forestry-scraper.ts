@@ -91,11 +91,9 @@ const waitForReadyContent = async (
   }
 
   const finalHtml = await page.content();
-  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-  log(`[waitForReady] ${label} TIMED OUT ${elapsed}s (#${pollCount} CF=${isCloudflareChallengeHtml(finalHtml)} len=${finalHtml.length})`);
+  log(`[waitForReady] ${label} TIMED OUT ${((Date.now() - start) / 1000).toFixed(1)}s (#${pollCount} CF=${isCloudflareChallengeHtml(finalHtml)} len=${finalHtml.length})`);
   return finalHtml;
 };
-
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
@@ -131,20 +129,27 @@ export class ForestryScraper {
     }
 
     if (cached && !isCloudflareChallengeHtml(cached.html)) {
-      return {
-        html: cached.html,
-        url: cached.finalUrl
-      };
+      return { html: cached.html, url: cached.finalUrl };
     }
 
     const context = await getContext();
     const page = await context.newPage();
     try {
       this.log(`[fetchHtml] → ${url}`);
-      const navigationResponse = await page.goto(url, {
-        waitUntil: "domcontentloaded",
-        timeout: this.options.timeoutMs
-      });
+      let navigationResponse: Awaited<ReturnType<Page["goto"]>> = null;
+      try {
+        navigationResponse = await page.goto(url, {
+          waitUntil: "domcontentloaded",
+          timeout: this.options.timeoutMs
+        });
+      } catch (navigationError) {
+        // net::ERR_HTTP_RESPONSE_CODE_FAILURE means the server returned an
+        // error HTTP status. The page may still contain a CF challenge that
+        // resolves after JS execution, so we continue instead of re-throwing.
+        if (errorMessage(navigationError).includes("ERR_HTTP_RESPONSE_CODE_FAILURE")) {
+          this.log(`[fetchHtml] goto error (non-fatal, will poll): ${errorMessage(navigationError)}`);
+        } else { throw navigationError; }
+      }
       if (navigationResponse) {
         const headers = navigationResponse.headers();
         this.log(
@@ -181,10 +186,7 @@ export class ForestryScraper {
         }
       }
 
-      return {
-        html,
-        url: finalUrl
-      };
+      return { html, url: finalUrl };
     } finally {
       await page.close();
     }
