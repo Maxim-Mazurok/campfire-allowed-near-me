@@ -13,3 +13,4 @@ data/cache/*.sqlite-*
 !.env.example
 .tmp*
 **/.tmp*
+.playwright-mcp/

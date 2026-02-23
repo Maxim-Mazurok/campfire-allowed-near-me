@@ -92,6 +92,21 @@ forestsWebSocketServer.on("connection", (socket) => {
   });
 });
 
+const gracefulShutdown = () => {
+  for (const webSocketServer of [refreshWebSocketServer, forestsWebSocketServer]) {
+    for (const client of webSocketServer.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.close(1001, "Server shutting down");
+      }
+    }
+  }
+
+  server.close();
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
+
 if (!Number.isInteger(port) || port < 1 || port > MAX_PORT) {
   throw new Error(
     `PORT must be an integer between 1 and ${MAX_PORT}. Received "${process.env.PORT}".`

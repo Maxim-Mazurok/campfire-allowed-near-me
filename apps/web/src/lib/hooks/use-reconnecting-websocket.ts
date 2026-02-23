@@ -76,7 +76,20 @@ export const useReconnectingWebSocket = <Message,>({
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);
       }
-      webSocket?.close();
+      if (!webSocket) return;
+
+      // If the socket is still connecting (React StrictMode double-invoke),
+      // wait for it to open before closing to avoid the browser logging
+      // "WebSocket is closed before the connection is established".
+      if (webSocket.readyState === WebSocket.CONNECTING) {
+        const pending = webSocket;
+        pending.addEventListener("open", () => pending.close());
+        // Also handle the case where it never opens (e.g. server down).
+        pending.addEventListener("error", () => pending.close());
+        return;
+      }
+
+      webSocket.close();
     };
   }, [isEnabled, reconnectDelayMs, webSocketUrl]);
 };
