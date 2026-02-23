@@ -441,26 +441,34 @@ export class ForestryScraper {
       externalCleanup: null
     };
 
+    let contextPromise: Promise<BrowserContext> | null = null;
+
     const getContext = async (): Promise<BrowserContext> => {
       if (runtime.context) {
         return runtime.context;
       }
 
-      if (this.browserContextFactory) {
-        const factoryResult = await this.browserContextFactory();
-        runtime.context = factoryResult.context;
-        runtime.externalCleanup = factoryResult.cleanup;
-        return runtime.context;
+      if (!contextPromise) {
+        contextPromise = (async () => {
+          if (this.browserContextFactory) {
+            const factoryResult = await this.browserContextFactory();
+            runtime.context = factoryResult.context;
+            runtime.externalCleanup = factoryResult.cleanup;
+            return runtime.context;
+          }
+
+          runtime.browser = await chromium.launch({ headless: true });
+          runtime.context = await runtime.browser.newContext({
+            userAgent:
+              "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
+            locale: "en-AU"
+          });
+
+          return runtime.context;
+        })();
       }
 
-      runtime.browser = await chromium.launch({ headless: true });
-      runtime.context = await runtime.browser.newContext({
-        userAgent:
-          "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
-        locale: "en-AU"
-      });
-
-      return runtime.context;
+      return contextPromise;
     };
 
     try {
