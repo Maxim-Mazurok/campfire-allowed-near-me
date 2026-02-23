@@ -1,11 +1,15 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright";
+import { chromium as stealthChromium } from "playwright-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
+
+stealthChromium.use(StealthPlugin());
 
 const ARTIFACT_DIRECTORY = process.env.SCRAPE_TEST_ARTIFACT_DIR ?? "scrape-artifacts";
 
-const TARGETS = [
+const FORESTRY_TARGETS = [
   {
     name: "forestry-fire-bans",
     url: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
@@ -21,6 +25,9 @@ const TARGETS = [
     url: "https://forestclosure.fcnsw.net",
     expectedPattern: /forest closures|closuredetails/i,
   },
+];
+
+const RFS_TARGETS = [
   {
     name: "rfs-fire-danger-ratings",
     url: "https://www.rfs.nsw.gov.au/_designs/xml/fire-danger-ratings/fire-danger-ratings-v2",
@@ -33,25 +40,12 @@ const TARGETS = [
   },
 ];
 
-interface TestResult {
-  name: string;
-  url: string;
-  plainFetchSuccess: boolean;
-  plainFetchStatusCode: number | null;
-  plainFetchCloudflareBlocked: boolean;
-  plainFetchContentLength: number | null;
-  plainFetchMatchesExpected: boolean;
-  plainFetchError: string | null;
-  playwrightSuccess: boolean;
-  playwrightCloudflareBlocked: boolean;
-  playwrightContentLength: number | null;
-  playwrightMatchesExpected: boolean;
-  playwrightError: string | null;
-}
+const ALL_TARGETS = [...FORESTRY_TARGETS, ...RFS_TARGETS];
 
-const testPlainFetch = async (
-  target: (typeof TARGETS)[number]
-): Promise<{
+type MethodName = "plain-fetch" | "playwright" | "playwright-stealth" | "playwright-stealth-headed";
+
+interface MethodResult {
+  method: MethodName;
   success: boolean;
   statusCode: number | null;
   cloudflareBlocked: boolean;
@@ -59,7 +53,32 @@ const testPlainFetch = async (
   matchesExpected: boolean;
   error: string | null;
   html: string | null;
-}> => {
+}
+
+interface TargetResult {
+  name: string;
+  url: string;
+  methods: MethodResult[];
+}
+
+const waitForCloudflareResolution = async (
+  page: { content: () => Promise<string>; waitForTimeout: (timeout: number) => Promise<void> },
+  maxWaitMs: number
+): Promise<string> => {
+  const startTime = Date.now();
+  let html = await page.content();
+
+  while (isCloudflareChallengeHtml(html) && Date.now() - startTime < maxWaitMs) {
+    await page.waitForTimeout(2_000);
+    html = await page.content();
+  }
+
+  return html;
+};
+
+const testPlainFetch = async (
+  target: (typeof ALL_TARGETS)[number]
+): Promise<MethodResult> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30_000);
@@ -81,7 +100,8 @@ const testPlainFetch = async (
     const matchesExpected = target.expectedPattern.test(html);
 
     return {
-      success: response.ok,
+      method: "plain-fetch",
+      success: response.ok && matchesExpected,
       statusCode: response.status,
       cloudflareBlocked,
       contentLength: html.length,
@@ -91,6 +111,7 @@ const testPlainFetch = async (
     };
   } catch (error) {
     return {
+      method: "plain-fetch",
       success: false,
       statusCode: null,
       cloudflareBlocked: false,
@@ -102,23 +123,22 @@ const testPlainFetch = async (
   }
 };
 
-const testPlaywrightFetch = async (
-  target: (typeof TARGETS)[number]
-): Promise<{
-  success: boolean;
-  cloudflareBlocked: boolean;
-  contentLength: number | null;
-  matchesExpected: boolean;
-  error: string | null;
-  html: string | null;
-}> => {
-  const browser = await chromium.launch({ headless: true });
+const testPlaywrightVariant = async (
+  target: (typeof ALL_TARGETS)[number],
+  method: MethodName,
+  launchBrowser: () => Promise<import("playwright").Browser>
+): Promise<MethodResult> => {
+  let browser: import("playwright").Browser | null = null;
 
   try {
+    browser = await launchBrowser();
+
     const context = await browser.newContext({
       userAgent:
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       locale: "en-AU",
+      viewport: { width: 1920, height: 1080 },
+      timezoneId: "Australia/Sydney",
     });
 
     const page = await context.newPage();
@@ -129,20 +149,14 @@ const testPlaywrightFetch = async (
         timeout: 60_000,
       });
 
-      // Wait a bit for any Cloudflare challenge to resolve
-      const startTime = Date.now();
-      let html = await page.content();
-
-      while (isCloudflareChallengeHtml(html) && Date.now() - startTime < 30_000) {
-        await page.waitForTimeout(2_000);
-        html = await page.content();
-      }
-
+      const html = await waitForCloudflareResolution(page, 30_000);
       const cloudflareBlocked = isCloudflareChallengeHtml(html);
       const matchesExpected = target.expectedPattern.test(html);
 
       return {
+        method,
         success: !cloudflareBlocked && matchesExpected,
+        statusCode: null,
         cloudflareBlocked,
         contentLength: html.length,
         matchesExpected,
@@ -155,7 +169,9 @@ const testPlaywrightFetch = async (
     }
   } catch (error) {
     return {
+      method,
       success: false,
+      statusCode: null,
       cloudflareBlocked: false,
       contentLength: null,
       matchesExpected: false,
@@ -163,117 +179,143 @@ const testPlaywrightFetch = async (
       html: null,
     };
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
+};
+
+const formatStatus = (result: MethodResult): string => {
+  if (result.success) return "OK";
+  if (result.cloudflareBlocked) return "CF-BLOCKED";
+  if (result.error) return `FAIL(${result.error.slice(0, 30)})`;
+  return "FAIL";
 };
 
 const main = async () => {
   mkdirSync(ARTIFACT_DIRECTORY, { recursive: true });
 
-  console.log("=== Scrape Test ===\n");
-  console.log(`Testing ${TARGETS.length} targets...\n`);
+  console.log("=== Scrape Test (with stealth) ===\n");
+  console.log(`Testing ${ALL_TARGETS.length} targets with 4 methods...\n`);
 
-  const results: TestResult[] = [];
+  const results: TargetResult[] = [];
 
-  for (const target of TARGETS) {
-    console.log(`--- ${target.name} ---`);
-    console.log(`URL: ${target.url}\n`);
+  for (const target of ALL_TARGETS) {
+    console.log(`\n${"=".repeat(60)}`);
+    console.log(`Target: ${target.name}`);
+    console.log(`URL: ${target.url}`);
+    console.log("=".repeat(60));
 
-    // Test plain fetch
-    console.log("  Testing plain fetch...");
+    const methodResults: MethodResult[] = [];
+
+    // Method 1: Plain fetch
+    console.log("\n  [1/4] Plain fetch...");
     const plainResult = await testPlainFetch(target);
-    console.log(`    Status: ${plainResult.statusCode ?? "N/A"}`);
-    console.log(`    Success: ${plainResult.success}`);
-    console.log(`    Cloudflare blocked: ${plainResult.cloudflareBlocked}`);
-    console.log(`    Content length: ${plainResult.contentLength ?? "N/A"}`);
-    console.log(`    Matches expected pattern: ${plainResult.matchesExpected}`);
-    if (plainResult.error) {
-      console.log(`    Error: ${plainResult.error}`);
-    }
+    methodResults.push(plainResult);
+    console.log(`    → ${formatStatus(plainResult)} (${plainResult.contentLength ?? 0} bytes)`);
 
     if (plainResult.html) {
-      writeFileSync(
-        join(ARTIFACT_DIRECTORY, `${target.name}-plain-fetch.html`),
-        plainResult.html
-      );
+      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-plain-fetch.html`), plainResult.html);
     }
 
-    // Test Playwright
-    console.log("  Testing Playwright...");
-    const playwrightResult = await testPlaywrightFetch(target);
-    console.log(`    Success: ${playwrightResult.success}`);
-    console.log(`    Cloudflare blocked: ${playwrightResult.cloudflareBlocked}`);
-    console.log(`    Content length: ${playwrightResult.contentLength ?? "N/A"}`);
-    console.log(`    Matches expected pattern: ${playwrightResult.matchesExpected}`);
-    if (playwrightResult.error) {
-      console.log(`    Error: ${playwrightResult.error}`);
-    }
+    // Method 2: Standard Playwright (headless)
+    console.log("  [2/4] Playwright (headless)...");
+    const playwrightResult = await testPlaywrightVariant(
+      target,
+      "playwright",
+      () => chromium.launch({ headless: true })
+    );
+    methodResults.push(playwrightResult);
+    console.log(`    → ${formatStatus(playwrightResult)} (${playwrightResult.contentLength ?? 0} bytes)`);
 
     if (playwrightResult.html) {
-      writeFileSync(
-        join(ARTIFACT_DIRECTORY, `${target.name}-playwright.html`),
-        playwrightResult.html
-      );
+      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-playwright.html`), playwrightResult.html);
     }
 
-    console.log("");
+    // Method 3: Playwright-extra with stealth (headless)
+    console.log("  [3/4] Playwright + stealth (headless)...");
+    const stealthResult = await testPlaywrightVariant(
+      target,
+      "playwright-stealth",
+      () => stealthChromium.launch({ headless: true })
+    );
+    methodResults.push(stealthResult);
+    console.log(`    → ${formatStatus(stealthResult)} (${stealthResult.contentLength ?? 0} bytes)`);
+
+    if (stealthResult.html) {
+      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth.html`), stealthResult.html);
+    }
+
+    // Method 4: Playwright-extra with stealth (headed via xvfb)
+    console.log("  [4/4] Playwright + stealth (headed/xvfb)...");
+    const headedStealthResult = await testPlaywrightVariant(
+      target,
+      "playwright-stealth-headed",
+      () => stealthChromium.launch({ headless: false })
+    );
+    methodResults.push(headedStealthResult);
+    console.log(`    → ${formatStatus(headedStealthResult)} (${headedStealthResult.contentLength ?? 0} bytes)`);
+
+    if (headedStealthResult.html) {
+      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-stealth-headed.html`), headedStealthResult.html);
+    }
 
     results.push({
       name: target.name,
       url: target.url,
-      plainFetchSuccess: plainResult.success,
-      plainFetchStatusCode: plainResult.statusCode,
-      plainFetchCloudflareBlocked: plainResult.cloudflareBlocked,
-      plainFetchContentLength: plainResult.contentLength,
-      plainFetchMatchesExpected: plainResult.matchesExpected,
-      plainFetchError: plainResult.error,
-      playwrightSuccess: playwrightResult.success,
-      playwrightCloudflareBlocked: playwrightResult.cloudflareBlocked,
-      playwrightContentLength: playwrightResult.contentLength,
-      playwrightMatchesExpected: playwrightResult.matchesExpected,
-      playwrightError: playwrightResult.error,
+      methods: methodResults,
     });
   }
 
-  // Summary
-  console.log("\n=== Summary ===\n");
-  console.log("| Target | Plain Fetch | Playwright | CF Blocked (plain) | CF Blocked (PW) |");
+  // Summary table
+  console.log("\n\n=== Summary ===\n");
+  console.log("| Target | Plain Fetch | Playwright | Stealth | Stealth+Headed |");
   console.log("|---|---|---|---|---|");
 
   for (const result of results) {
-    const plainStatus = result.plainFetchSuccess ? "OK" : "FAIL";
-    const playwrightStatus = result.playwrightSuccess ? "OK" : "FAIL";
-    const plainCloudflare = result.plainFetchCloudflareBlocked ? "YES" : "no";
-    const playwrightCloudflare = result.playwrightCloudflareBlocked ? "YES" : "no";
-
-    console.log(
-      `| ${result.name} | ${plainStatus} | ${playwrightStatus} | ${plainCloudflare} | ${playwrightCloudflare} |`
-    );
+    const statuses = result.methods.map(formatStatus);
+    console.log(`| ${result.name} | ${statuses.join(" | ")} |`);
   }
 
-  // Save results JSON
+  // Save results JSON (without html content for smaller file)
+  const jsonResults = results.map((result) => ({
+    ...result,
+    methods: result.methods.map(({ html: _html, ...rest }) => rest),
+  }));
+
   writeFileSync(
     join(ARTIFACT_DIRECTORY, "results.json"),
-    JSON.stringify(results, null, 2)
+    JSON.stringify(jsonResults, null, 2)
   );
 
   console.log(`\nArtifacts saved to ${ARTIFACT_DIRECTORY}/`);
 
-  // Exit with error if any Forestry targets failed with both methods
-  const forestryTargets = results.filter(
-    (result) =>
-      result.name.startsWith("forestry") || result.name === "forest-closures"
+  // Determine overall outcome
+  const forestryResults = results.filter(
+    (result) => result.name.startsWith("forestry") || result.name === "forest-closures"
   );
 
-  const allForestryFailed = forestryTargets.every(
-    (result) => !result.plainFetchSuccess && !result.playwrightSuccess
+  const anyForestryMethodWorked = forestryResults.some((result) =>
+    result.methods.some((method) => method.success)
   );
 
-  if (allForestryFailed && forestryTargets.length > 0) {
+  if (!anyForestryMethodWorked && forestryResults.length > 0) {
     console.log(
-      "\nWARNING: All Forestry targets failed with both methods. Stealth plugin or proxies may be needed."
+      "\nWARNING: No method succeeded for any Forestry target. Residential proxies may be needed."
     );
+    console.log("Consider:");
+    console.log("  1. Using a residential proxy service (Bright Data, IPRoyal, etc.)");
+    console.log("  2. Running the scraper on a self-hosted runner with a residential IP");
+    console.log("  3. Switching to a manual/local scrape + commit workflow");
     process.exit(1);
+  }
+
+  if (anyForestryMethodWorked) {
+    const workingMethods = forestryResults
+      .flatMap((result) => result.methods.filter((method) => method.success))
+      .map((method) => method.method);
+    const uniqueMethods = [...new Set(workingMethods)];
+    console.log(`\nSUCCESS: Working methods for Forestry targets: ${uniqueMethods.join(", ")}`);
   }
 };
 
