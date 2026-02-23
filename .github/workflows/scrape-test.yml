@@ -1,0 +1,38 @@
+name: Scrape Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-scraping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx -y playwright install --with-deps chromium
+
+      - name: Run scrape test
+        run: npx -y tsx scripts/scrape-test.ts
+        env:
+          SCRAPE_TEST_ARTIFACT_DIR: scrape-artifacts
+
+      - name: Upload scraped HTML artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-results
+          path: scrape-artifacts/
+          retention-days: 7
