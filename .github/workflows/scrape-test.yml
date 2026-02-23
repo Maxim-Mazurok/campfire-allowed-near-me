@@ -25,7 +25,7 @@ jobs:
         run: npx -y tsx scripts/scrape-test.ts
         env:
           SCRAPE_TEST_ARTIFACT_DIR: scrape-artifacts
-          PROXY_USERNAME: ${{ secrets.` }}
+          PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
           PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
 
       - name: Upload scraped HTML artifacts
