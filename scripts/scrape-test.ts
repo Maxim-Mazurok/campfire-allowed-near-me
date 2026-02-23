@@ -18,6 +18,10 @@ const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 /**
  * needsBrowser: true = Cloudflare JS challenge, requires a browser to solve
  * needsProxy: true = IP-blocked, requires residential proxy to bypass
+ *
+ * Order matters for browser targets on the same domain: visit the page
+ * that passes Cloudflare more easily first, so the cf_clearance cookie
+ * carries over to harder pages.
  */
 const TARGETS = [
   {
@@ -96,7 +100,7 @@ const logFetchHeaders = (label: string, status: number, url: string, headers: He
 
 const logPlaywrightHeaders = (
   label: string,
-  response: import("playwright").Response
+  response: import("playwright").Response,
 ): void => {
   console.log(`    [${label}] HTTP ${response.status()} ${response.url()}`);
   const responseHeaders = response.headers();
@@ -127,7 +131,7 @@ const logResponseBody = (result: MethodResult): void => {
 
 const waitForCloudflareResolution = async (
   page: { content: () => Promise<string>; waitForTimeout: (timeout: number) => Promise<void> },
-  maxWaitMilliseconds: number
+  maxWaitMilliseconds: number,
 ): Promise<string> => {
   const startTime = Date.now();
   let html = await page.content();
@@ -141,7 +145,7 @@ const waitForCloudflareResolution = async (
 };
 
 const testDirectFetch = async (
-  target: (typeof TARGETS)[number]
+  target: (typeof TARGETS)[number],
 ): Promise<MethodResult> => {
   try {
     const controller = new AbortController();
@@ -189,7 +193,7 @@ const createProxyDispatcher = async (proxyUrl: string) => {
 };
 
 const testProxyFetch = async (
-  target: (typeof TARGETS)[number]
+  target: (typeof TARGETS)[number],
 ): Promise<MethodResult> => {
   try {
     const proxyUrl = `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_HOST}:${PROXY_PORT}`;
@@ -235,67 +239,78 @@ const testProxyFetch = async (
   }
 };
 
-const testProxyBrowser = async (
-  target: (typeof TARGETS)[number]
+/**
+ * Creates a shared browser context routed through the residential proxy.
+ * Keeping one context across multiple pages on the same domain lets us
+ * reuse the `cf_clearance` cookie that Cloudflare sets after the first
+ * successful challenge, so later pages skip or get an easier challenge.
+ */
+const createProxyBrowserContext = async (): Promise<{
+  browser: import("playwright").Browser;
+  context: import("playwright").BrowserContext;
+}> => {
+  const browser = await chromium.launch({
+    headless: false, // headed mode helps bypass Cloudflare Turnstile
+    args: ["--no-sandbox"],
+  });
+
+  const context = await browser.newContext({
+    proxy: {
+      server: `http://${PROXY_HOST}:${PROXY_PORT}`,
+      username: PROXY_USERNAME,
+      password: PROXY_PASSWORD,
+    },
+    userAgent:
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    locale: "en-AU",
+    viewport: { width: 1920, height: 1080 },
+    timezoneId: "Australia/Sydney",
+  });
+
+  return { browser, context };
+};
+
+/**
+ * Visits a target URL in an existing browser context and waits for
+ * any Cloudflare challenge to resolve.
+ */
+const testProxyBrowserInContext = async (
+  target: (typeof TARGETS)[number],
+  context: import("playwright").BrowserContext,
 ): Promise<MethodResult> => {
-  let browser: import("playwright").Browser | null = null;
+  const page = await context.newPage();
 
   try {
-    browser = await chromium.launch({
-      headless: false, // headed mode helps bypass Cloudflare
-      args: ["--no-sandbox"],
+    const response = await page.goto(target.url, {
+      waitUntil: "domcontentloaded",
+      timeout: 60_000,
     });
 
-    const context = await browser.newContext({
-      proxy: {
-        server: `http://${PROXY_HOST}:${PROXY_PORT}`,
-        username: PROXY_USERNAME,
-        password: PROXY_PASSWORD,
-      },
-      userAgent:
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      locale: "en-AU",
-      viewport: { width: 1920, height: 1080 },
-      timezoneId: "Australia/Sydney",
-    });
-
-    const page = await context.newPage();
-
-    try {
-      const response = await page.goto(target.url, {
-        waitUntil: "domcontentloaded",
-        timeout: 60_000,
-      });
-
-      if (response) {
-        logPlaywrightHeaders("proxy-browser", response);
-      }
-
-      // Wait for network to settle (SPA/JS-rendered content)
-      try {
-        await page.waitForLoadState("networkidle", { timeout: 15_000 });
-      } catch {
-        // networkidle timeout is not fatal
-      }
-
-      const html = await waitForCloudflareResolution(page, 30_000);
-      const cloudflareBlocked = isCloudflareChallengeHtml(html);
-      const matchesExpected = target.expectedPattern.test(html);
-
-      return {
-        method: "proxy-browser",
-        success: !cloudflareBlocked && matchesExpected,
-        statusCode: response?.status() ?? null,
-        cloudflareBlocked,
-        contentLength: html.length,
-        matchesExpected,
-        error: null,
-        html,
-      };
-    } finally {
-      await page.close();
-      await context.close();
+    if (response) {
+      logPlaywrightHeaders("proxy-browser", response);
     }
+
+    // Wait for network to settle (SPA/JS-rendered content)
+    try {
+      await page.waitForLoadState("networkidle", { timeout: 15_000 });
+    } catch {
+      // networkidle timeout is not fatal
+    }
+
+    const html = await waitForCloudflareResolution(page, 40_000);
+    const cloudflareBlocked = isCloudflareChallengeHtml(html);
+    const matchesExpected = target.expectedPattern.test(html);
+
+    return {
+      method: "proxy-browser",
+      success: !cloudflareBlocked && matchesExpected,
+      statusCode: response?.status() ?? null,
+      cloudflareBlocked,
+      contentLength: html.length,
+      matchesExpected,
+      error: null,
+      html,
+    };
   } catch (error) {
     return {
       method: "proxy-browser",
@@ -308,9 +323,7 @@ const testProxyBrowser = async (
       html: null,
     };
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    await page.close();
   }
 };
 
@@ -324,7 +337,7 @@ const formatStatus = (result: MethodResult): string => {
 const main = async () => {
   mkdirSync(ARTIFACT_DIRECTORY, { recursive: true });
 
-  console.log("=== Scrape Test ===\n");
+  console.log("=== Scrape Test (v6: shared browser context) ===\n");
   console.log(`Proxy configured: ${hasProxy ? "YES" : "NO"}`);
   if (hasProxy) {
     console.log(`Proxy endpoint: ${PROXY_HOST}:${PROXY_PORT}`);
@@ -333,57 +346,103 @@ const main = async () => {
 
   const results: TargetResult[] = [];
 
-  for (const target of TARGETS) {
-    console.log(`\n${"=".repeat(60)}`);
-    console.log(`Target: ${target.name}`);
-    console.log(`URL: ${target.url}`);
-    console.log(`Needs: ${[target.needsProxy && "proxy", target.needsBrowser && "browser"].filter(Boolean).join(" + ") || "nothing special"}`);
-    console.log("=".repeat(60));
+  // Create a shared browser context for all Cloudflare targets.
+  // This lets cf_clearance cookies carry over between pages on the same domain.
+  const browserTargets = TARGETS.filter((target) => target.needsProxy && target.needsBrowser);
+  let proxyBrowser: import("playwright").Browser | null = null;
+  let proxyBrowserContext: import("playwright").BrowserContext | null = null;
 
-    const methodResults: MethodResult[] = [];
+  if (hasProxy && browserTargets.length > 0) {
+    console.log("Launching shared browser context for Cloudflare targets...");
+    const { browser, context } = await createProxyBrowserContext();
+    proxyBrowser = browser;
+    proxyBrowserContext = context;
+    console.log("Browser ready.\n");
+  }
 
-    // Method 1: Direct fetch (always run as baseline)
-    console.log("\n  [1] Direct fetch...");
-    const directResult = await testDirectFetch(target);
-    methodResults.push(directResult);
-    console.log(`    → ${formatStatus(directResult)} (${directResult.contentLength ?? 0} bytes)`);
-    logResponseBody(directResult);
+  try {
+    for (const target of TARGETS) {
+      console.log(`\n${"=".repeat(60)}`);
+      console.log(`Target: ${target.name}`);
+      console.log(`URL: ${target.url}`);
+      console.log(
+        `Needs: ${[target.needsProxy && "proxy", target.needsBrowser && "browser"].filter(Boolean).join(" + ") || "nothing special"}`,
+      );
+      console.log("=".repeat(60));
 
-    if (directResult.html) {
-      writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-direct.html`), directResult.html);
-    }
+      const methodResults: MethodResult[] = [];
 
-    // Method 2: Proxy fetch (for IP-blocked, non-browser targets)
-    if (hasProxy && target.needsProxy && !target.needsBrowser) {
-      console.log("  [2] Proxy fetch (residential)...");
-      const proxyResult = await testProxyFetch(target);
-      methodResults.push(proxyResult);
-      console.log(`    → ${formatStatus(proxyResult)} (${proxyResult.contentLength ?? 0} bytes)`);
-      logResponseBody(proxyResult);
+      // Method 1: Direct fetch (always run as baseline)
+      console.log("\n  [1] Direct fetch...");
+      const directResult = await testDirectFetch(target);
+      methodResults.push(directResult);
+      console.log(
+        `    → ${formatStatus(directResult)} (${directResult.contentLength ?? 0} bytes)`,
+      );
+      logResponseBody(directResult);
 
-      if (proxyResult.html) {
-        writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy.html`), proxyResult.html);
+      if (directResult.html) {
+        writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-direct.html`), directResult.html);
       }
-    }
 
-    // Method 3: Proxy + browser (for Cloudflare JS challenge targets)
-    if (hasProxy && target.needsProxy && target.needsBrowser) {
-      console.log("  [2] Proxy + browser (stealth, headed)...");
-      const proxyBrowserResult = await testProxyBrowser(target);
-      methodResults.push(proxyBrowserResult);
-      console.log(`    → ${formatStatus(proxyBrowserResult)} (${proxyBrowserResult.contentLength ?? 0} bytes)`);
-      logResponseBody(proxyBrowserResult);
+      // Method 2: Proxy fetch (for IP-blocked, non-browser targets)
+      if (hasProxy && target.needsProxy && !target.needsBrowser) {
+        console.log("  [2] Proxy fetch (residential)...");
+        const proxyResult = await testProxyFetch(target);
+        methodResults.push(proxyResult);
+        console.log(
+          `    → ${formatStatus(proxyResult)} (${proxyResult.contentLength ?? 0} bytes)`,
+        );
+        logResponseBody(proxyResult);
 
-      if (proxyBrowserResult.html) {
-        writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy-browser.html`), proxyBrowserResult.html);
+        if (proxyResult.html) {
+          writeFileSync(join(ARTIFACT_DIRECTORY, `${target.name}-proxy.html`), proxyResult.html);
+        }
       }
-    }
 
-    results.push({
-      name: target.name,
-      url: target.url,
-      methods: methodResults,
-    });
+      // Method 3: Proxy + browser (shared context for cf_clearance cookie reuse)
+      if (hasProxy && target.needsProxy && target.needsBrowser && proxyBrowserContext) {
+        console.log("  [2] Proxy + browser (stealth, headed, shared context)...");
+        const proxyBrowserResult = await testProxyBrowserInContext(target, proxyBrowserContext);
+        methodResults.push(proxyBrowserResult);
+        console.log(
+          `    → ${formatStatus(proxyBrowserResult)} (${proxyBrowserResult.contentLength ?? 0} bytes)`,
+        );
+        logResponseBody(proxyBrowserResult);
+
+        if (proxyBrowserResult.html) {
+          writeFileSync(
+            join(ARTIFACT_DIRECTORY, `${target.name}-proxy-browser.html`),
+            proxyBrowserResult.html,
+          );
+        }
+
+        // Log cookies after each browser target to verify cf_clearance propagation
+        const cookies = await proxyBrowserContext.cookies();
+        const clearanceCookies = cookies.filter((cookie) => cookie.name === "cf_clearance");
+        if (clearanceCookies.length > 0) {
+          console.log(
+            `    cf_clearance cookies: ${clearanceCookies.map((cookie) => `${cookie.domain} (expires ${new Date(cookie.expires * 1_000).toISOString()})`).join(", ")}`,
+          );
+        } else {
+          console.log("    cf_clearance cookies: none");
+        }
+      }
+
+      results.push({
+        name: target.name,
+        url: target.url,
+        methods: methodResults,
+      });
+    }
+  } finally {
+    // Clean up shared browser
+    if (proxyBrowserContext) {
+      await proxyBrowserContext.close();
+    }
+    if (proxyBrowser) {
+      await proxyBrowser.close();
+    }
   }
 
   // Summary table
@@ -412,12 +471,12 @@ const main = async () => {
   console.log(`\nArtifacts saved to ${ARTIFACT_DIRECTORY}/`);
 
   // Determine overall outcome
-  const proxyTargets = results.filter(
-    (result) => TARGETS.find((target) => target.name === result.name)?.needsProxy
+  const proxyTargets = results.filter((result) =>
+    TARGETS.find((target) => target.name === result.name)?.needsProxy,
   );
 
   const allProxyTargetsSucceeded = proxyTargets.every((result) =>
-    result.methods.some((method) => method.success)
+    result.methods.some((method) => method.success),
   );
 
   if (hasProxy) {
