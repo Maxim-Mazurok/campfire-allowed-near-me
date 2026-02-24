@@ -11,7 +11,7 @@ import { campfireTheme } from "./theme";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <MantineProvider theme={campfireTheme}>
+    <MantineProvider theme={campfireTheme} defaultColorScheme="auto">
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>

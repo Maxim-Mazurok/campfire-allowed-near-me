@@ -4,8 +4,12 @@
 
 :root {
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-  color: #1f2933;
+  color: var(--mantine-color-text);
   background: radial-gradient(circle at 20% 20%, #f7f7ee 0, #edf4f0 45%, #e6eef2 100%);
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  background: var(--mantine-color-body);
 }
 
 * {
@@ -38,8 +42,8 @@ body {
 }
 
 .panel {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #d8e0d8;
+  background: var(--mantine-color-default);
+  border: 1px solid var(--mantine-color-default-border);
   border-radius: 12px;
   padding: 12px;
   box-shadow: 0 4px 14px rgba(47, 72, 66, 0.08);
@@ -158,14 +162,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  border: 1px solid #e0e7df;
+  border: 1px solid var(--mantine-color-default-border);
   border-radius: 10px;
   padding: 9px 10px;
   transition: background-color 120ms ease;
 }
 
 .forest-row:hover {
-  background: #f4efff;
+  background: var(--mantine-color-default-hover);
 }
 
 .forest-main-row {
@@ -187,21 +191,21 @@ body {
 .forest-navigation-link {
   width: 22px;
   height: 22px;
-  border: 1px solid #a8b9ad;
+  border: 1px solid var(--mantine-color-default-border);
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #1f2933;
-  background: #fff;
+  color: var(--mantine-color-text);
+  background: var(--mantine-color-default);
   text-decoration: none;
   flex-shrink: 0;
   font-size: 0.72rem;
 }
 
 .forest-navigation-link:hover {
-  border-color: #2f855a;
-  color: #2f855a;
+  border-color: var(--mantine-color-green-6);
+  color: var(--mantine-color-green-6);
 }
 
 .forest-navigation-link--disabled {
@@ -257,7 +261,7 @@ body {
 
 .forest-notice-list-label {
   font-size: 0.7rem;
-  color: #536070;
+  color: var(--mantine-color-dimmed);
   margin-bottom: 4px;
 }
 
@@ -275,13 +279,14 @@ body {
 }
 
 .forest-notice-link {
-  color: #1c4a76;
+  color: var(--mantine-color-anchor);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .forest-notice-link:hover {
-  color: #123a63;
+  color: var(--mantine-color-anchor);
+  opacity: 0.85;
 }
 
 /* ================================================================
@@ -301,23 +306,23 @@ body {
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  border: 1px solid #dde5dd;
-  background: #f7faf8;
+  border: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-default);
   line-height: 1;
   padding: 2px 0;
 }
 
 .facility-indicator.present {
   opacity: 1;
-  color: #1d4e89;
-  border-color: #8ab5e3;
-  background: #eef5ff;
+  color: var(--mantine-color-blue-7);
+  border-color: var(--mantine-color-blue-3);
+  background: var(--mantine-color-blue-0);
 }
 
 .facility-indicator.absent,
 .facility-indicator.unknown {
   opacity: 0.35;
-  color: #515f71;
+  color: var(--mantine-color-dimmed);
 }
 
 .facility-icon-glyph {
@@ -329,11 +334,12 @@ body {
    ================================================================ */
 
 .warnings-section a {
-  color: #1c4a76;
+  color: var(--mantine-color-anchor);
 }
 
 .warnings-section a:hover {
-  color: #123a63;
+  color: var(--mantine-color-anchor);
+  opacity: 0.85;
 }
 
 .warning-list {
@@ -355,7 +361,7 @@ body {
 }
 
 .warning-forest-highlight {
-  background: #fff3b0;
+  background: var(--mantine-color-yellow-1);
   border-radius: 2px;
   padding: 0 3px;
 }
@@ -366,14 +372,14 @@ body {
 
 .warning-debug summary {
   cursor: pointer;
-  color: #1c4a76;
+  color: var(--mantine-color-anchor);
   font-size: 0.82rem;
 }
 
 .warning-debug-list {
   margin: 5px 0 0;
   padding-left: 18px;
-  color: #455569;
+  color: var(--mantine-color-dimmed);
   font-size: 0.78rem;
   font-family:
     ui-monospace,
@@ -420,10 +426,10 @@ body {
   top: 0;
   transform: translate(50%, -50%);
   border-radius: 999px;
-  border: 1px solid #cfd9cf !important;
-  background: #fff !important;
+  border: 1px solid var(--mantine-color-default-border) !important;
+  background: var(--mantine-color-default) !important;
   box-shadow: 0 4px 10px rgba(47, 72, 66, 0.18) !important;
-  color: #334155 !important;
+  color: var(--mantine-color-text) !important;
   opacity: 1 !important;
   text-decoration: none !important;
   display: inline-flex;
@@ -443,12 +449,12 @@ body {
 }
 
 .forest-popup a.leaflet-popup-close-button:hover {
-  color: #1f2933;
+  color: var(--mantine-color-text);
   box-shadow: 0 6px 12px rgba(47, 72, 66, 0.22);
 }
 
 .forest-popup a.leaflet-popup-close-button:focus-visible {
-  outline: 2px solid #aeb8c4;
+  outline: 2px solid var(--mantine-color-default-border);
   outline-offset: 1px;
 }
 
@@ -459,22 +465,22 @@ body {
    ================================================================ */
 
 .warning {
-  border-color: #d59f2f;
-  background: #fff5df;
+  border-color: var(--mantine-color-yellow-6);
+  background: var(--mantine-color-yellow-0);
 }
 
 .error {
-  color: #c53030;
+  color: var(--mantine-color-error);
 }
 
 .muted {
-  color: #536070;
+  color: var(--mantine-color-dimmed);
 }
 
 .warning-inline {
   margin-top: 0;
   margin-bottom: 10px;
-  color: #7b341e;
+  color: var(--mantine-color-orange-8);
 }
 
 /* ================================================================
@@ -516,4 +522,22 @@ body {
   .facility-icon-glyph {
     font-size: 0.9rem;
   }
+}
+
+/* ================================================================
+   Dark Mode — Leaflet overrides
+   ================================================================ */
+
+[data-mantine-color-scheme='dark'] .leaflet-popup-content-wrapper,
+[data-mantine-color-scheme='dark'] .leaflet-popup-tip {
+  background: var(--mantine-color-dark-7);
+  color: var(--mantine-color-text);
+}
+
+[data-mantine-color-scheme='dark'] .leaflet-container a.leaflet-popup-close-button {
+  color: var(--mantine-color-text);
+}
+
+[data-mantine-color-scheme='dark'] .leaflet-layer img {
+  filter: brightness(0.85) contrast(1.1) saturate(0.8);
 }
