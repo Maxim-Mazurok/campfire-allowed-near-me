@@ -33,7 +33,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/cache/coordinates.sqlite
-          key: geocoding-cache-${{ runner.os }}-v1
+          key: geocoding-cache-${{ runner.os }}-v2-${{ github.run_id }}
+          restore-keys: |
+            geocoding-cache-${{ runner.os }}-v2-
+          save-always: true
 
       - name: Generate snapshot
         run: xvfb-run --auto-servernum -- npx -y tsx scripts/generate-snapshot.ts
