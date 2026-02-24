@@ -10,9 +10,7 @@ import { ForestLoadProgressBroker } from "./services/forest-load-progress-broker
 import { LiveForestDataService } from "./services/live-forest-data-service.js";
 import { RefreshTaskManager } from "./services/refresh-task-manager.js";
 import { resolveWebSocketServerKey } from "./services/websocket-upgrade-router.js";
-import { loadLocalEnv } from "./utils/load-local-env.js";
-
-loadLocalEnv();
+import "dotenv/config";
 
 const MAX_PORT = 65_535;
 let port = Number(process.env.PORT ?? "8787");

@@ -48,15 +48,15 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
    ```
 4. Create local environment file:
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    ```
-   Then set `GOOGLE_MAPS_API_KEY` in `.env.local`.
+   Then set `GOOGLE_MAPS_API_KEY` in `.env`.
 
 Optional: run local Nominatim (Docker) and point fallback geocoding at it:
 ```bash
 docker run -it --rm -p 8080:8080 -e PBF_URL=https://download.geofabrik.de/australia-oceania-latest.osm.pbf mediagis/nominatim:4.5
 ```
-Then set `NOMINATIM_BASE_URL=http://localhost:8080` in `.env.local`.
+Then set `NOMINATIM_BASE_URL=http://localhost:8080` in `.env`.
 First startup imports OSM data and can take significant time/disk.
 
 `npm run dev` also attempts to auto-start a local `campfire-nominatim` Docker container (unless `NOMINATIM_AUTO_START=0`).
@@ -123,15 +123,14 @@ npm run warm:coordinates
 - `FORESTRY_RAW_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json`)
 - `FORESTRY_RAW_CACHE_TTL_MS` (default `3600000`)
 - `CLOSURE_LLM_ENABLED` (`true|false`; default auto-enabled when Azure credentials are present)
-- `CLOSURE_LLM_ENV_FILE` (optional env file to preload credentials; useful with `/Users/max/scenario-lab/.env.local`)
 - `AZURE_OPENAI_ENDPOINT` (required for AI enrichment)
 - `AZURE_OPENAI_API_KEY` (required for AI enrichment)
 - `CLOSURE_LLM_DEPLOYMENT` (preferred Azure deployment name; falls back to `AZURE_OPENAI_DEPLOYMENT_REASONER`)
 - `CLOSURE_LLM_DEPLOYMENT_DEEP` (optional deep model deployment; also reads `AZURE_OPENAI_DEPLOYMENT_DEEP`)
-- `CLOSURE_LLM_MODEL_PROFILE` (`balanced|max_quality|low_cost`; also reads `SCENARIO_LAB_MODEL_PROFILE`)
-- `CLOSURE_LLM_TIMEOUT_MS` (default `90000`; also reads `SCENARIO_LAB_TIMEOUT_SEC`)
-- `CLOSURE_LLM_RATE_LIMIT_RETRIES` (default `2`; also reads `SCENARIO_LAB_RATE_LIMIT_RETRIES`)
-- `CLOSURE_LLM_MIN_CALL_INTERVAL_MS` (default `15000`; also reads `SCENARIO_LAB_MIN_CALL_INTERVAL_SEC`)
+- `CLOSURE_LLM_MODEL_PROFILE` (`balanced|max_quality|low_cost`)
+- `CLOSURE_LLM_TIMEOUT_MS` (default `90000`)
+- `CLOSURE_LLM_RATE_LIMIT_RETRIES` (default `2`)
+- `CLOSURE_LLM_MIN_CALL_INTERVAL_MS` (default `1000`)
 - `CLOSURE_LLM_MAX_NOTICES_PER_REFRESH` (default `12`, cost-control cap)
 - `CLOSURE_LLM_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/closure-llm-impacts.json`)
 - `CLOSURE_LLM_CACHE_TTL_MS` (default `604800000`, 7 days)

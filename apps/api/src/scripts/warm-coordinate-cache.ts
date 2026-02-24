@@ -1,7 +1,5 @@
 import { LiveForestDataService } from "../services/live-forest-data-service.js";
-import { loadLocalEnv } from "../utils/load-local-env.js";
-
-loadLocalEnv();
+import "dotenv/config";
 
 const run = async () => {
   const service = new LiveForestDataService({ scrapeTtlMs: 0 });

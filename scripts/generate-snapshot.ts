@@ -7,6 +7,7 @@ import { OSMGeocoder } from "../apps/api/src/services/osm-geocoder.js";
 import { TotalFireBanService } from "../apps/api/src/services/total-fire-ban-service.js";
 import { LiveForestDataService } from "../apps/api/src/services/live-forest-data-service.js";
 import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
+import "dotenv/config";
 import type { PersistedSnapshot } from "../packages/shared/src/contracts.js";
 
 // ---------------------------------------------------------------------------

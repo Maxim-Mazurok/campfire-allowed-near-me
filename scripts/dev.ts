@@ -1,6 +1,6 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { createServer } from "node:net";
-import { loadLocalEnv } from "../apps/api/src/utils/load-local-env.js";
+import "dotenv/config";
 
 const DEFAULT_API_PORT = 8787;
 const DEFAULT_WEB_PORT = 5173;
@@ -12,8 +12,6 @@ const DEFAULT_NOMINATIM_GUNICORN_WORKERS = "8";
 const DEFAULT_NOMINATIM_DNS_SERVERS = "1.1.1.1,8.8.8.8";
 const DEFAULT_NOMINATIM_PBF_URL =
   "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf";
-
-loadLocalEnv();
 
 const parsePort = (value: string | undefined, fallback: number) => {
   if (!value) {

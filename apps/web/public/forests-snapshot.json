@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-24T10:11:04.692Z",
+  "fetchedAt": "2026-02-24T11:08:01.250Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -199,8 +199,8 @@
         "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4229",
         "listedAt": "2025-12-07T13:01:00.000Z",
         "listedAtText": "2025-12-07T13:01:00.0000000Z",
-        "untilAt": "2026-06-30T00:00:00.000Z",
-        "untilText": "2026-06-30T00:00:00.0000000Z",
+        "untilAt": "2026-06-30T08:00:00.000Z",
+        "untilText": "2026-06-30T08:00:00.0000000Z",
         "forestNameHint": "Myrtle Creek State Forest",
         "status": "PARTIAL",
         "tags": [],
@@ -792,8 +792,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4986",
           "listedAt": "2026-01-27T13:01:00.000Z",
           "listedAtText": "2026-01-27T13:01:00.0000000Z",
-          "untilAt": "2026-04-30T00:00:00.000Z",
-          "untilText": "2026-04-30T00:00:00.0000000Z",
+          "untilAt": "2026-04-30T13:59:00.000Z",
+          "untilText": "2026-04-30T13:59:00.0000000Z",
           "forestNameHint": "Glenwood State Forest",
           "status": "CLOSED",
           "tags": [
@@ -806,7 +806,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "Notice only mentions mountain bike trails and access points closed, no specific info on camping or vehicle access."
+            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access."
           }
         }
       ],
@@ -1788,8 +1788,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5215",
           "listedAt": "2026-02-22T13:01:00.000Z",
           "listedAtText": "2026-02-22T13:01:00.0000000Z",
-          "untilAt": "2026-03-20T00:00:00.000Z",
-          "untilText": "2026-03-20T00:00:00.0000000Z",
+          "untilAt": "2026-03-20T12:59:00.000Z",
+          "untilText": "2026-03-20T12:59:00.0000000Z",
           "forestNameHint": "Vittoria State Forest",
           "status": "CLOSED",
           "tags": [
@@ -9187,8 +9187,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1647",
           "listedAt": "2021-05-03T23:47:00.000Z",
           "listedAtText": "2021-05-03T23:47:00.0000000Z",
-          "untilAt": "2033-12-30T00:00:00.000Z",
-          "untilText": "2033-12-30T00:00:00.0000000Z",
+          "untilAt": "2033-12-30T21:47:00.000Z",
+          "untilText": "2033-12-30T21:47:00.0000000Z",
           "forestNameHint": "Leard State Forest",
           "status": "PARTIAL",
           "tags": [
@@ -9201,7 +9201,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Public access to the exclusive use area is not allowed without permission, restricting camping and vehicle access."
+            "rationale": "Public access to the specified area is not allowed without permission, restricting camping and vehicle access."
           }
         }
       ],
@@ -11461,8 +11461,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4885",
           "listedAt": "2026-02-21T13:01:00.000Z",
           "listedAtText": "2026-02-21T13:01:00.0000000Z",
-          "untilAt": "2026-02-28T00:00:00.000Z",
-          "untilText": "2026-02-28T00:00:00.0000000Z",
+          "untilAt": "2026-02-28T12:59:00.000Z",
+          "untilText": "2026-02-28T12:59:00.0000000Z",
           "forestNameHint": "Strahorn State Forest",
           "status": "CLOSED",
           "tags": [
@@ -16483,8 +16483,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4264",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Mount Pikapene State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -18652,8 +18652,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4258",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Cherry Tree State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -18724,8 +18724,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4260",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Cherry Tree West State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -18733,10 +18733,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -18747,9 +18747,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19395,8 +19395,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3006",
           "listedAt": "2025-12-07T13:01:00.000Z",
           "listedAtText": "2025-12-07T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T08:00:00.000Z",
+          "untilText": "2026-06-30T08:00:00.0000000Z",
           "forestNameHint": "Dalmorton State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -20017,8 +20017,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4557",
           "listedAt": "2025-05-24T14:01:00.000Z",
           "listedAtText": "2025-05-24T14:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Ewingar State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -20026,10 +20026,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest with no specific details on camping or vehicle access impacts."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -20040,9 +20040,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -20414,8 +20414,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5149",
           "listedAt": "2026-02-17T13:01:00.000Z",
           "listedAtText": "2026-02-17T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Grange State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -22129,15 +22129,15 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4918",
           "listedAt": "2026-01-18T13:01:00.000Z",
           "listedAtText": "2026-01-18T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Mount Belmore State Forest",
           "status": "PARTIAL",
           "tags": [],
           "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026.Download the closure notice and map below.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
+            "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
@@ -22376,8 +22376,8 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4264",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Mount Pikapene State Forest",
           "status": "PARTIAL",
           "tags": [],
@@ -22773,19 +22773,19 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4233",
           "listedAt": "2025-12-08T00:59:00.000Z",
           "listedAtText": "2025-12-08T00:59:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T08:00:00.000Z",
+          "untilText": "2026-06-30T08:00:00.0000000Z",
           "forestNameHint": "Newfoundland State Forest",
           "status": "PARTIAL",
           "tags": [],
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.Download the closure notice and map below for further detail.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
+            "confidence": "MEDIUM",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, implying restricted camping and vehicle access."
           }
         }
       ],
@@ -22796,9 +22796,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -23495,19 +23495,19 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4524",
           "listedAt": "2025-11-02T13:01:00.000Z",
           "listedAtText": "2025-11-02T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Pine Creek State Forest",
           "status": "PARTIAL",
           "tags": [],
           "detailText": "Please note that Pine Creek State Forest will be partly closed between 9:00 am Monday 3rd November 2025 and 6:00 pm Tuesday 30th June 2026.Download the detailed closure notice and map below.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200).",
           "structuredImpact": {
-            "source": "LLM",
+            "source": "RULES",
             "confidence": "MEDIUM",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Partial closure status implies at least some access restrictions."
           }
         }
       ],
@@ -23519,8 +23519,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -27813,19 +27813,19 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3103",
           "listedAt": "2025-12-07T13:01:00.000Z",
           "listedAtText": "2025-12-07T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T08:00:00.000Z",
+          "untilText": "2026-06-30T08:00:00.0000000Z",
           "forestNameHint": "Styx River State Forest",
           "status": "PARTIAL",
           "tags": [],
           "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.Download the closure map below for further detail.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Partial closure status implies at least some access restrictions."
           }
         },
         {
@@ -27834,19 +27834,19 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5052",
           "listedAt": "2026-01-26T13:01:00.000Z",
           "listedAtText": "2026-01-26T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T00:00:00.000Z",
-          "untilText": "2026-06-30T00:00:00.0000000Z",
+          "untilAt": "2026-06-30T13:59:00.000Z",
+          "untilText": "2026-06-30T13:59:00.0000000Z",
           "forestNameHint": "Styx River State Forest",
           "status": "PARTIAL",
           "tags": [],
           "detailText": "Please note that parts of Styx River State Forest will be closed from 9:00 am Tuesday 27 January 2026 to 6:00 pm Tuesday 30 June 2026.Please follow signage on the site and follow any direction from Forestry Corporation staff.Download the document below for a detailed map of the closed area.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Partial closure status implies at least some access restrictions."
           }
         }
       ],
@@ -27858,8 +27858,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -28736,8 +28736,9 @@
     }
   ],
   "warnings": [
-    "AI structured 5 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap fallback geocoding is active.",
+    "AI structured 12 closure notice(s) to extract camping and 2WD/4WD access impacts.",
+    "AI structuring skipped 5 closure notice(s) due to per-refresh budget limit (12).",
+    "Google Places geocoding failed for one or more lookups; OpenStreetMap fallback coordinates were used where available.",
     "Facilities page includes 9 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Perricoota State Forest, Tallaganda State Forest, Vulcan State Forest, Wingello State Forest, Yambulla State Forest (+1 more).",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
     "Could not match 4 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed, Myrtle Creek State Forest: Partial closure, Yessabah State Forest closed.",

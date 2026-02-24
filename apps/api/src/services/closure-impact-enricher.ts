@@ -1,6 +1,4 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { DEFAULT_CLOSURE_LLM_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { readJsonFile, writeJsonFile } from "../utils/fs-cache.js";
 import type {
@@ -13,7 +11,6 @@ import type {
 type ModelProfile = "balanced" | "max_quality" | "low_cost";
 
 interface ClosureImpactEnricherOptions {
-  envFilePath?: string | null;
   cachePath?: string;
   cacheTtlMs?: number;
   maxNoticesPerRefresh?: number;
@@ -76,36 +73,6 @@ const toConfidence = (
   }
 
   return fallback;
-};
-
-const loadEnvFile = (filePath: string): void => {
-  if (!existsSync(filePath)) {
-    return;
-  }
-
-  let content = "";
-  try {
-    content = readFileSync(filePath, "utf8");
-  } catch {
-    return;
-  }
-
-  for (const line of content.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) {
-      continue;
-    }
-
-    const separator = trimmed.indexOf("=");
-    const key = trimmed.slice(0, separator).trim();
-    if (!key || process.env[key]) {
-      continue;
-    }
-
-    const rawValue = trimmed.slice(separator + 1).trim();
-    const normalizedValue = rawValue.replace(/^['"]|['"]$/g, "");
-    process.env[key] = normalizedValue;
-  }
 };
 
 const parseBoolean = (value: string | undefined, fallback: boolean): boolean => {
@@ -347,13 +314,6 @@ export class ClosureImpactEnricher {
   private readonly cache = new Map<string, ClosureImpactCacheEntry>();
 
   constructor(options?: ClosureImpactEnricherOptions) {
-    const explicitEnvFilePath = options?.envFilePath ?? process.env.CLOSURE_LLM_ENV_FILE ?? null;
-    if (explicitEnvFilePath) {
-      loadEnvFile(explicitEnvFilePath);
-    } else if (process.env.HOME) {
-      loadEnvFile(join(process.env.HOME, "scenario-lab", ".env.local"));
-    }
-
     const endpoint = (process.env.AZURE_OPENAI_ENDPOINT ?? "").trim().replace(/\/+$/, "");
     const apiKey = (process.env.AZURE_OPENAI_API_KEY ?? "").trim();
     const deploymentReasoner = (
@@ -366,20 +326,7 @@ export class ClosureImpactEnricher {
       process.env.AZURE_OPENAI_DEPLOYMENT_DEEP ??
       ""
     ).trim();
-    const modelProfile = parseModelProfile(
-      process.env.CLOSURE_LLM_MODEL_PROFILE ?? process.env.SCENARIO_LAB_MODEL_PROFILE
-    );
-    const scenarioTimeoutSec = Number.parseFloat(process.env.SCENARIO_LAB_TIMEOUT_SEC ?? "");
-    const scenarioTimeoutMs = Number.isFinite(scenarioTimeoutSec) && scenarioTimeoutSec > 0
-      ? `${Math.round(scenarioTimeoutSec * 1000)}`
-      : undefined;
-    const scenarioMinIntervalSec = Number.parseFloat(
-      process.env.SCENARIO_LAB_MIN_CALL_INTERVAL_SEC ?? ""
-    );
-    const scenarioMinIntervalMs =
-      Number.isFinite(scenarioMinIntervalSec) && scenarioMinIntervalSec >= 0
-        ? `${Math.round(scenarioMinIntervalSec * 1000)}`
-        : undefined;
+    const modelProfile = parseModelProfile(process.env.CLOSURE_LLM_MODEL_PROFILE);
 
     const autoEnabled = Boolean(endpoint && apiKey && deploymentReasoner);
     const enabled = parseBoolean(process.env.CLOSURE_LLM_ENABLED, autoEnabled);
@@ -391,16 +338,16 @@ export class ClosureImpactEnricher {
     this.deploymentDeep = deploymentDeep || null;
     this.modelProfile = modelProfile;
     this.timeoutMs = parsePositiveInteger(
-      process.env.CLOSURE_LLM_TIMEOUT_MS ?? scenarioTimeoutMs,
+      process.env.CLOSURE_LLM_TIMEOUT_MS,
       90_000
     );
     this.rateLimitRetries = parseNonNegativeInteger(
-      process.env.CLOSURE_LLM_RATE_LIMIT_RETRIES ?? process.env.SCENARIO_LAB_RATE_LIMIT_RETRIES,
+      process.env.CLOSURE_LLM_RATE_LIMIT_RETRIES,
       2
     );
     this.minCallIntervalMs = parseNonNegativeInteger(
-      process.env.CLOSURE_LLM_MIN_CALL_INTERVAL_MS ?? scenarioMinIntervalMs,
-      15_000
+      process.env.CLOSURE_LLM_MIN_CALL_INTERVAL_MS,
+      1000
     );
     this.cachePath = options?.cachePath ??
       process.env.CLOSURE_LLM_CACHE_PATH ??
