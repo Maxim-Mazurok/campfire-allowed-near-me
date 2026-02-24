@@ -1388,7 +1388,14 @@ export class LiveForestDataService implements ForestDataService {
             status: area.status,
             statusText: this.normalizeBanStatusText(area.status, area.statusText)
           };
+        const geocodeStartMs = Date.now();
         const geocode = await this.geocoder.geocodeForest(forestName, area.areaName);
+        const geocodeElapsedMs = Date.now() - geocodeStartMs;
+        const geocodeOutcomes = (geocode.attempts ?? []).map((attempt) => `${attempt.provider}:${attempt.outcome}`);
+        const wasCacheHit = geocodeOutcomes.some((outcome) => outcome === "CACHE:CACHE_HIT");
+        console.log(
+          `[GEOCODE_FORESTS] ${forestName} | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]`
+        );
         this.collectGeocodeWarnings(warningSet, geocode);
         completedForestGeocodes += 1;
         this.reportProgress(progressCallback, {
@@ -1466,7 +1473,14 @@ export class LiveForestDataService implements ForestDataService {
     );
 
     for (const forestName of unmatchedFacilitiesForests) {
+      const geocodeStartMs = Date.now();
       const geocode = await this.geocoder.geocodeForest(forestName);
+      const geocodeElapsedMs = Date.now() - geocodeStartMs;
+      const geocodeOutcomes = (geocode.attempts ?? []).map((attempt) => `${attempt.provider}:${attempt.outcome}`);
+      const wasCacheHit = geocodeOutcomes.some((outcome) => outcome === "CACHE:CACHE_HIT");
+      console.log(
+        `[GEOCODE_FORESTS] ${forestName} (unmatched) | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]`
+      );
       this.collectGeocodeWarnings(warningSet, geocode);
       completedForestGeocodes += 1;
       this.reportProgress(progressCallback, {

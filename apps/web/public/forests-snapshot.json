@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-24T11:08:01.250Z",
+  "fetchedAt": "2026-02-24T11:29:42.108Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -23502,12 +23502,12 @@
           "tags": [],
           "detailText": "Please note that Pine Creek State Forest will be partly closed between 9:00 am Monday 3rd November 2025 and 6:00 pm Tuesday 30th June 2026.Download the detailed closure notice and map below.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23519,8 +23519,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -27820,12 +27820,12 @@
           "tags": [],
           "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.Download the closure map below for further detail.Please follow signage on the site and follow any direction from Forestry Corporation staff.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         },
         {
@@ -27841,12 +27841,12 @@
           "tags": [],
           "detailText": "Please note that parts of Styx River State Forest will be closed from 9:00 am Tuesday 27 January 2026 to 6:00 pm Tuesday 30 June 2026.Please follow signage on the site and follow any direction from Forestry Corporation staff.Download the document below for a detailed map of the closed area.Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -27858,8 +27858,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -28736,8 +28736,6 @@
     }
   ],
   "warnings": [
-    "AI structured 12 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 5 closure notice(s) due to per-refresh budget limit (12).",
     "Google Places geocoding failed for one or more lookups; OpenStreetMap fallback coordinates were used where available.",
     "Facilities page includes 9 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Perricoota State Forest, Tallaganda State Forest, Vulcan State Forest, Wingello State Forest, Yambulla State Forest (+1 more).",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
