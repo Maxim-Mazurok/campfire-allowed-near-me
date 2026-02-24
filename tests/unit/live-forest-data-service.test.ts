@@ -334,7 +334,7 @@ describe("LiveForestDataService facilities matching", () => {
         {
           id: "100",
           title: "Forest A State Forest: Closed",
-          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=100",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=100",
           listedAt: "2026-01-01T00:00:00.000Z",
           listedAtText: "2026-01-01",
           untilAt: null,
@@ -354,7 +354,7 @@ describe("LiveForestDataService facilities matching", () => {
         {
           id: "101",
           title: "Forest B State Forest: Partial closure",
-          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=101",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=101",
           listedAt: "2026-01-02T00:00:00.000Z",
           listedAtText: "2026-01-02",
           untilAt: null,
@@ -374,7 +374,7 @@ describe("LiveForestDataService facilities matching", () => {
         {
           id: "103",
           title: "Forest B State Forest: Closed for event",
-          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=103",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=103",
           listedAt: "2999-01-01T00:00:00.000Z",
           listedAtText: "2999-01-01",
           untilAt: "2999-01-07T00:00:00.000Z",
@@ -386,7 +386,7 @@ describe("LiveForestDataService facilities matching", () => {
         {
           id: "104",
           title: "Forest B State Forest: Closed due to works",
-          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=104",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=104",
           listedAt: "2000-01-01T00:00:00.000Z",
           listedAtText: "2000-01-01",
           untilAt: "2000-01-07T00:00:00.000Z",
@@ -398,7 +398,7 @@ describe("LiveForestDataService facilities matching", () => {
         {
           id: "102",
           title: "Forest C State Forest: Closed",
-          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=102",
+          detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=102",
           listedAt: null,
           listedAtText: null,
           untilAt: null,

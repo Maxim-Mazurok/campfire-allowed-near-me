@@ -1,9 +1,10 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
 import { installResourceBlockingRoutes } from "../apps/api/src/utils/resource-blocking.js";
+import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
 
 chromium.use(StealthPlugin());
 
@@ -13,6 +14,8 @@ const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
 const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
 const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
 const PROXY_PORT = process.env.PROXY_PORT ?? "30001";
+const BROWSER_PROFILE_DIRECTORY =
+  process.env.BROWSER_PROFILE_DIR ?? DEFAULT_BROWSER_PROFILE_PATH;
 
 const isRunningInCI = Boolean(process.env.CI);
 const hasProxy = isRunningInCI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
@@ -45,8 +48,8 @@ const TARGETS = [
   },
   {
     name: "forest-closures",
-    url: "https://forestclosure.fcnsw.net",
-    expectedPattern: /forest closures|closuredetails/i,
+    url: "https://forestclosure.fcnsw.net/indexframe",
+    expectedPattern: /forest closures|closuredetailsframe/i,
     needsProxy: true,
     needsBrowser: false,
   },
@@ -246,20 +249,24 @@ const testProxyFetch = async (
 
 /**
  * Creates a shared browser context routed through the residential proxy.
- * Keeping one context across multiple pages on the same domain lets us
- * reuse the `cf_clearance` cookie that Cloudflare sets after the first
- * successful challenge, so later pages skip or get an easier challenge.
+ * Uses a persistent user-data directory so the browser disk cache (JS bundles,
+ * Cloudflare challenge scripts) is reused across scrape runs, reducing proxy
+ * bandwidth. Keeping one context across multiple pages on the same domain
+ * lets us reuse the `cf_clearance` cookie that Cloudflare sets after the
+ * first successful challenge.
  */
 const createProxyBrowserContext = async (): Promise<{
-  browser: import("playwright").Browser;
   context: import("playwright").BrowserContext;
 }> => {
-  const browser = await chromium.launch({
+  const profileDirectory = BROWSER_PROFILE_DIRECTORY;
+  if (!existsSync(profileDirectory)) {
+    mkdirSync(profileDirectory, { recursive: true });
+  }
+  console.log(`Browser profile directory: ${profileDirectory}`);
+
+  const context = await chromium.launchPersistentContext(profileDirectory, {
     headless: false, // headed mode helps bypass Cloudflare Turnstile
     args: ["--no-sandbox"],
-  });
-
-  const context = await browser.newContext({
     proxy: {
       server: `http://${PROXY_HOST}:${PROXY_PORT}`,
       username: PROXY_USERNAME,
@@ -274,7 +281,7 @@ const createProxyBrowserContext = async (): Promise<{
 
   await installResourceBlockingRoutes(context, (message) => console.log(`  ${message}`));
 
-  return { browser, context };
+  return { context };
 };
 
 /**
@@ -356,13 +363,11 @@ const main = async () => {
   // Create a shared browser context for all Cloudflare targets.
   // This lets cf_clearance cookies carry over between pages on the same domain.
   const browserTargets = TARGETS.filter((target) => target.needsProxy && target.needsBrowser);
-  let proxyBrowser: import("playwright").Browser | null = null;
   let proxyBrowserContext: import("playwright").BrowserContext | null = null;
 
   if (hasProxy && browserTargets.length > 0) {
     console.log("Launching shared browser context for Cloudflare targets...");
-    const { browser, context } = await createProxyBrowserContext();
-    proxyBrowser = browser;
+    const { context } = await createProxyBrowserContext();
     proxyBrowserContext = context;
     console.log("Browser ready.\n");
   }
@@ -443,12 +448,9 @@ const main = async () => {
       });
     }
   } finally {
-    // Clean up shared browser
+    // Clean up shared browser (persistent context: close closes browser too)
     if (proxyBrowserContext) {
       await proxyBrowserContext.close();
-    }
-    if (proxyBrowser) {
-      await proxyBrowser.close();
     }
   }
 

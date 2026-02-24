@@ -4,10 +4,12 @@
  *
  * Usage: PROXY_USERNAME=... PROXY_PASSWORD=... npx -y tsx scripts/scrape-smoke.ts
  */
+import { existsSync, mkdirSync } from "node:fs";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
 import { installResourceBlockingRoutes } from "../apps/api/src/utils/resource-blocking.js";
+import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
 
 // Suppress playwright-extra CDP session race (page closed before CDP resolves)
 process.on("unhandledRejection", (reason: unknown) => {
@@ -25,6 +27,8 @@ const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
 const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
 const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
 const PROXY_PORT = process.env.PROXY_PORT ?? "30001";
+const BROWSER_PROFILE_DIRECTORY =
+  process.env.BROWSER_PROFILE_DIR ?? DEFAULT_BROWSER_PROFILE_PATH;
 
 const TARGET_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
@@ -40,22 +44,18 @@ const main = async () => {
   console.log("=== Scrape Smoke Test ===");
   console.log(`Proxy: ${hasProxy ? `${PROXY_HOST}:${PROXY_PORT}` : "none"}`);
   console.log(`Target: ${TARGET_URL}`);
+  console.log(`Browser profile: ${BROWSER_PROFILE_DIRECTORY}`);
   console.log("");
 
-  const launchOptions: Parameters<typeof chromium.launch>[0] = {
-    headless: false,
-    args: ["--no-sandbox"]
-  };
+  const profileDirectory = BROWSER_PROFILE_DIRECTORY;
+  if (!existsSync(profileDirectory)) {
+    mkdirSync(profileDirectory, { recursive: true });
+  }
 
   console.log("[1] Launching browser...");
-  const browser = await chromium.launch(launchOptions);
-
-  const contextOptions: Parameters<typeof browser.newContext>[0] = {
-    userAgent:
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-    locale: "en-AU",
-    viewport: { width: 1920, height: 1080 },
-    timezoneId: "Australia/Sydney",
+  const context = await chromium.launchPersistentContext(profileDirectory, {
+    headless: false,
+    args: ["--no-sandbox"],
     ...(hasProxy
       ? {
           proxy: {
@@ -64,10 +64,14 @@ const main = async () => {
             password: PROXY_PASSWORD
           }
         }
-      : {})
-  };
+      : {}),
+    userAgent:
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    locale: "en-AU",
+    viewport: { width: 1920, height: 1080 },
+    timezoneId: "Australia/Sydney"
+  });
 
-  const context = await browser.newContext(contextOptions);
   await installResourceBlockingRoutes(context, (message) => console.log(`  ${message}`));
   const page = await context.newPage();
 
@@ -211,8 +215,8 @@ const main = async () => {
     process.exitCode = 1;
   } finally {
     await page.close();
+    // launchPersistentContext: closing the context also closes the browser
     await context.close();
-    await browser.close();
     console.log("\n[cleanup] Browser closed.");
   }
 };

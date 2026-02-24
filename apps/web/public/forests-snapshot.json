@@ -150,7 +150,7 @@
       {
         "id": "1658",
         "title": "Broadwater State Forest: Closed",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1658",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1658",
         "listedAt": "2020-12-14T03:57:00.000Z",
         "listedAtText": "2020-12-14T03:57:00.0000000Z",
         "untilAt": null,
@@ -173,7 +173,7 @@
       {
         "id": "1686",
         "title": "Gundar State Forest: Closed",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1686",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1686",
         "listedAt": "2020-01-14T06:24:00.000Z",
         "listedAtText": "2020-01-14T06:24:00.0000000Z",
         "untilAt": null,
@@ -196,7 +196,7 @@
       {
         "id": "4229",
         "title": "Myrtle Creek State Forest: Partial closure",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4229",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4229",
         "listedAt": "2025-12-07T13:01:00.000Z",
         "listedAtText": "2025-12-07T13:01:00.0000000Z",
         "untilAt": "2026-06-30T00:00:00.000Z",
@@ -217,7 +217,7 @@
       {
         "id": "1816",
         "title": "Yessabah State Forest closed",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1816",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1816",
         "listedAt": "2020-01-13T13:00:00.000Z",
         "listedAtText": "2020-01-13T13:00:00.0000000Z",
         "untilAt": null,
@@ -789,7 +789,7 @@
         {
           "id": "4986",
           "title": "Glenwood State Forest: Closure of Mountain Bike Trails due to harvesting",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4986",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4986",
           "listedAt": "2026-01-27T13:01:00.000Z",
           "listedAtText": "2026-01-27T13:01:00.0000000Z",
           "untilAt": "2026-04-30T00:00:00.000Z",
@@ -1563,7 +1563,7 @@
         {
           "id": "3367",
           "title": "Pennsylvania State Forest: Road closures (see notice for details)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3367",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3367",
           "listedAt": "2025-07-25T04:35:00.000Z",
           "listedAtText": "2025-07-25T04:35:00.0000000Z",
           "untilAt": null,
@@ -1637,7 +1637,7 @@
         {
           "id": "3368",
           "title": "Roseberg State Forest: Road closures (see notice for details)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3368",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3368",
           "listedAt": "2025-07-25T04:36:00.000Z",
           "listedAtText": "2025-07-25T04:36:00.0000000Z",
           "untilAt": null,
@@ -1711,7 +1711,7 @@
         {
           "id": "1654",
           "title": "Sunny Corner State Forest: Mary’s Park closed for restoration",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1654",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1654",
           "listedAt": "2022-01-11T03:41:00.000Z",
           "listedAtText": "2022-01-11T03:41:00.0000000Z",
           "untilAt": null,
@@ -1785,7 +1785,7 @@
         {
           "id": "5215",
           "title": "Vittoria State Forest: Closed for pest control operations",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=5215",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5215",
           "listedAt": "2026-02-22T13:01:00.000Z",
           "listedAtText": "2026-02-22T13:01:00.0000000Z",
           "untilAt": "2026-03-20T00:00:00.000Z",
@@ -1860,7 +1860,7 @@
         {
           "id": "2344",
           "title": "Bago State Forest: Sections of plantations closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2344",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2344",
           "listedAt": "2024-07-23T14:01:00.000Z",
           "listedAtText": "2024-07-23T14:01:00.0000000Z",
           "untilAt": null,
@@ -1986,7 +1986,7 @@
         {
           "id": "1981",
           "title": "Bondo State Forest: Partial Road Closure Notice - Nottingham Road",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1981",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1981",
           "listedAt": "2023-12-05T05:03:00.000Z",
           "listedAtText": "2023-12-05T05:03:00.0000000Z",
           "untilAt": null,
@@ -2160,7 +2160,7 @@
         {
           "id": "1685",
           "title": "Green Hills State Forest: Partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1685",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1685",
           "listedAt": "2020-01-14T06:23:00.000Z",
           "listedAtText": "2020-01-14T06:23:00.0000000Z",
           "untilAt": null,
@@ -2584,7 +2584,7 @@
         {
           "id": "2344",
           "title": "Bago State Forest: Sections of plantations closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2344",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2344",
           "listedAt": "2024-07-23T14:01:00.000Z",
           "listedAtText": "2024-07-23T14:01:00.0000000Z",
           "untilAt": null,
@@ -2710,7 +2710,7 @@
         {
           "id": "1981",
           "title": "Bondo State Forest: Partial Road Closure Notice - Nottingham Road",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1981",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1981",
           "listedAt": "2023-12-05T05:03:00.000Z",
           "listedAtText": "2023-12-05T05:03:00.0000000Z",
           "untilAt": null,
@@ -2884,7 +2884,7 @@
         {
           "id": "1685",
           "title": "Green Hills State Forest: Partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1685",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1685",
           "listedAt": "2020-01-14T06:23:00.000Z",
           "listedAtText": "2020-01-14T06:23:00.0000000Z",
           "untilAt": null,
@@ -3408,7 +3408,7 @@
         {
           "id": "1817",
           "title": "Penrose State Forest closed - Limited camping only off Paddys River Road",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1817",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1817",
           "listedAt": "2022-08-01T14:00:00.000Z",
           "listedAtText": "2022-08-01T14:00:00.0000000Z",
           "untilAt": null,
@@ -9184,7 +9184,7 @@
         {
           "id": "1647",
           "title": "Leard State Forest: Exclusive use on part",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1647",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1647",
           "listedAt": "2021-05-03T23:47:00.000Z",
           "listedAtText": "2021-05-03T23:47:00.0000000Z",
           "untilAt": "2033-12-30T00:00:00.000Z",
@@ -11458,7 +11458,7 @@
         {
           "id": "4885",
           "title": "Strahorn State Forest: Closed for pest control operations",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4885",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4885",
           "listedAt": "2026-02-21T13:01:00.000Z",
           "listedAtText": "2026-02-21T13:01:00.0000000Z",
           "untilAt": "2026-02-28T00:00:00.000Z",
@@ -14633,7 +14633,7 @@
         {
           "id": "3930",
           "title": "Flat Rock State Forest: Three Falls Road Closed until further notice",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3930",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3930",
           "listedAt": "2025-09-19T00:19:00.000Z",
           "listedAtText": "2025-09-19T00:19:00.0000000Z",
           "untilAt": null,
@@ -15757,7 +15757,7 @@
         {
           "id": "4789",
           "title": "Wandera State Forest: Knowles Road & Wandera Trig Fire Trail closed for road maintenance works",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4789",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4789",
           "listedAt": "2026-01-11T13:01:00.000Z",
           "listedAtText": "2026-01-11T13:01:00.0000000Z",
           "untilAt": null,
@@ -15781,7 +15781,7 @@
         {
           "id": "2311",
           "title": "Wandera State Forest: Wandera Trig Road Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2311",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2311",
           "listedAt": "2025-01-15T13:05:00.000Z",
           "listedAtText": "2025-01-15T13:05:00.0000000Z",
           "untilAt": null,
@@ -16206,7 +16206,7 @@
         {
           "id": "1821",
           "title": "Clouds Creek State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1821",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1821",
           "listedAt": "2023-03-02T13:00:00.000Z",
           "listedAtText": "2023-03-02T13:00:00.0000000Z",
           "untilAt": null,
@@ -16480,7 +16480,7 @@
         {
           "id": "4264",
           "title": "Mount Pikapene State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4264",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4264",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -16852,7 +16852,7 @@
         {
           "id": "3664",
           "title": "Avon River State Forest closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3664",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3664",
           "listedAt": "2025-05-06T23:10:00.000Z",
           "listedAtText": "2025-05-06T23:10:00.0000000Z",
           "untilAt": null,
@@ -17227,7 +17227,7 @@
         {
           "id": "3466",
           "title": "Barrington Tops State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3466",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3466",
           "listedAt": "2025-05-06T14:01:00.000Z",
           "listedAtText": "2025-05-06T14:01:00.0000000Z",
           "untilAt": null,
@@ -17250,7 +17250,7 @@
         {
           "id": "3012",
           "title": "Barrington Tops State Forest: Landslip on Barrington Tops Forest Road",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3012",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3012",
           "listedAt": "2025-05-27T14:01:00.000Z",
           "listedAtText": "2025-05-27T14:01:00.0000000Z",
           "untilAt": null,
@@ -17325,7 +17325,7 @@
         {
           "id": "1984",
           "title": "Bellangry State Forest: Number 1 Tower Picnic Area closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1984",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1984",
           "listedAt": "2025-04-05T05:06:00.000Z",
           "listedAtText": "2025-04-05T05:06:00.0000000Z",
           "untilAt": null,
@@ -17551,7 +17551,7 @@
         {
           "id": "1657",
           "title": "Boonanghi State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1657",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1657",
           "listedAt": "2020-12-14T03:56:00.000Z",
           "listedAtText": "2020-12-14T03:56:00.0000000Z",
           "untilAt": null,
@@ -18475,7 +18475,7 @@
         {
           "id": "1659",
           "title": "Carrai State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1659",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1659",
           "listedAt": "2025-10-08T03:58:00.000Z",
           "listedAtText": "2025-10-08T03:58:00.0000000Z",
           "untilAt": null,
@@ -18649,7 +18649,7 @@
         {
           "id": "4258",
           "title": "Cherry Tree State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4258",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4258",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -18721,7 +18721,7 @@
         {
           "id": "4260",
           "title": "Cherry Tree West State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4260",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4260",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -18793,7 +18793,7 @@
         {
           "id": "3994",
           "title": "Chichester State Forest: Partial closures and vehicle load limits due to severe weather impacts",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3994",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3994",
           "listedAt": "2025-10-01T06:52:00.000Z",
           "listedAtText": "2025-10-01T06:52:00.0000000Z",
           "untilAt": null,
@@ -18868,7 +18868,7 @@
         {
           "id": "1821",
           "title": "Clouds Creek State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1821",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1821",
           "listedAt": "2023-03-02T13:00:00.000Z",
           "listedAtText": "2023-03-02T13:00:00.0000000Z",
           "untilAt": null,
@@ -18992,7 +18992,7 @@
         {
           "id": "1652",
           "title": "Comboyne State Forest: Waitui Road closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1652",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1652",
           "listedAt": "2021-06-07T04:40:00.000Z",
           "listedAtText": "2021-06-07T04:40:00.0000000Z",
           "untilAt": null,
@@ -19216,7 +19216,7 @@
         {
           "id": "2314",
           "title": "Coopernook State Forest: Increased truck traffic",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2314",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2314",
           "listedAt": "2025-02-02T13:01:00.000Z",
           "listedAtText": "2025-02-02T13:01:00.0000000Z",
           "untilAt": null,
@@ -19392,7 +19392,7 @@
         {
           "id": "3006",
           "title": "Dalmorton State Forest partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3006",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3006",
           "listedAt": "2025-12-07T13:01:00.000Z",
           "listedAtText": "2025-12-07T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -20014,7 +20014,7 @@
         {
           "id": "4557",
           "title": "Ewingar State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4557",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4557",
           "listedAt": "2025-05-24T14:01:00.000Z",
           "listedAtText": "2025-05-24T14:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -20236,7 +20236,7 @@
         {
           "id": "3009",
           "title": "Giro State Forest: Baxters Ridge Road closed due to landslip",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3009",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3009",
           "listedAt": "2025-05-27T14:01:00.000Z",
           "listedAtText": "2025-05-27T14:01:00.0000000Z",
           "untilAt": null,
@@ -20411,7 +20411,7 @@
         {
           "id": "5149",
           "title": "Grange State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=5149",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5149",
           "listedAt": "2026-02-17T13:01:00.000Z",
           "listedAtText": "2026-02-17T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -20883,7 +20883,7 @@
         {
           "id": "3565",
           "title": "Kerewong State Forest: Temporary closure of Blackbutt Road (details in closure notice)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3565",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3565",
           "listedAt": "2025-05-07T01:15:00.000Z",
           "listedAtText": "2025-05-07T01:15:00.0000000Z",
           "untilAt": null,
@@ -20906,7 +20906,7 @@
         {
           "id": "2321",
           "title": "Kerewong State Forest: Temporary closure of Kerewong Road",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2321",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2321",
           "listedAt": "2025-03-16T13:01:00.000Z",
           "listedAtText": "2025-03-16T13:01:00.0000000Z",
           "untilAt": null,
@@ -21081,7 +21081,7 @@
         {
           "id": "1687",
           "title": "Kippara State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1687",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1687",
           "listedAt": "2020-12-14T06:25:00.000Z",
           "listedAtText": "2020-12-14T06:25:00.0000000Z",
           "untilAt": null,
@@ -21155,7 +21155,7 @@
         {
           "id": "3631",
           "title": "Kiwarrak State Forest: Break Neck Road, Deans Creek Road and Peters Road temporarily closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3631",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3631",
           "listedAt": "2025-05-07T01:21:00.000Z",
           "listedAtText": "2025-05-07T01:21:00.0000000Z",
           "untilAt": null,
@@ -21230,7 +21230,7 @@
         {
           "id": "3598",
           "title": "Knorrit State Forest: Temporary closure of Knodingbul Road (details in closure notice)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3598",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3598",
           "listedAt": "2025-05-07T01:18:00.000Z",
           "listedAtText": "2025-05-07T01:18:00.0000000Z",
           "untilAt": null,
@@ -21654,7 +21654,7 @@
         {
           "id": "4027",
           "title": "Masseys Creek State Forest campgrounds closed due to bushfire impact",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4027",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4027",
           "listedAt": "2025-10-06T00:21:00.000Z",
           "listedAtText": "2025-10-06T00:21:00.0000000Z",
           "untilAt": null,
@@ -21678,7 +21678,7 @@
         {
           "id": "3665",
           "title": "Masseys Creek State Forest closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3665",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3665",
           "listedAt": "2025-05-06T23:12:00.000Z",
           "listedAtText": "2025-05-06T23:12:00.0000000Z",
           "untilAt": null,
@@ -21702,7 +21702,7 @@
         {
           "id": "1653",
           "title": "Masseys Creek State Forest: Boonabilla Road and Basin Road closed to vehicle traffic",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1653",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1653",
           "listedAt": "2021-12-31T03:40:00.000Z",
           "listedAtText": "2021-12-31T03:40:00.0000000Z",
           "untilAt": null,
@@ -22126,7 +22126,7 @@
         {
           "id": "4918",
           "title": "Mount Belmore State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4918",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4918",
           "listedAt": "2026-01-18T13:01:00.000Z",
           "listedAtText": "2026-01-18T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -22198,7 +22198,7 @@
         {
           "id": "3532",
           "title": "Mount Boss State Forest: Fire Tower No.1 Picnic Area closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3532",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3532",
           "listedAt": "2025-05-07T01:09:00.000Z",
           "listedAtText": "2025-05-07T01:09:00.0000000Z",
           "untilAt": null,
@@ -22373,7 +22373,7 @@
         {
           "id": "4264",
           "title": "Mount Pikapene State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4264",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4264",
           "listedAt": "2025-11-09T13:01:00.000Z",
           "listedAtText": "2025-11-09T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -22645,7 +22645,7 @@
         {
           "id": "3666",
           "title": "Nerong State Forest closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3666",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3666",
           "listedAt": "2025-05-06T23:13:00.000Z",
           "listedAtText": "2025-05-06T23:13:00.0000000Z",
           "untilAt": null,
@@ -22770,7 +22770,7 @@
         {
           "id": "4233",
           "title": "Newfoundland State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4233",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4233",
           "listedAt": "2025-12-08T00:59:00.000Z",
           "listedAtText": "2025-12-08T00:59:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -23492,7 +23492,7 @@
         {
           "id": "4524",
           "title": "Pine Creek State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=4524",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4524",
           "listedAt": "2025-11-02T13:01:00.000Z",
           "listedAtText": "2025-11-02T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -23614,7 +23614,7 @@
         {
           "id": "1691",
           "title": "Putty State Forest: partly closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1691",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1691",
           "listedAt": "2020-01-14T06:29:00.000Z",
           "listedAtText": "2020-01-14T06:29:00.0000000Z",
           "untilAt": null,
@@ -24989,7 +24989,7 @@
         {
           "id": "2287",
           "title": "Wang Wauk State Forests: Wootton historic railway walk closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2287",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2287",
           "listedAt": "2024-12-09T00:59:00.000Z",
           "listedAtText": "2024-12-09T00:59:00.0000000Z",
           "untilAt": null,
@@ -25714,7 +25714,7 @@
         {
           "id": "1660",
           "title": "Copeton State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1660",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1660",
           "listedAt": "2020-01-14T03:59:00.000Z",
           "listedAtText": "2020-01-14T03:59:00.0000000Z",
           "untilAt": null,
@@ -25988,7 +25988,7 @@
         {
           "id": "1689",
           "title": "Nowendoc State Forest: Partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1689",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1689",
           "listedAt": "2020-01-14T06:27:00.000Z",
           "listedAtText": "2020-01-14T06:27:00.0000000Z",
           "untilAt": null,
@@ -27262,7 +27262,7 @@
         {
           "id": "1688",
           "title": "Lower Creek State Forest: Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1688",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1688",
           "listedAt": "2020-01-14T06:26:00.000Z",
           "listedAtText": "2020-01-14T06:26:00.0000000Z",
           "untilAt": null,
@@ -27486,7 +27486,7 @@
         {
           "id": "1689",
           "title": "Nowendoc State Forest: Partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1689",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1689",
           "listedAt": "2020-01-14T06:27:00.000Z",
           "listedAtText": "2020-01-14T06:27:00.0000000Z",
           "untilAt": null,
@@ -27810,7 +27810,7 @@
         {
           "id": "3103",
           "title": "Styx River State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=3103",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3103",
           "listedAt": "2025-12-07T13:01:00.000Z",
           "listedAtText": "2025-12-07T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -27831,7 +27831,7 @@
         {
           "id": "5052",
           "title": "Styx River State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=5052",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5052",
           "listedAt": "2026-01-26T13:01:00.000Z",
           "listedAtText": "2026-01-26T13:01:00.0000000Z",
           "untilAt": "2026-06-30T00:00:00.000Z",
@@ -28453,7 +28453,7 @@
         {
           "id": "2410",
           "title": "Tallaganda State Forest: Palerang road is closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=2410",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2410",
           "listedAt": "2024-06-04T14:01:00.000Z",
           "listedAtText": "2024-06-04T14:01:00.0000000Z",
           "untilAt": null,
@@ -28476,7 +28476,7 @@
         {
           "id": "1692",
           "title": "Tallanganda State Forest: Lowden Forest Rest Area remains closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1692",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1692",
           "listedAt": "2020-01-14T06:30:00.000Z",
           "listedAtText": "2020-01-14T06:30:00.0000000Z",
           "untilAt": null,
@@ -28551,7 +28551,7 @@
         {
           "id": "1982",
           "title": "Vulcan State Forest: Blue Hill quarry area closed to fossicking",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetails?id=1982",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1982",
           "listedAt": "2025-03-21T05:03:00.000Z",
           "listedAtText": "2025-03-21T05:03:00.0000000Z",
           "untilAt": null,

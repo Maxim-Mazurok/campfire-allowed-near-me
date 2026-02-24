@@ -890,7 +890,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
               {
                 id: "100",
                 title: "Closed Forest: Closed for event",
-                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=100",
+                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=100",
                 listedAt: null,
                 listedAtText: null,
                 untilAt: null,
@@ -944,7 +944,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
               {
                 id: "101",
                 title: "Partial Forest: Partial road closure",
-                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=101",
+                detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=101",
                 listedAt: null,
                 listedAtText: null,
                 untilAt: null,

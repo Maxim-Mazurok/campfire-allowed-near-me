@@ -113,7 +113,7 @@ describe("closure notices parsing", () => {
       <div id="closuresList">
         <ol>
           <li id="closureItem0">
-            <a href="./ClosureDetails?id=3664" title="Avon River State Forest closed">
+            <a href="./ClosureDetailsFrame?id=3664" title="Avon River State Forest closed">
               <h3>Avon River State Forest closed</h3>
               <p>
                 <span class="fb-summary">When: <time>2025-05-06T23:10:00.0000000Z</time></span>
@@ -122,7 +122,7 @@ describe("closure notices parsing", () => {
             </a>
           </li>
           <li id="closureItem1">
-            <a href="./ClosureDetails?id=5119" title="Belanglo State Forest: Closed due to large community event">
+            <a href="./ClosureDetailsFrame?id=5119" title="Belanglo State Forest: Closed due to large community event">
               <h3>Belanglo State Forest: Closed due to large community event</h3>
               <p>
                 <span class="fb-summary">When: <time>2026-05-01T01:59:00.0000000Z</time></span>
@@ -134,12 +134,12 @@ describe("closure notices parsing", () => {
       </div>
     `;
 
-    const notices = parseClosureNoticesPage(html, "https://forestclosure.fcnsw.net");
+    const notices = parseClosureNoticesPage(html, "https://forestclosure.fcnsw.net/indexframe");
     expect(notices).toHaveLength(2);
     expect(notices[0]).toMatchObject({
       id: "3664",
       title: "Avon River State Forest closed",
-      detailUrl: "https://forestclosure.fcnsw.net/ClosureDetails?id=3664",
+      detailUrl: "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3664",
       forestNameHint: "Avon River State Forest",
       status: "CLOSED"
     });

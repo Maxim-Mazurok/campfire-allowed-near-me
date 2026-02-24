@@ -8,6 +8,7 @@ data/cache/forestry-raw-pages.json
 data/cache/geocode-cache.json
 data/cache/*.sqlite
 data/cache/*.sqlite-*
+data/cache/browser-profile/
 .DS_Store
 .env*
 !.env.example

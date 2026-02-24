@@ -12,7 +12,7 @@ All five data sources are successfully scrapeable from GitHub Actions using a co
 |---|---|---|---|---|
 | Forestry fire bans | forestrycorporation.com.au | Cloudflare JS challenge | Playwright + stealth + residential proxy (headed) | ~79 KB |
 | Forestry forests directory | forestrycorporation.com.au | Cloudflare JS challenge | Playwright + stealth + residential proxy (headed) | ~485 KB |
-| Forest closures | forestclosure.fcnsw.net | AWS API Gateway IP block | `fetch()` through residential proxy | ~990 KB |
+| Forest closures | forestclosure.fcnsw.net/indexframe | AWS API Gateway IP block | `fetch()` through residential proxy | ~990 KB |
 | RFS fire danger ratings | rfs.nsw.gov.au | None | Plain `fetch()` | ~6 KB |
 | RFS fire danger GeoJSON | rfs.nsw.gov.au | None | Plain `fetch()` | ~1.6 MB |
 

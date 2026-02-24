@@ -12,7 +12,7 @@
 | API | Express + WebSocket (single process) | Runs locally on port 8787 |
 | Scraping (fire bans) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
 | Scraping (forests dir) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
-| Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net` — AWS API Gateway IP block |
+| Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net/indexframe` — AWS API Gateway IP block |
 | Total Fire Ban data | Direct `fetch()` to RFS XML/GeoJSON | `rfs.nsw.gov.au` — public, no auth |
 | Geocoding | Local Nominatim Docker + Google Places fallback | SQLite cache |
 | Driving routes | Google Routes API (`computeRoutes`) | SQLite cache, needs `GOOGLE_MAPS_API_KEY` |
@@ -73,7 +73,7 @@ All 5 data sources are scrapeable from GitHub Actions. Three different methods a
 | Target | Method | Why |
 |---|---|---|
 | forestrycorporation.com.au (2 pages) | Playwright + stealth + Decodo AU residential proxy (headed mode via xvfb) | Cloudflare Turnstile JS challenge requires both a real browser and a residential IP |
-| forestclosure.fcnsw.net | `fetch()` through Decodo AU residential proxy (`undici.ProxyAgent`) | AWS API Gateway blocks datacenter IPs; no browser needed |
+| forestclosure.fcnsw.net/indexframe | `fetch()` through Decodo AU residential proxy (`undici.ProxyAgent`) | AWS API Gateway blocks datacenter IPs; no browser needed |
 | rfs.nsw.gov.au (2 endpoints) | Plain `fetch()` | No bot protection |
 
 ### Key Findings

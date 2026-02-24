@@ -1,4 +1,5 @@
 import pLimit from "p-limit";
+import { existsSync, mkdirSync } from "node:fs";
 import { chromium, type Browser, type BrowserContext } from "playwright";
 import { ProxyAgent } from "undici";
 import {
@@ -12,7 +13,7 @@ import {
 } from "./forestry-parser.js";
 import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
-import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
+import { DEFAULT_FORESTRY_RAW_CACHE_PATH, DEFAULT_BROWSER_PROFILE_PATH } from "../utils/default-cache-paths.js";
 import { installResourceBlockingRoutes } from "../utils/resource-blocking.js";
 import { waitForReadyContent } from "./wait-for-ready-content.js";
 import type {
@@ -32,6 +33,7 @@ interface ForestryScraperOptions {
   rawPageCachePath: string;
   rawPageCacheTtlMs: number;
   proxyUrl: string | null;
+  browserProfileDirectory: string;
 }
 
 interface BrowserContextFactoryResult {
@@ -52,13 +54,14 @@ interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptio
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
   entryUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
-  closuresUrl: "https://forestclosure.fcnsw.net",
+  closuresUrl: "https://forestclosure.fcnsw.net/indexframe",
   timeoutMs: 90_000,
   maxAreaConcurrency: 1,
   maxClosureConcurrency: 1,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000,
-  proxyUrl: null
+  proxyUrl: null,
+  browserProfileDirectory: DEFAULT_BROWSER_PROFILE_PATH
 };
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -299,7 +302,7 @@ export class ForestryScraper {
     try {
       response = await this.fetchHtmlPlain(
         this.options.closuresUrl,
-        /forest closures|closuredetails/i
+        /forest closures|closuredetailsframe/i
       );
     } catch (closuresFetchError) {
       const message = errorMessage(closuresFetchError);
@@ -369,8 +372,13 @@ export class ForestryScraper {
             runtime.context = factoryResult.context;
             runtime.externalCleanup = factoryResult.cleanup;
           } else {
-            runtime.browser = await chromium.launch({ headless: true });
-            runtime.context = await runtime.browser.newContext({
+            const profileDirectory = this.options.browserProfileDirectory;
+            if (!existsSync(profileDirectory)) {
+              mkdirSync(profileDirectory, { recursive: true });
+            }
+            this.log(`[scrape] Using persistent browser profile: ${profileDirectory}`);
+            runtime.context = await chromium.launchPersistentContext(profileDirectory, {
+              headless: true,
               userAgent: "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
               locale: "en-AU"
             });
@@ -399,9 +407,9 @@ export class ForestryScraper {
     } finally {
       if (runtime.externalCleanup) {
         await runtime.externalCleanup();
-      } else {
-        if (runtime.context) await runtime.context.close();
-        if (runtime.browser) await runtime.browser.close();
+      } else if (runtime.context) {
+        // launchPersistentContext: closing the context also closes the browser
+        await runtime.context.close();
       }
     }
   }

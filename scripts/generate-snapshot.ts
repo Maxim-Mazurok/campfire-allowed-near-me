@@ -6,6 +6,7 @@ import { ForestryScraper } from "../apps/api/src/services/forestry-scraper.js";
 import { OSMGeocoder } from "../apps/api/src/services/osm-geocoder.js";
 import { TotalFireBanService } from "../apps/api/src/services/total-fire-ban-service.js";
 import { LiveForestDataService } from "../apps/api/src/services/live-forest-data-service.js";
+import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
 import type { PersistedSnapshot } from "../packages/shared/src/contracts.js";
 
 // ---------------------------------------------------------------------------
@@ -57,6 +58,8 @@ const MAX_GEOCODE_LOOKUPS_PER_RUN = Number(
 const MAX_PROXY_RETRIES = Number(
   process.env.MAX_PROXY_RETRIES ?? "5"
 );
+const BROWSER_PROFILE_DIRECTORY =
+  process.env.BROWSER_PROFILE_DIR ?? DEFAULT_BROWSER_PROFILE_PATH;
 
 const isRunningInCI = Boolean(process.env.CI);
 const hasProxy = isRunningInCI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
@@ -65,7 +68,7 @@ if (!isRunningInCI && PROXY_USERNAME) {
 }
 
 // ---------------------------------------------------------------------------
-// Browser context factory (stealth + residential proxy)
+// Browser context factory (stealth + residential proxy + persistent cache)
 // ---------------------------------------------------------------------------
 
 const createProxyBrowserContextFactory = (proxyPort: string) => {
@@ -77,13 +80,16 @@ const createProxyBrowserContextFactory = (proxyPort: string) => {
   }
 
   return async () => {
+    const profileDirectory = BROWSER_PROFILE_DIRECTORY;
+    if (!existsSync(profileDirectory)) {
+      mkdirSync(profileDirectory, { recursive: true });
+    }
     console.log(`Launching stealth browser with residential proxy (${PROXY_HOST}:${proxyPort})...`);
-    const browser = await chromium.launch({
-      headless: false,
-      args: ["--no-sandbox"]
-    });
+    console.log(`Browser profile directory: ${profileDirectory}`);
 
-    const context = await browser.newContext({
+    const context = await chromium.launchPersistentContext(profileDirectory, {
+      headless: false,
+      args: ["--no-sandbox"],
       proxy: {
         server: `http://${PROXY_HOST}:${proxyPort}`,
         username: PROXY_USERNAME,
@@ -99,8 +105,8 @@ const createProxyBrowserContextFactory = (proxyPort: string) => {
     return {
       context,
       cleanup: async () => {
+        // launchPersistentContext: closing the context also closes the browser
         await context.close();
-        await browser.close();
       }
     };
   };
@@ -161,7 +167,8 @@ const attemptScrape = async (
     browserContextFactory: createProxyBrowserContextFactory(proxyPort),
     verbose: true,
     rawPageCacheTtlMs: 0, // Disable caching — each attempt must fetch fresh pages
-    proxyUrl
+    proxyUrl,
+    browserProfileDirectory: BROWSER_PROFILE_DIRECTORY
   });
 
   const forestDataService = new LiveForestDataService({

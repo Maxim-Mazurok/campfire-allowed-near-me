@@ -9,7 +9,7 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
 - Scrapes Forestry Corporation NSW fire-ban page and linked area pages.
 - Loads NSW RFS Total Fire Ban status data and fire weather area map data.
 - Scrapes Forestry Corporation NSW forests directory (`/visiting/forests`) and parses all facility filters.
-- Scrapes Forestry NSW closures/notices feed (`https://forestclosure.fcnsw.net`) and matches notices to forests.
+- Scrapes Forestry NSW closures/notices feed (`https://forestclosure.fcnsw.net/indexframe`) and matches notices to forests.
 - Applies only closures/notices active right now (future and expired notices are ignored).
 - Extracts structured closure impacts (camping, 2WD, 4WD) from notice prose using deterministic rules, with optional Azure OpenAI enrichment.
 - Uses **Solid Fuel Fire Ban** and **Total Fire Ban** data in forest status, and excludes fully closed forests from nearest legal recommendations.
@@ -118,7 +118,7 @@ npm run warm:coordinates
 - `WEB_PREVIEW_PORT` (default `4173`)
 - `FORESTRY_ENTRY_URL` (default Forestry Corporation solid-fuel-fire-ban URL)
 - `FORESTRY_DIRECTORY_URL` (default Forestry Corporation forests directory URL)
-- `FORESTRY_CLOSURES_URL` (default `https://forestclosure.fcnsw.net`)
+- `FORESTRY_CLOSURES_URL` (default `https://forestclosure.fcnsw.net/indexframe`)
 - `FORESTRY_MAX_CLOSURE_CONCURRENCY` (default `4`, concurrent closure detail fetches)
 - `FORESTRY_RAW_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/forestry-raw-pages.json`)
 - `FORESTRY_RAW_CACHE_TTL_MS` (default `3600000`)
