@@ -58,7 +58,11 @@ const MAX_PROXY_RETRIES = Number(
   process.env.MAX_PROXY_RETRIES ?? "5"
 );
 
-const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+const isRunningInCI = Boolean(process.env.CI);
+const hasProxy = isRunningInCI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+if (!isRunningInCI && PROXY_USERNAME) {
+  console.log("⚠ Proxy credentials found but CI env not detected — skipping proxy (local run).");
+}
 
 // ---------------------------------------------------------------------------
 // Browser context factory (stealth + residential proxy)

@@ -7,6 +7,7 @@
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
+import { installResourceBlockingRoutes } from "../apps/api/src/utils/resource-blocking.js";
 
 // Suppress playwright-extra CDP session race (page closed before CDP resolves)
 process.on("unhandledRejection", (reason: unknown) => {
@@ -29,7 +30,11 @@ const TARGET_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const EXPECTED_PATTERN = /solid fuel fire ban|forest area/i;
 
-const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+const isRunningInCI = Boolean(process.env.CI);
+const hasProxy = isRunningInCI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+if (!isRunningInCI && PROXY_USERNAME) {
+  console.log("⚠ Proxy credentials found but CI env not detected — skipping proxy (local run).");
+}
 
 const main = async () => {
   console.log("=== Scrape Smoke Test ===");
@@ -63,6 +68,7 @@ const main = async () => {
   };
 
   const context = await browser.newContext(contextOptions);
+  await installResourceBlockingRoutes(context, (message) => console.log(`  ${message}`));
   const page = await context.newPage();
 
   try {

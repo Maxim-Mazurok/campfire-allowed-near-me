@@ -14,6 +14,7 @@ import {
 import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
+import { installResourceBlockingRoutes } from "../utils/resource-blocking.js";
 import { waitForReadyContent } from "./wait-for-ready-content.js";
 import type {
   ForestAreaWithForests,
@@ -446,13 +447,14 @@ export class ForestryScraper {
             const factoryResult = await this.browserContextFactory();
             runtime.context = factoryResult.context;
             runtime.externalCleanup = factoryResult.cleanup;
-            return runtime.context;
+          } else {
+            runtime.browser = await chromium.launch({ headless: true });
+            runtime.context = await runtime.browser.newContext({
+              userAgent: "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
+              locale: "en-AU"
+            });
           }
-          runtime.browser = await chromium.launch({ headless: true });
-          runtime.context = await runtime.browser.newContext({
-            userAgent: "campfire-allowed-near-me/1.0 (contact: local-dev; purpose: fire ban lookup)",
-            locale: "en-AU"
-          });
+          await installResourceBlockingRoutes(runtime.context, this.log);
           return runtime.context;
         })();
       }

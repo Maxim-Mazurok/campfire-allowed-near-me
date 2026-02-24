@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
+import { installResourceBlockingRoutes } from "../apps/api/src/utils/resource-blocking.js";
 
 chromium.use(StealthPlugin());
 
@@ -13,7 +14,11 @@ const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
 const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
 const PROXY_PORT = process.env.PROXY_PORT ?? "30001";
 
-const hasProxy = Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+const isRunningInCI = Boolean(process.env.CI);
+const hasProxy = isRunningInCI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+if (!isRunningInCI && PROXY_USERNAME) {
+  console.log("⚠ Proxy credentials found but CI env not detected — skipping proxy (local run).");
+}
 
 /**
  * needsBrowser: true = Cloudflare JS challenge, requires a browser to solve
@@ -266,6 +271,8 @@ const createProxyBrowserContext = async (): Promise<{
     viewport: { width: 1920, height: 1080 },
     timezoneId: "Australia/Sydney",
   });
+
+  await installResourceBlockingRoutes(context, (message) => console.log(`  ${message}`));
 
   return { browser, context };
 };
