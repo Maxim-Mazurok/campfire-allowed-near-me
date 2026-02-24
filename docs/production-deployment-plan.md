@@ -57,7 +57,7 @@
 1. **Static-first**: Forest data (bans, closures, geocodes, facilities) changes slowly — once or twice a day is plenty. Pre-compute everything into a single JSON snapshot.
 2. **No long-running server**: The Express API is eliminated from production. The SPA loads the snapshot directly from a static URL.
 3. **Thin API only for routing**: A single Cloudflare Worker proxies Google Routes API requests (to hide the API key), or we use haversine (straight-line) distance as the default and offer driving distance as an opt-in enhancement.
-4. **Free tier everything**: GitHub Actions (free for public repos), Cloudflare Pages (free), Cloudflare Workers (100K requests/day free), Google Routes API ($200 free monthly credit).
+4. **Free tier everything**: GitHub Actions (free for public repos), Cloudflare Pages (free), Cloudflare Workers (100K requests/day free), Google Maps Platform (per-SKU free tiers: 10K Geocoding requests/month, 5K Routes requests/month).
 
 ---
 
@@ -156,7 +156,7 @@ This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `F
 
 All geocoding runs periodically in background (GHA scheduled workflow or local dev), not per-request, so latency is not a concern — quality is the priority.
 
-- **Primary**: Google Geocoding API (`maps.googleapis.com/maps/api/geocode/json`) — covered by $200/month free credit. Results are validated against the forest name to reject implausible matches.
+- **Primary**: Google Geocoding API (`maps.googleapis.com/maps/api/geocode/json`) — Essentials tier with 10,000 free requests/month (since March 2025, per-SKU free tiers replaced the old $200/month credit). Results are validated against the forest name to reject implausible matches.
 - **Fallback**: OpenStreetMap Nominatim — public instance in GHA (`nominatim.openstreetmap.org`, 1 req/sec rate limit), local Docker container in development (`NOMINATIM_BASE_URL`).
 - **Cache persistence**: The SQLite geocode cache can be committed alongside the snapshot, or the snapshot can include pre-resolved coordinates (which it does — `latitude`/`longitude` fields on each `ForestPoint`).
 - **Key insight**: Once all forests are geocoded, the coordinates are stable. New forests appear rarely. The cache file size is small (~100KB of SQLite). We can store the resolved coordinates directly in the snapshot JSON.
@@ -212,7 +212,7 @@ Since driving routes are user-specific (different origin for each user), we have
 - Worker proxies to Google Routes API `computeRoutes` with the user's origin and all forest destinations
 - Worker hides the `GOOGLE_MAPS_API_KEY` as an environment secret
 - Results are cached in Cloudflare KV (keyed by rounded lat/long + forest ID) to avoid redundant API calls
-- **Cost**: Google Routes API gives $200/month free credit. Each `computeRoutes` call with `TRAFFIC_AWARE_OPTIMAL` is ~$0.015 (Pro tier). 150 forests per user = ~$2.25 per user load. That is ~88 free user loads per month, which is plenty for a pet project. If needed, use the Essentials tier ($0.005/request) by removing `TRAFFIC_AWARE_OPTIMAL` — then 150 forests = $0.75/user = ~266 free loads/month.
+- **Cost**: Since March 2025 Google Maps Platform uses per-SKU free tiers instead of the old $200/month credit. Routes API (Pro tier) gets 5,000 free requests/month. Each `computeRoutes` call with `TRAFFIC_AWARE_OPTIMAL` is ~$0.015 (Pro tier). 150 forests per user = ~$2.25 per user load. The 5K free tier covers ~33 user loads/month. If needed, use the Essentials tier ($0.005/request) by removing `TRAFFIC_AWARE_OPTIMAL` — then 150 forests = $0.75/user, and with 10K free Essentials requests that covers ~66 loads/month.
 - **Alternative**: Use OSRM (Open Source Routing Machine) via the public demo instance at `router.project-osrm.org` — completely free, but may have rate limits and less accuracy than Google. Could serve as a fallback.
 
 ---
@@ -293,10 +293,10 @@ Keep the current Express + WebSocket setup for local development:
 | Cloudflare Pages | Unlimited bandwidth, unlimited sites | 1 site, low traffic | **$0** |
 | Cloudflare Workers | 100K requests/day | A few hundred/day at most | **$0** |
 | Cloudflare KV | 1GB storage, 100K reads/day | Tiny | **$0** |
-| Google Routes API | $200/month free credit | ~$0.75-$2.25 per user load × maybe 50 users/month = $37-$112 | **$0** (covered by credit) |
-| Google Geocoding API | Part of $200/month credit | Negligible (forests are geocoded once) | **$0** |
+| Google Routes API | 5,000 free Pro requests/month | ~$0.75-$2.25 per user load × maybe 50 users/month = $37-$112 | **$0–$112** (free tier covers ~33 loads; overage billed at $0.015/req) |
+| Google Geocoding API | 10,000 free Essentials requests/month | Negligible (forests are geocoded once, ~200 lookups) | **$0** |
 | Public Nominatim | Free (rate limited) | ~200 lookups per snapshot rebuild (only for new forests) | **$0** |
-| **Total** | | | **~$3.65/year** |
+| **Total** | | | **~$3.65/year + potential Google Routes overage** |
 
 ---
 
@@ -348,7 +348,7 @@ Keep the current Express + WebSocket setup for local development:
 | Proxy service | Decodo (Smartproxy) Pay-As-You-Go | Cheapest per-GB ($3.50) for low-volume; AU residential endpoint; 12-month expiry |
 | Browser context | Shared per-domain | Reuse session across same-domain pages; avoids re-challenging on harder pages |
 | Frontend hosting | Cloudflare Pages (or GitHub Pages) | Free, fast, no maintenance |
-| Driving routes | Cloudflare Worker + Google Routes API | Need to hide API key; $200/month free credit is sufficient |
+| Driving routes | Cloudflare Worker + Google Routes API | Need to hide API key; 5K free Pro requests/month (per-SKU free tier since March 2025) |
 | Default distance | Haversine (client-side) | Free, instant, no API needed |
 | Geocoding | Google Geocoding API + Nominatim fallback | Coordinates cached in SQLite and snapshot |
 | WebSockets | Dev-only | No real-time data in production (snapshot is static) |
@@ -365,7 +365,7 @@ Keep the current Express + WebSocket setup for local development:
 | Decodo proxy service outage or shutdown | Scraping fails for 3/5 targets | Switch to alternative proxy (IPRoyal, Bright Data); credentials are easily rotated via GitHub Secrets |
 | Proxy IP gets flagged by Cloudflare | Intermittent failures | Decodo rotates residential IPs per-request; retry logic in pipeline; different session on each run |
 | Forestry Corporation changes page structure | Parser breaks, no data | Schema validation in GHA alerts via GitHub issue; parsers are already robust with fuzzy matching |
-| Google API cost exceeds $200/month | Small bill | Set billing alerts; use Essentials tier ($0.005/req); or switch to OSRM (free) |
+| Google API cost exceeds free tier | Small bill | Set billing alerts; downgrade Routes to Essentials tier ($0.005/req, 10K free/month); or switch to OSRM (free) |
 | Public Nominatim rate limits | Slow fallback geocoding | Google is primary; Nominatim is only used when Google fails. Coordinates are cached; only new forests need geocoding |
 | GHA scheduled runs are delayed | Data slightly stale | Acceptable for fire ban data; manual dispatch as backup |
 | Proxy bandwidth costs increase | Annual cost rises | Current usage is ~1.13 GB/year; even at 2x price ($7/GB) would be ~$8/year |
