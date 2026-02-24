@@ -28,17 +28,16 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 
 ## Frontend plan
 
-### P0
-- Move heavy derivations into memoized selector functions with stable inputs.
-- Split UI into focused components to reduce rerender scope.
+### Completed ✅
+- Memoized selector functions with stable inputs extracted from `App.tsx`.
+- UI split into focused components (FilterPanel, ForestListPanel, MapView, etc.).
+- List virtualization via `@tanstack/react-virtual` with threshold-based activation.
+- Viewport-aware marker rendering with zoom-aware budgets and padded bounds culling.
+- Memoized marker components with stable path option objects.
+- Single selected-marker popup layer instead of per-marker popups.
 
-### P1
-- Add list virtualization for forest list.
-- Add viewport-aware marker rendering or clustering strategy.
-- Avoid rendering non-visible marker details until needed.
-
-### P2
-- Add user-facing loading states by stage (data loaded, routes pending, etc.).
+### Remaining
+- User-facing loading states by stage (data loaded, routes pending, etc.).
 - Defer non-critical panels/dialog data until opened.
 
 ## Backend plan
@@ -67,11 +66,12 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 
 ## Practical implementation order
 
-1. Instrumentation first.
-2. Selector extraction.
-3. List virtualization.
-4. Marker rendering strategy.
-5. Backend route budget and async enrichment behavior.
+Remaining performance work (frontend high-impact baseline is complete):
+
+1. Backend route budget and async enrichment behavior.
+2. Source connector parallelism.
+3. Performance regression CI smoke tests.
+4. Instrumentation (p50/p95 latency, cache hit ratios).
 
 ## Exit criteria
 

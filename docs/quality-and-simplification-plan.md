@@ -21,49 +21,22 @@ Last updated: 2026-02-22
 - One concern per module.
 - No speculative abstractions.
 
-## Phase 1: Contract unification (DRY)
+## Phase 1: Contract unification ✅ COMPLETE
 
-### Tasks
-- Populate `packages/shared/src` with canonical API/domain DTO types.
-- Update API and web imports to shared contracts.
-- Remove duplicated local type definitions.
-
-### Acceptance checks
-- Typecheck passes.
-- No duplicate DTO definitions remain.
-- API response shape unchanged.
+Shared contracts live in `packages/shared/src/` (`contracts.ts`, `websocket.ts`, `distance.ts`). Both API and web import from there. No duplicate DTO definitions remain.
 
 ## Phase 2: API decomposition
 
-### Tasks
-- Split `LiveForestDataService` into explicit internal pipeline modules:
-  - `snapshot-repository`
-  - `facilities-matcher`
-  - `closure-matcher`
-  - `geocode-enricher`
-  - `route-enricher`
-  - `forest-response-assembler`
+### Remaining
+- Split `LiveForestDataService` (~1800 lines) into focused pipeline modules.
 - Keep `LiveForestDataService` as orchestration shell only.
+- Add unit tests for each extracted module.
 
-### Acceptance checks
-- Existing tests green.
-- New unit tests for each extracted module.
-- `LiveForestDataService` reduced substantially in length and branching.
+See [`/todo.md`](/todo.md) for the full task list.
 
-## Phase 3: Web decomposition
+## Phase 3: Web decomposition ✅ COMPLETE
 
-### Tasks
-- Extract these from `App.tsx`:
-  - query/progress websocket hooks
-  - preference persistence hook
-  - forest selectors (`matching`, `warnings`, `sorted lists`)
-  - presentation components (filter panel, warnings dialog, forest list panel)
-- Keep `App.tsx` as composition layer.
-
-### Acceptance checks
-- E2E behavior unchanged.
-- Forest list/filter/warnings logic covered by unit tests for selectors.
-- `App.tsx` no longer hosts major business logic.
+`App.tsx` reduced from ~2300 to ~500 lines. Extracted components: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`. Hooks, selectors, and domain logic extracted into `apps/web/src/lib/`.
 
 ## Phase 4: Code health guardrails
 
@@ -80,11 +53,6 @@ Last updated: 2026-02-22
 
 ## Suggested Pull Request Strategy
 
-1. PR 1: shared contracts only.
-2. PR 2: API extraction pass 1 (snapshot + assemblers).
-3. PR 3: API extraction pass 2 (matching + enrichment modules).
-4. PR 4: web hook extraction.
-5. PR 5: web selector and component extraction.
-6. PR 6: guardrails and docs updates.
-
-This keeps risk low and review quality high.
+1. PR 1: API extraction pass 1 (snapshot + assemblers).
+2. PR 2: API extraction pass 2 (matching + enrichment modules).
+3. PR 3: Guardrails and docs updates.

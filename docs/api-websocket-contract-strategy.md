@@ -2,13 +2,15 @@
 
 Last updated: 2026-02-22
 
-## What was implemented now
+## What was implemented
 
-- Shared contract source created in `packages/shared/src/contracts.ts`.
-- Shared websocket message contracts created in `packages/shared/src/websocket.ts`.
-- API websocket publish path now emits typed payloads from shared message contracts.
-- Websocket client handling in web app now uses a reusable typed reconnecting hook.
-- Frontend API types now consume shared contracts (no duplicated DTO definitions in web API layer).
+- Shared contract source in `packages/shared/src/contracts.ts`.
+- Shared websocket message contracts in `packages/shared/src/websocket.ts`.
+- API websocket publish path emits typed payloads from shared message contracts.
+- Websocket client uses a reusable typed reconnecting hook (`use-reconnecting-websocket.ts`).
+- Frontend API types consume shared contracts (no duplicated DTO definitions).
+
+This is considered complete. tRPC remains an optional future evaluation (see below).
 
 ## Why this is pragmatic now
 

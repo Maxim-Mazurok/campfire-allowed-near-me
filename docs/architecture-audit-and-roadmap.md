@@ -29,17 +29,15 @@ This document proposes a pragmatic, startup-appropriate target:
 - E2E tests pass (13 tests).
 
 ### Structural hotspots
-- `apps/web/src/App.tsx` is very large (2306 lines).
-- `apps/api/src/services/live-forest-data-service.ts` is very large (1768 lines).
-- `tests/unit/live-forest-data-service.test.ts` is very large (1280 lines).
-- `packages/shared/src` is empty while API and web define near-duplicate contract types.
+- `apps/api/src/services/live-forest-data-service.ts` remains large (~1800 lines) — decomposition pending.
+- `apps/web/src/App.tsx` reduced from ~2300 to ~500 lines ✅.
+- `packages/shared/src` populated with shared contracts ✅.
 
 ### Performance and UX signals
-- Map renders all matching and non-matching forests as live markers.
-- Forest list renders all matching forests in one list (no windowing).
-- Heavy derived calculations happen in `App.tsx`.
+- Map renders viewport-culled markers with zoom-aware budgets ✅.
+- Forest list uses threshold-based virtualization ✅.
+- Heavy derived calculations extracted to selectors ✅.
 - In dev/E2E, websocket reconnect noise appears (`EPIPE`/`ECONNRESET` through Vite proxy).
-- Runtime warning in browser console indicates React 19 compatibility concern in dependency stack (`element.ref` deprecation warning).
 
 ## Key Risks
 
@@ -99,30 +97,25 @@ No explicit architecture decision record trail yet; contributors and AI agents n
 4. **State model**
    - Keep UI state local, but grouped by concern (route settings, filters, dialogs, progress).
 
-## Prioritized Refactoring Backlog
+## Completed Refactoring
 
-### P0 (start immediately, highest leverage)
-1. Extract shared API contract types into `packages/shared/src` and consume from both API and web.
-2. Split `LiveForestDataService` into pipeline modules:
-   - snapshot loading/validation
-   - source fetch/merge
-   - facilities matching
-   - closure matching
-   - geocoding and routing enrichment
-3. Split `App.tsx` into feature components + selectors modules.
-4. Introduce a source connector interface for future data providers.
+The following high-leverage refactors are done:
 
-### P1 (near-term, performance + iteration speed)
-1. Implement list windowing/virtualization for forest list.
-2. Render only viewport-relevant markers or clustering at lower zoom levels.
-3. Move expensive filter/sort/warning derivations into selectors with stable inputs.
-4. Add endpoint-level timing metrics and cache hit ratios (basic telemetry logs).
+- **Shared contracts**: `packages/shared/src/` contains `contracts.ts`, `websocket.ts`, `distance.ts`. Both API and web consume from here; no duplicate DTOs.
+- **App.tsx decomposition**: Reduced from ~2300 lines to ~500 lines. Extracted: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`, plus hooks (`use-reconnecting-websocket`, `use-forest-progress`, `use-refresh-and-location`, `use-warning-dialog-data`) and domain/selector modules in `apps/web/src/lib/`.
+- **List virtualization**: `ForestListPanel` uses `@tanstack/react-virtual` with threshold-based activation.
+- **Map viewport-aware rendering**: Marker culling to padded viewport bounds, zoom-aware unmatched marker budgets, memoized marker components. Logic extracted to `apps/web/src/lib/map-marker-rendering.ts`.
+- **Memoized selectors**: Filter/sort/warning derivations moved to dedicated modules with stable inputs.
+- **Closure impact enricher**: Rules-based structured impact extraction with optional LLM enrichment layer (activates when Azure OpenAI credentials are provided).
 
-### P2 (expansion readiness)
-1. Add NSW parks connector and schema mapping.
-2. Add optional reviews connector (Google Places reviews metadata only).
-3. Add LLM extraction adapter behind strict budget and fallback rules.
-4. Add canonical confidence scoring and explainability payload per forest.
+## Remaining Refactoring
+
+See [`/todo.md`](/todo.md) for the current task list. Key remaining items:
+
+- `LiveForestDataService` decomposition (still ~1800 lines).
+- Source connector abstraction for multi-source expansion.
+- New data source connectors (NSW Parks, Google reviews).
+- Canonical confidence scoring and explainability payload per forest.
 
 ## Recommended File/Module Direction
 
@@ -158,23 +151,4 @@ No explicit architecture decision record trail yet; contributors and AI agents n
 - Performance remains responsive with significantly larger forest counts.
 - Test pyramid remains healthy and meaningful.
 
-## Suggested 6-Week Execution Sequence
 
-Week 1:
-- Shared contracts package + initial extraction.
-- Architecture decision docs established.
-
-Week 2:
-- `LiveForestDataService` decomposition (no behavior changes).
-
-Week 3:
-- `App.tsx` decomposition + selectors.
-
-Week 4:
-- Performance pass (virtualization + marker strategy).
-
-Week 5:
-- Source connector abstraction + first new connector spike.
-
-Week 6:
-- Hardening: tests, docs, benchmarks, cleanup.
