@@ -2,7 +2,7 @@ import { chmodSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-export type GeocodeProvider = "GOOGLE_PLACES" | "OSM_NOMINATIM";
+export type GeocodeProvider = "GOOGLE_GEOCODING" | "OSM_NOMINATIM";
 
 interface GeocodeHit {
   latitude: number;
@@ -20,19 +20,19 @@ interface NominatimRow {
   importance?: number;
 }
 
-interface GooglePlacesSearchResponse {
-  places?: Array<{
-    id?: string;
-    formattedAddress?: string;
-    displayName?: {
-      text?: string;
-      languageCode?: string;
-    };
+interface GoogleGeocodingResult {
+  formatted_address?: string;
+  geometry?: {
     location?: {
-      latitude?: number;
-      longitude?: number;
+      lat?: number;
+      lng?: number;
     };
-  }>;
+  };
+}
+
+interface GoogleGeocodingResponse {
+  status: string;
+  results?: GoogleGeocodingResult[];
 }
 
 export type GeocodeLookupOutcome =
@@ -66,10 +66,10 @@ export interface GeocodeResponse {
   attempts?: GeocodeLookupAttempt[];
 }
 
-const GOOGLE_FALLBACK_WARNING =
-  "Google Places geocoding failed for one or more lookups; OpenStreetMap fallback coordinates were used where available.";
+const NOMINATIM_FALLBACK_WARNING =
+  "Google Geocoding failed for one or more lookups; OpenStreetMap Nominatim fallback coordinates were used where available.";
 const GOOGLE_KEY_MISSING_WARNING =
-  "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap fallback geocoding is active.";
+  "Google Geocoding is unavailable because GOOGLE_MAPS_API_KEY is not configured; OpenStreetMap Nominatim fallback geocoding is active.";
 const DEFAULT_NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
 const DEFAULT_LOCAL_NOMINATIM_PORT = "8080";
 const DEFAULT_LOCAL_NOMINATIM_DELAY_MS = 200;
@@ -104,6 +104,92 @@ const toErrorMessage = (value: unknown): string => {
 const shouldRetryHttpStatus = (httpStatus: number): boolean =>
   httpStatus === 408 || httpStatus === 429 || httpStatus >= 500;
 
+/**
+ * Common words that appear in forest/area names and geocode results but
+ * carry no identifying value for matching. These are excluded when
+ * validating whether a geocode result matches the queried forest.
+ */
+const GEOCODE_STOP_WORDS = new Set([
+  "state", "forest", "forests", "national", "park", "reserve", "new", "south",
+  "wales", "australia", "nsw", "near", "around", "the", "of", "and", "pine",
+  "native", "region", "road", "council", "shire", "city", "area"
+]);
+
+/**
+ * Extract significant words from forest names, excluding common stop words,
+ * very short tokens, and parenthetical qualifiers (e.g. "(pine plantations)").
+ * Returns a set of lowercase words that carry identifying meaning
+ * (e.g. "croft", "knoll" from "Croft Knoll").
+ */
+const extractSignificantWords = (
+  forestNameWithoutStateForest: string,
+  directoryNameWithoutStateForest: string | null
+): Set<string> => {
+  // Strip parenthetical qualifiers like "(pine plantations)" — these are
+  // descriptive metadata that geocoders don't include in their results.
+  const stripParenthetical = (text: string): string =>
+    text.replace(/\s*\([^)]*\)/g, "").trim();
+
+  const cleanedForestName = stripParenthetical(forestNameWithoutStateForest);
+  const cleanedDirectoryName = directoryNameWithoutStateForest
+    ? stripParenthetical(directoryNameWithoutStateForest)
+    : null;
+
+  const combined = cleanedDirectoryName
+    ? `${cleanedForestName} ${cleanedDirectoryName}`
+    : cleanedForestName;
+
+  return new Set(
+    combined
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length >= 3 && !GEOCODE_STOP_WORDS.has(word))
+  );
+};
+
+/**
+ * Check whether a geocode result's displayName shares ALL significant
+ * words with the queried forest name. Used to reject results where the
+ * provider returned a completely different feature (e.g. Google returning
+ * "Koondrook State Forest" for "Croft Knoll State Forest", or "Croft NSW"
+ * for "Croft Knoll State Forest").
+ */
+const isPlausibleForestMatch = (
+  displayName: string,
+  significantWords: Set<string>
+): boolean => {
+  if (significantWords.size === 0) {
+    return true;
+  }
+
+  const displayNameLower = displayName.toLowerCase();
+  for (const word of significantWords) {
+    if (!displayNameLower.includes(word)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Display-name substrings that always indicate a false-positive geocode result.
+ * These are organisation offices or landmarks that geocoders sometimes return
+ * for forest-related queries but are never actual forests.
+ */
+const GEOCODE_BLACKLISTED_NAMES = [
+  "forestry corporation",
+];
+
+/**
+ * Returns true if the displayName contains any blacklisted substring,
+ * meaning the result should be rejected regardless of query type.
+ */
+const isBlacklistedGeocodeResult = (displayName: string): boolean => {
+  const lower = displayName.toLowerCase();
+  return GEOCODE_BLACKLISTED_NAMES.some((blacklisted) => lower.includes(blacklisted));
+};
+
 const isLocalNominatimBaseUrl = (baseUrl: string): boolean => {
   try {
     const parsedUrl = new URL(baseUrl);
@@ -119,7 +205,7 @@ const isLocalNominatimBaseUrl = (baseUrl: string): boolean => {
   }
 };
 
-export class OSMGeocoder {
+export class ForestGeocoder {
   private readonly cacheDbPath: string;
 
   private readonly requestDelayMs: number;
@@ -145,16 +231,6 @@ export class OSMGeocoder {
   private db: DatabaseSync;
 
   private newLookupsThisRun = 0;
-
-  private readonly backgroundGoogleEnrichmentQueue: Array<{
-    query: string;
-    aliasKey: string | null;
-    cacheKey: string;
-  }> = [];
-
-  private readonly queuedBackgroundGoogleEnrichmentKeys = new Set<string>();
-
-  private backgroundGoogleEnrichmentInProgress = false;
 
   resetLookupBudgetForRun(): void {
     this.newLookupsThisRun = 0;
@@ -361,7 +437,12 @@ export class OSMGeocoder {
       return null;
     }
 
-    const provider = row.provider === "GOOGLE_PLACES" ? "GOOGLE_PLACES" : "OSM_NOMINATIM";
+    // Normalise legacy "GOOGLE_PLACES" cache rows written before the switch to
+    // the Geocoding API.  Safe to remove once all caches have been regenerated.
+    const provider =
+      row.provider === "GOOGLE_GEOCODING" || row.provider === "GOOGLE_PLACES"
+        ? "GOOGLE_GEOCODING"
+        : "OSM_NOMINATIM";
 
     return {
       latitude: row.latitude,
@@ -399,6 +480,14 @@ export class OSMGeocoder {
           hit.provider,
           hit.updatedAt
         );
+    });
+  }
+
+  private deleteCached(key: string): void {
+    this.runWriteStatement(() => {
+      this.db
+        .prepare("DELETE FROM geocode_cache WHERE cache_key = ?")
+        .run(key);
     });
   }
 
@@ -453,7 +542,7 @@ export class OSMGeocoder {
     };
   }
 
-  private async lookupGooglePlaces(
+  private async lookupGoogleGeocoding(
     query: string,
     aliasKey: string | null,
     cacheKey: string
@@ -463,7 +552,7 @@ export class OSMGeocoder {
       return {
         hit: null,
         attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
+          "GOOGLE_GEOCODING",
           query,
           aliasKey,
           cacheKey,
@@ -472,23 +561,17 @@ export class OSMGeocoder {
       };
     }
 
-    const body = {
-      textQuery: query,
-      maxResultCount: 1,
-      languageCode: "en",
-      regionCode: "AU"
-    };
+    const geocodeUrl = new URL("https://maps.googleapis.com/maps/api/geocode/json");
+    geocodeUrl.searchParams.set("address", query);
+    geocodeUrl.searchParams.set("region", "au");
+    geocodeUrl.searchParams.set("language", "en");
+    geocodeUrl.searchParams.set("key", googleApiKey);
 
     const googleRequest = await this.runWithRetries(() =>
-      this.fetchWithTimeout("https://places.googleapis.com/v1/places:searchText", {
-        method: "POST",
+      this.fetchWithTimeout(geocodeUrl.toString(), {
         headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": googleApiKey,
-          "X-Goog-FieldMask":
-            "places.id,places.displayName,places.formattedAddress,places.location"
-        },
-        body: JSON.stringify(body)
+          Accept: "application/json"
+        }
       })
     );
 
@@ -496,7 +579,7 @@ export class OSMGeocoder {
       return {
         hit: null,
         attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
+          "GOOGLE_GEOCODING",
           query,
           aliasKey,
           cacheKey,
@@ -513,20 +596,20 @@ export class OSMGeocoder {
     if (!response.ok) {
       return {
         hit: null,
-        attempt: this.buildAttempt("GOOGLE_PLACES", query, aliasKey, cacheKey, "HTTP_ERROR", {
+        attempt: this.buildAttempt("GOOGLE_GEOCODING", query, aliasKey, cacheKey, "HTTP_ERROR", {
           httpStatus: response.status
         })
       };
     }
 
-    let rows: GooglePlacesSearchResponse;
+    let geocodingResponse: GoogleGeocodingResponse;
     try {
-      rows = (await response.json()) as GooglePlacesSearchResponse;
+      geocodingResponse = (await response.json()) as GoogleGeocodingResponse;
     } catch (error) {
       return {
         hit: null,
         attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
+          "GOOGLE_GEOCODING",
           query,
           aliasKey,
           cacheKey,
@@ -538,47 +621,46 @@ export class OSMGeocoder {
       };
     }
 
-    const places = rows.places ?? [];
-    const first = places[0];
+    const results = geocodingResponse.results ?? [];
+    const first = results[0];
 
-    if (!first?.location) {
+    if (!first?.geometry?.location) {
       return {
         hit: null,
         attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
+          "GOOGLE_GEOCODING",
           query,
           aliasKey,
           cacheKey,
           "EMPTY_RESULT",
           {
-            resultCount: places.length
+            resultCount: results.length
           }
         )
       };
     }
 
-    const latitude = Number(first.location.latitude);
-    const longitude = Number(first.location.longitude);
+    const latitude = Number(first.geometry.location.lat);
+    const longitude = Number(first.geometry.location.lng);
 
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
       return {
         hit: null,
         attempt: this.buildAttempt(
-          "GOOGLE_PLACES",
+          "GOOGLE_GEOCODING",
           query,
           aliasKey,
           cacheKey,
           "INVALID_COORDINATES",
           {
-            resultCount: places.length
+            resultCount: results.length
           }
         )
       };
     }
 
     const displayName =
-      first.displayName?.text?.trim() ||
-      first.formattedAddress?.trim() ||
+      first.formatted_address?.trim() ||
       query;
 
     const hit: GeocodeHit = {
@@ -586,14 +668,14 @@ export class OSMGeocoder {
       longitude,
       displayName,
       importance: 1,
-      provider: "GOOGLE_PLACES",
+      provider: "GOOGLE_GEOCODING",
       updatedAt: new Date().toISOString()
     };
 
     return {
       hit,
-      attempt: this.buildAttempt("GOOGLE_PLACES", query, aliasKey, cacheKey, "LOOKUP_SUCCESS", {
-        resultCount: places.length
+      attempt: this.buildAttempt("GOOGLE_GEOCODING", query, aliasKey, cacheKey, "LOOKUP_SUCCESS", {
+        resultCount: results.length
       })
     };
   }
@@ -763,49 +845,36 @@ export class OSMGeocoder {
         : null;
 
     if (cached && cacheKeyUsed) {
-      if (cached.provider === "OSM_NOMINATIM") {
-        this.enqueueBackgroundGoogleEnrichment(query, aliasKeyNormalized, queryKey);
+      // Populate the alias key in cache when a hit came from the query key only.
+      // This prevents a cascade of failed lookups on subsequent calls where the
+      // alias key (e.g. area:<url>) was never persisted.
+      if (aliasKeyNormalized && !cacheHitFromAlias) {
+        this.putCached(aliasKeyNormalized, cached);
       }
 
       return this.toGeocodeResponse(
         cached,
-        [this.buildAttempt("CACHE", query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")],
-        cached.provider === "OSM_NOMINATIM"
-          ? [this.googleApiKey ? GOOGLE_FALLBACK_WARNING : GOOGLE_KEY_MISSING_WARNING]
-          : undefined
+        [this.buildAttempt("CACHE", query, aliasKeyNormalized, cacheKeyUsed, "CACHE_HIT")]
       );
     }
 
     const attempts: GeocodeLookupAttempt[] = [];
     const warnings: string[] = [];
 
-    const nominatimLookup = await this.lookupNominatim(query, aliasKeyNormalized, queryKey);
-    attempts.push(nominatimLookup.attempt);
-
-    if (nominatimLookup.hit) {
-      this.putCached(queryKey, nominatimLookup.hit);
-      if (aliasKeyNormalized) {
-        this.putCached(aliasKeyNormalized, nominatimLookup.hit);
-      }
-
-      this.enqueueBackgroundGoogleEnrichment(query, aliasKeyNormalized, queryKey);
-
-      return this.toGeocodeResponse(nominatimLookup.hit, attempts, warnings);
-    }
-
+    // Google Geocoding API is the primary source of truth.
     const googleLookup =
       this.newLookupsThisRun >= this.maxNewLookupsPerRun
         ? {
             hit: null,
             attempt: this.buildAttempt(
-              "GOOGLE_PLACES",
+              "GOOGLE_GEOCODING",
               query,
               aliasKeyNormalized,
               queryKey,
               "LIMIT_REACHED"
             )
           }
-        : await this.lookupGooglePlaces(query, aliasKeyNormalized, queryKey);
+        : await this.lookupGoogleGeocoding(query, aliasKeyNormalized, queryKey);
 
     if (googleLookup.attempt.outcome !== "LIMIT_REACHED") {
       this.newLookupsThisRun += 1;
@@ -814,18 +883,45 @@ export class OSMGeocoder {
     attempts.push(googleLookup.attempt);
 
     if (googleLookup.hit) {
-      this.putCached(queryKey, googleLookup.hit);
-      if (aliasKeyNormalized) {
-        this.putCached(aliasKeyNormalized, googleLookup.hit);
-      }
+      if (isBlacklistedGeocodeResult(googleLookup.hit.displayName)) {
+        warnings.push(
+          `Rejected blacklisted Google result "${googleLookup.hit.displayName}" for query "${query}"`
+        );
+      } else {
+        this.putCached(queryKey, googleLookup.hit);
+        if (aliasKeyNormalized) {
+          this.putCached(aliasKeyNormalized, googleLookup.hit);
+        }
 
-      return this.toGeocodeResponse(googleLookup.hit, attempts);
+        return this.toGeocodeResponse(googleLookup.hit, attempts);
+      }
+    }
+
+    // Fall back to Nominatim when Google fails.
+    const nominatimLookup = await this.lookupNominatim(query, aliasKeyNormalized, queryKey);
+    attempts.push(nominatimLookup.attempt);
+
+    if (nominatimLookup.hit) {
+      if (isBlacklistedGeocodeResult(nominatimLookup.hit.displayName)) {
+        warnings.push(
+          `Rejected blacklisted Nominatim result "${nominatimLookup.hit.displayName}" for query "${query}"`
+        );
+      } else {
+        this.putCached(queryKey, nominatimLookup.hit);
+        if (aliasKeyNormalized) {
+          this.putCached(aliasKeyNormalized, nominatimLookup.hit);
+        }
+
+        warnings.push(
+          this.googleApiKey ? NOMINATIM_FALLBACK_WARNING : GOOGLE_KEY_MISSING_WARNING
+        );
+
+        return this.toGeocodeResponse(nominatimLookup.hit, attempts, warnings);
+      }
     }
 
     warnings.push(
-      googleLookup.attempt.outcome === "GOOGLE_API_KEY_MISSING"
-        ? GOOGLE_KEY_MISSING_WARNING
-        : GOOGLE_FALLBACK_WARNING
+      this.googleApiKey ? NOMINATIM_FALLBACK_WARNING : GOOGLE_KEY_MISSING_WARNING
     );
 
     return {
@@ -839,96 +935,10 @@ export class OSMGeocoder {
     };
   }
 
-  private enqueueBackgroundGoogleEnrichment(
-    query: string,
-    aliasKey: string | null,
-    cacheKey: string
-  ): void {
-    if (!this.googleApiKey) {
-      return;
-    }
-
-    if (this.newLookupsThisRun >= this.maxNewLookupsPerRun) {
-      return;
-    }
-
-    const queueKey = `${cacheKey}|${aliasKey ?? ""}`;
-    if (this.queuedBackgroundGoogleEnrichmentKeys.has(queueKey)) {
-      return;
-    }
-
-    this.queuedBackgroundGoogleEnrichmentKeys.add(queueKey);
-    this.backgroundGoogleEnrichmentQueue.push({
-      query,
-      aliasKey,
-      cacheKey
-    });
-
-    if (this.backgroundGoogleEnrichmentInProgress) {
-      return;
-    }
-
-    this.backgroundGoogleEnrichmentInProgress = true;
-    void this.runBackgroundGoogleEnrichmentQueue();
-  }
-
-  private async runBackgroundGoogleEnrichmentQueue(): Promise<void> {
-    try {
-      while (this.backgroundGoogleEnrichmentQueue.length > 0) {
-        const nextEnrichment = this.backgroundGoogleEnrichmentQueue.shift();
-        if (!nextEnrichment) {
-          continue;
-        }
-
-        const queueKey = `${nextEnrichment.cacheKey}|${nextEnrichment.aliasKey ?? ""}`;
-
-        try {
-          const aliasCachedHit = nextEnrichment.aliasKey
-            ? this.getCached(nextEnrichment.aliasKey)
-            : null;
-          const queryCachedHit = this.getCached(nextEnrichment.cacheKey);
-          const existingHit = aliasCachedHit ?? queryCachedHit;
-
-          if (existingHit?.provider === "GOOGLE_PLACES") {
-            continue;
-          }
-
-          if (this.newLookupsThisRun >= this.maxNewLookupsPerRun) {
-            continue;
-          }
-
-          const googleLookup = await this.lookupGooglePlaces(
-            nextEnrichment.query,
-            nextEnrichment.aliasKey,
-            nextEnrichment.cacheKey
-          );
-
-          if (googleLookup.attempt.outcome !== "LIMIT_REACHED") {
-            this.newLookupsThisRun += 1;
-          }
-
-          if (!googleLookup.hit) {
-            continue;
-          }
-
-          this.putCached(nextEnrichment.cacheKey, googleLookup.hit);
-          if (nextEnrichment.aliasKey) {
-            this.putCached(nextEnrichment.aliasKey, googleLookup.hit);
-          }
-        } catch {
-          continue;
-        } finally {
-          this.queuedBackgroundGoogleEnrichmentKeys.delete(queueKey);
-        }
-      }
-    } finally {
-      this.backgroundGoogleEnrichmentInProgress = false;
-    }
-  }
-
   async geocodeForest(
     forestName: string,
-    areaName?: string
+    areaName?: string,
+    options?: { directoryForestName?: string }
   ): Promise<GeocodeResponse> {
     const normalizedForestName = forestName.trim();
     const queryForestName = /state forest/i.test(normalizedForestName)
@@ -946,11 +956,35 @@ export class OSMGeocoder {
         .trim()
       : null;
 
-    const queryCandidates = [
+    // When the directory has a different spelling (e.g. "Crofts Knoll" vs
+    // fire ban "Croft Knoll"), generate additional query candidates from
+    // the directory name so the geocoder can match the correct feature.
+    const directoryName = options?.directoryForestName?.trim() ?? null;
+    const hasDistinctDirectoryName =
+      directoryName !== null &&
+      directoryName.toLowerCase() !== normalizedForestName.toLowerCase();
+    const directoryQueryName = hasDistinctDirectoryName
+      ? (/state forest/i.test(directoryName!) ? directoryName! : `${directoryName!} State Forest`)
+      : null;
+    const directoryNameWithoutStateForest = hasDistinctDirectoryName
+      ? directoryName!
+        .replace(/\bstate\s+forest\b/gi, "")
+        .replace(/\s+/g, " ")
+        .trim()
+      : null;
+
+    // Forest-specific candidates: contain the forest name or directory name.
+    const forestSpecificCandidates = [
       `${queryForestName}, New South Wales, Australia`,
       `${normalizedForestName}, New South Wales, Australia`,
       forestNameWithoutStateForest
         ? `${forestNameWithoutStateForest}, New South Wales, Australia`
+        : null,
+      directoryQueryName
+        ? `${directoryQueryName}, New South Wales, Australia`
+        : null,
+      directoryNameWithoutStateForest
+        ? `${directoryNameWithoutStateForest}, New South Wales, Australia`
         : null,
       normalizedAreaName
         ? `${queryForestName}, near ${normalizedAreaName}, New South Wales, Australia`
@@ -963,7 +997,13 @@ export class OSMGeocoder {
         : null,
       simplifiedAreaName && forestNameWithoutStateForest
         ? `${forestNameWithoutStateForest}, ${simplifiedAreaName}, New South Wales, Australia`
-        : null,
+        : null
+    ].filter((value): value is string => Boolean(value));
+
+    // Area-only fallback candidates: do NOT contain the forest name.
+    // Results from these should NOT be cached under the forest alias key,
+    // because area centroid coordinates are not the actual forest location.
+    const areaOnlyCandidates = [
       normalizedAreaName
         ? `${normalizedAreaName}, New South Wales, Australia`
         : null,
@@ -972,17 +1012,111 @@ export class OSMGeocoder {
         : null
     ].filter((value): value is string => Boolean(value));
 
-    const uniqueQueryCandidates = [...new Set(queryCandidates)];
+    const allCandidates = [...forestSpecificCandidates, ...areaOnlyCandidates];
+    const uniqueAllCandidates = [...new Set(allCandidates)];
+    const forestSpecificCandidateSet = new Set(forestSpecificCandidates);
+
+    // Significant words from the forest name (and directory name if available)
+    // used to validate that a geocode result actually matches the queried forest.
+    // Common generic words are excluded to avoid false positives.
+    const forestNameSignificantWords = extractSignificantWords(
+      forestNameWithoutStateForest,
+      directoryNameWithoutStateForest
+    );
     const forestKey = `forest:${normalizedAreaName ?? ""}:${normalizedForestName}`;
+    const aliasKeyNormalized = `alias:${this.normalizeKey(forestKey)}`;
     const attempts: GeocodeLookupAttempt[] = [];
     const warnings: string[] = [];
 
-    for (const query of uniqueQueryCandidates) {
-      const geocodeResult = await this.geocodeQuery(query, forestKey);
+    // Fast path: check alias cache for this forest.
+    // Validate the cached alias entry before returning it. If the cached
+    // display name doesn't mention the forest name (or the directory name
+    // when available), the entry is likely a stale area-centroid result from
+    // a previous run where the fire ban name couldn't be resolved directly.
+    // Delete the stale entry and retry with fresh lookups.
+    const aliasHit = this.getCached(aliasKeyNormalized);
+    if (aliasHit) {
+      const cachedDisplayLower = aliasHit.displayName.toLowerCase();
+      const matchesForestName = cachedDisplayLower.includes(
+        forestNameWithoutStateForest.toLowerCase()
+      );
+      const matchesDirectoryName = directoryNameWithoutStateForest
+        ? cachedDisplayLower.includes(directoryNameWithoutStateForest.toLowerCase())
+        : false;
+      const isStaleAreaFallback = !matchesForestName && !matchesDirectoryName;
+
+      if (!isStaleAreaFallback) {
+        return this.toGeocodeResponse(
+          aliasHit,
+          [this.buildAttempt("CACHE", forestKey, aliasKeyNormalized, aliasKeyNormalized, "CACHE_HIT")]
+        );
+      }
+
+      // Remove the stale alias so future runs don't keep returning it.
+      this.deleteCached(aliasKeyNormalized);
+    }
+
+    for (const query of uniqueAllCandidates) {
+      // No alias key passed to geocodeQuery — alias management is handled
+      // at the geocodeForest level to avoid caching area-only fallback
+      // results under the forest alias key.
+      const geocodeResult = await this.geocodeQuery(query);
       attempts.push(...(geocodeResult.attempts ?? []));
       warnings.push(...(geocodeResult.warnings ?? []));
 
       if (geocodeResult.latitude !== null && geocodeResult.longitude !== null) {
+        const resultDisplayName = geocodeResult.displayName ?? query;
+        const isForestSpecific = forestSpecificCandidateSet.has(query);
+
+        // For forest-specific candidates, validate that the result actually
+        // matches the queried forest. Reject results where the provider
+        // returned a completely different feature (e.g. Google returning
+        // "Koondrook State Forest" for "Croft Knoll State Forest").
+        if (isForestSpecific && !isPlausibleForestMatch(resultDisplayName, forestNameSignificantWords)) {
+          warnings.push(
+            `Rejected implausible result "${resultDisplayName}" for forest "${normalizedForestName}"`
+          );
+
+          // When the primary provider (Google) returns an implausible result,
+          // try Nominatim directly for this candidate before moving on.
+          // Google may confidently return the wrong forest, but Nominatim
+          // might have the correct mapping (e.g. "Crofts Knoll" vs "Croft Knoll").
+          const queryKey = `query:${this.normalizeKey(query)}`;
+          const nominatimRetry = await this.lookupNominatim(query, null, queryKey);
+          attempts.push(nominatimRetry.attempt);
+
+          if (nominatimRetry.hit) {
+            const nominatimDisplayName = nominatimRetry.hit.displayName;
+            if (isPlausibleForestMatch(nominatimDisplayName, forestNameSignificantWords)) {
+              // Nominatim returned a plausible result — update cache and use it.
+              this.putCached(queryKey, nominatimRetry.hit);
+              this.putCached(aliasKeyNormalized, nominatimRetry.hit);
+              return this.toGeocodeResponse(nominatimRetry.hit, attempts, [...new Set(warnings)]);
+            }
+
+            warnings.push(
+              `Rejected implausible Nominatim result "${nominatimDisplayName}" for forest "${normalizedForestName}"`
+            );
+          }
+
+          continue;
+        }
+
+        // Only cache the alias key for forest-specific candidate hits.
+        // Area-only fallback hits should NOT pollute the forest alias,
+        // so that future runs can retry with forest-specific candidates.
+        if (isForestSpecific) {
+          const hit: GeocodeHit = {
+            latitude: geocodeResult.latitude,
+            longitude: geocodeResult.longitude,
+            displayName: resultDisplayName,
+            importance: geocodeResult.confidence ?? 0,
+            provider: geocodeResult.provider ?? "OSM_NOMINATIM",
+            updatedAt: new Date().toISOString()
+          };
+          this.putCached(aliasKeyNormalized, hit);
+        }
+
         return {
           ...geocodeResult,
           attempts,

@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { ForestryScraper } from "../apps/api/src/services/forestry-scraper.js";
-import { OSMGeocoder } from "../apps/api/src/services/osm-geocoder.js";
+import { ForestGeocoder } from "../apps/api/src/services/forest-geocoder.js";
 import { TotalFireBanService } from "../apps/api/src/services/total-fire-ban-service.js";
 import { LiveForestDataService } from "../apps/api/src/services/live-forest-data-service.js";
 import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
@@ -157,7 +157,7 @@ const validateSnapshot = (snapshot: PersistedSnapshot): string[] => {
 
 const attemptScrape = async (
   proxyPort: string,
-  geocoder: OSMGeocoder,
+  geocoder: ForestGeocoder,
   totalFireBanService: TotalFireBanService
 ) => {
   const proxyUrl = hasProxy
@@ -220,7 +220,7 @@ const main = async () => {
   }
 
   // Set up shared services (geocoder + TFB are reusable across retries)
-  const geocoder = new OSMGeocoder({
+  const geocoder = new ForestGeocoder({
     cacheDbPath: GEOCODE_CACHE_PATH,
     nominatimBaseUrl: NOMINATIM_BASE_URL,
     googleApiKey: GOOGLE_MAPS_API_KEY || null,

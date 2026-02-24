@@ -5,7 +5,7 @@ import { writeFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { LiveForestDataService } from "../../apps/api/src/services/live-forest-data-service.js";
 import type { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
-import type { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
+import type { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
 import type { RouteService } from "../../apps/api/src/services/google-routes.js";
 import type { TotalFireBanService } from "../../apps/api/src/services/total-fire-ban-service.js";
 import type {
@@ -111,7 +111,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -221,7 +221,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -298,7 +298,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -457,7 +457,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder
+        geocoder: geocoder as unknown as ForestGeocoder
       });
 
       const response = await service.getForestData({
@@ -556,7 +556,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -645,7 +645,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -774,7 +774,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         routeService: routeServiceStub,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
@@ -890,7 +890,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -1021,7 +1021,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -1216,7 +1216,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -1329,7 +1329,7 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 

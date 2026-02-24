@@ -12,10 +12,10 @@ import { haversineDistanceKm } from "../utils/distance.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { ForestryScraper } from "./forestry-scraper.js";
 import {
-  OSMGeocoder,
+  ForestGeocoder,
   type GeocodeLookupAttempt,
   type GeocodeResponse
-} from "./osm-geocoder.js";
+} from "./forest-geocoder.js";
 import {
   TotalFireBanService,
   UNKNOWN_TOTAL_FIRE_BAN_STATUS_TEXT,
@@ -57,7 +57,7 @@ interface LiveForestDataServiceOptions {
   scrapeTtlMs?: number;
   sourceName?: string;
   scraper?: ForestryScraper;
-  geocoder?: OSMGeocoder;
+  geocoder?: ForestGeocoder;
   totalFireBanService?: TotalFireBanService;
   routeService?: RouteService;
 }
@@ -129,7 +129,7 @@ export class LiveForestDataService implements ForestDataService {
 
   private readonly scraper: ForestryScraper;
 
-  private readonly geocoder: OSMGeocoder;
+  private readonly geocoder: ForestGeocoder;
 
   private readonly totalFireBanService: TotalFireBanService;
 
@@ -156,7 +156,7 @@ export class LiveForestDataService implements ForestDataService {
         )
       });
     this.geocoder = options?.geocoder ??
-      new OSMGeocoder({
+      new ForestGeocoder({
         cacheDbPath: process.env.COORDINATE_CACHE_DB ?? "data/cache/coordinates.sqlite",
         maxNewLookupsPerRun: Number(
           process.env.GEOCODE_MAX_NEW_PER_REQUEST ?? "25"
@@ -772,7 +772,7 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     if (attempts.some((attempt) => attempt.outcome === "GOOGLE_API_KEY_MISSING")) {
-      return "Google Places geocoding is unavailable because GOOGLE_MAPS_API_KEY is missing.";
+      return "Google Geocoding is unavailable because GOOGLE_MAPS_API_KEY is missing.";
     }
 
     if (
@@ -1287,7 +1287,7 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
-    const areaGeocodeMap = new Map<string, Awaited<ReturnType<OSMGeocoder["geocodeArea"]>>>();
+    const areaGeocodeMap = new Map<string, Awaited<ReturnType<ForestGeocoder["geocodeArea"]>>>();
     const byForestName = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.facilities] as const)
     );
@@ -1388,13 +1388,25 @@ export class LiveForestDataService implements ForestDataService {
             status: area.status,
             statusText: this.normalizeBanStatusText(area.status, area.statusText)
           };
+        const facilityMatchForGeocode = facilityAssignments.byFireBanForestName.get(forestName);
+        const directoryForestName =
+          facilityMatchForGeocode?.matchedDirectoryForestName ?? undefined;
         const geocodeStartMs = Date.now();
-        const geocode = await this.geocoder.geocodeForest(forestName, area.areaName);
+        const geocode = await this.geocoder.geocodeForest(
+          forestName,
+          area.areaName,
+          directoryForestName ? { directoryForestName } : undefined
+        );
         const geocodeElapsedMs = Date.now() - geocodeStartMs;
-        const geocodeOutcomes = (geocode.attempts ?? []).map((attempt) => `${attempt.provider}:${attempt.outcome}`);
+        const geocodeAttempts = geocode.attempts ?? [];
+        const geocodeOutcomes = geocodeAttempts.map((attempt) => `${attempt.provider}:${attempt.outcome}`);
         const wasCacheHit = geocodeOutcomes.some((outcome) => outcome === "CACHE:CACHE_HIT");
+        const cacheHitAttempt = geocodeAttempts.find((attempt) => attempt.outcome === "CACHE_HIT");
+        const slowDetails = geocodeElapsedMs > 500
+          ? ` | cacheHitQuery=${cacheHitAttempt?.query ?? "none"} | cacheKey=${cacheHitAttempt?.cacheKey ?? "none"} | aliasKey=${cacheHitAttempt?.aliasKey ?? "none"} | area=${area.areaName}`
+          : "";
         console.log(
-          `[GEOCODE_FORESTS] ${forestName} | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]`
+          `[GEOCODE_FORESTS] ${forestName} | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]${slowDetails}`
         );
         this.collectGeocodeWarnings(warningSet, geocode);
         completedForestGeocodes += 1;
@@ -1476,10 +1488,15 @@ export class LiveForestDataService implements ForestDataService {
       const geocodeStartMs = Date.now();
       const geocode = await this.geocoder.geocodeForest(forestName);
       const geocodeElapsedMs = Date.now() - geocodeStartMs;
-      const geocodeOutcomes = (geocode.attempts ?? []).map((attempt) => `${attempt.provider}:${attempt.outcome}`);
+      const geocodeAttempts = geocode.attempts ?? [];
+      const geocodeOutcomes = geocodeAttempts.map((attempt) => `${attempt.provider}:${attempt.outcome}`);
       const wasCacheHit = geocodeOutcomes.some((outcome) => outcome === "CACHE:CACHE_HIT");
+      const cacheHitAttempt = geocodeAttempts.find((attempt) => attempt.outcome === "CACHE_HIT");
+      const slowDetails = geocodeElapsedMs > 500
+        ? ` | cacheHitQuery=${cacheHitAttempt?.query ?? "none"} | cacheKey=${cacheHitAttempt?.cacheKey ?? "none"} | aliasKey=${cacheHitAttempt?.aliasKey ?? "none"}`
+        : "";
       console.log(
-        `[GEOCODE_FORESTS] ${forestName} (unmatched) | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]`
+        `[GEOCODE_FORESTS] ${forestName} (unmatched) | ${wasCacheHit ? "CACHE_HIT" : "LOOKUP"} | ${geocodeElapsedMs}ms | outcomes=[${geocodeOutcomes.join(", ")}]${slowDetails}`
       );
       this.collectGeocodeWarnings(warningSet, geocode);
       completedForestGeocodes += 1;

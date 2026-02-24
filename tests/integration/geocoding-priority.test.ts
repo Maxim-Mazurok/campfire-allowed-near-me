@@ -2,9 +2,9 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
+import { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
 
-describe("OSMGeocoder forest lookup priority", () => {
+describe("ForestGeocoder forest lookup priority", () => {
   const originalFetch = globalThis.fetch;
 
   afterEach(() => {
@@ -17,23 +17,24 @@ describe("OSMGeocoder forest lookup priority", () => {
 
     const searchTextQueries: string[] = [];
 
-    globalThis.fetch = vi.fn(async (url, init) => {
+    globalThis.fetch = vi.fn(async (url) => {
       const parsedUrl = new URL(String(url));
-      if (parsedUrl.hostname === "places.googleapis.com") {
-        const requestBody = JSON.parse(String(init?.body ?? "{}")) as { textQuery?: string };
-        const textQuery = String(requestBody.textQuery ?? "");
-        searchTextQueries.push(textQuery);
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        searchTextQueries.push(address);
 
-        if (textQuery === "Badja State Forest, New South Wales, Australia") {
+        if (address === "Badja State Forest, New South Wales, Australia") {
           return new Response(
             JSON.stringify({
-              places: [
+              status: "OK",
+              results: [
                 {
-                  displayName: { text: "Badja State Forest" },
-                  formattedAddress: "Badja State Forest, NSW",
-                  location: {
-                    latitude: -35.89,
-                    longitude: 149.57
+                  formatted_address: "Badja State Forest, NSW",
+                  geometry: {
+                    location: {
+                      lat: -35.89,
+                      lng: 149.57
+                    }
                   }
                 }
               ]
@@ -42,7 +43,7 @@ describe("OSMGeocoder forest lookup priority", () => {
           );
         }
 
-        return new Response(JSON.stringify({ places: [] }), {
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
           status: 200,
           headers: { "Content-Type": "application/json" }
         });
@@ -55,7 +56,7 @@ describe("OSMGeocoder forest lookup priority", () => {
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -82,23 +83,24 @@ describe("OSMGeocoder forest lookup priority", () => {
 
     const searchTextQueries: string[] = [];
 
-    globalThis.fetch = vi.fn(async (url, init) => {
+    globalThis.fetch = vi.fn(async (url) => {
       const parsedUrl = new URL(String(url));
-      if (parsedUrl.hostname === "places.googleapis.com") {
-        const requestBody = JSON.parse(String(init?.body ?? "{}")) as { textQuery?: string };
-        const textQuery = String(requestBody.textQuery ?? "");
-        searchTextQueries.push(textQuery);
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        searchTextQueries.push(address);
 
-        if (textQuery === "Badja State Forest, near State forests around Bombala, New South Wales, Australia") {
+        if (address === "Badja State Forest, near State forests around Bombala, New South Wales, Australia") {
           return new Response(
             JSON.stringify({
-              places: [
+              status: "OK",
+              results: [
                 {
-                  displayName: { text: "Badja State Forest" },
-                  formattedAddress: "Badja State Forest, NSW",
-                  location: {
-                    latitude: -35.9,
-                    longitude: 149.58
+                  formatted_address: "Badja State Forest, NSW",
+                  geometry: {
+                    location: {
+                      lat: -35.9,
+                      lng: 149.58
+                    }
                   }
                 }
               ]
@@ -107,7 +109,7 @@ describe("OSMGeocoder forest lookup priority", () => {
           );
         }
 
-        return new Response(JSON.stringify({ places: [] }), {
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
           status: 200,
           headers: { "Content-Type": "application/json" }
         });
@@ -120,7 +122,7 @@ describe("OSMGeocoder forest lookup priority", () => {
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -168,14 +170,14 @@ describe("OSMGeocoder forest lookup priority", () => {
         );
       }
 
-      return new Response(JSON.stringify({ places: [] }), {
+      return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
         status: 200,
         headers: { "Content-Type": "application/json" }
       });
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -244,14 +246,14 @@ describe("OSMGeocoder forest lookup priority", () => {
         );
       }
 
-      return new Response(JSON.stringify({ places: [] }), {
+      return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
         status: 200,
         headers: { "Content-Type": "application/json" }
       });
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -288,29 +290,32 @@ describe("OSMGeocoder forest lookup priority", () => {
     }
   });
 
-  it("returns Nominatim first and upgrades to Google from background enrichment", async () => {
-    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-background-google-"));
+  it("prefers Google Geocoding over Nominatim when both can resolve", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-google-preferred-"));
     const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
 
     let googleRequests = 0;
+    let nominatimRequests = 0;
 
-    globalThis.fetch = vi.fn(async (url, init) => {
+    globalThis.fetch = vi.fn(async (url) => {
       const parsedUrl = new URL(String(url));
 
-      if (parsedUrl.hostname === "places.googleapis.com") {
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
         googleRequests += 1;
 
-        const requestBody = JSON.parse(String(init?.body ?? "{}")) as { textQuery?: string };
-        if (requestBody.textQuery?.includes("Badja")) {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        if (address.includes("Badja")) {
           return new Response(
             JSON.stringify({
-              places: [
+              status: "OK",
+              results: [
                 {
-                  displayName: { text: "Badja State Forest" },
-                  formattedAddress: "Badja State Forest, NSW",
-                  location: {
-                    latitude: -35.77,
-                    longitude: 149.66
+                  formatted_address: "Badja State Forest, NSW",
+                  geometry: {
+                    location: {
+                      lat: -35.77,
+                      lng: 149.66
+                    }
                   }
                 }
               ]
@@ -319,13 +324,14 @@ describe("OSMGeocoder forest lookup priority", () => {
           );
         }
 
-        return new Response(JSON.stringify({ places: [] }), {
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
           status: 200,
           headers: { "Content-Type": "application/json" }
         });
       }
 
       if (parsedUrl.pathname === "/search") {
+        nominatimRequests += 1;
         return new Response(
           JSON.stringify([
             {
@@ -346,7 +352,7 @@ describe("OSMGeocoder forest lookup priority", () => {
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -355,37 +361,19 @@ describe("OSMGeocoder forest lookup priority", () => {
         nominatimBaseUrl: "http://localhost:8080"
       });
 
-      const firstLookup = await geocoder.geocodeForest(
+      const result = await geocoder.geocodeForest(
         "Badja State Forest",
         "State forests around Bombala"
       );
 
-      expect(firstLookup.provider).toBe("OSM_NOMINATIM");
-      expect(firstLookup.latitude).toBe(-35.91);
-      expect(firstLookup.longitude).toBe(149.59);
+      // Google is the primary source of truth
+      expect(result.provider).toBe("GOOGLE_GEOCODING");
+      expect(result.latitude).toBe(-35.77);
+      expect(result.longitude).toBe(149.66);
 
-      for (let i = 0; i < 30 && googleRequests === 0; i += 1) {
-        await new Promise((resolve) => setTimeout(resolve, 20));
-      }
-
+      // Google was called, Nominatim was NOT needed
       expect(googleRequests).toBeGreaterThan(0);
-
-      let secondLookup = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
-      );
-
-      for (let i = 0; i < 30 && secondLookup.provider !== "GOOGLE_PLACES"; i += 1) {
-        await new Promise((resolve) => setTimeout(resolve, 20));
-        secondLookup = await geocoder.geocodeForest(
-          "Badja State Forest",
-          "State forests around Bombala"
-        );
-      }
-
-      expect(secondLookup.provider).toBe("GOOGLE_PLACES");
-      expect(secondLookup.latitude).toBe(-35.77);
-      expect(secondLookup.longitude).toBe(149.66);
+      expect(nominatimRequests).toBe(0);
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true });
     }
@@ -397,14 +385,14 @@ describe("OSMGeocoder forest lookup priority", () => {
 
     let googleRequestCount = 0;
 
-    globalThis.fetch = vi.fn(async (url, init) => {
+    globalThis.fetch = vi.fn(async (url) => {
       const parsedUrl = new URL(String(url));
 
-      if (parsedUrl.hostname === "places.googleapis.com") {
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
         googleRequestCount += 1;
 
         if (googleRequestCount === 1) {
-          return new Response(JSON.stringify({ places: [] }), {
+          return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
             status: 200,
             headers: { "Content-Type": "application/json" }
           });
@@ -412,13 +400,15 @@ describe("OSMGeocoder forest lookup priority", () => {
 
         return new Response(
           JSON.stringify({
-            places: [
+            status: "OK",
+            results: [
               {
-                displayName: { text: "Brewombenia State Forest" },
-                formattedAddress: "Brewombenia State Forest, NSW",
-                location: {
-                  latitude: -31.21,
-                  longitude: 148.54
+                formatted_address: "Brewombenia State Forest, NSW",
+                geometry: {
+                  location: {
+                    lat: -31.21,
+                    lng: 148.54
+                  }
                 }
               }
             ]
@@ -441,7 +431,7 @@ describe("OSMGeocoder forest lookup priority", () => {
     }) as unknown as typeof fetch;
 
     try {
-      const geocoder = new OSMGeocoder({
+      const geocoder = new ForestGeocoder({
         cacheDbPath,
         requestDelayMs: 0,
         requestTimeoutMs: 5000,
@@ -459,7 +449,7 @@ describe("OSMGeocoder forest lookup priority", () => {
       expect(
         firstMiss.attempts?.some(
           (attempt) =>
-            attempt.provider === "GOOGLE_PLACES" && attempt.outcome === "EMPTY_RESULT"
+            attempt.provider === "GOOGLE_GEOCODING" && attempt.outcome === "EMPTY_RESULT"
         )
       ).toBe(true);
 
@@ -471,7 +461,7 @@ describe("OSMGeocoder forest lookup priority", () => {
       expect(
         secondLimited.attempts?.some(
           (attempt) =>
-            attempt.provider === "GOOGLE_PLACES" && attempt.outcome === "LIMIT_REACHED"
+            attempt.provider === "GOOGLE_GEOCODING" && attempt.outcome === "LIMIT_REACHED"
         )
       ).toBe(true);
 
@@ -484,7 +474,7 @@ describe("OSMGeocoder forest lookup priority", () => {
 
       expect(thirdRetried.latitude).toBe(-31.21);
       expect(thirdRetried.longitude).toBe(148.54);
-      expect(thirdRetried.provider).toBe("GOOGLE_PLACES");
+      expect(thirdRetried.provider).toBe("GOOGLE_GEOCODING");
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true });
     }

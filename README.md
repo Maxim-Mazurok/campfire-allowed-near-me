@@ -15,8 +15,8 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
 - Uses **Solid Fuel Fire Ban** and **Total Fire Ban** data in forest status, and excludes fully closed forests from nearest legal recommendations.
 - Ignores Firewood collection status for campfire legality.
 - UI built with **Mantine v8** component library and **@tabler/icons-react** icons.
-- Resolves forest coordinates with local Nominatim first for fast initial results, then enriches/upgrades coordinates in the background with Google Places.
-- Supports optional local Nominatim fallback (`NOMINATIM_BASE_URL`) for high-volume/local development geocoding.
+- Resolves forest coordinates with Google Geocoding API as the primary source, falling back to OpenStreetMap Nominatim when Google is unavailable or returns implausible results.
+- Supports optional local Nominatim instance (`NOMINATIM_BASE_URL`) for development; uses public Nominatim in CI/GHA.
 - Maps forests with OpenStreetMap + Leaflet.
 - Computes driving distance/time with Google Routes traffic for next Saturday at 10:00 AM (request-time calculation).
 - Route settings let users choose `No tolls` (default) or `Allow toll roads`.
@@ -135,7 +135,7 @@ npm run warm:coordinates
 - `CLOSURE_LLM_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/closure-llm-impacts.json`)
 - `CLOSURE_LLM_CACHE_TTL_MS` (default `604800000`, 7 days)
 - `SCRAPE_TTL_MS` (default `900000`, in-memory processed snapshot TTL)
-- `GOOGLE_MAPS_API_KEY` (required for Google Places geocoding and Google Routes driving metrics)
+- `GOOGLE_MAPS_API_KEY` (required for Google Geocoding and Google Routes driving metrics)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
 - `GEOCODE_DELAY_MS` (default `1200`)
 - `GEOCODE_TIMEOUT_MS` (default `15000`)

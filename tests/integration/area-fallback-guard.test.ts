@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import { LiveForestDataService } from "../../apps/api/src/services/live-forest-data-service.js";
 import type {
   GeocodeLookupAttempt,
-  OSMGeocoder
-} from "../../apps/api/src/services/osm-geocoder.js";
+  ForestGeocoder
+} from "../../apps/api/src/services/forest-geocoder.js";
 import type { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
 import type { TotalFireBanService } from "../../apps/api/src/services/total-fire-ban-service.js";
 import type { ForestryScrapeResult } from "../../apps/api/src/types/domain.js";
@@ -34,7 +34,7 @@ const makeTotalFireBanServiceStub = (): TotalFireBanService =>
 const makeForestAttempt = (
   outcome: GeocodeLookupAttempt["outcome"]
 ): GeocodeLookupAttempt => ({
-  provider: "GOOGLE_PLACES",
+  provider: "GOOGLE_GEOCODING",
   query: "Badja State Forest, New South Wales, Australia",
   aliasKey: "forest:State forests around Bombala:Badja State Forest",
   cacheKey: "query:badja state forest",
@@ -92,7 +92,7 @@ describe("forest geocode area fallback guard", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 
@@ -155,7 +155,7 @@ describe("forest geocode area fallback guard", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as OSMGeocoder,
+        geocoder: geocoder as unknown as ForestGeocoder,
         totalFireBanService: makeTotalFireBanServiceStub()
       });
 

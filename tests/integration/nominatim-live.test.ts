@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { OSMGeocoder } from "../../apps/api/src/services/osm-geocoder.js";
+import { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
 
 const shouldRunLiveNominatimTest = process.env.NOMINATIM_LIVE_TEST !== "0";
 const describeLiveNominatim = shouldRunLiveNominatimTest ? describe : describe.skip;
@@ -15,7 +15,7 @@ describeLiveNominatim("live Nominatim integration", () => {
     );
     const cacheDbPath = join(temporaryDirectoryPath, "coordinates.sqlite");
 
-    const geocoder = new OSMGeocoder({
+    const geocoder = new ForestGeocoder({
       cacheDbPath,
       nominatimBaseUrl,
       googleApiKey: null,
@@ -72,7 +72,7 @@ describeLiveNominatim("live Nominatim integration", () => {
     );
     const cacheDbPath = join(temporaryDirectoryPath, "coordinates.sqlite");
 
-    const geocoder = new OSMGeocoder({
+    const geocoder = new ForestGeocoder({
       cacheDbPath,
       nominatimBaseUrl,
       googleApiKey: null,

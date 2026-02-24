@@ -14,7 +14,7 @@
 | Scraping (forests dir) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
 | Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net/indexframe` — AWS API Gateway IP block |
 | Total Fire Ban data | Direct `fetch()` to RFS XML/GeoJSON | `rfs.nsw.gov.au` — public, no auth |
-| Geocoding | Local Nominatim Docker + Google Places fallback | SQLite cache |
+| Geocoding | Google Geocoding API + Nominatim fallback | SQLite cache |
 | Driving routes | Google Routes API (`computeRoutes`) | SQLite cache, needs `GOOGLE_MAPS_API_KEY` |
 | Data persistence | JSON snapshots on disk + SQLite caches | `data/cache/` directory |
 | WebSockets | Two channels: refresh progress + load progress | For live UI feedback |
@@ -133,9 +133,9 @@ jobs:
 
 ### New script: `scripts/generate-snapshot.ts`
 
-This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `OSMGeocoder`, but:
+This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `ForestGeocoder`, but:
 - Outputs a `PersistedSnapshot` JSON file (same schema as existing snapshots)
-- Uses public Nominatim for geocoding (no Docker needed) — rate-limited to 1 req/sec, but fine for a batch job that runs twice a day
+- Uses Google Geocoding API as the primary geocoder with Nominatim fallback (public Nominatim in GHA, local Docker in development)
 - Skips driving route computation (that is user-specific and done client-side or via Worker)
 - Includes all forest points with coordinates, ban statuses, facilities, closure data
 - Saves to `data/forests-snapshot.json`
@@ -152,13 +152,13 @@ This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `O
 3. Snapshot committed to a `gh-pages` or `data` branch, or uploaded to Cloudflare R2
 4. SPA fetches snapshot at load time from a static URL
 
-### Geocoding Strategy (No Docker)
+### Geocoding Strategy
 
-Current setup uses a local Nominatim Docker container with an Australia OSM PBF extract. For production:
+All geocoding runs periodically in background (GHA scheduled workflow or local dev), not per-request, so latency is not a concern — quality is the priority.
 
-- **Primary**: Public Nominatim API (`nominatim.openstreetmap.org`) — free, 1 req/sec rate limit per the usage policy. Fine for batch geocoding in GHA (there are ~150-200 forests, once geocoded they are cached).
+- **Primary**: Google Geocoding API (`maps.googleapis.com/maps/api/geocode/json`) — covered by $200/month free credit. Results are validated against the forest name to reject implausible matches.
+- **Fallback**: OpenStreetMap Nominatim — public instance in GHA (`nominatim.openstreetmap.org`, 1 req/sec rate limit), local Docker container in development (`NOMINATIM_BASE_URL`).
 - **Cache persistence**: The SQLite geocode cache can be committed alongside the snapshot, or the snapshot can include pre-resolved coordinates (which it does — `latitude`/`longitude` fields on each `ForestPoint`).
-- **Google Places fallback**: Use the existing Google Places geocoding as fallback (covered by the $200/month free credit).
 - **Key insight**: Once all forests are geocoded, the coordinates are stable. New forests appear rarely. The cache file size is small (~100KB of SQLite). We can store the resolved coordinates directly in the snapshot JSON.
 
 ---
@@ -294,7 +294,7 @@ Keep the current Express + WebSocket setup for local development:
 | Cloudflare Workers | 100K requests/day | A few hundred/day at most | **$0** |
 | Cloudflare KV | 1GB storage, 100K reads/day | Tiny | **$0** |
 | Google Routes API | $200/month free credit | ~$0.75-$2.25 per user load × maybe 50 users/month = $37-$112 | **$0** (covered by credit) |
-| Google Places API | Part of $200/month credit | Negligible (forests are geocoded once) | **$0** |
+| Google Geocoding API | Part of $200/month credit | Negligible (forests are geocoded once) | **$0** |
 | Public Nominatim | Free (rate limited) | ~200 lookups per snapshot rebuild (only for new forests) | **$0** |
 | **Total** | | | **~$3.65/year** |
 
@@ -350,7 +350,7 @@ Keep the current Express + WebSocket setup for local development:
 | Frontend hosting | Cloudflare Pages (or GitHub Pages) | Free, fast, no maintenance |
 | Driving routes | Cloudflare Worker + Google Routes API | Need to hide API key; $200/month free credit is sufficient |
 | Default distance | Haversine (client-side) | Free, instant, no API needed |
-| Geocoding | Public Nominatim + Google Places fallback | No Docker needed; coordinates cached in snapshot |
+| Geocoding | Google Geocoding API + Nominatim fallback | Coordinates cached in SQLite and snapshot |
 | WebSockets | Dev-only | No real-time data in production (snapshot is static) |
 | Database | None | JSON snapshot + KV cache is sufficient |
 | Refresh button | Hidden in production (or link to GHA status) | Users can't trigger scraping on static hosting |
@@ -366,6 +366,6 @@ Keep the current Express + WebSocket setup for local development:
 | Proxy IP gets flagged by Cloudflare | Intermittent failures | Decodo rotates residential IPs per-request; retry logic in pipeline; different session on each run |
 | Forestry Corporation changes page structure | Parser breaks, no data | Schema validation in GHA alerts via GitHub issue; parsers are already robust with fuzzy matching |
 | Google API cost exceeds $200/month | Small bill | Set billing alerts; use Essentials tier ($0.005/req); or switch to OSRM (free) |
-| Public Nominatim rate limits | Slow geocoding | Coordinates are cached; only new forests need geocoding; can also use Google Places |
+| Public Nominatim rate limits | Slow fallback geocoding | Google is primary; Nominatim is only used when Google fails. Coordinates are cached; only new forests need geocoding |
 | GHA scheduled runs are delayed | Data slightly stale | Acceptable for fire ban data; manual dispatch as backup |
 | Proxy bandwidth costs increase | Annual cost rises | Current usage is ~1.13 GB/year; even at 2x price ($7/GB) would be ~$8/year |
