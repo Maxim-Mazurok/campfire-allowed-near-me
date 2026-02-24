@@ -80,7 +80,9 @@ export class ForestryScraper {
         filePath: this.options.rawPageCachePath,
         ttlMs: this.options.rawPageCacheTtlMs
       });
-    this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
+    this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher({
+      verbose: options?.verbose
+    });
     this.browserContextFactory = options?.browserContextFactory ?? null;
     this.log = options?.verbose ? (message) => console.log(`  ${message}`) : () => {};
   }
@@ -313,6 +315,7 @@ export class ForestryScraper {
       return { closures: [], warnings: ["Could not load Forestry closures/notices page due to anti-bot verification."] };
     }
     const closures = parseClosureNoticesPage(response.html, response.url);
+    this.log(`[scrapeClosures] Parsed ${closures.length} closure notice(s). Fetching detail pages...`);
     if (!closures.length) {
       return { closures: [], warnings: ["No closure notices were parsed from Forestry closures/notices page."] };
     }
@@ -347,6 +350,7 @@ export class ForestryScraper {
     );
 
     const structured = await this.closureImpactEnricher.enrichNotices(closuresWithDetails);
+    this.log(`[scrapeClosures] Closure scraping complete.`);
     const closureWarnings = new Set<string>(structured.warnings);
     if (detailChallengeCount > 0) {
       closureWarnings.add(`Could not load ${detailChallengeCount} closure detail page(s) due to anti-bot verification.`);

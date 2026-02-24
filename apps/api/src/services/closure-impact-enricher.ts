@@ -17,6 +17,7 @@ interface ClosureImpactEnricherOptions {
   cachePath?: string;
   cacheTtlMs?: number;
   maxNoticesPerRefresh?: number;
+  verbose?: boolean;
 }
 
 interface ClosureImpactCacheEntry {
@@ -335,6 +336,8 @@ export class ClosureImpactEnricher {
 
   private readonly maxNoticesPerRefresh: number;
 
+  private readonly log: (message: string) => void;
+
   private nextAllowedCallAtMs = 0;
 
   private cacheLoaded = false;
@@ -409,17 +412,21 @@ export class ClosureImpactEnricher {
         process.env.CLOSURE_LLM_MAX_NOTICES_PER_REFRESH,
         DEFAULT_MAX_NOTICES_PER_REFRESH
       );
+    this.log = options?.verbose ? (message) => console.log(`  ${message}`) : () => {};
   }
 
   async enrichNotices(
     notices: ForestClosureNotice[]
   ): Promise<{ notices: ForestClosureNotice[]; warnings: string[] }> {
+    const enrichmentStartTime = Date.now();
+    this.log(`[enrichNotices] Enriching ${notices.length} closure notice(s) (LLM ${this.enabled ? "enabled" : "disabled"}).`);
     const warnings = new Set<string>();
     await this.loadCacheIfNeeded();
 
     let llmCalls = 0;
     let llmFallbackCount = 0;
     let llmSkippedByBudgetCount = 0;
+    let llmCacheHitCount = 0;
     let firstLlmError: string | null = null;
 
     const enriched: ForestClosureNotice[] = [];
@@ -448,10 +455,12 @@ export class ClosureImpactEnricher {
         const cachedImpact = this.getCacheEntry(normalizedNotice.id, inputHash);
         if (cachedImpact) {
           selectedImpact = cachedImpact;
+          llmCacheHitCount += 1;
         } else if (llmCalls >= this.maxNoticesPerRefresh) {
           llmSkippedByBudgetCount += 1;
         } else {
           try {
+            this.log(`[enrichNotices] LLM call ${llmCalls + 1}/${this.maxNoticesPerRefresh} for "${normalizedNotice.title.slice(0, 80)}"`);
             const llmDraft = await this.requestLlmStructuredImpact(normalizedNotice);
             selectedImpact = {
               source: "LLM",
@@ -484,6 +493,12 @@ export class ClosureImpactEnricher {
     }
 
     await this.persistCacheIfNeeded();
+
+    const enrichmentElapsedMs = Date.now() - enrichmentStartTime;
+    this.log(
+      `[enrichNotices] Done in ${(enrichmentElapsedMs / 1000).toFixed(1)}s` +
+      ` (${llmCalls} LLM call(s), ${llmCacheHitCount} cache hit(s), ${llmFallbackCount} fallback(s), ${llmSkippedByBudgetCount} skipped).`
+    );
 
     if (llmCalls > 0) {
       warnings.add(
@@ -630,6 +645,7 @@ export class ClosureImpactEnricher {
   private async waitForCallSlot(): Promise<void> {
     const waitMs = this.nextAllowedCallAtMs - Date.now();
     if (waitMs > 0) {
+      this.log(`[enrichNotices] Rate-limit wait: ${(waitMs / 1000).toFixed(1)}s`);
       await this.sleep(waitMs);
     }
   }
