@@ -1,5 +1,6 @@
 import pLimit from "p-limit";
-import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
+import { chromium, type Browser, type BrowserContext } from "playwright";
+import { ProxyAgent } from "undici";
 import {
   classifyClosureNoticeTags,
   isCloudflareChallengeHtml,
@@ -13,6 +14,7 @@ import {
 import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
+import { waitForReadyContent } from "./wait-for-ready-content.js";
 import type {
   ForestAreaWithForests,
   ForestClosureNotice,
@@ -30,6 +32,7 @@ interface ForestryScraperOptions {
   maxClosureConcurrency: number;
   rawPageCachePath: string;
   rawPageCacheTtlMs: number;
+  proxyUrl: string | null;
 }
 
 interface BrowserContextFactoryResult {
@@ -44,6 +47,7 @@ interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptio
   closureImpactEnricher?: ClosureImpactEnricher;
   browserContextFactory?: BrowserContextFactory;
   verbose?: boolean;
+  proxyUrl?: string | null;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
@@ -55,45 +59,8 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   maxFilterConcurrency: 1,
   maxClosureConcurrency: 1,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
-  rawPageCacheTtlMs: 60 * 60 * 1000
-};
-
-const waitForReadyContent = async (
-  page: Page,
-  expectedPattern: RegExp | null,
-  timeoutMs: number,
-  label: string,
-  log: (message: string) => void
-): Promise<string> => {
-  const start = Date.now();
-  let pollCount = 0;
-
-  while (Date.now() - start < timeoutMs) {
-    pollCount += 1;
-    const html = await page.content();
-    const isCloudflare = isCloudflareChallengeHtml(html);
-    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-
-    if (pollCount === 1 || pollCount % 5 === 0) {
-      log(`[waitForReady] ${label} #${pollCount} (${elapsed}s) CF=${isCloudflare} len=${html.length}`);
-    }
-    if (!isCloudflare) {
-      if (!expectedPattern || expectedPattern.test(html)) {
-        log(`[waitForReady] ${label} matched ${elapsed}s (#${pollCount})`);
-        return html;
-      }
-      // Body fallback only when no specific pattern required
-      if (!expectedPattern && /<body/i.test(html) && html.length > 5000) {
-        log(`[waitForReady] ${label} body fallback ${elapsed}s (${html.length}B)`);
-        return html;
-      }
-    }
-    await page.waitForTimeout(2000);
-  }
-
-  const finalHtml = await page.content();
-  log(`[waitForReady] ${label} TIMED OUT ${((Date.now() - start) / 1000).toFixed(1)}s (#${pollCount} CF=${isCloudflareChallengeHtml(finalHtml)} len=${finalHtml.length})`);
-  return finalHtml;
+  rawPageCacheTtlMs: 60 * 60 * 1000,
+  proxyUrl: null
 };
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -178,6 +145,46 @@ export class ForestryScraper {
     } finally {
       await page.close();
     }
+  }
+
+  /**
+   * Plain fetch() for non-Cloudflare URLs (e.g. forestclosure.fcnsw.net).
+   * Only needs a residential IP, not a real browser — saves proxy bandwidth.
+   */
+  private async fetchHtmlPlain(
+    url: string,
+    expectedPattern: RegExp | null
+  ): Promise<{ html: string; url: string }> {
+    let cached: Awaited<ReturnType<RawPageCache["get"]>> = null;
+    try { cached = await this.rawPageCache.get(url); } catch { cached = null; }
+    if (cached) return { html: cached.html, url: cached.finalUrl };
+
+    this.log(`[fetchHtmlPlain] → ${url}`);
+    const fetchOptions: RequestInit = {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-AU,en;q=0.9"
+      },
+      signal: AbortSignal.timeout(this.options.timeoutMs)
+    };
+    if (this.options.proxyUrl) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Node undici dispatcher
+      (fetchOptions as any).dispatcher = new ProxyAgent(this.options.proxyUrl);
+    }
+
+    const response = await fetch(url, fetchOptions);
+    this.log(`[fetchHtmlPlain] HTTP ${response.status} (${response.headers.get("content-length") ?? "?"} bytes)`);
+    if (!response.ok) throw new Error(`fetchHtmlPlain: HTTP ${response.status} for ${url}`);
+
+    const html = await response.text();
+    const finalUrl = response.url || url;
+    if (expectedPattern && !expectedPattern.test(html)) {
+      this.log(`[fetchHtmlPlain] WARNING: expected pattern not matched in ${url} (${html.length} bytes)`);
+    }
+    try { await this.rawPageCache.set(url, { finalUrl, html }); } catch { /* non-fatal */ }
+
+    return { html, url: finalUrl };
   }
 
   private async scrapeAreas(
@@ -362,16 +369,13 @@ export class ForestryScraper {
     };
   }
 
-  private async scrapeClosures(
-    getContext: () => Promise<BrowserContext>
-  ): Promise<{
+  private async scrapeClosures(): Promise<{
     closures: ForestryScrapeResult["closures"];
     warnings: string[];
   }> {
     let response: { html: string; url: string };
     try {
-      response = await this.fetchHtml(
-        getContext,
+      response = await this.fetchHtmlPlain(
         this.options.closuresUrl,
         /forest closures|closuredetails/i
       );
@@ -396,8 +400,8 @@ export class ForestryScraper {
       closures.map((closure) =>
         detailLimit(async (): Promise<ForestClosureNotice> => {
           try {
-            const detailResponse = await this.fetchHtml(
-              getContext, closure.detailUrl,
+            const detailResponse = await this.fetchHtmlPlain(
+              closure.detailUrl,
               /more information|go to forest closures list|closures and notices/i
             );
             if (isCloudflareChallengeHtml(detailResponse.html)) {
@@ -461,7 +465,7 @@ export class ForestryScraper {
       // same BrowserContext.
       const areas = await this.scrapeAreas(getContext);
       const directory = await this.scrapeDirectory(getContext);
-      const closuresResult = await this.scrapeClosures(getContext);
+      const closuresResult = await this.scrapeClosures();
 
       return {
         areas,

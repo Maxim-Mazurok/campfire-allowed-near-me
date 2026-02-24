@@ -149,10 +149,15 @@ const attemptScrape = async (
   geocoder: OSMGeocoder,
   totalFireBanService: TotalFireBanService
 ) => {
+  const proxyUrl = hasProxy
+    ? `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_HOST}:${proxyPort}`
+    : null;
+
   const scraper = new ForestryScraper({
     browserContextFactory: createProxyBrowserContextFactory(proxyPort),
     verbose: true,
-    rawPageCacheTtlMs: 0 // Disable caching — each attempt must fetch fresh pages
+    rawPageCacheTtlMs: 0, // Disable caching — each attempt must fetch fresh pages
+    proxyUrl
   });
 
   const forestDataService = new LiveForestDataService({
