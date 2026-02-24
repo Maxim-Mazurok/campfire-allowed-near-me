@@ -1,7 +1,7 @@
 name: Update Forest Data
 
 on:
-  schedule:
+  # schedule:
     # Twice daily: 6 AM and 6 PM UTC (~4-5 PM / 4-5 AM AEST)
     # - cron: "0 6,18 * * *" # todo: enable after fixing
   workflow_dispatch:
