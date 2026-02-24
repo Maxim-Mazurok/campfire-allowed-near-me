@@ -1,6 +1,6 @@
 # Architecture Audit and Pragmatic Roadmap
 
-Last updated: 2026-02-22
+Last updated: 2026-02-25
 
 ## Executive Summary
 
@@ -80,7 +80,7 @@ No explicit architecture decision record trail yet; contributors and AI agents n
    - Pure functions and deterministic outputs.
 
 4. **Enrichment Pipeline**
-   - Geocoding, routing, optional LLM enrichers.
+   - FCNSW boundary lookup (preferred), fallback geocoding, routing, optional LLM enrichers.
    - Each enrichment step independent and cache-aware.
 
 5. **Query Assembly**
@@ -116,6 +116,7 @@ See [`/todo.md`](/todo.md) for the current task list. Key remaining items:
 - Source connector abstraction for multi-source expansion.
 - New data source connectors (NSW Parks, Google reviews).
 - Canonical confidence scoring and explainability payload per forest.
+- FCNSW ArcGIS polygon-first integration and fallback geocoder demotion.
 
 ## Recommended File/Module Direction
 

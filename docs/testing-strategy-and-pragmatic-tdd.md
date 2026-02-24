@@ -1,6 +1,6 @@
 # Testing Strategy and Pragmatic TDD Plan
 
-Last updated: 2026-02-22
+Last updated: 2026-02-25
 
 ## Testing Philosophy
 
@@ -14,7 +14,7 @@ Do not chase 100% coverage. Chase confidence in critical decisions and failure p
 ## Current Baseline
 
 - Unit: strong, with extensive parser and service behavior checks.
-- Integration: healthy route/progress/geocoder coverage.
+- Integration: healthy route/progress/location-enrichment coverage.
 - E2E: broad happy-path and warning/interaction coverage.
 
 ## Gaps to Address
@@ -41,7 +41,7 @@ Do not chase 100% coverage. Chase confidence in critical decisions and failure p
   - cache hit/miss,
   - refresh modes.
 - Source connector + normalization wiring.
-- Geocoder/routing fallback behavior.
+- FCNSW boundary lookup + fallback geocoder/routing behavior.
 
 ### E2E tests (minimal but high value)
 - Initial load + nearest recommendation.
@@ -75,7 +75,7 @@ Use non-flaky thresholds and trend tracking, not strict micro-benchmarks.
 
 - Keep deterministic fixtures in-repo.
 - Add one "large fixture" profile for scale tests.
-- Keep live external tests opt-in (already good pattern with local Nominatim test).
+- Keep live external tests opt-in (FCNSW ArcGIS live checks and local Nominatim fallback checks).
 
 ## CI Guardrails
 

@@ -15,8 +15,8 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
 - Uses **Solid Fuel Fire Ban** and **Total Fire Ban** data in forest status, and excludes fully closed forests from nearest legal recommendations.
 - Ignores Firewood collection status for campfire legality.
 - UI built with **Mantine v8** component library and **@tabler/icons-react** icons.
-- Resolves forest coordinates with Google Geocoding API as the primary source, falling back to OpenStreetMap Nominatim when Google is unavailable or returns implausible results.
-- Supports optional local Nominatim instance (`NOMINATIM_BASE_URL`) for development; uses public Nominatim in CI/GHA.
+- Uses Forestry Corporation NSW ArcGIS dedicated-forest geometry as the preferred geospatial source (polygon-first), with Google Geocoding and OpenStreetMap Nominatim retained as fallback paths during migration and for unresolved names.
+- Supports optional local Nominatim instance (`NOMINATIM_BASE_URL`) for fallback geocoding in development; uses public Nominatim in CI/GHA.
 - Maps forests with OpenStreetMap + Leaflet.
 - Computes haversine (straight-line) distances client-side from the static snapshot.
 - Sidebar filters:
@@ -50,8 +50,9 @@ This project was developed with **Codex using the GPT-5.3-Codex model**.
 5. Open `http://localhost:5173` in your browser.
 
 The app loads forest data from the pre-generated `public/forests-snapshot.json` file.
-To regenerate the snapshot with fresh data, set up a `.env` file (see `.env.example`)
-with `GOOGLE_MAPS_API_KEY` and run:
+To regenerate the snapshot with fresh data, set up a `.env` file (see `.env.example`).
+
+Preferred geospatial input is FCNSW ArcGIS dedicated-state-forest geometry. During migration, keep `GOOGLE_MAPS_API_KEY` available for fallback geocoding and run:
 ```bash
 npm run warm:coordinates
 ```
@@ -87,7 +88,7 @@ First startup imports OSM data and can take significant time/disk.
 ## Scripts
 - `npm run dev`: start the Vite dev server (auto-starts local Nominatim if available).
 - `npm run dev:web`: run frontend only (Vite auto-increments to next free port if needed).
-- `npm run warm:coordinates`: force refresh and populate coordinate cache.
+- `npm run warm:coordinates`: force refresh and populate coordinate/boundary cache (FCNSW preferred, fallback geocoders for unresolved entries).
 - `npm run cache:reset`: clear local geocoding/snapshot caches.
 - `npm run typecheck`: TypeScript checks.
 - `npm test`: unit + integration + e2e.
@@ -117,7 +118,7 @@ First startup imports OSM data and can take significant time/disk.
 - `CLOSURE_LLM_CACHE_PATH` (default `os.tmpdir()/campfire-allowed-near-me/closure-llm-impacts.json`)
 - `CLOSURE_LLM_CACHE_TTL_MS` (default `604800000`, 7 days)
 - `SCRAPE_TTL_MS` (default `900000`, in-memory processed snapshot TTL)
-- `GOOGLE_MAPS_API_KEY` (required for Google Geocoding)
+- `GOOGLE_MAPS_API_KEY` (used for fallback Google geocoding and Google Routes)
 - `GEOCODE_MAX_NEW_PER_REQUEST` (default `25`)
 - `GEOCODE_DELAY_MS` (default `1200`)
 - `GEOCODE_TIMEOUT_MS` (default `15000`)
@@ -181,6 +182,7 @@ Workflow file: `.github/workflows/ci.yml`.
 
 ## Project Documentation
 - `docs/production-deployment-plan.md`: zero-server production architecture, phased deployment, and cost analysis.
+- `docs/nsw-forest-integration-guide.md`: FCNSW ArcGIS integration guide and polygon-first lookup strategy.
 - `docs/scraping-findings.md`: scraping strategy validation results across 6 iterations.
 - `docs/architecture-audit-and-roadmap.md`: architecture audit, risks, and phased roadmap.
 - `docs/technical-business-brief.md`: product/technical goals and pragmatic delivery direction.

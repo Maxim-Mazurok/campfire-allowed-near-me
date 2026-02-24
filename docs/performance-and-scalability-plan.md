@@ -1,6 +1,6 @@
 # Performance and Scalability Plan
 
-Last updated: 2026-02-22
+Last updated: 2026-02-25
 
 ## Why this matters now
 
@@ -15,7 +15,7 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 - Filter interactions trigger expensive recomputation paths.
 
 ### Backend
-- End-to-end request can include scraping + geocoding + route enrichment.
+- End-to-end request can include scraping + FCNSW boundary lookup/fallback geocoding + route enrichment.
 - Route metrics are potentially expensive for many forests.
 - Some processing paths are serialized inside large orchestrator flow.
 
@@ -23,7 +23,7 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 
 1. Keep filter interactions responsive at larger forest counts.
 2. Keep initial results quick using cached/stale-safe strategy.
-3. Avoid route/geocode fan-out bottlenecks.
+3. Avoid route/location-enrichment fan-out bottlenecks.
 4. Preserve transparent progress reporting.
 
 ## Frontend plan
@@ -49,7 +49,7 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 ### P1
 - Add route enrichment budget controls per request.
 - Add background completion mode for route metrics on large sets.
-- Improve cache-key strategy observability (hit/miss logging for route and geocode caches).
+- Improve cache-key strategy observability (hit/miss logging for route and location-enrichment caches).
 
 ### P2
 - Add source connector parallelism with bounded concurrency and per-source timeout budgets.
@@ -58,7 +58,7 @@ Current UX is acceptable for small data volumes but will degrade with more fores
 ## Metrics to add immediately
 
 - `/api/forests` latency (p50/p95).
-- Geocode cache hit ratio.
+- FCNSW boundary match ratio and fallback geocode cache hit ratio.
 - Route cache hit ratio.
 - Count of forests without coordinates.
 - Count of forests with unknown ban statuses.

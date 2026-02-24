@@ -14,7 +14,7 @@
 | Scraping (forests dir) | Playwright (headless Chromium) | `forestrycorporation.com.au` — Cloudflare JS challenge |
 | Scraping (closures) | Playwright (headless Chromium) | `forestclosure.fcnsw.net/indexframe` — AWS API Gateway IP block |
 | Total Fire Ban data | Direct `fetch()` to RFS XML/GeoJSON | `rfs.nsw.gov.au` — public, no auth |
-| Geocoding | Google Geocoding API + Nominatim fallback | SQLite cache |
+| Forest geometry lookup | FCNSW ArcGIS FeatureServer (polygon-first) + Google/Nominatim fallback | SQLite cache + snapshot evidence |
 | Driving routes | Google Routes API (`computeRoutes`) | SQLite cache, needs `GOOGLE_MAPS_API_KEY` |
 | Data persistence | JSON snapshots on disk + SQLite caches | `data/cache/` directory |
 | WebSockets | Two channels: refresh progress + load progress | For live UI feedback |
@@ -31,7 +31,8 @@
 │     + stealth + Decodo AU proxy)    │
 │  2. Scrape closures (proxy fetch)   │
 │  3. Fetch RFS Total Fire Ban data   │
-│  4. Geocode forests (public APIs)   │
+│  4. Resolve forests via FCNSW ArcGIS│
+│     (fallback geocoders if needed)  │
 │  5. Produce forests-snapshot.json   │
 │  6. Commit to data branch / R2      │
 └──────────┬──────────────────────────┘
@@ -54,10 +55,10 @@
 
 ### Core Principles
 
-1. **Static-first**: Forest data (bans, closures, geocodes, facilities) changes slowly — once or twice a day is plenty. Pre-compute everything into a single JSON snapshot.
+1. **Static-first**: Forest data (bans, closures, boundaries/coordinates, facilities) changes slowly — once or twice a day is plenty. Pre-compute everything into a single JSON snapshot.
 2. **No long-running server**: The Express API is eliminated from production. The SPA loads the snapshot directly from a static URL.
 3. **Thin API only for routing**: A single Cloudflare Worker proxies Google Routes API requests (to hide the API key), or we use haversine (straight-line) distance as the default and offer driving distance as an opt-in enhancement.
-4. **Free tier everything**: GitHub Actions (free for public repos), Cloudflare Pages (free), Cloudflare Workers (100K requests/day free), Google Maps Platform (per-SKU free tiers: 10K Geocoding requests/month, 5K Routes requests/month).
+4. **Free tier everything**: GitHub Actions (free for public repos), Cloudflare Pages (free), Cloudflare Workers (100K requests/day free), FCNSW Open Data (free), Google Maps Platform Routes free tier for optional driving distance.
 
 ---
 
@@ -135,7 +136,7 @@ jobs:
 
 This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `ForestGeocoder`, but:
 - Outputs a `PersistedSnapshot` JSON file (same schema as existing snapshots)
-- Uses Google Geocoding API as the primary geocoder with Nominatim fallback (public Nominatim in GHA, local Docker in development)
+- Uses FCNSW ArcGIS dedicated-state-forest geometry as the preferred source, with Google/Nominatim fallback only for unresolved names
 - Skips driving route computation (that is user-specific and done client-side or via Worker)
 - Includes all forest points with coordinates, ban statuses, facilities, closure data
 - Saves to `data/forests-snapshot.json`
@@ -148,18 +149,19 @@ This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `F
 ### Data flow
 
 1. GHA runs `generate-snapshot.ts`
-2. Script scrapes → parses → geocodes → assembles snapshot
+2. Script scrapes → parses → resolves forest geometry (FCNSW-first) → assembles snapshot
 3. Snapshot committed to a `gh-pages` or `data` branch, or uploaded to Cloudflare R2
 4. SPA fetches snapshot at load time from a static URL
 
-### Geocoding Strategy
+### Forest Geometry Strategy
 
-All geocoding runs periodically in background (GHA scheduled workflow or local dev), not per-request, so latency is not a concern — quality is the priority.
+All forest location enrichment runs periodically in background (GHA scheduled workflow or local dev), not per-request, so latency is not a concern — quality is the priority.
 
-- **Primary**: Google Geocoding API (`maps.googleapis.com/maps/api/geocode/json`) — Essentials tier with 10,000 free requests/month (since March 2025, per-SKU free tiers replaced the old $200/month credit). Results are validated against the forest name to reject implausible matches.
-- **Fallback**: OpenStreetMap Nominatim — public instance in GHA (`nominatim.openstreetmap.org`, 1 req/sec rate limit), local Docker container in development (`NOMINATIM_BASE_URL`).
-- **Cache persistence**: The SQLite geocode cache can be committed alongside the snapshot, or the snapshot can include pre-resolved coordinates (which it does — `latitude`/`longitude` fields on each `ForestPoint`).
-- **Key insight**: Once all forests are geocoded, the coordinates are stable. New forests appear rarely. The cache file size is small (~100KB of SQLite). We can store the resolved coordinates directly in the snapshot JSON.
+- **Primary**: FCNSW ArcGIS FeatureServer (`NSW_Dedicated_State_Forests`) queried by `SFName` with `returnGeometry=true`, `outSR=4326`.
+- **Fallback 1**: Google Geocoding API for unresolved/ambiguous FCNSW matches.
+- **Fallback 2**: OpenStreetMap Nominatim — public instance in GHA (`nominatim.openstreetmap.org`, 1 req/sec rate limit), local Docker container in development (`NOMINATIM_BASE_URL`).
+- **Cache persistence**: Persist FCNSW evidence (`SFNo`, normalized `SFName`, source tag) with coordinates in snapshot/cache so lookup provenance is retained.
+- **Key insight**: FCNSW polygons improve legal/geographic accuracy and support boundary-aware features that centroid-only geocoding cannot provide.
 
 ---
 
@@ -294,8 +296,9 @@ Keep the current Express + WebSocket setup for local development:
 | Cloudflare Workers | 100K requests/day | A few hundred/day at most | **$0** |
 | Cloudflare KV | 1GB storage, 100K reads/day | Tiny | **$0** |
 | Google Routes API | 5,000 free Pro requests/month | ~$0.75-$2.25 per user load × maybe 50 users/month = $37-$112 | **$0–$112** (free tier covers ~33 loads; overage billed at $0.015/req) |
-| Google Geocoding API | 10,000 free Essentials requests/month | Negligible (forests are geocoded once, ~200 lookups) | **$0** |
-| Public Nominatim | Free (rate limited) | ~200 lookups per snapshot rebuild (only for new forests) | **$0** |
+| FCNSW ArcGIS Open Data | Free | Primary source for forest geometry | **$0** |
+| Google Geocoding API (fallback only) | 10,000 free Essentials requests/month | Small fallback volume for unresolved names | **$0** (expected) |
+| Public Nominatim (fallback only) | Free (rate limited) | Small fallback volume after FCNSW + Google | **$0** |
 | **Total** | | | **~$3.65/year + potential Google Routes overage** |
 
 ---
@@ -350,7 +353,7 @@ Keep the current Express + WebSocket setup for local development:
 | Frontend hosting | Cloudflare Pages (or GitHub Pages) | Free, fast, no maintenance |
 | Driving routes | Cloudflare Worker + Google Routes API | Need to hide API key; 5K free Pro requests/month (per-SKU free tier since March 2025) |
 | Default distance | Haversine (client-side) | Free, instant, no API needed |
-| Geocoding | Google Geocoding API + Nominatim fallback | Coordinates cached in SQLite and snapshot |
+| Forest geometry lookup | FCNSW ArcGIS polygon-first + Google/Nominatim fallback | Coordinates and provenance cached in SQLite and snapshot |
 | WebSockets | Dev-only | No real-time data in production (snapshot is static) |
 | Database | None | JSON snapshot + KV cache is sufficient |
 | Refresh button | Hidden in production (or link to GHA status) | Users can't trigger scraping on static hosting |
@@ -366,6 +369,6 @@ Keep the current Express + WebSocket setup for local development:
 | Proxy IP gets flagged by Cloudflare | Intermittent failures | Decodo rotates residential IPs per-request; retry logic in pipeline; different session on each run |
 | Forestry Corporation changes page structure | Parser breaks, no data | Schema validation in GHA alerts via GitHub issue; parsers are already robust with fuzzy matching |
 | Google API cost exceeds free tier | Small bill | Set billing alerts; downgrade Routes to Essentials tier ($0.005/req, 10K free/month); or switch to OSRM (free) |
-| Public Nominatim rate limits | Slow fallback geocoding | Google is primary; Nominatim is only used when Google fails. Coordinates are cached; only new forests need geocoding |
+| Public Nominatim rate limits | Slow tertiary fallback | FCNSW ArcGIS is primary; Google is secondary; Nominatim is tertiary and cached |
 | GHA scheduled runs are delayed | Data slightly stale | Acceptable for fire ban data; manual dispatch as backup |
 | Proxy bandwidth costs increase | Annual cost rises | Current usage is ~1.13 GB/year; even at 2x price ($7/GB) would be ~$8/year |

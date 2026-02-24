@@ -1,6 +1,6 @@
 # AI Implementation Handoff Guide
 
-Last updated: 2026-02-24
+Last updated: 2026-02-25
 
 This guide is optimized for AI coding agents making iterative changes safely.
 
@@ -12,6 +12,7 @@ Primary user value:
 Hard policy constraints:
 - Keep Forestry NSW `Solid Fuel Fire Ban` as legality source of truth.
 - Do not use firewood collection status for legality logic.
+- Prefer FCNSW ArcGIS dedicated-state-forest geometry for forest lookup/boundaries; use Google/Nominatim only as fallback for unresolved names.
 
 ## Ongoing engineering guidance
 
@@ -40,6 +41,16 @@ These are continuous standards (not a one-time phase plan):
 - `ForestListPanel` now skips clone/sort work when 0–1 forests are present.
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
+
+### Forest geometry source preference (decision 2026-02-25)
+
+Use FCNSW ArcGIS dedicated-state-forest geometry as the preferred source for forest location and extent.
+
+**Decision:** FCNSW polygon-first lookup is now the default architecture direction:
+- Query FCNSW FeatureServer by `SFName` (fuzzy match) and request geometry (`returnGeometry=true`, `outSR=4326`).
+- Persist FCNSW identifiers/signals (for example `SFNo`, normalized `SFName`) in snapshot data where available.
+- Use fallback geocoding (Google, then Nominatim) only when FCNSW matching is unresolved.
+- Keep source evidence in diagnostics so geospatial provenance is visible.
 
 ### Area names are NOT used for geocoding (decision 2026-02-24)
 

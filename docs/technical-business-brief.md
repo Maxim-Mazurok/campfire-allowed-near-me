@@ -1,6 +1,6 @@
 # Technical + Business Brief
 
-Last updated: 2026-02-22
+Last updated: 2026-02-25
 
 ## Product Goal
 
@@ -43,6 +43,7 @@ We optimize for **speed of iteration** and **low change risk**:
 ## Product Capabilities to Add
 
 ### Priority A: Multi-source intelligence
+- FCNSW ArcGIS polygon-first forest geometry (preferred over generic point geocoding).
 - NSW National Parks/camping pages and metadata.
 - Optional Google reviews signal (e.g., recent closures/conditions mentions).
 - Ability to show source evidence per forest.

@@ -4,9 +4,11 @@ Remaining work, sequenced by logical dependency (not by priority or time estimat
 
 ## API decomposition
 
-- [ ] Split `LiveForestDataService` (1800+ lines) into focused pipeline modules: snapshot-repository, facilities-matcher, closure-matcher, geocode-enricher, route-enricher, forest-response-assembler
+- [ ] Split `LiveForestDataService` (1800+ lines) into focused pipeline modules: snapshot-repository, facilities-matcher, closure-matcher, fcnsw-boundary-enricher, fallback-geocode-enricher, route-enricher, forest-response-assembler
 - [ ] Keep `LiveForestDataService` as a thin orchestration shell
 - [ ] Add unit tests for each extracted module
+- [ ] Implement FCNSW ArcGIS dedicated-state-forest lookup as preferred geospatial source and persist `SFNo`/normalized `SFName` evidence
+- [ ] Apply Google/Nominatim only as fallback when FCNSW lookup is unresolved
 
 ## Source connector abstraction
 

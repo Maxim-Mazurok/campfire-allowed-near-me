@@ -1,6 +1,6 @@
 # Data Source Expansion and LLM Enrichment Plan
 
-Last updated: 2026-02-22
+Last updated: 2026-02-25
 
 ## Objective
 
@@ -61,6 +61,10 @@ Each signal should carry:
 5. Cache LLM output with TTL and provenance.
 
 ## Candidate source roadmap
+
+### Source wave 0 (geospatial foundation)
+- FCNSW ArcGIS dedicated-state-forest boundary connector as the preferred geometry source.
+- Persist FCNSW identifiers/evidence in canonical records and use fallback geocoders only when unresolved.
 
 ### Source wave 1 (high confidence)
 - NSW National Parks pages (status/notices/camping pages).
