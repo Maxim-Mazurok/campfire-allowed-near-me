@@ -7,8 +7,7 @@ import {
   parseAreaForestNames,
   parseClosureNoticeDetailPage,
   parseClosureNoticesPage,
-  parseForestDirectoryFilters,
-  parseForestDirectoryForests,
+  parseForestDirectoryWithFacilities,
   parseMainFireBanPage
 } from "./forestry-parser.js";
 import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
@@ -29,7 +28,6 @@ interface ForestryScraperOptions {
   closuresUrl: string;
   timeoutMs: number;
   maxAreaConcurrency: number;
-  maxFilterConcurrency: number;
   maxClosureConcurrency: number;
   rawPageCachePath: string;
   rawPageCacheTtlMs: number;
@@ -57,7 +55,6 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   closuresUrl: "https://forestclosure.fcnsw.net",
   timeoutMs: 90_000,
   maxAreaConcurrency: 1,
-  maxFilterConcurrency: 1,
   maxClosureConcurrency: 1,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000,
@@ -283,91 +280,15 @@ export class ForestryScraper {
       );
     }
 
-    const filters = parseForestDirectoryFilters(base.html).filter((filter) => Boolean(filter.paramName));
-    const baseForestEntries = parseForestDirectoryForests(base.html);
+    const snapshot = parseForestDirectoryWithFacilities(base.html);
 
-    if (!filters.length) {
+    if (!snapshot.filters.length && !snapshot.forests.length) {
       return this.buildEmptyDirectorySnapshot(
-        "No facilities filters were parsed from Forestry forests page."
+        "No facilities or forests were parsed from the Forestry forests directory page."
       );
     }
 
-    const facilityKeys = filters.map((filter) => filter.key);
-    const makeDefaultFacilities = (): Record<string, boolean> =>
-      Object.fromEntries(facilityKeys.map((key) => [key, false]));
-
-    type ForestRow = { facilities: Record<string, boolean>; forestUrl: string | null };
-    const byForestName = new Map<string, ForestRow>();
-    const ensureForest = (forestName: string, forestUrl?: string | null): ForestRow => {
-      const existing = byForestName.get(forestName);
-      if (existing) {
-        if (!existing.forestUrl && forestUrl) existing.forestUrl = forestUrl;
-        return existing;
-      }
-      const created: ForestRow = { facilities: makeDefaultFacilities(), forestUrl: forestUrl ?? null };
-      byForestName.set(forestName, created);
-      return created;
-    };
-
-    for (const entry of baseForestEntries) {
-      ensureForest(entry.forestName, entry.forestUrl);
-    }
-
-    const warnings = new Set<string>();
-    const limit = pLimit(this.options.maxFilterConcurrency);
-
-    await Promise.all(
-      filters.map((filter) =>
-        limit(async () => {
-          const filterUrl = new URL(base.url);
-          filterUrl.search = "";
-          filterUrl.searchParams.set(filter.paramName, "Yes");
-
-          let filteredHtml: string;
-          try {
-            filteredHtml = (
-              await this.fetchHtml(
-                getContext,
-                filterUrl.toString(),
-                /state forest|showing \d+ results/i
-              )
-            ).html;
-          } catch (filterError) {
-            const message = errorMessage(filterError);
-            console.error(`  [scrapeDirectory] Filter "${filter.label}" failed: ${message}`);
-            warnings.add(`Facilities filter "${filter.label}" could not be loaded: ${message}`);
-            return;
-          }
-
-          if (isCloudflareChallengeHtml(filteredHtml)) {
-            warnings.add(
-              `Facilities filter "${filter.label}" could not be loaded due to anti-bot verification.`
-            );
-            return;
-          }
-
-          const forestsWithFacility = parseForestDirectoryForests(filteredHtml);
-          for (const entry of forestsWithFacility) {
-            const row = ensureForest(entry.forestName, entry.forestUrl);
-            row.facilities[filter.key] = true;
-          }
-        })
-      )
-    );
-
-    const forests = [...byForestName.entries()]
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([forestName, row]) => ({
-        forestName,
-        forestUrl: row.forestUrl,
-        facilities: row.facilities
-      }));
-
-    return {
-      filters,
-      forests,
-      warnings: [...warnings]
-    };
+    return snapshot;
   }
 
   private async scrapeClosures(): Promise<{
