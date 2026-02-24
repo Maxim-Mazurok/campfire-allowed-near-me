@@ -41,6 +41,32 @@ These are continuous standards (not a one-time phase plan):
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
 
+### Area names are NOT used for geocoding (decision 2026-02-24)
+
+Visual inspection of Forestry Corporation "areas" (e.g. "Cypress pine forests", "State forests around Bombala") revealed they are organizational categories rather than reliable geographic regions. Some areas span enormous distances (Melbourne to Brisbane). Using area names as geocoding queries introduced noise: street-address false positives (e.g. "Cypress Pine Ln"), implausible centroids, and unreliable area-only fallbacks.
+
+**Decision:** Area names are intentionally excluded from all geocoding logic:
+- `geocodeForest()` no longer includes area name in any query candidate.
+- `geocodeArea()` method removed entirely.
+- Area centroid fallback removed from `LiveForestDataService`.
+- The `_areaName` parameter is still accepted by `geocodeForest()` for call-site compatibility but is ignored.
+
+Area names remain available for UI purposes (area subtitle display, area-based map highlighting on hover).
+
+### Map marker pane z-index stack
+
+`MapView` uses Leaflet `<Pane>` components to control marker layering. The z-index ordering ensures that interactive states always render above static states:
+
+| Pane name | z-index | Purpose |
+|---|---|---|
+| `unmatched-forests` | 610 | Grey markers for forests not matching filters |
+| `matched-forests` | 660 | Green markers for forests matching filters |
+| `area-highlighted-forests` | 700 | Orange markers for forests in the hovered area |
+| `hovered-forest` | 750 | Purple marker for the individually hovered forest |
+| `selected-forest-popup` | 900 | Popup card for the clicked/selected forest |
+
+The `ForestMarker` component assigns each marker to the highest-priority pane it qualifies for: hovered > area-highlighted > matched > unmatched. This ensures a hovered forest is always visible above area-highlighted siblings, and all interactive states render above the default matched/unmatched layers.
+
 ### Production scraping (validated 2026-02-24)
 
 Scraping all 5 data sources from GitHub Actions is validated. See [docs/scraping-findings.md](scraping-findings.md) for full details.

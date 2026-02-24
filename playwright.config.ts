@@ -9,7 +9,6 @@ const parsePort = (value: string | undefined, fallback: number) => {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 };
 
-const apiPort = parsePort(process.env.PW_API_PORT, 18_787);
 const webPort = parsePort(process.env.PW_WEB_PORT, 15_173);
 
 export default defineConfig({
@@ -24,19 +23,10 @@ export default defineConfig({
     permissions: ["geolocation"],
     geolocation: { latitude: -33.8688, longitude: 151.2093 }
   },
-  webServer: [
-    {
-      command:
-        `FORESTRY_USE_FIXTURE=fixtures/mock-forests.json FORESTRY_SKIP_SCRAPE=true PORT=${apiPort} STRICT_PORT=1 npm run dev:api`,
-      port: apiPort,
-      reuseExistingServer: false,
-      timeout: 120_000
-    },
-    {
-      command: `WEB_PORT=${webPort} VITE_API_PROXY_TARGET=http://localhost:${apiPort} VITE_STRICT_PORT=1 npm run dev:web`,
-      port: webPort,
-      reuseExistingServer: false,
-      timeout: 120_000
-    }
-  ]
+  webServer: {
+    command: `WEB_PORT=${webPort} VITE_STRICT_PORT=1 npm run dev:web`,
+    port: webPort,
+    reuseExistingServer: false,
+    timeout: 120_000
+  }
 });

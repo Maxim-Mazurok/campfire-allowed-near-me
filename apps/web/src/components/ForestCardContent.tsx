@@ -1,12 +1,13 @@
-import { IconCar } from "@tabler/icons-react";
+import { IconCar, IconMapPinOff } from "@tabler/icons-react";
 import { Badge, Tooltip } from "@mantine/core";
-import { memo } from "react";
+import { memo, useCallback, useRef } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
 import {
   buildGoogleMapsDrivingNavigationUrl,
   buildTextHighlightUrl,
   buildTotalFireBanDetailsUrl,
+  forestHasCoordinates,
   formatDriveSummary,
   isHttpUrl
 } from "../lib/app-domain-forest";
@@ -24,36 +25,92 @@ type ForestCardContentProps = {
   forest: ForestApiResponse["forests"][number];
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
+  onHoveredAreaNameChange?: (hoveredAreaName: string | null) => void;
 };
 
 export const ForestCardContent = memo(({
   forest,
   availableFacilities,
-  avoidTolls
+  avoidTolls,
+  onHoveredAreaNameChange
 }: ForestCardContentProps) => {
+  const areaCleanupReference = useRef<(() => void) | null>(null);
+
+  /**
+   * Callback ref: fires immediately when the element is committed to the DOM,
+   * regardless of portal nesting depth or shadow DOM boundaries.
+   * Unlike useEffect (which depends on render cycle ordering), this guarantees
+   * listeners are attached the instant the element exists.
+   */
+  const areaHoverReference = useCallback((element: HTMLElement | null) => {
+    // Clean up previous listeners if any
+    if (areaCleanupReference.current) {
+      areaCleanupReference.current();
+      areaCleanupReference.current = null;
+    }
+
+    if (!element || !onHoveredAreaNameChange) {
+      return;
+    }
+
+    const handleMouseEnter = () => onHoveredAreaNameChange(forest.areaName);
+    const handleMouseLeave = () => onHoveredAreaNameChange(null);
+
+    element.addEventListener("mouseenter", handleMouseEnter);
+    element.addEventListener("mouseleave", handleMouseLeave);
+
+    areaCleanupReference.current = () => {
+      element.removeEventListener("mouseenter", handleMouseEnter);
+      element.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [onHoveredAreaNameChange, forest.areaName]);
+
   const forestClosureStatus = getForestClosureStatus(forest);
   const impactSummary = getForestImpactSummary(forest);
-  const googleMapsDrivingNavigationUrl =
-    buildGoogleMapsDrivingNavigationUrl(forest);
+  const hasCoordinates = forestHasCoordinates(forest);
+  const googleMapsDrivingNavigationUrl = hasCoordinates
+    ? buildGoogleMapsDrivingNavigationUrl(forest)
+    : null;
   const closureNotices = forest.closureNotices ?? [];
-  const driveMetricTooltipText = `Google Maps estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}) for realistic distance/time.`;
+  const locationNotFoundTooltipLabel = (
+    <>
+      Location not found — coordinates unavailable for this forest.
+      <br /><br />
+      Hover over the area name below the forest name to highlight other forests in the same area.
+    </>
+  );
+  const driveMetricTooltipLabel = hasCoordinates
+    ? `Google Maps estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}) for realistic distance/time.`
+    : locationNotFoundTooltipLabel;
 
   return (
     <>
       <div className="forest-main-row">
         <div className="forest-title-block">
           <div className="forest-title-row">
-            <a
-              href={googleMapsDrivingNavigationUrl}
-              className="forest-navigation-link"
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Open driving navigation to ${forest.forestName} in Google Maps`}
-              title="Open driving navigation in Google Maps"
-              data-testid="forest-navigation-link"
-            >
-              <IconCar size={14} stroke={1.5} />
-            </a>
+            {googleMapsDrivingNavigationUrl ? (
+              <a
+                href={googleMapsDrivingNavigationUrl}
+                className="forest-navigation-link"
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Open driving navigation to ${forest.forestName} in Google Maps`}
+                title="Open driving navigation in Google Maps"
+                data-testid="forest-navigation-link"
+              >
+                <IconCar size={14} stroke={1.5} />
+              </a>
+            ) : (
+              <Tooltip label={locationNotFoundTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+                <span
+                  className="forest-navigation-link forest-navigation-link--disabled"
+                  aria-label={`Location not found for ${forest.forestName}`}
+                  data-testid="forest-navigation-link-disabled"
+                >
+                  <IconMapPinOff size={14} stroke={1.5} />
+                </span>
+              </Tooltip>
+            )}
             <strong>
               {isHttpUrl(forest.forestUrl) ? (
                 <a
@@ -71,15 +128,23 @@ export const ForestCardContent = memo(({
           </div>
           {isHttpUrl(forest.areaUrl) ? (
             <a
+              ref={areaHoverReference}
               href={buildTextHighlightUrl(forest.areaUrl, forest.forestName)}
               className="muted forest-region-link"
               target="_blank"
               rel="noreferrer"
+              data-testid="forest-area-link"
             >
               {forest.areaName}
             </a>
           ) : (
-            <div className="muted forest-region-link">{forest.areaName}</div>
+            <div
+              ref={areaHoverReference}
+              className="muted forest-region-link"
+              data-testid="forest-area-link"
+            >
+              {forest.areaName}
+            </div>
           )}
         </div>
         <div className="status-block">
@@ -116,14 +181,16 @@ export const ForestCardContent = memo(({
               </Badge>
             ) : null}
           </div>
-          <Tooltip label={driveMetricTooltipText} position="top" openDelay={0} closeDelay={0}>
-            <small className="muted" data-testid="distance-text">
-              {forest.distanceKm !== null
-                ? formatDriveSummary(
-                    forest.distanceKm,
-                    forest.travelDurationMinutes
-                  )
-                : "Drive distance unavailable"}
+          <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+            <small className={hasCoordinates ? "muted" : "muted forest-location-warning"} data-testid="distance-text">
+              {hasCoordinates
+                ? (forest.distanceKm !== null
+                    ? formatDriveSummary(
+                        forest.distanceKm,
+                        forest.travelDurationMinutes
+                      )
+                    : "Drive distance unavailable")
+                : "Location not found"}
             </small>
           </Tooltip>
         </div>

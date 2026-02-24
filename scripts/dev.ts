@@ -1,8 +1,6 @@
 import { spawn, type ChildProcess } from "node:child_process";
-import { createServer } from "node:net";
 import "dotenv/config";
 
-const DEFAULT_API_PORT = 8787;
 const DEFAULT_WEB_PORT = 5173;
 const MAX_PORT = 65_535;
 const NOMINATIM_CONTAINER_NAME = "campfire-nominatim";
@@ -26,46 +24,6 @@ const parsePort = (value: string | undefined, fallback: number) => {
   }
 
   return parsed;
-};
-
-const canListenOnPort = async (port: number): Promise<boolean> =>
-  new Promise((resolve, reject) => {
-    const server = createServer();
-    server.unref();
-
-    server.once("error", (error: NodeJS.ErrnoException) => {
-      if (error.code === "EADDRINUSE" || error.code === "EACCES") {
-        resolve(false);
-        return;
-      }
-
-      reject(error);
-    });
-
-    server.listen(port, () => {
-      server.close((closeError) => {
-        if (closeError) {
-          reject(closeError);
-          return;
-        }
-
-        resolve(true);
-      });
-    });
-  });
-
-const findAvailablePort = async (startPort: number, reserved: Set<number>) => {
-  for (let port = startPort; port <= MAX_PORT; port += 1) {
-    if (reserved.has(port)) {
-      continue;
-    }
-
-    if (await canListenOnPort(port)) {
-      return port;
-    }
-  }
-
-  throw new Error(`No available port found between ${startPort} and ${MAX_PORT}.`);
 };
 
 const spawnProcess = (
@@ -372,37 +330,23 @@ const ensureNominatimContainerRunning = async (): Promise<void> => {
 const main = async () => {
   await ensureNominatimContainerRunning();
 
-  const apiStartPort = parsePort(
-    process.env.API_PORT_START ?? process.env.PORT,
-    DEFAULT_API_PORT
-  );
-  const apiPort = await findAvailablePort(apiStartPort, new Set<number>());
   const webStartPort = parsePort(
     process.env.WEB_PORT_START ?? process.env.WEB_PORT,
     DEFAULT_WEB_PORT
   );
 
-  const apiUrl = `http://localhost:${apiPort}`;
-  // eslint-disable-next-line no-console
-  console.log(`[dev] API target: ${apiUrl}`);
   // eslint-disable-next-line no-console
   console.log(
     `[dev] Web start port: ${webStartPort} (Vite will move to the next free port if needed).`
   );
 
   const baseEnv = process.env;
-  const apiProcess = spawnProcess(["run", "dev:api"], {
-    ...baseEnv,
-    PORT: `${apiPort}`,
-    STRICT_PORT: "1"
-  });
   const webProcess = spawnProcess(["run", "dev:web"], {
     ...baseEnv,
-    WEB_PORT: `${webStartPort}`,
-    VITE_API_PROXY_TARGET: apiUrl
+    WEB_PORT: `${webStartPort}`
   });
 
-  const children = [apiProcess, webProcess];
+  const children = [webProcess];
   let shuttingDown = false;
 
   const shutdown = (signal: NodeJS.Signals) => {
@@ -415,18 +359,6 @@ const main = async () => {
       stopProcess(child, signal);
     }
   };
-
-  apiProcess.on("exit", (code, signal) => {
-    if (shuttingDown) {
-      return;
-    }
-
-    const detail = signal ? `signal ${signal}` : `code ${code ?? 1}`;
-    // eslint-disable-next-line no-console
-    console.error(`[dev] API process exited with ${detail}.`);
-    shutdown("SIGTERM");
-    process.exit(code ?? 1);
-  });
 
   webProcess.on("exit", (code, signal) => {
     if (shuttingDown) {

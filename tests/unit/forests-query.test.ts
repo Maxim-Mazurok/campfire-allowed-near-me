@@ -1,18 +1,17 @@
 import { QueryClient } from "@tanstack/react-query";
-import { delay, http, HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
+import type { PersistedSnapshot } from "../../packages/shared/src/contracts";
 import {
   buildForestsQueryKey,
   forestsQueryFn
 } from "../../apps/web/src/lib/forests-query";
 
-const API_URL = "http://localhost/api/forests";
+const SNAPSHOT_URL = "http://localhost/forests-snapshot.json";
 
 const server = setupServer();
-const noTolls = { avoidTolls: true } as const;
-const allowTolls = { avoidTolls: false } as const;
 
 const createQueryClient = () =>
   new QueryClient({
@@ -24,7 +23,7 @@ const createQueryClient = () =>
     }
   });
 
-const buildPayload = (overrides: Partial<ForestApiResponse> = {}): ForestApiResponse => ({
+const buildSnapshot = (overrides: Partial<PersistedSnapshot> = {}): PersistedSnapshot => ({
   fetchedAt: "2026-02-21T10:00:00.000Z",
   stale: false,
   sourceName: "Forestry Corporation NSW",
@@ -34,7 +33,6 @@ const buildPayload = (overrides: Partial<ForestApiResponse> = {}): ForestApiResp
     fuzzyMatches: []
   },
   warnings: [],
-  nearestLegalSpot: null,
   forests: [
     {
       id: "forest-a",
@@ -51,8 +49,6 @@ const buildPayload = (overrides: Partial<ForestApiResponse> = {}): ForestApiResp
       longitude: 151.1,
       geocodeName: "Forest A",
       geocodeConfidence: 0.8,
-      distanceKm: 12.4,
-      travelDurationMinutes: 18,
       facilities: {}
     }
   ],
@@ -72,183 +68,129 @@ afterAll(() => {
 });
 
 describe("forests query options", () => {
-  it("includes location coordinates in requests for location-aware query keys", async () => {
-    let seenUrl: URL | null = null;
+  it("fetches snapshot and computes haversine distances when location is provided", async () => {
     server.use(
-      http.get(API_URL, ({ request }) => {
-        seenUrl = new URL(request.url);
-        return HttpResponse.json(buildPayload());
-      })
+      http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
     );
 
     const queryClient = createQueryClient();
     const location = { latitude: -33.9, longitude: 151.1 };
-    const queryKey = buildForestsQueryKey(location, noTolls);
+    const queryKey = buildForestsQueryKey(location);
 
     const response = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(location, noTolls)
+      queryFn: forestsQueryFn(location)
     });
 
     expect(response.forests[0]?.forestName).toBe("Forest A");
-    expect(seenUrl?.searchParams.get("lat")).toBe(String(location.latitude));
-    expect(seenUrl?.searchParams.get("lng")).toBe(String(location.longitude));
-    expect(seenUrl?.searchParams.get("refresh")).toBeNull();
-    expect(seenUrl?.searchParams.get("tolls")).toBe("avoid");
+    expect(response.forests[0]?.distanceKm).toBeCloseTo(0, 0);
+    expect(response.forests[0]?.travelDurationMinutes).toBeNull();
   });
 
-  it("forces refresh-from-source requests with refresh=1 on the same query key", async () => {
-    const seenUrls: URL[] = [];
+  it("returns null distances when no location is provided", async () => {
     server.use(
-      http.get(API_URL, ({ request }) => {
-        const requestUrl = new URL(request.url);
-        seenUrls.push(requestUrl);
-
-        const timestamp =
-          requestUrl.searchParams.get("refresh") === "1"
-            ? "2026-02-21T10:01:00.000Z"
-            : "2026-02-21T10:00:00.000Z";
-        return HttpResponse.json(
-          buildPayload({
-            fetchedAt: timestamp
-          })
-        );
-      })
+      http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
     );
 
     const queryClient = createQueryClient();
-    const queryKey = buildForestsQueryKey(null, noTolls);
+    const queryKey = buildForestsQueryKey(null);
 
-    const firstResponse = await queryClient.fetchQuery({
+    const response = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(null, noTolls, false)
-    });
-    const refreshedResponse = await queryClient.fetchQuery({
-      queryKey,
-      queryFn: forestsQueryFn(null, noTolls, true)
+      queryFn: forestsQueryFn(null)
     });
 
-    expect(firstResponse.fetchedAt).toBe("2026-02-21T10:00:00.000Z");
-    expect(refreshedResponse.fetchedAt).toBe("2026-02-21T10:01:00.000Z");
-    expect(seenUrls[0]?.searchParams.get("refresh")).toBeNull();
-    expect(seenUrls[1]?.searchParams.get("refresh")).toBe("1");
-    expect(
-      queryClient.getQueryData<ForestApiResponse>(queryKey)?.fetchedAt
-    ).toBe("2026-02-21T10:01:00.000Z");
+    expect(response.forests[0]?.forestName).toBe("Forest A");
+    expect(response.forests[0]?.distanceKm).toBeNull();
+    expect(response.forests[0]?.travelDurationMinutes).toBeNull();
   });
 
-  it("keeps location and non-location responses isolated when requests overlap", async () => {
+  it("keeps location and non-location responses isolated in separate query keys", async () => {
     server.use(
-      http.get(API_URL, async ({ request }) => {
-        const requestUrl = new URL(request.url);
-        const hasLocation =
-          requestUrl.searchParams.has("lat") && requestUrl.searchParams.has("lng");
-
-        if (hasLocation) {
-          return HttpResponse.json(
-            buildPayload({
-              nearestLegalSpot: {
-                id: "forest-fast",
-                forestName: "Fast Forest",
-                areaName: "Area Fast",
-                distanceKm: 1.2,
-                travelDurationMinutes: 5
-              },
-              forests: [
-                {
-                  id: "forest-fast",
-                  source: "Forestry Corporation NSW",
-                  areaName: "Area Fast",
-                  areaUrl: "https://example.com/fast",
-                  forestName: "Fast Forest",
-                  forestUrl: "https://www.forestrycorporation.com.au/visit/forests/fast-forest",
-                  banStatus: "NOT_BANNED",
-                  banStatusText: "No Solid Fuel Fire Ban",
-                  totalFireBanStatus: "NOT_BANNED",
-                  totalFireBanStatusText: "No Total Fire Ban",
-                  latitude: -33.9,
-                  longitude: 151.1,
-                  geocodeName: "Fast Forest",
-                  geocodeConfidence: 0.9,
-                  distanceKm: 1.2,
-                  travelDurationMinutes: 5,
-                  facilities: {}
-                }
-              ]
-            })
-          );
-        }
-
-        await delay(200);
-        return HttpResponse.json(
-          buildPayload({
-            nearestLegalSpot: null,
-            forests: []
-          })
-        );
-      })
+      http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
     );
 
     const queryClient = createQueryClient();
     const location = { latitude: -33.9, longitude: 151.1 };
 
-    const nonLocationRequest = queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(null, noTolls),
-      queryFn: forestsQueryFn(null, noTolls)
-    });
     const locationResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(location, noTolls),
-      queryFn: forestsQueryFn(location, noTolls)
+      queryKey: buildForestsQueryKey(location),
+      queryFn: forestsQueryFn(location)
     });
 
-    await nonLocationRequest;
+    const noLocationResponse = await queryClient.fetchQuery({
+      queryKey: buildForestsQueryKey(null),
+      queryFn: forestsQueryFn(null)
+    });
 
-    expect(locationResponse.nearestLegalSpot?.forestName).toBe("Fast Forest");
+    expect(locationResponse.forests[0]?.distanceKm).toBeCloseTo(0, 0);
+    expect(noLocationResponse.forests[0]?.distanceKm).toBeNull();
+
     expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(location, noTolls))
-        ?.nearestLegalSpot?.forestName
-    ).toBe("Fast Forest");
+      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(location))
+        ?.forests[0]?.distanceKm
+    ).toBeCloseTo(0, 0);
     expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(null, noTolls))
-        ?.nearestLegalSpot
+      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(null))
+        ?.forests[0]?.distanceKm
     ).toBeNull();
   });
 
-  it("separates toll and no-toll responses by query key", async () => {
-    const seenTolls: string[] = [];
+  it("computes nearestLegalSpot from forests when location is provided", async () => {
     server.use(
-      http.get(API_URL, ({ request }) => {
-        const requestUrl = new URL(request.url);
-        const tolls = requestUrl.searchParams.get("tolls") ?? "avoid";
-        seenTolls.push(tolls);
-
-        return HttpResponse.json(
-          buildPayload({
-            nearestLegalSpot: {
-              id: tolls === "allow" ? "forest-allow" : "forest-avoid",
-              forestName: tolls === "allow" ? "Allow Tolls Forest" : "Avoid Tolls Forest",
-              areaName: "Area",
-              distanceKm: tolls === "allow" ? 8 : 9,
-              travelDurationMinutes: tolls === "allow" ? 12 : 14
-            }
+      http.get(SNAPSHOT_URL, () =>
+        HttpResponse.json(
+          buildSnapshot({
+            forests: [
+              {
+                id: "forest-banned",
+                source: "Forestry Corporation NSW",
+                areaName: "Area 1",
+                areaUrl: "https://example.com/banned",
+                forestName: "Banned Forest",
+                forestUrl: "https://www.forestrycorporation.com.au/visit/forests/banned",
+                banStatus: "BANNED",
+                banStatusText: "Solid Fuel Fire Ban",
+                totalFireBanStatus: "NOT_BANNED",
+                totalFireBanStatusText: "No Total Fire Ban",
+                latitude: -33.8,
+                longitude: 151.0,
+                geocodeName: "Banned Forest",
+                geocodeConfidence: 0.9,
+                facilities: {}
+              },
+              {
+                id: "forest-legal",
+                source: "Forestry Corporation NSW",
+                areaName: "Area 2",
+                areaUrl: "https://example.com/legal",
+                forestName: "Legal Forest",
+                forestUrl: "https://www.forestrycorporation.com.au/visit/forests/legal",
+                banStatus: "NOT_BANNED",
+                banStatusText: "No Solid Fuel Fire Ban",
+                totalFireBanStatus: "NOT_BANNED",
+                totalFireBanStatusText: "No Total Fire Ban",
+                latitude: -33.9,
+                longitude: 151.1,
+                geocodeName: "Legal Forest",
+                geocodeConfidence: 0.9,
+                facilities: {}
+              }
+            ]
           })
-        );
-      })
+        )
+      )
     );
 
     const queryClient = createQueryClient();
+    const location = { latitude: -33.9, longitude: 151.1 };
 
-    const noTollsResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(null, noTolls),
-      queryFn: forestsQueryFn(null, noTolls)
-    });
-    const allowTollsResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(null, allowTolls),
-      queryFn: forestsQueryFn(null, allowTolls)
+    const response = await queryClient.fetchQuery({
+      queryKey: buildForestsQueryKey(location),
+      queryFn: forestsQueryFn(location)
     });
 
-    expect(noTollsResponse.nearestLegalSpot?.forestName).toBe("Avoid Tolls Forest");
-    expect(allowTollsResponse.nearestLegalSpot?.forestName).toBe("Allow Tolls Forest");
-    expect(seenTolls).toEqual(["avoid", "allow"]);
+    expect(response.nearestLegalSpot?.forestName).toBe("Legal Forest");
+    expect(response.nearestLegalSpot?.id).toBe("forest-legal");
   });
 });

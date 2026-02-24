@@ -57,15 +57,6 @@ describe("LiveForestDataService single-flight refresh", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -36.0,
-        longitude: 149.0,
-        displayName: "South Coast",
-        confidence: 0.8,
-        provider: "OSM_NOMINATIM",
-        attempts: [],
-        warnings: []
-      }),
       geocodeForest: async () => ({
         latitude: -36.1,
         longitude: 149.1,

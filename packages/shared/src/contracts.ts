@@ -3,7 +3,6 @@ export type RefreshTaskStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
 export type RefreshTaskPhase =
   | "IDLE"
   | "SCRAPE"
-  | "GEOCODE_AREAS"
   | "GEOCODE_FORESTS"
   | "ROUTES"
   | "PERSIST"

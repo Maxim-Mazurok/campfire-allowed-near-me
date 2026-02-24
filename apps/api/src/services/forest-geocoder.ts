@@ -22,6 +22,7 @@ interface NominatimRow {
 
 interface GoogleGeocodingResult {
   formatted_address?: string;
+  types?: string[];
   geometry?: {
     location?: {
       lat?: number;
@@ -188,6 +189,69 @@ const GEOCODE_BLACKLISTED_NAMES = [
 const isBlacklistedGeocodeResult = (displayName: string): boolean => {
   const lower = displayName.toLowerCase();
   return GEOCODE_BLACKLISTED_NAMES.some((blacklisted) => lower.includes(blacklisted));
+};
+
+/**
+ * Google Geocoding result types that indicate a street-level or premise-level
+ * feature.  These are never correct for forest lookups — a street
+ * address like "Cypress Pine Ln" should not be used as a forest location.
+ */
+const REJECTED_GOOGLE_RESULT_TYPES = new Set([
+  "street_address",
+  "route",
+  "intersection",
+  "premise",
+  "subpremise",
+  "floor",
+  "room",
+  "post_box",
+  "parking",
+  "bus_station",
+  "train_station",
+  "transit_station",
+  "airport",
+]);
+
+/**
+ * Returns true when the Google Geocoding result types contain at least one
+ * type that is too granular to be a forest or area-level feature.
+ */
+const isStreetLevelGoogleResult = (types: string[]): boolean =>
+  types.some((type) => REJECTED_GOOGLE_RESULT_TYPES.has(type));
+
+/**
+ * Derive a confidence score from Google Geocoding result types.
+ * Google doesn’t provide a confidence field, so we map result types to
+ * approximate confidence tiers.  Broader features (locality, region) get
+ * lower confidence than exact-match features (park, natural_feature, point_of_interest).
+ */
+const deriveGoogleConfidence = (types: string[]): number => {
+  // Exact-match types — the geocoder resolved to a named place/feature.
+  const exactMatchTypes = new Set([
+    "natural_feature",
+    "park",
+    "point_of_interest",
+    "establishment",
+    "campground",
+  ]);
+  if (types.some((type) => exactMatchTypes.has(type))) return 1;
+
+  // Administrative/area types — the geocoder resolved to a broad region.
+  const broadAreaTypes = new Set([
+    "locality",
+    "sublocality",
+    "administrative_area_level_1",
+    "administrative_area_level_2",
+    "administrative_area_level_3",
+    "administrative_area_level_4",
+    "postal_code",
+    "colloquial_area",
+    "neighborhood",
+  ]);
+  if (types.some((type) => broadAreaTypes.has(type))) return 0.5;
+
+  // Unknown / unrecognised types — treat with moderate distrust.
+  return 0.3;
 };
 
 const isLocalNominatimBaseUrl = (baseUrl: string): boolean => {
@@ -663,11 +727,32 @@ export class ForestGeocoder {
       first.formatted_address?.trim() ||
       query;
 
+    const resultTypes = first.types ?? [];
+
+    // Reject street-level results — a street address is never a valid forest
+    // or area location (e.g. "Cypress Pine Ln" for "Cypress pine forests").
+    if (isStreetLevelGoogleResult(resultTypes)) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "GOOGLE_GEOCODING",
+          query,
+          aliasKey,
+          cacheKey,
+          "EMPTY_RESULT",
+          {
+            resultCount: results.length,
+            errorMessage: `Rejected street-level result type [${resultTypes.join(", ")}]: "${displayName}"`
+          }
+        )
+      };
+    }
+
     const hit: GeocodeHit = {
       latitude,
       longitude,
       displayName,
-      importance: 1,
+      importance: deriveGoogleConfidence(resultTypes),
       provider: "GOOGLE_GEOCODING",
       updatedAt: new Date().toISOString()
     };
@@ -935,26 +1020,28 @@ export class ForestGeocoder {
     };
   }
 
+  // NOTE: Area names from Forestry Corporation (e.g. "Cypress pine forests",
+  // "State forests around Bombala") are NOT used for geocoding. Visual
+  // inspection revealed that areas are organizational categories, not reliable
+  // geographic regions — some span from Melbourne to Brisbane. They introduce
+  // noise (street-address false positives, implausible centroids) and do not
+  // improve geocoding accuracy for individual forests.
+  //
+  // The `areaName` parameter is accepted for backward compatibility with
+  // callers but is intentionally ignored in query construction.
   async geocodeForest(
     forestName: string,
-    areaName?: string,
+    _areaName?: string,
     options?: { directoryForestName?: string }
   ): Promise<GeocodeResponse> {
     const normalizedForestName = forestName.trim();
     const queryForestName = /state forest/i.test(normalizedForestName)
       ? normalizedForestName
       : `${normalizedForestName} State Forest`;
-    const normalizedAreaName = areaName?.trim();
     const forestNameWithoutStateForest = normalizedForestName
       .replace(/\bstate\s+forest\b/gi, "")
       .replace(/\s+/g, " ")
       .trim();
-    const simplifiedAreaName = normalizedAreaName
-      ? normalizedAreaName
-        .replace(/\b(state|forests?|around|native|pine|of|the|region)\b/gi, " ")
-        .replace(/\s+/g, " ")
-        .trim()
-      : null;
 
     // When the directory has a different spelling (e.g. "Crofts Knoll" vs
     // fire ban "Croft Knoll"), generate additional query candidates from
@@ -974,7 +1061,8 @@ export class ForestGeocoder {
       : null;
 
     // Forest-specific candidates: contain the forest name or directory name.
-    const forestSpecificCandidates = [
+    // Area names are intentionally excluded — see note above.
+    const candidates = [
       `${queryForestName}, New South Wales, Australia`,
       `${normalizedForestName}, New South Wales, Australia`,
       forestNameWithoutStateForest
@@ -985,36 +1073,10 @@ export class ForestGeocoder {
         : null,
       directoryNameWithoutStateForest
         ? `${directoryNameWithoutStateForest}, New South Wales, Australia`
-        : null,
-      normalizedAreaName
-        ? `${queryForestName}, near ${normalizedAreaName}, New South Wales, Australia`
-        : null,
-      normalizedAreaName
-        ? `${queryForestName}, ${normalizedAreaName}, New South Wales, Australia`
-        : null,
-      normalizedAreaName && forestNameWithoutStateForest
-        ? `${forestNameWithoutStateForest}, ${normalizedAreaName}, New South Wales, Australia`
-        : null,
-      simplifiedAreaName && forestNameWithoutStateForest
-        ? `${forestNameWithoutStateForest}, ${simplifiedAreaName}, New South Wales, Australia`
         : null
     ].filter((value): value is string => Boolean(value));
 
-    // Area-only fallback candidates: do NOT contain the forest name.
-    // Results from these should NOT be cached under the forest alias key,
-    // because area centroid coordinates are not the actual forest location.
-    const areaOnlyCandidates = [
-      normalizedAreaName
-        ? `${normalizedAreaName}, New South Wales, Australia`
-        : null,
-      simplifiedAreaName
-        ? `${simplifiedAreaName}, New South Wales, Australia`
-        : null
-    ].filter((value): value is string => Boolean(value));
-
-    const allCandidates = [...forestSpecificCandidates, ...areaOnlyCandidates];
-    const uniqueAllCandidates = [...new Set(allCandidates)];
-    const forestSpecificCandidateSet = new Set(forestSpecificCandidates);
+    const uniqueCandidates = [...new Set(candidates)];
 
     // Significant words from the forest name (and directory name if available)
     // used to validate that a geocode result actually matches the queried forest.
@@ -1023,7 +1085,8 @@ export class ForestGeocoder {
       forestNameWithoutStateForest,
       directoryNameWithoutStateForest
     );
-    const forestKey = `forest:${normalizedAreaName ?? ""}:${normalizedForestName}`;
+
+    const forestKey = `forest::${normalizedForestName}`;
     const aliasKeyNormalized = `alias:${this.normalizeKey(forestKey)}`;
     const attempts: GeocodeLookupAttempt[] = [];
     const warnings: string[] = [];
@@ -1056,23 +1119,19 @@ export class ForestGeocoder {
       this.deleteCached(aliasKeyNormalized);
     }
 
-    for (const query of uniqueAllCandidates) {
-      // No alias key passed to geocodeQuery — alias management is handled
-      // at the geocodeForest level to avoid caching area-only fallback
-      // results under the forest alias key.
+    for (const query of uniqueCandidates) {
       const geocodeResult = await this.geocodeQuery(query);
       attempts.push(...(geocodeResult.attempts ?? []));
       warnings.push(...(geocodeResult.warnings ?? []));
 
       if (geocodeResult.latitude !== null && geocodeResult.longitude !== null) {
         const resultDisplayName = geocodeResult.displayName ?? query;
-        const isForestSpecific = forestSpecificCandidateSet.has(query);
 
-        // For forest-specific candidates, validate that the result actually
-        // matches the queried forest. Reject results where the provider
-        // returned a completely different feature (e.g. Google returning
-        // "Koondrook State Forest" for "Croft Knoll State Forest").
-        if (isForestSpecific && !isPlausibleForestMatch(resultDisplayName, forestNameSignificantWords)) {
+        // Validate that the result actually matches the queried forest.
+        // Reject results where the provider returned a completely different
+        // feature (e.g. Google returning "Koondrook State Forest" for
+        // "Croft Knoll State Forest").
+        if (!isPlausibleForestMatch(resultDisplayName, forestNameSignificantWords)) {
           warnings.push(
             `Rejected implausible result "${resultDisplayName}" for forest "${normalizedForestName}"`
           );
@@ -1102,68 +1161,18 @@ export class ForestGeocoder {
           continue;
         }
 
-        // Only cache the alias key for forest-specific candidate hits.
-        // Area-only fallback hits should NOT pollute the forest alias,
-        // so that future runs can retry with forest-specific candidates.
-        if (isForestSpecific) {
-          const hit: GeocodeHit = {
-            latitude: geocodeResult.latitude,
-            longitude: geocodeResult.longitude,
-            displayName: resultDisplayName,
-            importance: geocodeResult.confidence ?? 0,
-            provider: geocodeResult.provider ?? "OSM_NOMINATIM",
-            updatedAt: new Date().toISOString()
-          };
-          this.putCached(aliasKeyNormalized, hit);
-        }
+        const hit: GeocodeHit = {
+          latitude: geocodeResult.latitude,
+          longitude: geocodeResult.longitude,
+          displayName: resultDisplayName,
+          importance: geocodeResult.confidence ?? 0,
+          provider: geocodeResult.provider ?? "OSM_NOMINATIM",
+          updatedAt: new Date().toISOString()
+        };
+        this.putCached(aliasKeyNormalized, hit);
 
         return {
           ...geocodeResult,
-          attempts,
-          warnings: [...new Set(warnings)]
-        };
-      }
-    }
-
-    return {
-      latitude: null,
-      longitude: null,
-      displayName: null,
-      confidence: null,
-      provider: null,
-      attempts,
-      warnings: [...new Set(warnings)]
-    };
-  }
-
-  async geocodeArea(
-    areaName: string,
-    areaUrl: string
-  ): Promise<GeocodeResponse> {
-    const fromUrl = areaUrl
-      .split("/")
-      .at(-1)
-      ?.replace(/-/g, " ")
-      .replace(/\b(state|forests?|around|native|pine|of|the)\b/gi, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    const queryCandidates = [
-      `${areaName}, New South Wales, Australia`,
-      fromUrl ? `${fromUrl}, New South Wales, Australia` : null
-    ].filter((value): value is string => Boolean(value));
-
-    const areaKey = `area:${areaUrl || areaName}`;
-    const attempts: GeocodeLookupAttempt[] = [];
-    const warnings: string[] = [];
-
-    for (const query of queryCandidates) {
-      const hit = await this.geocodeQuery(query, areaKey);
-      attempts.push(...(hit.attempts ?? []));
-      warnings.push(...(hit.warnings ?? []));
-      if (hit.latitude !== null && hit.longitude !== null) {
-        return {
-          ...hit,
           attempts,
           warnings: [...new Set(warnings)]
         };

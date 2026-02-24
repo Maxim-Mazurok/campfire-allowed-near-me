@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppHeader } from "./components/AppHeader";
 import { FilterPanel } from "./components/FilterPanel";
@@ -7,13 +7,7 @@ import { LocationStatusPanels } from "./components/LocationStatusPanels";
 import { MapView } from "./components/MapView";
 import { SettingsDialog } from "./components/SettingsDialog";
 import { WarningsDialog } from "./components/WarningsDialog";
-import {
-  useForestLoadProgress,
-  useForestLoadStatusText,
-  useRefreshTaskProgress,
-  useRefreshTaskStatusText
-} from "./lib/hooks/use-forest-progress";
-import { useRefreshAndLocation } from "./lib/hooks/use-refresh-and-location";
+import { useLocation } from "./lib/hooks/use-refresh-and-location";
 import {
   buildForestsQueryKey,
   forestsQueryFn,
@@ -60,7 +54,6 @@ export const App = () => {
     return preferences;
   };
 
-  const queryClient = useQueryClient();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [warningsOpen, setWarningsOpen] = useState(false);
   const [fireBanForestTableOpen, setFireBanForestTableOpen] = useState(false);
@@ -96,33 +89,27 @@ export const App = () => {
     () => getInitialPreferences().avoidTolls ?? true
   );
   const [hoveredForestId, setHoveredForestId] = useState<string | null>(null);
+  const [hoveredAreaName, setHoveredAreaName] = useState<string | null>(null);
   const [forestListSortOption, setForestListSortOption] = useState<ForestListSortOption>(
     () => getInitialPreferences().forestListSortOption ?? "DRIVING_TIME_ASC"
   );
   const forestsQueryKey = useMemo(
-    () => buildForestsQueryKey(userLocation, { avoidTolls }),
-    [userLocation?.latitude, userLocation?.longitude, avoidTolls]
+    () => buildForestsQueryKey(userLocation),
+    [userLocation?.latitude, userLocation?.longitude]
   );
   const forestsQuery = useQuery({
     queryKey: forestsQueryKey,
-    queryFn: forestsQueryFn(userLocation, { avoidTolls })
+    queryFn: forestsQueryFn(userLocation)
   });
 
   const payload = forestsQuery.data ?? null;
   const loading = forestsQuery.isFetching;
   const {
     locationError,
-    refreshTaskState,
-    forestLoadProgressState,
-    refreshFromSource,
     requestLocation
-  } = useRefreshAndLocation({
-    queryClient,
-    forestsQueryKey,
+  } = useLocation({
     userLocation,
-    setUserLocation,
-    avoidTolls,
-    payloadRefreshTask: payload?.refreshTask ?? undefined
+    setUserLocation
   });
   const queryErrorMessage = toLoadErrorMessage(forestsQuery.error);
   const error = locationError ?? queryErrorMessage;
@@ -186,11 +173,6 @@ export const App = () => {
     avoidTolls,
     forestListSortOption
   ]);
-
-  const refreshTaskStatusText = useRefreshTaskStatusText(refreshTaskState);
-  const refreshTaskProgress = useRefreshTaskProgress(refreshTaskState);
-  const forestLoadStatusText = useForestLoadStatusText(forestLoadProgressState);
-  const forestLoadProgress = useForestLoadProgress(forestLoadProgressState);
 
   const setSingleFacilityMode = (key: string, mode: TriStateMode) => {
     setFacilityFilterModes((current) => ({
@@ -390,13 +372,8 @@ export const App = () => {
     <main className="app-shell">
       <AppHeader
         warningCount={warningCount}
-        onRefreshFromSource={refreshFromSource}
         onOpenSettings={openSettingsDialog}
         onOpenWarnings={openWarningsDialog}
-        refreshTaskStatusText={refreshTaskStatusText}
-        refreshTaskProgress={refreshTaskProgress}
-        forestLoadStatusText={forestLoadStatusText}
-        forestLoadProgress={forestLoadProgress}
         snapshotFetchedAt={payload?.fetchedAt ?? null}
       />
 
@@ -497,6 +474,8 @@ export const App = () => {
               availableFacilities={availableFacilities}
               avoidTolls={avoidTolls}
               hoveredForestId={hoveredForestId}
+              hoveredAreaName={hoveredAreaName}
+              onHoveredAreaNameChange={setHoveredAreaName}
             />
           ) : null}
         </section>
@@ -508,6 +487,8 @@ export const App = () => {
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={setHoveredForestId}
+          hoveredAreaName={hoveredAreaName}
+          onHoveredAreaNameChange={setHoveredAreaName}
           forestListSortOption={forestListSortOption}
           onForestListSortOptionChange={setForestListSortOption}
         />

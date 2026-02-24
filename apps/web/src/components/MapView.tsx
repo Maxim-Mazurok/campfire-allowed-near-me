@@ -8,6 +8,7 @@ import {
   useMap
 } from "react-leaflet";
 import { ForestCardContent } from "./ForestCardContent";
+import { PopupShadowContainer } from "./PopupShadowContainer";
 import type { FacilityDefinition, ForestPoint } from "../lib/api";
 import {
   getForestMarkerVisualOptions
@@ -125,11 +126,13 @@ type SelectedForestPopupState = {
 const ForestPopupContent = ({
   forest,
   availableFacilities,
-  avoidTolls
+  avoidTolls,
+  onHoveredAreaNameChange
 }: {
   forest: ForestWithCoordinates;
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
+  onHoveredAreaNameChange?: (hoveredAreaName: string | null) => void;
 }) => {
   useEffect(() => {
     const markerSelectionTestWindow = window as MarkerSelectionTestWindow;
@@ -149,13 +152,16 @@ const ForestPopupContent = ({
   }, []);
 
   return (
-    <div className="forest-popup-card" data-testid="forest-popup-card">
-      <ForestCardContent
-        forest={forest}
-        availableFacilities={availableFacilities}
-        avoidTolls={avoidTolls}
-      />
-    </div>
+    <PopupShadowContainer>
+      <div className="forest-popup-card" data-testid="forest-popup-card">
+        <ForestCardContent
+          forest={forest}
+          availableFacilities={availableFacilities}
+          avoidTolls={avoidTolls}
+          onHoveredAreaNameChange={onHoveredAreaNameChange}
+        />
+      </div>
+    </PopupShadowContainer>
   );
 };
 
@@ -163,18 +169,28 @@ const ForestMarker = memo(({
   forest,
   matchesFilters,
   hoveredForestId,
+  hoveredAreaName,
   selectForestPopup
 }: {
   forest: ForestWithCoordinates;
   matchesFilters: boolean;
   hoveredForestId: string | null;
+  hoveredAreaName: string | null;
   selectForestPopup: (selectedForestPopupState: SelectedForestPopupState) => void;
 }) => {
   const isHoveredForest = hoveredForestId === forest.id;
-  const markerPaneName = matchesFilters ? "matched-forests" : "unmatched-forests";
+  const isAreaHighlighted = hoveredAreaName !== null && forest.areaName === hoveredAreaName;
+  const markerPaneName = isHoveredForest
+    ? "hovered-forest"
+    : isAreaHighlighted
+      ? "area-highlighted-forests"
+      : matchesFilters
+        ? "matched-forests"
+        : "unmatched-forests";
   const { markerRadius, markerPathOptions } = getForestMarkerVisualOptions({
     matchesFilters,
-    isHoveredForest
+    isHoveredForest,
+    isAreaHighlighted
   });
   const {
     displayMarkerInteractive,
@@ -259,13 +275,17 @@ const VisibleForestMarkers = ({
   unmatchedForests,
   availableFacilities,
   avoidTolls,
-  hoveredForestId
+  hoveredForestId,
+  hoveredAreaName,
+  onHoveredAreaNameChange
 }: {
   matchedForests: ForestWithCoordinates[];
   unmatchedForests: ForestWithCoordinates[];
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
   hoveredForestId: string | null;
+  hoveredAreaName: string | null;
+  onHoveredAreaNameChange?: (hoveredAreaName: string | null) => void;
 }) => {
   const map = useMap();
   const [mapViewportSnapshot, setMapViewportSnapshot] =
@@ -406,28 +426,65 @@ const VisibleForestMarkers = ({
   return (
     <>
       <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
-        {renderedUnmatchedForests.map((forest) => (
-          <ForestMarker
-            key={forest.id}
-            forest={forest}
-            matchesFilters={false}
-            hoveredForestId={hoveredForestId}
-            selectForestPopup={setSelectedForestPopupState}
-          />
-        ))}
+        {renderedUnmatchedForests
+          .filter((forest) => hoveredAreaName === null || forest.areaName !== hoveredAreaName)
+          .map((forest) => (
+            <ForestMarker
+              key={forest.id}
+              forest={forest}
+              matchesFilters={false}
+              hoveredForestId={hoveredForestId}
+              hoveredAreaName={hoveredAreaName}
+              selectForestPopup={setSelectedForestPopupState}
+            />
+          ))}
       </Pane>
 
       <Pane name="matched-forests" style={{ zIndex: 660 }}>
-        {visibleMatchedForests.map((forest) => (
-          <ForestMarker
-            key={forest.id}
-            forest={forest}
-            matchesFilters={true}
-            hoveredForestId={hoveredForestId}
-            selectForestPopup={setSelectedForestPopupState}
-          />
-        ))}
+        {visibleMatchedForests
+          .filter((forest) => hoveredAreaName === null || forest.areaName !== hoveredAreaName)
+          .map((forest) => (
+            <ForestMarker
+              key={forest.id}
+              forest={forest}
+              matchesFilters={true}
+              hoveredForestId={hoveredForestId}
+              hoveredAreaName={hoveredAreaName}
+              selectForestPopup={setSelectedForestPopupState}
+            />
+          ))}
       </Pane>
+
+      {hoveredAreaName !== null ? (
+        <Pane name="area-highlighted-forests" style={{ zIndex: 700 }}>
+          {renderedUnmatchedForests
+            .filter((forest) => forest.areaName === hoveredAreaName)
+            .map((forest) => (
+              <ForestMarker
+                key={forest.id}
+                forest={forest}
+                matchesFilters={false}
+                hoveredForestId={hoveredForestId}
+                hoveredAreaName={hoveredAreaName}
+                selectForestPopup={setSelectedForestPopupState}
+              />
+            ))}
+          {visibleMatchedForests
+            .filter((forest) => forest.areaName === hoveredAreaName)
+            .map((forest) => (
+              <ForestMarker
+                key={forest.id}
+                forest={forest}
+                matchesFilters={true}
+                hoveredForestId={hoveredForestId}
+                hoveredAreaName={hoveredAreaName}
+                selectForestPopup={setSelectedForestPopupState}
+              />
+            ))}
+        </Pane>
+      ) : null}
+
+      <Pane name="hovered-forest" style={{ zIndex: 750 }} />
 
       <Pane name="selected-forest-popup" style={{ zIndex: 900 }} />
 
@@ -450,6 +507,7 @@ const VisibleForestMarkers = ({
             forest={selectedForestPopupState.forest}
             availableFacilities={availableFacilities}
             avoidTolls={avoidTolls}
+            onHoveredAreaNameChange={onHoveredAreaNameChange}
           />
         </Popup>
       ) : null}
@@ -465,7 +523,9 @@ export const MapView = memo(({
   userLocation,
   availableFacilities,
   avoidTolls,
-  hoveredForestId
+  hoveredForestId,
+  hoveredAreaName,
+  onHoveredAreaNameChange
 }: {
   forests: ForestPoint[];
   matchedForestIds: Set<string>;
@@ -473,6 +533,8 @@ export const MapView = memo(({
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
   hoveredForestId: string | null;
+  hoveredAreaName: string | null;
+  onHoveredAreaNameChange?: (hoveredAreaName: string | null) => void;
 }) => {
   const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
     const nextMappedForests: ForestWithCoordinates[] = [];
@@ -541,6 +603,8 @@ export const MapView = memo(({
         availableFacilities={availableFacilities}
         avoidTolls={avoidTolls}
         hoveredForestId={hoveredForestId}
+        hoveredAreaName={hoveredAreaName}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
       />
     </MapContainer>
   );

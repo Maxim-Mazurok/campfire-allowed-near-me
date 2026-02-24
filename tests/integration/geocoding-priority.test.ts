@@ -65,82 +65,12 @@ describe("ForestGeocoder forest lookup priority", () => {
       });
 
       const geocodeResult = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
+        "Badja State Forest"
       );
 
       expect(geocodeResult.latitude).toBe(-35.89);
       expect(geocodeResult.longitude).toBe(149.57);
       expect(searchTextQueries[0]).toBe("Badja State Forest, New South Wales, Australia");
-    } finally {
-      rmSync(temporaryDirectory, { recursive: true, force: true });
-    }
-  });
-
-  it("falls back to area-guided forest query only when forest-name-only misses", async () => {
-    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-fallback-"));
-    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
-
-    const searchTextQueries: string[] = [];
-
-    globalThis.fetch = vi.fn(async (url) => {
-      const parsedUrl = new URL(String(url));
-      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
-        const address = parsedUrl.searchParams.get("address") ?? "";
-        searchTextQueries.push(address);
-
-        if (address === "Badja State Forest, near State forests around Bombala, New South Wales, Australia") {
-          return new Response(
-            JSON.stringify({
-              status: "OK",
-              results: [
-                {
-                  formatted_address: "Badja State Forest, NSW",
-                  geometry: {
-                    location: {
-                      lat: -35.9,
-                      lng: 149.58
-                    }
-                  }
-                }
-              ]
-            }),
-            { status: 200, headers: { "Content-Type": "application/json" } }
-          );
-        }
-
-        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" }
-        });
-      }
-
-      return new Response(JSON.stringify([]), {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
-      });
-    }) as unknown as typeof fetch;
-
-    try {
-      const geocoder = new ForestGeocoder({
-        cacheDbPath,
-        requestDelayMs: 0,
-        requestTimeoutMs: 5000,
-        retryAttempts: 1,
-        googleApiKey: "test-key"
-      });
-
-      const geocodeResult = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
-      );
-
-      expect(geocodeResult.latitude).toBe(-35.9);
-      expect(geocodeResult.longitude).toBe(149.58);
-      expect(searchTextQueries).toContain("Badja State Forest, New South Wales, Australia");
-      expect(searchTextQueries).toContain(
-        "Badja State Forest, near State forests around Bombala, New South Wales, Australia"
-      );
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true });
     }
@@ -188,8 +118,7 @@ describe("ForestGeocoder forest lookup priority", () => {
       });
 
       const geocodeResult = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
+        "Badja State Forest"
       );
 
       expect(geocodeResult.latitude).toBe(-35.91);
@@ -262,8 +191,7 @@ describe("ForestGeocoder forest lookup priority", () => {
       });
 
       const geocodeResult = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
+        "Badja State Forest"
       );
 
       expect(geocodeResult.latitude).toBe(-35.91);
@@ -362,8 +290,7 @@ describe("ForestGeocoder forest lookup priority", () => {
       });
 
       const result = await geocoder.geocodeForest(
-        "Badja State Forest",
-        "State forests around Bombala"
+        "Badja State Forest"
       );
 
       // Google is the primary source of truth
@@ -441,8 +368,7 @@ describe("ForestGeocoder forest lookup priority", () => {
       });
 
       const firstMiss = await geocoder.geocodeForest(
-        "Brewombenia State Forest",
-        "Cypress pine forests"
+        "Brewombenia State Forest"
       );
 
       expect(firstMiss.latitude).toBeNull();
@@ -454,8 +380,7 @@ describe("ForestGeocoder forest lookup priority", () => {
       ).toBe(true);
 
       const secondLimited = await geocoder.geocodeForest(
-        "Another Missing Forest",
-        "Cypress pine forests"
+        "Another Missing Forest"
       );
 
       expect(
@@ -468,13 +393,247 @@ describe("ForestGeocoder forest lookup priority", () => {
       geocoder.resetLookupBudgetForRun();
 
       const thirdRetried = await geocoder.geocodeForest(
-        "Brewombenia State Forest",
-        "Cypress pine forests"
+        "Brewombenia State Forest"
       );
 
       expect(thirdRetried.latitude).toBe(-31.21);
       expect(thirdRetried.longitude).toBe(148.54);
       expect(thirdRetried.provider).toBe("GOOGLE_GEOCODING");
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects Google results with street-level types (e.g. route)", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-street-reject-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    globalThis.fetch = vi.fn(async (url) => {
+      const parsedUrl = new URL(String(url));
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        return new Response(
+          JSON.stringify({
+            status: "OK",
+            results: [{
+              formatted_address: "Cypress Pine Ln, Daruka NSW 2340, Australia",
+              types: ["route"],
+              geometry: {
+                location: { lat: -31.28, lng: 151.12 }
+              }
+            }]
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new ForestGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        googleApiKey: "test-key"
+      });
+
+      const result = await geocoder.geocodeForest(
+        "Brewombenia State Forest"
+      );
+
+      expect(result.latitude).toBeNull();
+      expect(result.longitude).toBeNull();
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it("assigns lower confidence for locality-type Google results", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-confidence-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    globalThis.fetch = vi.fn(async (url) => {
+      const parsedUrl = new URL(String(url));
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        if (address.includes("Badja")) {
+          return new Response(
+            JSON.stringify({
+              status: "OK",
+              results: [{
+                formatted_address: "Badja State Forest, NSW, Australia",
+                types: ["natural_feature", "establishment"],
+                geometry: {
+                  location: { lat: -35.89, lng: 149.57 }
+                }
+              }]
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          );
+        }
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
+          status: 200, headers: { "Content-Type": "application/json" }
+        });
+      }
+      return new Response(JSON.stringify([]), {
+        status: 200, headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new ForestGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        googleApiKey: "test-key"
+      });
+
+      const result = await geocoder.geocodeForest("Badja State Forest");
+      expect(result.latitude).toBe(-35.89);
+      expect(result.confidence).toBe(1);
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it("does not include area name in any geocoding query", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-geocode-no-area-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    const allQueries: string[] = [];
+
+    globalThis.fetch = vi.fn(async (url) => {
+      const parsedUrl = new URL(String(url));
+
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        allQueries.push(address);
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      if (parsedUrl.pathname === "/search") {
+        const queryParameter = parsedUrl.searchParams.get("q") ?? "";
+        allQueries.push(queryParameter);
+        return new Response(JSON.stringify([]), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new ForestGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        googleApiKey: "test-key",
+        nominatimBaseUrl: "http://localhost:8080"
+      });
+
+      // Pass an area name — it should be completely ignored
+      const result = await geocoder.geocodeForest(
+        "Badja State Forest",
+        "Cypress pine forests"
+      );
+
+      // All queries should have been attempted (result will be null since everything returns empty)
+      expect(result.latitude).toBeNull();
+      expect(allQueries.length).toBeGreaterThan(0);
+
+      // No query should contain the area name
+      for (const query of allQueries) {
+        expect(query.toLowerCase()).not.toContain("cypress");
+        expect(query.toLowerCase()).not.toContain("pine forests");
+      }
+
+      // All attempt queries should reference the forest name, never the area
+      const attemptQueries = (result.attempts ?? []).map(
+        (attempt) => attempt.query
+      );
+      expect(attemptQueries.length).toBeGreaterThan(0);
+      for (const attemptQuery of attemptQueries) {
+        expect(attemptQuery.toLowerCase()).toContain("badja");
+        expect(attemptQuery.toLowerCase()).not.toContain("cypress");
+      }
+    } finally {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it("uses double-colon alias key format without area name", async () => {
+    const temporaryDirectory = mkdtempSync(join(tmpdir(), "campfire-alias-key-"));
+    const cacheDbPath = join(temporaryDirectory, "coordinates.sqlite");
+
+    globalThis.fetch = vi.fn(async (url) => {
+      const parsedUrl = new URL(String(url));
+      if (parsedUrl.hostname === "maps.googleapis.com" && parsedUrl.pathname === "/maps/api/geocode/json") {
+        const address = parsedUrl.searchParams.get("address") ?? "";
+        if (address.includes("Badja")) {
+          return new Response(
+            JSON.stringify({
+              status: "OK",
+              results: [
+                {
+                  formatted_address: "Badja State Forest, NSW",
+                  geometry: {
+                    location: { lat: -35.89, lng: 149.57 }
+                  }
+                }
+              ]
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          );
+        }
+        return new Response(JSON.stringify({ status: "ZERO_RESULTS", results: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }) as unknown as typeof fetch;
+
+    try {
+      const geocoder = new ForestGeocoder({
+        cacheDbPath,
+        requestDelayMs: 0,
+        requestTimeoutMs: 5000,
+        retryAttempts: 1,
+        googleApiKey: "test-key"
+      });
+
+      // First call populates the cache under the alias key
+      await geocoder.geocodeForest("Badja State Forest", "Some Area Name");
+
+      // Second call should hit the alias cache
+      const cachedResult = await geocoder.geocodeForest("Badja State Forest", "Some Area Name");
+
+      expect(cachedResult.latitude).toBe(-35.89);
+
+      // The cache hit preserves the original provider but the attempt records CACHE_HIT
+      const cacheAttempt = cachedResult.attempts?.find(
+        (attempt) => attempt.outcome === "CACHE_HIT"
+      );
+      expect(cacheAttempt).toBeDefined();
+
+      // The alias key should use double-colon format without area name
+      expect(cacheAttempt?.aliasKey).toBe("alias:forest::badja state forest");
+      expect(cacheAttempt?.aliasKey).not.toContain("some area");
     } finally {
       rmSync(temporaryDirectory, { recursive: true, force: true });
     }

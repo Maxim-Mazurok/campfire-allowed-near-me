@@ -204,6 +204,22 @@ body {
   color: #2f855a;
 }
 
+.forest-navigation-link--disabled {
+  border-color: var(--mantine-color-warning-6, #e8590c);
+  color: var(--mantine-color-warning-6, #e8590c);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.forest-navigation-link--disabled:hover {
+  border-color: var(--mantine-color-warning-6, #e8590c);
+  color: var(--mantine-color-warning-6, #e8590c);
+}
+
+.forest-location-warning {
+  color: var(--mantine-color-warning-6, #e8590c);
+}
+
 .forest-name-link {
   color: inherit;
 }
@@ -382,6 +398,9 @@ body {
 .forest-popup-card {
   min-width: 420px;
   max-width: 510px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
 .forest-popup .leaflet-popup-content-wrapper {
@@ -433,13 +452,7 @@ body {
   outline-offset: 1px;
 }
 
-.leaflet-popup-content .forest-main-row {
-  margin-bottom: 7px;
-}
 
-.leaflet-popup-content a {
-  color: inherit;
-}
 
 /* ================================================================
    Utility Classes

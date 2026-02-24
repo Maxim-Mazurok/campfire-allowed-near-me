@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-24T14:58:25.412Z",
+  "fetchedAt": "2026-02-24T16:11:05.818Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -1384,10 +1384,10 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -33.1810592,
-      "longitude": 150.234389,
-      "geocodeName": "Newnes, Lithgow City Council, New South Wales, 2790, Australia",
-      "geocodeConfidence": 0.16004728694590675,
+      "latitude": -33.1730026,
+      "longitude": 150.2561531,
+      "geocodeName": "Newnes NSW 2790, Australia",
+      "geocodeConfidence": 0.5,
       "geocodeDiagnostics": null,
       "facilities": {
         "camping_and_picnics": null,
@@ -6002,14 +6002,36 @@
       "forestUrl": null,
       "banStatus": "BANNED",
       "banStatusText": "Solid fuel fires banned",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -31.0281972,
-      "longitude": 150.9717134,
-      "geocodeName": "Cypress Pine Ln, Daruka NSW 2340, Australia",
-      "geocodeConfidence": 1,
-      "geocodeDiagnostics": null,
+      "totalFireBanStatus": "UNKNOWN",
+      "totalFireBanStatusText": "Unknown (Total Fire Ban status unavailable)",
+      "totalFireBanDiagnostics": {
+        "reason": "Coordinates were unavailable, so Total Fire Ban lookup could not run.",
+        "lookupCode": "NO_COORDINATES",
+        "fireWeatherAreaName": null,
+        "debug": [
+          "lookupCode=NO_COORDINATES",
+          "statusText=Unknown (Total Fire Ban status unavailable)",
+          "latitude=null",
+          "longitude=null",
+          "fireWeatherAreaName=null",
+          "snapshotAreaStatuses=21",
+          "snapshotGeoAreas=21",
+          "snapshotWarnings=0"
+        ]
+      },
+      "latitude": null,
+      "longitude": null,
+      "geocodeName": null,
+      "geocodeConfidence": null,
+      "geocodeDiagnostics": {
+        "reason": "Geocoding request failed before coordinates were resolved.",
+        "debug": [
+          "Forest lookup: CACHE_HIT | provider=CACHE | query=Brewombenia State Forest, New South Wales, Australia",
+          "Forest lookup: REQUEST_FAILED | provider=OSM_NOMINATIM | query=Brewombenia State Forest, New South Wales, Australia | error=Empty result from https://nominatim.openstreetmap.org",
+          "Forest lookup: CACHE_HIT | provider=CACHE | query=Brewombenia, New South Wales, Australia",
+          "Forest lookup: REQUEST_FAILED | provider=OSM_NOMINATIM | query=Brewombenia, New South Wales, Australia | error=Empty result from https://nominatim.openstreetmap.org"
+        ]
+      },
       "facilities": {
         "camping_and_picnics": null,
         "walking_track": null,
@@ -28074,10 +28096,10 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -28.4728333,
-      "longitude": 152.5480618,
-      "geocodeName": "Urbenville, Tenterfield Shire Council, New South Wales, 2475, Australia",
-      "geocodeConfidence": 0.1600483154039826,
+      "latitude": -28.4667972,
+      "longitude": 152.5571655,
+      "geocodeName": "Urbenville NSW 2475, Australia",
+      "geocodeConfidence": 1,
       "geocodeDiagnostics": null,
       "facilities": {
         "camping_and_picnics": true,
@@ -28174,10 +28196,10 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -28.6899493,
-      "longitude": 152.0866009,
-      "geocodeName": "Willsons Downfall, Tenterfield Shire Council, New South Wales, 2372, Australia",
-      "geocodeConfidence": 0.1600483154039826,
+      "latitude": -28.7018902,
+      "longitude": 152.0988562,
+      "geocodeName": "Willsons Downfall NSW 2372, Australia",
+      "geocodeConfidence": 0.5,
       "geocodeDiagnostics": null,
       "facilities": {
         "camping_and_picnics": null,
@@ -28738,10 +28760,6 @@
   "warnings": [
     "Rejected implausible result \"Burrawan State Forest\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"Bondi Brewing Co. [Office Address]\" for forest \"Brewombenia State Forest\"",
-    "Rejected implausible result \"Carabost State Forest, Carabost NSW 2650, Australia\" for forest \"Brewombenia State Forest\"",
-    "Rejected implausible result \"Bee hive camp #2\" for forest \"Brewombenia State Forest\"",
-    "Rejected implausible result \"New South Wales, Australia\" for forest \"Brewombenia State Forest\"",
-    "Rejected implausible result \"BREWMANCE LANE COVE\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Croft Knoll State Forest\"",
     "Facilities page includes 9 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Perricoota State Forest, Tallaganda State Forest, Vulcan State Forest, Wingello State Forest, Yambulla State Forest (+1 more).",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",

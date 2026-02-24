@@ -90,12 +90,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -34.5,
-        longitude: 150.3,
-        displayName: "Southern Highlands",
-        confidence: 0.9
-      }),
       geocodeForest: async () => ({
         latitude: -34.5,
         longitude: 150.3,
@@ -200,12 +194,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -34.5,
-        longitude: 150.3,
-        displayName: "Southern Highlands",
-        confidence: 0.9
-      }),
       geocodeForest: async () => ({
         latitude: -34.5,
         longitude: 150.3,
@@ -264,12 +252,6 @@ describe("LiveForestDataService facilities matching", () => {
     const geocodedForestNameOrder: string[] = [];
     const geocoder = {
       resetLookupBudgetForRun: () => {},
-      geocodeArea: async () => ({
-        latitude: null,
-        longitude: null,
-        displayName: "Cypress pine forests",
-        confidence: null
-      }),
       geocodeForest: async (forestName: string) => {
         geocodedForestNameOrder.push(forestName);
 
@@ -416,12 +398,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -35.2,
-        longitude: 150.8,
-        displayName: "South Coast",
-        confidence: 0.8
-      }),
       geocodeForest: async (forestName: string) => {
         if (forestName === "Forest A State Forest") {
           return {
@@ -535,12 +511,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -37.0,
-        longitude: 149.0,
-        displayName: "Bombala",
-        confidence: 0.9
-      }),
       geocodeForest: async () => ({
         latitude: -37.0,
         longitude: 149.0,
@@ -624,12 +594,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -32.0,
-        longitude: 151.6,
-        displayName: "North Coast",
-        confidence: 0.9
-      }),
       geocodeForest: async () => ({
         latitude: -32.0,
         longitude: 151.6,
@@ -721,12 +685,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -29.0,
-        longitude: 152.0,
-        displayName: "North Coast",
-        confidence: 0.9
-      }),
       geocodeForest: async (forestName: string) => {
         if (forestName === "Carwong State Forest") {
           return {
@@ -870,12 +828,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -33.9,
-        longitude: 151.2,
-        displayName: "Legacy Area",
-        confidence: 0.7
-      }),
       geocodeForest: async () => ({
         latitude: -33.9,
         longitude: 151.2,
@@ -1001,12 +953,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: -33.2,
-        longitude: 150.1,
-        displayName: "New Area",
-        confidence: 0.7
-      }),
       geocodeForest: async () => ({
         latitude: -33.2,
         longitude: 150.1,
@@ -1150,23 +1096,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: null,
-        longitude: null,
-        displayName: null,
-        confidence: null,
-        attempts: [
-          {
-            query: "Legacy Area, New South Wales, Australia",
-            aliasKey: "alias:area:https://example.com/legacy-area",
-            cacheKey: "query:legacy area, new south wales, australia",
-            outcome: "EMPTY_RESULT",
-            httpStatus: null,
-            resultCount: 0,
-            errorMessage: null
-          }
-        ]
-      }),
       geocodeForest: async (forestName: string) => {
         if (forestName === "Mapped State Forest") {
           return {
@@ -1176,10 +1105,10 @@ describe("LiveForestDataService facilities matching", () => {
             confidence: 0.8,
             attempts: [
               {
-                query: "Mapped State Forest, Legacy Area, New South Wales, Australia",
-                aliasKey: "alias:forest:legacy area:mapped state forest",
+                query: "Mapped State Forest, New South Wales, Australia",
+                aliasKey: "alias:forest::mapped state forest",
                 cacheKey:
-                  "query:mapped state forest, legacy area, new south wales, australia",
+                  "query:mapped state forest, new south wales, australia",
                 outcome: "LOOKUP_SUCCESS",
                 httpStatus: 200,
                 resultCount: 1,
@@ -1196,10 +1125,10 @@ describe("LiveForestDataService facilities matching", () => {
           confidence: null,
           attempts: [
             {
-              query: "Unmapped State Forest, Legacy Area, New South Wales, Australia",
-              aliasKey: "alias:forest:legacy area:unmapped state forest",
+              query: "Unmapped State Forest, New South Wales, Australia",
+              aliasKey: "alias:forest::unmapped state forest",
               cacheKey:
-                "query:unmapped state forest, legacy area, new south wales, australia",
+                "query:unmapped state forest, new south wales, australia",
               outcome: "LIMIT_REACHED",
               httpStatus: null,
               resultCount: null,
@@ -1232,10 +1161,13 @@ describe("LiveForestDataService facilities matching", () => {
       );
       expect(unmappedForest?.geocodeDiagnostics?.debug).toEqual(
         expect.arrayContaining([
-          expect.stringContaining("Forest lookup: LIMIT_REACHED"),
-          expect.stringContaining("Area fallback: EMPTY_RESULT")
+          expect.stringContaining("Forest lookup: LIMIT_REACHED")
         ])
       );
+      // All diagnostics debug entries should be forest lookups only (no area lookups)
+      for (const debugEntry of unmappedForest?.geocodeDiagnostics?.debug ?? []) {
+        expect(debugEntry).toMatch(/^Forest lookup:/);
+      }
       expect(secondResponse.forests.find((forest) => forest.forestName === "Unmapped State Forest")
         ?.geocodeDiagnostics?.debug).toEqual(
         expect.arrayContaining([
@@ -1285,23 +1217,6 @@ describe("LiveForestDataService facilities matching", () => {
     };
 
     const geocoder = {
-      geocodeArea: async () => ({
-        latitude: null,
-        longitude: null,
-        displayName: null,
-        confidence: null,
-        attempts: [
-          {
-            query: "West Region, New South Wales, Australia",
-            aliasKey: "alias:area:https://example.com/west-region",
-            cacheKey: "query:west region, new south wales, australia",
-            outcome: "EMPTY_RESULT",
-            httpStatus: null,
-            resultCount: 0,
-            errorMessage: null
-          }
-        ]
-      }),
       geocodeForest: async () => ({
         latitude: null,
         longitude: null,
@@ -1309,10 +1224,10 @@ describe("LiveForestDataService facilities matching", () => {
         confidence: null,
         attempts: [
           {
-            query: "Unmapped State Forest, West Region, New South Wales, Australia",
-            aliasKey: "alias:forest:west region:unmapped state forest",
+            query: "Unmapped State Forest, New South Wales, Australia",
+            aliasKey: "alias:forest::unmapped state forest",
             cacheKey:
-              "query:unmapped state forest, west region, new south wales, australia",
+              "query:unmapped state forest, new south wales, australia",
             outcome: "LIMIT_REACHED",
             httpStatus: null,
             resultCount: null,
@@ -1345,10 +1260,13 @@ describe("LiveForestDataService facilities matching", () => {
       );
       expect(unmappedForest?.geocodeDiagnostics?.debug).toEqual(
         expect.arrayContaining([
-          expect.stringContaining("Forest lookup: LIMIT_REACHED"),
-          expect.stringContaining("Area fallback: EMPTY_RESULT")
+          expect.stringContaining("Forest lookup: LIMIT_REACHED")
         ])
       );
+      // All diagnostics debug entries should be forest lookups only (no area lookups)
+      for (const debugEntry of unmappedForest?.geocodeDiagnostics?.debug ?? []) {
+        expect(debugEntry).toMatch(/^Forest lookup:/);
+      }
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
     }

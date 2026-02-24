@@ -10,6 +10,16 @@ import { renderWithMantine } from "../test-utils";
 import { MapView } from "../../apps/web/src/components/MapView";
 import type { ForestPoint } from "../../apps/web/src/lib/api";
 
+vi.mock("../../apps/web/src/components/PopupShadowContainer", () => ({
+  PopupShadowContainer: ({
+    children,
+    className
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => <div className={className}>{children}</div>
+}));
+
 const mockedMap = {
   setView: vi.fn(),
   fitBounds: vi.fn(),
@@ -89,16 +99,20 @@ const resetMockedMapSpies = () => {
 const buildForestPoint = ({
   id,
   forestName,
-  banStatus
+  banStatus,
+  areaName = "Area 1",
+  areaUrl = "https://example.com/area-1"
 }: {
   id: string;
   forestName: string;
   banStatus: ForestPoint["banStatus"];
+  areaName?: string;
+  areaUrl?: string;
 }): ForestPoint => ({
   id,
   source: "Forestry Corporation NSW",
-  areaName: "Area 1",
-  areaUrl: "https://example.com/area-1",
+  areaName,
+  areaUrl,
   forestName,
   forestUrl: `https://example.com/forests/${id}`,
   banStatus,
@@ -213,5 +227,169 @@ describe("MapView marker popup interactions", () => {
 
     expect(screen.getByTestId("forest-popup-card").textContent).toContain("Forest A");
     expect(mockedMap.panInside).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders hovered forest marker in the hovered-forest pane", () => {
+    resetMockedMapSpies();
+
+    const forests = [
+      buildForestPoint({
+        id: "forest-a",
+        forestName: "Forest A",
+        banStatus: "NOT_BANNED"
+      }),
+      buildForestPoint({
+        id: "forest-b",
+        forestName: "Forest B",
+        banStatus: "NOT_BANNED"
+      })
+    ];
+
+    // Render without hover — both should be in matched-forests pane
+    const { rerender } = renderWithMantine(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+      />
+    );
+
+    const matchedMarkersBefore = screen.getAllByTestId("circle-marker-matched-forests-interactive");
+    expect(matchedMarkersBefore.length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByTestId("circle-marker-hovered-forest-interactive")).toBeNull();
+
+    // Hover forest-a — it should move to hovered-forest pane
+    rerender(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId="forest-a"
+      />
+    );
+
+    expect(screen.getByTestId("circle-marker-hovered-forest-interactive")).toBeTruthy();
+    expect(screen.getByTestId("pane-hovered-forest")).toBeTruthy();
+  });
+
+  it("fires onHoveredAreaNameChange when hovering the area subtitle in the popup", () => {
+    resetMockedMapSpies();
+
+    const onHoveredAreaNameChange = vi.fn<(hoveredAreaName: string | null) => void>();
+
+    renderWithMantine(
+      <MapView
+        forests={[
+          buildForestPoint({
+            id: "forest-a",
+            forestName: "Forest A",
+            banStatus: "NOT_BANNED"
+          })
+        ]}
+        matchedForestIds={new Set(["forest-a"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+        hoveredAreaName={null}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
+      />
+    );
+
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    expect(screen.getByTestId("forest-popup-card")).toBeTruthy();
+
+    const areaLink = screen.getByTestId("forest-area-link");
+    fireEvent.mouseEnter(areaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith("Area 1");
+
+    fireEvent.mouseLeave(areaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith(null);
+  });
+
+  it("highlights area markers on map when hovering area name in popup", () => {
+    resetMockedMapSpies();
+
+    const forests = [
+      buildForestPoint({
+        id: "forest-a",
+        forestName: "Forest A",
+        banStatus: "NOT_BANNED",
+        areaName: "Hunter Area"
+      }),
+      buildForestPoint({
+        id: "forest-b",
+        forestName: "Forest B",
+        banStatus: "NOT_BANNED",
+        areaName: "Hunter Area"
+      }),
+      buildForestPoint({
+        id: "forest-c",
+        forestName: "Forest C",
+        banStatus: "NOT_BANNED",
+        areaName: "South Coast Area"
+      })
+    ];
+
+    // Initially all markers are in matched-forests pane, no area highlighting
+    const { rerender } = renderWithMantine(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b", "forest-c"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+        hoveredAreaName={null}
+      />
+    );
+
+    const matchedMarkersInitial = screen.getAllByTestId("circle-marker-matched-forests-interactive");
+    expect(matchedMarkersInitial.length).toBeGreaterThanOrEqual(3);
+    expect(screen.queryByTestId("circle-marker-area-highlighted-forests-interactive")).toBeNull();
+
+    // Simulate what App does when onHoveredAreaNameChange fires:
+    // re-render MapView with hoveredAreaName="Hunter Area"
+    rerender(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b", "forest-c"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+        hoveredAreaName="Hunter Area"
+      />
+    );
+
+    // Hunter Area forests (a, b) should move to area-highlighted pane
+    const highlightedMarkers = screen.getAllByTestId("circle-marker-area-highlighted-forests-interactive");
+    expect(highlightedMarkers).toHaveLength(2);
+
+    // Forest C (South Coast) should remain in matched-forests pane
+    const remainingMatchedMarkers = screen.getAllByTestId("circle-marker-matched-forests-interactive");
+    expect(remainingMatchedMarkers).toHaveLength(1);
+
+    // Clear hover — all markers return to matched-forests pane
+    rerender(
+      <MapView
+        forests={forests}
+        matchedForestIds={new Set(["forest-a", "forest-b", "forest-c"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+        hoveredAreaName={null}
+      />
+    );
+
+    expect(screen.queryByTestId("circle-marker-area-highlighted-forests-interactive")).toBeNull();
+    const allMatchedFinal = screen.getAllByTestId("circle-marker-matched-forests-interactive");
+    expect(allMatchedFinal.length).toBeGreaterThanOrEqual(3);
   });
 });

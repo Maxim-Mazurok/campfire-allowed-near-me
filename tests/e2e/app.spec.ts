@@ -119,7 +119,7 @@ const clearStoredPreferences = async ({
 };
 
 test("highlights matching map pin when hovering a forest row", async ({ page }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -134,12 +134,6 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-a",
-          forestName: "Forest A",
-          areaName: "Area 1",
-          distanceKm: 10.2
-        },
         forests: [
           {
             id: "forest-a",
@@ -156,7 +150,6 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
             longitude: 151.1,
             geocodeName: "Forest A",
             geocodeConfidence: 0.8,
-            distanceKm: 10.2,
             facilities: {}
           }
         ]
@@ -181,7 +174,7 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
 
 test("opens popup when clicking green matched marker", async ({ page }) => {
   await clearStoredPreferences({ page });
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -196,12 +189,6 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-green",
-          forestName: "Forest Green",
-          areaName: "Area 1",
-          distanceKm: 0
-        },
         forests: [
           {
             id: "forest-green",
@@ -218,7 +205,6 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
             longitude: 147.0166,
             geocodeName: "Forest Green",
             geocodeConfidence: 0.8,
-            distanceKm: 0,
             facilities: {}
           }
         ]
@@ -238,7 +224,7 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
 
 test("opens popup when clicking grey unmatched marker", async ({ page }) => {
   await clearStoredPreferences({ page });
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -253,7 +239,6 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "forest-grey",
@@ -270,7 +255,6 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
             longitude: 147.0166,
             geocodeName: "Forest Grey",
             geocodeConfidence: 0.8,
-            distanceKm: null,
             facilities: {}
           }
         ]
@@ -291,7 +275,7 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
 
 test("keeps map position after panning with popup open", async ({ page }) => {
   await clearStoredPreferences({ page });
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -306,12 +290,6 @@ test("keeps map position after panning with popup open", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-pan",
-          forestName: "Forest Pan",
-          areaName: "Area 1",
-          distanceKm: 0
-        },
         forests: [
           {
             id: "forest-pan",
@@ -328,7 +306,6 @@ test("keeps map position after panning with popup open", async ({ page }) => {
             longitude: 147.0166,
             geocodeName: "Forest Pan",
             geocodeConfidence: 0.8,
-            distanceKm: 0,
             facilities: {}
           }
         ]
@@ -380,7 +357,7 @@ test("keeps map position after panning with popup open", async ({ page }) => {
 
 test("keeps popup stable while hovering forest list", async ({ page }) => {
   await clearStoredPreferences({ page });
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -395,12 +372,6 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-a",
-          forestName: "Forest A",
-          areaName: "Area 1",
-          distanceKm: 0
-        },
         forests: [
           {
             id: "forest-a",
@@ -417,7 +388,6 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             longitude: 147.0166,
             geocodeName: "Forest A",
             geocodeConfidence: 0.8,
-            distanceKm: 0,
             facilities: {}
           },
           {
@@ -435,7 +405,6 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             longitude: 147.1166,
             geocodeName: "Forest B",
             geocodeConfidence: 0.8,
-            distanceKm: 12,
             facilities: {}
           }
         ]
@@ -474,7 +443,7 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
 test("loads forests, applies filters, and resolves nearest legal spot", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -502,12 +471,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-a",
-          forestName: "Forest A",
-          areaName: "Area 1",
-          distanceKm: 14.2
-        },
         forests: [
           {
             id: "forest-a",
@@ -524,7 +487,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             longitude: 151.1,
             geocodeName: "Forest A",
             geocodeConfidence: 0.8,
-            distanceKm: 14.2,
             facilities: {
               fishing: true,
               camping: true
@@ -545,7 +507,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             longitude: 151.3,
             geocodeName: "Forest B",
             geocodeConfidence: 0.8,
-            distanceKm: 30.1,
             facilities: {
               fishing: false,
               camping: true
@@ -566,7 +527,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             longitude: 151.4,
             geocodeName: "Forest C",
             geocodeConfidence: 0.8,
-            distanceKm: 44.2,
             facilities: {
               fishing: true,
               camping: false
@@ -683,7 +643,7 @@ test("persists location and filters across reloads", async ({ page }) => {
   await page.context().grantPermissions(["geolocation"]);
   await page.context().setGeolocation({ latitude: -33.9, longitude: 151.1 });
 
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     const requestUrl = new URL(route.request().url());
     const hasLocation =
       requestUrl.searchParams.has("lat") && requestUrl.searchParams.has("lng");
@@ -709,14 +669,6 @@ test("persists location and filters across reloads", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: hasLocation
-          ? {
-              id: "forest-a",
-              forestName: "Forest A",
-              areaName: "Area 1",
-              distanceKm: 2.4
-            }
-          : null,
         forests: [
           {
             id: "forest-a",
@@ -733,7 +685,6 @@ test("persists location and filters across reloads", async ({ page }) => {
             longitude: 151.1,
             geocodeName: "Forest A",
             geocodeConfidence: 0.8,
-            distanceKm: 2.4,
             facilities: {
               fishing: false
             }
@@ -753,7 +704,6 @@ test("persists location and filters across reloads", async ({ page }) => {
             longitude: 149.1,
             geocodeName: "Forest B",
             geocodeConfidence: 0.8,
-            distanceKm: 45.5,
             facilities: {
               fishing: true
             }
@@ -783,7 +733,7 @@ test("persists location and filters across reloads", async ({ page }) => {
 });
 
 test("shows closure badges and applies closure filters", async ({ page }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -826,12 +776,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-open",
-          forestName: "Open Forest",
-          areaName: "Area 1",
-          distanceKm: 12.4
-        },
         forests: [
           {
             id: "forest-open",
@@ -846,7 +790,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             longitude: 151.1,
             geocodeName: "Open Forest",
             geocodeConfidence: 0.8,
-            distanceKm: 12.4,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -879,7 +822,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             longitude: 151.3,
             geocodeName: "Closed Forest",
             geocodeConfidence: 0.8,
-            distanceKm: 20.1,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -933,7 +875,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             longitude: 151.4,
             geocodeName: "Partial Forest",
             geocodeConfidence: 0.8,
-            distanceKm: 25.5,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -1035,7 +976,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
 test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1050,7 +991,6 @@ test("shows stale warning in warnings dialog when upstream scrape falls back to 
           fuzzyMatches: []
         },
         warnings: ["Forestry site anti-bot verification blocked scraping."],
-        nearestLegalSpot: null,
         forests: []
       })
     });
@@ -1071,7 +1011,7 @@ test("does not request geolocation on page load when permission is not granted",
 }) => {
   await page.context().clearPermissions();
 
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1086,7 +1026,6 @@ test("does not request geolocation on page load when permission is not granted",
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: []
       })
     });
@@ -1099,118 +1038,13 @@ test("does not request geolocation on page load when permission is not granted",
   await expect(page.getByTestId("nearest-spot")).toHaveCount(0);
 });
 
-test("shows refresh progress status text when refresh task is running", async ({ page }) => {
-  await page.route("**/api/forests**", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        fetchedAt: "2026-02-21T10:00:00.000Z",
-        stale: false,
-        sourceName: "Forestry Corporation NSW",
-        availableFacilities: [],
-        availableClosureTags: [],
-        matchDiagnostics: {
-          unmatchedFacilitiesForests: [],
-          fuzzyMatches: []
-        },
-        warnings: [],
-        nearestLegalSpot: null,
-        forests: []
-      })
-    });
-  });
-
-  await page.route("**/api/refresh/status", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        taskId: "refresh-1",
-        status: "RUNNING",
-        phase: "GEOCODE_FORESTS",
-        message: "Resolving forest coordinates (13/541).",
-        startedAt: "2026-02-21T10:00:00.000Z",
-        updatedAt: "2026-02-21T10:00:02.000Z",
-        completedAt: null,
-        error: null,
-        progress: {
-          phase: "GEOCODE_FORESTS",
-          message: "Resolving forest coordinates (13/541).",
-          completed: 13,
-          total: 541
-        }
-      })
-    });
-  });
-
-  await page.goto("/");
-  await page.getByRole("button", { name: "Refresh from source" }).click();
-  await expect(page.getByTestId("refresh-task-status")).toContainText(
-    "Refresh in progress:"
-  );
-  await expect(page.getByTestId("refresh-progress-bar")).toBeVisible();
-});
-
-test("opens websocket handshakes for refresh and forests progress endpoints", async ({ page }) => {
-  await page.goto("/");
-
-  const websocketHandshakeResult = await page.evaluate(async () => {
-    const openWebSocket = async (path: string): Promise<string> =>
-      new Promise((resolve) => {
-        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-        const webSocket = new WebSocket(`${protocol}://${window.location.host}${path}`);
-        let settled = false;
-
-        const settle = (value: string) => {
-          if (settled) {
-            return;
-          }
-
-          settled = true;
-          resolve(value);
-        };
-
-        webSocket.addEventListener("open", () => {
-          webSocket.close();
-          settle("open");
-        });
-
-        webSocket.addEventListener("error", () => {
-          settle("error");
-        });
-
-        webSocket.addEventListener("close", () => {
-          if (!settled) {
-            settle("close");
-          }
-        });
-
-        setTimeout(() => {
-          settle("timeout");
-        }, 4000);
-      });
-
-    const refreshWebSocketStatus = await openWebSocket("/api/refresh/ws");
-    const forestsWebSocketStatus = await openWebSocket("/api/forests/ws");
-
-    return {
-      refreshWebSocketStatus,
-      forestsWebSocketStatus
-    };
-  });
-
-  expect(websocketHandshakeResult.refreshWebSocketStatus).toBe("open");
-  expect(websocketHandshakeResult.forestsWebSocketStatus).toBe("open");
-});
-
 test("uses current location on page load when permission is already granted", async ({
   page
 }) => {
   await page.context().grantPermissions(["geolocation"]);
   await page.context().setGeolocation({ latitude: -33.9, longitude: 151.1 });
 
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1225,12 +1059,6 @@ test("uses current location on page load when permission is already granted", as
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: {
-          id: "forest-a",
-          forestName: "Forest A",
-          areaName: "Area 1",
-          distanceKm: 2.4
-        },
         forests: [
           {
             id: "forest-a",
@@ -1247,7 +1075,6 @@ test("uses current location on page load when permission is already granted", as
             longitude: 151.1,
             geocodeName: "Forest A",
             geocodeConfidence: 0.8,
-            distanceKm: 2.4,
             facilities: {}
           }
         ]
@@ -1267,7 +1094,7 @@ test("keeps nearest spot when non-location response resolves after location resp
   await page.context().grantPermissions(["geolocation"]);
   await page.context().setGeolocation({ latitude: -33.9, longitude: 151.1 });
 
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     const requestUrl = new URL(route.request().url());
     const hasLocation =
       requestUrl.searchParams.has("lat") && requestUrl.searchParams.has("lng");
@@ -1287,12 +1114,6 @@ test("keeps nearest spot when non-location response resolves after location resp
             fuzzyMatches: []
           },
           warnings: [],
-          nearestLegalSpot: {
-            id: "forest-fast",
-            forestName: "Fast Forest",
-            areaName: "Area Fast",
-            distanceKm: 1.2
-          },
           forests: [
             {
               id: "forest-fast",
@@ -1309,7 +1130,6 @@ test("keeps nearest spot when non-location response resolves after location resp
               longitude: 151.1,
               geocodeName: "Fast Forest",
               geocodeConfidence: 0.9,
-              distanceKm: 1.2,
               facilities: {}
             }
           ]
@@ -1332,7 +1152,6 @@ test("keeps nearest spot when non-location response resolves after location resp
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: []
       }),
       delay: 300
@@ -1347,7 +1166,7 @@ test("keeps nearest spot when non-location response resolves after location resp
 test("shows facilities mismatch and fuzzy-match details in warnings dialog with links", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1375,7 +1194,6 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
         warnings: [
           "Facilities page includes 1 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest."
         ],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "forest-a",
@@ -1392,7 +1210,6 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
             longitude: 150.4,
             geocodeName: "Belangalo State Forest",
             geocodeConfidence: 0.8,
-            distanceKm: 10.2,
             facilities: {}
           }
         ]
@@ -1441,7 +1258,7 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
 test("opens fire-ban forest table from warnings and sorts by forest and region", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1456,7 +1273,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "fire-ban-zulu",
@@ -1472,7 +1288,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             longitude: 153.5,
             geocodeName: "Zulu State Forest",
             geocodeConfidence: 0.8,
-            distanceKm: null,
             facilities: {}
           },
           {
@@ -1489,7 +1304,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             longitude: 150.2,
             geocodeName: "Alpha State Forest",
             geocodeConfidence: 0.8,
-            distanceKm: null,
             facilities: {}
           },
           {
@@ -1506,7 +1320,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             longitude: 149.6,
             geocodeName: "Beta State Forest",
             geocodeConfidence: 0.8,
-            distanceKm: null,
             facilities: {}
           },
           {
@@ -1523,7 +1336,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             longitude: 149.2,
             geocodeName: "Coolangubra State Forest",
             geocodeConfidence: 0.5,
-            distanceKm: null,
             facilities: {}
           }
         ]
@@ -1564,7 +1376,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
 test("shows unmapped forests with diagnostics and fallback links in warnings dialog", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1579,7 +1391,6 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "alpha",
@@ -1602,7 +1413,6 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
                 "Forest lookup: LIMIT_REACHED | query=Alpha State Forest, North Region, New South Wales, Australia"
               ]
             },
-            distanceKm: null,
             facilities: {}
           },
           {
@@ -1626,7 +1436,6 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
                 "Area fallback: EMPTY_RESULT | query=South Region, New South Wales, Australia | results=0"
               ]
             },
-            distanceKm: null,
             facilities: {}
           }
         ]
@@ -1673,7 +1482,7 @@ test("prompts for location access when geolocation is unavailable", async ({
     });
   });
 
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1688,7 +1497,6 @@ test("prompts for location access when geolocation is unavailable", async ({
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: []
       })
     });
@@ -1710,7 +1518,7 @@ test("settings dialog is visible above the map and interactable by coordinates",
   page
 }) => {
   await clearStoredPreferences({ page });
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1725,7 +1533,6 @@ test("settings dialog is visible above the map and interactable by coordinates",
           fuzzyMatches: []
         },
         warnings: [],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "forest-ztest",
@@ -1742,7 +1549,6 @@ test("settings dialog is visible above the map and interactable by coordinates",
             longitude: 147.0166,
             geocodeName: "Forest Z-Test",
             geocodeConfidence: 0.8,
-            distanceKm: 10,
             facilities: {}
           }
         ]
@@ -1788,7 +1594,7 @@ test("settings dialog is visible above the map and interactable by coordinates",
 test("warnings dialog is visible above the map and interactable by coordinates", async ({
   page
 }) => {
-  await page.route("**/api/forests**", async (route) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -1803,7 +1609,6 @@ test("warnings dialog is visible above the map and interactable by coordinates",
           fuzzyMatches: []
         },
         warnings: ["Forestry site anti-bot verification blocked scraping."],
-        nearestLegalSpot: null,
         forests: [
           {
             id: "forest-wtest",
@@ -1820,7 +1625,6 @@ test("warnings dialog is visible above the map and interactable by coordinates",
             longitude: 147.0166,
             geocodeName: "Forest W-Test",
             geocodeConfidence: 0.8,
-            distanceKm: 10,
             facilities: {}
           }
         ]
@@ -1857,4 +1661,154 @@ test("warnings dialog is visible above the map and interactable by coordinates",
     closeButtonBox!.y + closeButtonBox!.height / 2
   );
   await expect(warningsDialog).not.toBeVisible();
+});
+
+test("hovering area name in map popup highlights same-area markers orange", async ({ page }) => {
+  await clearStoredPreferences({ page });
+
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-a",
+            source: "Forestry Corporation NSW",
+            areaName: "Hunter Area",
+            areaUrl: "https://example.com/hunter",
+            forestName: "Forest A",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.8,
+            longitude: 151.7,
+            geocodeName: "Forest A",
+            geocodeConfidence: 0.8,
+            facilities: {}
+          },
+          {
+            id: "forest-b",
+            source: "Forestry Corporation NSW",
+            areaName: "Hunter Area",
+            areaUrl: "https://example.com/hunter",
+            forestName: "Forest B",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -32.9,
+            longitude: 151.6,
+            geocodeName: "Forest B",
+            geocodeConfidence: 0.8,
+            facilities: {}
+          },
+          {
+            id: "forest-c",
+            source: "Forestry Corporation NSW",
+            areaName: "South Coast Area",
+            areaUrl: "https://example.com/south-coast",
+            forestName: "Forest C",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
+            banStatus: "NOT_BANNED",
+            banStatusText: "No Solid Fuel Fire Ban",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -35.2,
+            longitude: 150.5,
+            geocodeName: "Forest C",
+            geocodeConfidence: 0.8,
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
+
+  // All markers should initially be green (matched)
+  const greenFill = "#4ade80";
+  const orangeFill = "#fb923c";
+
+  // Wait for markers to be rendered on the map (Leaflet renders CircleMarkers as <path> elements)
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) {
+        return 0;
+      }
+      const matchedPane = leafletMap.getPane("matched-forests");
+      if (!matchedPane) {
+        return 0;
+      }
+      const paths = matchedPane.querySelectorAll("path");
+      return Array.from(paths)
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent")
+        .length;
+    });
+  }).toBeGreaterThanOrEqual(3);
+
+  // Click on Forest A marker to open popup
+  await clickForestMarker({ page, forestId: "forest-a" });
+  const forestPopupCard = page.getByTestId("forest-popup-card");
+  await expect(forestPopupCard).toBeVisible();
+  await expect(forestPopupCard).toContainText("Forest A");
+
+  // Hover the area name link inside the popup card (scoped to popup)
+  const areaLink = forestPopupCard.getByTestId("forest-area-link");
+  await expect(areaLink).toBeVisible();
+  await areaLink.hover();
+
+  // Same-area markers (Forest A and B, both "Hunter Area") should turn orange
+  await expect.poll(async () => {
+    return page.evaluate((expectedOrangeFill) => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) {
+        return { orangeCount: 0, fills: [] as (string | null)[] };
+      }
+      const highlightedPane = leafletMap.getPane("area-highlighted-forests");
+      if (!highlightedPane) {
+        return { orangeCount: 0, fills: [] as (string | null)[] };
+      }
+      const paths = highlightedPane.querySelectorAll("path");
+      const fills = Array.from(paths)
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent");
+      const orangeCount = fills.filter((fill) => fill === expectedOrangeFill).length;
+      return { orangeCount, fills };
+    }, orangeFill);
+  }).toEqual(expect.objectContaining({ orangeCount: 2 }));
+
+  // Forest C (different area) should still be green in matched pane
+  const remainingMatchedFills = await page.evaluate((expectedGreenFill) => {
+    const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+    if (!leafletMap) {
+      return [];
+    }
+    const matchedPane = leafletMap.getPane("matched-forests");
+    if (!matchedPane) {
+      return [];
+    }
+    const paths = matchedPane.querySelectorAll("path");
+    return Array.from(paths)
+      .map((path) => path.getAttribute("fill"))
+      .filter((fill) => fill && fill !== "transparent");
+  }, greenFill);
+  expect(remainingMatchedFills).toEqual([greenFill]);
 });

@@ -5,6 +5,14 @@ import { FORESTRY_BASE_URL, TOTAL_FIRE_BAN_SOURCE_URL } from "./app-domain-const
 export const isHttpUrl = (value?: string | null): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
 
+export const forestHasCoordinates = (
+  forest: Pick<ForestApiResponse["forests"][number], "latitude" | "longitude">
+): boolean =>
+  typeof forest.latitude === "number" &&
+  Number.isFinite(forest.latitude) &&
+  typeof forest.longitude === "number" &&
+  Number.isFinite(forest.longitude);
+
 export const sortForestsByDistance = (
   left: ForestApiResponse["forests"][number],
   right: ForestApiResponse["forests"][number]
@@ -180,13 +188,7 @@ export const buildTotalFireBanDetailsUrl = (
 export const buildGoogleMapsDrivingNavigationUrl = (
   forest: ForestApiResponse["forests"][number]
 ): string => {
-  const hasCoordinates =
-    typeof forest.latitude === "number" &&
-    Number.isFinite(forest.latitude) &&
-    typeof forest.longitude === "number" &&
-    Number.isFinite(forest.longitude);
-
-  const destination = hasCoordinates
+  const destination = forestHasCoordinates(forest)
     ? `${forest.latitude},${forest.longitude}`
     : `${forest.forestName}, ${forest.areaName}, NSW`;
 

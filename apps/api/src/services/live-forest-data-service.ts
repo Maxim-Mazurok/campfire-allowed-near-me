@@ -792,19 +792,15 @@ export class LiveForestDataService implements ForestDataService {
       return "No usable geocoding results were returned for this forest.";
     }
 
-    return "Coordinates were unavailable after forest and area geocoding.";
+    return "Coordinates were unavailable after forest geocoding.";
   }
 
   private buildGeocodeDiagnostics(
-    forestLookup: GeocodeResponse,
-    areaLookup?: GeocodeResponse | null
+    forestLookup: GeocodeResponse
   ): ForestGeocodeDiagnostics {
     const forestAttempts = this.getGeocodeAttempts(forestLookup);
-    const areaAttempts = this.getGeocodeAttempts(areaLookup);
-    const allAttempts = [...forestAttempts, ...areaAttempts];
     const debug = [
-      ...forestAttempts.map((attempt) => this.describeGeocodeAttempt("Forest lookup", attempt)),
-      ...areaAttempts.map((attempt) => this.describeGeocodeAttempt("Area fallback", attempt))
+      ...forestAttempts.map((attempt) => this.describeGeocodeAttempt("Forest lookup", attempt))
     ];
 
     if (!debug.length) {
@@ -812,32 +808,9 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     return {
-      reason: this.selectGeocodeFailureReason(allAttempts),
+      reason: this.selectGeocodeFailureReason(forestAttempts),
       debug
     };
-  }
-
-  private shouldUseAreaFallbackForForestLookup(forestLookup: GeocodeResponse): boolean {
-    const attempts = this.getGeocodeAttempts(forestLookup);
-
-    if (!attempts.length) {
-      return true;
-    }
-
-    const hasNoResultOutcome = attempts.some(
-      (attempt) =>
-        attempt.outcome === "EMPTY_RESULT" || attempt.outcome === "INVALID_COORDINATES"
-    );
-
-    const hasTransientOrConfigFailure = attempts.some(
-      (attempt) =>
-        attempt.outcome === "LIMIT_REACHED" ||
-        attempt.outcome === "HTTP_ERROR" ||
-        attempt.outcome === "REQUEST_FAILED" ||
-        attempt.outcome === "GOOGLE_API_KEY_MISSING"
-    );
-
-    return hasNoResultOutcome && !hasTransientOrConfigFailure;
   }
 
   private buildTotalFireBanDiagnostics(
@@ -1287,7 +1260,6 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
-    const areaGeocodeMap = new Map<string, Awaited<ReturnType<ForestGeocoder["geocodeArea"]>>>();
     const byForestName = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.facilities] as const)
     );
@@ -1311,29 +1283,7 @@ export class LiveForestDataService implements ForestDataService {
       ) + facilityAssignments.diagnostics.unmatchedFacilitiesForests.length;
     const totalFireBanNoAreaMatchForests = new Set<string>();
     const totalFireBanMissingStatusAreas = new Set<string>();
-    let completedAreaGeocodes = 0;
     let completedForestGeocodes = 0;
-
-    this.reportProgress(progressCallback, {
-      phase: "GEOCODE_AREAS",
-      message: "Resolving area coordinates.",
-      completed: completedAreaGeocodes,
-      total: areas.length
-    });
-
-    // Prioritize one lookup per area first so every forest can fall back to an area centroid.
-    for (const area of areas) {
-      const areaGeocode = await this.geocoder.geocodeArea(area.areaName, area.areaUrl);
-      areaGeocodeMap.set(area.areaUrl, areaGeocode);
-      this.collectGeocodeWarnings(warningSet, areaGeocode);
-      completedAreaGeocodes += 1;
-      this.reportProgress(progressCallback, {
-        phase: "GEOCODE_AREAS",
-        message: `Resolving area coordinates (${completedAreaGeocodes}/${areas.length}).`,
-        completed: completedAreaGeocodes,
-        total: areas.length
-      });
-    }
 
     this.reportProgress(progressCallback, {
       phase: "GEOCODE_FORESTS",
@@ -1370,13 +1320,6 @@ export class LiveForestDataService implements ForestDataService {
       const uniqueForestNames = sortForestNamesForRetryPriority(
         [...new Set(area.forests.map((forest) => forest.trim()).filter(Boolean))]
       );
-      const areaGeocode = areaGeocodeMap.get(area.areaUrl) ?? {
-        latitude: null,
-        longitude: null,
-        displayName: null,
-        confidence: null,
-        provider: null
-      };
 
       for (const forestName of uniqueForestNames) {
         if (!forestName) {
@@ -1416,15 +1359,9 @@ export class LiveForestDataService implements ForestDataService {
           completed: completedForestGeocodes,
           total: totalForestGeocodeCount
         });
-        const usedAreaFallback =
-          geocode.latitude === null &&
-          areaGeocode.latitude !== null &&
-          this.shouldUseAreaFallbackForForestLookup(geocode);
-        const resolvedLatitude = usedAreaFallback ? areaGeocode.latitude : geocode.latitude;
-        const resolvedLongitude = usedAreaFallback ? areaGeocode.longitude : geocode.longitude;
         const geocodeDiagnostics =
-          resolvedLatitude === null || resolvedLongitude === null
-            ? this.buildGeocodeDiagnostics(geocode, areaGeocode)
+          geocode.latitude === null || geocode.longitude === null
+            ? this.buildGeocodeDiagnostics(geocode)
             : null;
         const facilityMatch =
           facilityAssignments.byFireBanForestName.get(forestName) ??
@@ -1436,13 +1373,13 @@ export class LiveForestDataService implements ForestDataService {
           } satisfies FacilityMatchResult);
         const totalFireBanLookup = this.totalFireBanService.lookupStatusByCoordinates(
           totalFireBanSnapshot,
-          resolvedLatitude,
-          resolvedLongitude
+          geocode.latitude,
+          geocode.longitude
         );
         const totalFireBanDiagnostics = this.buildTotalFireBanDiagnostics(
           totalFireBanLookup,
-          resolvedLatitude,
-          resolvedLongitude,
+          geocode.latitude,
+          geocode.longitude,
           totalFireBanSnapshot
         );
 
@@ -1468,12 +1405,10 @@ export class LiveForestDataService implements ForestDataService {
           totalFireBanStatus: totalFireBanLookup.status,
           totalFireBanStatusText: totalFireBanLookup.statusText,
           totalFireBanDiagnostics,
-          latitude: resolvedLatitude,
-          longitude: resolvedLongitude,
-          geocodeName: usedAreaFallback
-            ? `${areaGeocode.displayName} (area centroid approximation)`
-            : geocode.displayName,
-          geocodeConfidence: geocode.confidence ?? areaGeocode.confidence,
+          latitude: geocode.latitude,
+          longitude: geocode.longitude,
+          geocodeName: geocode.displayName,
+          geocodeConfidence: geocode.confidence,
           geocodeDiagnostics,
           facilities: facilityMatch.facilities
         });

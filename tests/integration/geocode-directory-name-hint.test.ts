@@ -188,34 +188,6 @@ describe("geocodeForest with directoryForestName hint", () => {
     }
   });
 
-  it("falls back to area name when both fire ban and directory names fail", async () => {
-    const { geocoder, cleanup } = createTestGeocoder();
-
-    // Nominatim only responds to area-name queries
-    const calls = stubFetchWithNominatimMatch("North Coast", {
-      latitude: -29.65,
-      longitude: 152.78,
-      displayName: "North Coast, NSW"
-    });
-
-    try {
-      const result = await geocoder.geocodeForest(
-        "Nonexistent Forest",
-        "Pine forests of North Coast",
-        { directoryForestName: "Also Nonexistent Forest" }
-      );
-
-      // Falls back to area name
-      expect(result.latitude).toBe(-29.65);
-      expect(result.longitude).toBe(152.78);
-
-      // Both forest name and directory name queries were tried before area fallback
-      expect(calls.nominatimCalls.length).toBeGreaterThan(2);
-    } finally {
-      cleanup();
-    }
-  });
-
   it("works without directoryForestName (backward compatible)", async () => {
     const { geocoder, cleanup } = createTestGeocoder();
 

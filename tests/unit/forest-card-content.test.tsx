@@ -1,10 +1,16 @@
-import { describe, expect, it } from "vitest";
+// @vitest-environment jsdom
+import { afterEach, describe, expect, it, vi } from "vitest";
 import React from "react";
-import { renderToStaticMarkupWithMantine } from "../test-utils";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { renderToStaticMarkupWithMantine, renderWithMantine } from "../test-utils";
 import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
 
-const buildForest = (): ForestApiResponse["forests"][number] => ({
+afterEach(() => {
+  cleanup();
+});
+
+const buildForest = (overrides?: Partial<ForestApiResponse["forests"][number]>): ForestApiResponse["forests"][number] => ({
   id: "forest-a",
   source: "Forestry Corporation NSW",
   areaName: "Area 1",
@@ -48,7 +54,8 @@ const buildForest = (): ForestApiResponse["forests"][number] => ({
     }
   ],
   distanceKm: 14.2,
-  travelDurationMinutes: 20
+  travelDurationMinutes: 20,
+  ...overrides
 });
 
 describe("ForestCardContent", () => {
@@ -64,5 +71,28 @@ describe("ForestCardContent", () => {
     expect(html).toContain("Campground works in Forest A");
     expect(html).toContain("https://example.com/notices/forest-a/road-access");
     expect(html).toContain("https://example.com/notices/forest-a/campground-works");
+  });
+
+  it("calls onHoveredAreaNameChange on area name mouseenter and mouseleave", () => {
+    const onHoveredAreaNameChange = vi.fn<(hoveredAreaName: string | null) => void>();
+    const forest = buildForest();
+
+    renderWithMantine(
+      <ForestCardContent
+        forest={forest}
+        availableFacilities={[]}
+        avoidTolls={true}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
+      />
+    );
+
+    const areaLink = screen.getByTestId("forest-area-link");
+    expect(areaLink).toBeTruthy();
+
+    fireEvent.mouseEnter(areaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith("Area 1");
+
+    fireEvent.mouseLeave(areaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith(null);
   });
 });

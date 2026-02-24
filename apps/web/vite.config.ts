@@ -14,7 +14,6 @@ const parsePort = (value: string | undefined, fallback: number) => {
 
 const webPort = parsePort(process.env.WEB_PORT, 5173);
 const previewPort = parsePort(process.env.WEB_PREVIEW_PORT, 4173);
-const apiProxyTarget = process.env.VITE_API_PROXY_TARGET ?? "http://localhost:8787";
 const strictPort = process.env.VITE_STRICT_PORT === "1";
 const require = createRequire(__filename);
 
@@ -39,13 +38,6 @@ export default defineConfig({
   server: {
     port: webPort,
     strictPort,
-    proxy: {
-      "/api": {
-        target: apiProxyTarget,
-        changeOrigin: true,
-        ws: true
-      }
-    },
     fs: {
       allow: fsAllow
     }

@@ -22,37 +22,59 @@ export const HOVERED_FOREST_MARKER_PATH_OPTIONS = {
   weight: 3
 } as const;
 
+export const AREA_HIGHLIGHTED_FOREST_MARKER_PATH_OPTIONS = {
+  color: "#9a3412",
+  fillColor: "#fb923c",
+  fillOpacity: 0.95,
+  opacity: 1,
+  weight: 2
+} as const;
+
+const MATCHED_MARKER_RADIUS = 9;
+const UNMATCHED_MARKER_RADIUS = 4;
+const HOVERED_MARKER_RADIUS = 10;
+
 export type ForestMarkerVisualOptions = {
   markerRadius: number;
   markerPathOptions:
     | typeof MATCHED_FOREST_MARKER_PATH_OPTIONS
     | typeof UNMATCHED_FOREST_MARKER_PATH_OPTIONS
-    | typeof HOVERED_FOREST_MARKER_PATH_OPTIONS;
+    | typeof HOVERED_FOREST_MARKER_PATH_OPTIONS
+    | typeof AREA_HIGHLIGHTED_FOREST_MARKER_PATH_OPTIONS;
 };
 
 export const getForestMarkerVisualOptions = ({
   matchesFilters,
-  isHoveredForest
+  isHoveredForest,
+  isAreaHighlighted
 }: {
   matchesFilters: boolean;
   isHoveredForest: boolean;
+  isAreaHighlighted: boolean;
 }): ForestMarkerVisualOptions => {
   if (isHoveredForest) {
     return {
-      markerRadius: 10,
+      markerRadius: HOVERED_MARKER_RADIUS,
       markerPathOptions: HOVERED_FOREST_MARKER_PATH_OPTIONS
+    };
+  }
+
+  if (isAreaHighlighted) {
+    return {
+      markerRadius: matchesFilters ? MATCHED_MARKER_RADIUS : UNMATCHED_MARKER_RADIUS,
+      markerPathOptions: AREA_HIGHLIGHTED_FOREST_MARKER_PATH_OPTIONS
     };
   }
 
   if (matchesFilters) {
     return {
-      markerRadius: 9,
+      markerRadius: MATCHED_MARKER_RADIUS,
       markerPathOptions: MATCHED_FOREST_MARKER_PATH_OPTIONS
     };
   }
 
   return {
-    markerRadius: 4,
+    markerRadius: UNMATCHED_MARKER_RADIUS,
     markerPathOptions: UNMATCHED_FOREST_MARKER_PATH_OPTIONS
   };
 };

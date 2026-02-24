@@ -17,6 +17,8 @@ export type ForestListPanelProps = {
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
+  hoveredAreaName: string | null;
+  onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
   forestListSortOption: ForestListSortOption;
   onForestListSortOptionChange: (option: ForestListSortOption) => void;
 };
@@ -32,6 +34,7 @@ const ForestListItem = memo(({
   avoidTolls,
   hoveredForestId,
   onHoveredForestIdChange,
+  onHoveredAreaNameChange,
   listItemStyle,
   rowIndex,
   listItemReference
@@ -41,6 +44,7 @@ const ForestListItem = memo(({
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
+  onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
   listItemStyle?: CSSProperties;
   rowIndex?: number;
   listItemReference?: (element: HTMLLIElement | null) => void;
@@ -66,6 +70,7 @@ const ForestListItem = memo(({
         forest={forest}
         availableFacilities={availableFacilities}
         avoidTolls={avoidTolls}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
       />
     </li>
   );
@@ -78,13 +83,15 @@ const StandardForestList = memo(({
   availableFacilities,
   avoidTolls,
   hoveredForestId,
-  onHoveredForestIdChange
+  onHoveredForestIdChange,
+  onHoveredAreaNameChange
 }: {
   sortedMatchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
+  onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
 }) => {
   return (
     <ul className="forest-list" data-testid="forest-list">
@@ -96,6 +103,7 @@ const StandardForestList = memo(({
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={onHoveredForestIdChange}
+          onHoveredAreaNameChange={onHoveredAreaNameChange}
         />
       ))}
     </ul>
@@ -109,13 +117,15 @@ const VirtualizedForestList = memo(({
   availableFacilities,
   avoidTolls,
   hoveredForestId,
-  onHoveredForestIdChange
+  onHoveredForestIdChange,
+  onHoveredAreaNameChange
 }: {
   sortedMatchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
+  onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
 }) => {
   const forestListScrollContainerReference = useRef<HTMLDivElement | null>(null);
 
@@ -161,6 +171,7 @@ const VirtualizedForestList = memo(({
               avoidTolls={avoidTolls}
               hoveredForestId={hoveredForestId}
               onHoveredForestIdChange={onHoveredForestIdChange}
+              onHoveredAreaNameChange={onHoveredAreaNameChange}
               rowIndex={virtualForestRow.index}
               listItemReference={forestListVirtualizer.measureElement}
               listItemStyle={{
@@ -187,6 +198,8 @@ export const ForestListPanel = memo(({
   avoidTolls,
   hoveredForestId,
   onHoveredForestIdChange,
+  hoveredAreaName,
+  onHoveredAreaNameChange,
   forestListSortOption,
   onForestListSortOptionChange
 }: ForestListPanelProps) => {
@@ -274,6 +287,7 @@ export const ForestListPanel = memo(({
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={onHoveredForestIdChange}
+          onHoveredAreaNameChange={onHoveredAreaNameChange}
         />
       ) : (
         <StandardForestList
@@ -282,6 +296,7 @@ export const ForestListPanel = memo(({
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={onHoveredForestIdChange}
+          onHoveredAreaNameChange={onHoveredAreaNameChange}
         />
       )}
     </aside>
