@@ -11,6 +11,7 @@ import { slugify } from "../utils/slugs.js";
 import { haversineDistanceKm } from "../utils/distance.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { ForestryScraper } from "./forestry-scraper.js";
+import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import {
   ForestGeocoder,
   type GeocodeLookupAttempt,
@@ -62,6 +63,7 @@ interface LiveForestDataServiceOptions {
   geocoder?: ForestGeocoder;
   totalFireBanService?: TotalFireBanService;
   routeService?: RouteService;
+  closureImpactEnricher?: ClosureImpactEnricher;
 }
 
 interface LiveForestDataServiceResolvedOptions {
@@ -137,6 +139,8 @@ export class LiveForestDataService implements ForestDataService {
 
   private readonly routeService: RouteService;
 
+  private readonly closureImpactEnricher: ClosureImpactEnricher;
+
   private memorySnapshot: PersistedSnapshot | null = null;
 
   private snapshotResolvePromise: Promise<PersistedSnapshot> | null = null;
@@ -179,6 +183,7 @@ export class LiveForestDataService implements ForestDataService {
         )
       });
     this.totalFireBanService = options?.totalFireBanService ?? new TotalFireBanService();
+    this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
   }
 
   private isFacilitiesMismatchWarning(warning: string): boolean {
@@ -634,6 +639,11 @@ export class LiveForestDataService implements ForestDataService {
           this.totalFireBanService.fetchCurrentSnapshot()
         ]);
 
+        // Enrich closure notices with LLM impact analysis (separate from scraping)
+        const enrichedClosures = await this.closureImpactEnricher.enrichNotices(
+          scraped.closures
+        );
+
         this.reportProgress(progressCallback, {
           phase: "SCRAPE",
           message: "Source pages loaded. Preparing geocoding.",
@@ -643,7 +653,8 @@ export class LiveForestDataService implements ForestDataService {
 
         const warningSet = new Set([
           ...(scraped.warnings ?? []),
-          ...(totalFireBanSnapshot.warnings ?? [])
+          ...(totalFireBanSnapshot.warnings ?? []),
+          ...(enrichedClosures.warnings ?? [])
         ]);
         const unresolvedForestStatusKeys = new Set(
           (staleFallbackSnapshot?.forests ?? [])
@@ -654,7 +665,7 @@ export class LiveForestDataService implements ForestDataService {
         const forestResult = await this.buildForestPoints(
           scraped.areas,
           scraped.directory,
-          scraped.closures ?? [],
+          enrichedClosures.notices,
           totalFireBanSnapshot,
           warningSet,
           unresolvedForestStatusKeys,

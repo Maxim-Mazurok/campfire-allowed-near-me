@@ -86,4 +86,48 @@ describe("ForestListPanel hover behavior", () => {
       expect(onHoveredForestIdChange).toHaveBeenCalledWith(null);
     });
   });
+
+  it("fires onHoveredAreaNameChange with correct area name for each area in multi-area forest row", () => {
+    const onHoveredAreaNameChange = vi.fn<(hoveredAreaName: string | null) => void>();
+
+    const multiAreaForest: ForestApiResponse["forests"][number] = {
+      ...buildForest("forest-multi", "Multi Area Forest"),
+      areas: [
+        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
+        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }
+      ]
+    };
+
+    renderWithMantine(
+      <ForestListPanel
+        matchingForests={[multiAreaForest]}
+        availableFacilities={[]}
+        payload={null}
+        avoidTolls={true}
+        hoveredForestId={null}
+        onHoveredForestIdChange={() => {}}
+        hoveredAreaName={null}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
+        forestListSortOption="DRIVING_DISTANCE_ASC"
+        onForestListSortOptionChange={() => {}}
+      />
+    );
+
+    const areaLinks = screen.getAllByTestId("forest-area-link");
+    expect(areaLinks).toHaveLength(2);
+
+    // Hover first area
+    fireEvent.mouseEnter(areaLinks[0]);
+    expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("Hunter Area");
+
+    fireEvent.mouseLeave(areaLinks[0]);
+    expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
+
+    // Hover second area
+    fireEvent.mouseEnter(areaLinks[1]);
+    expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("South Coast Area");
+
+    fireEvent.mouseLeave(areaLinks[1]);
+    expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
+  });
 });

@@ -181,10 +181,10 @@ const ForestMarker = memo(({
 }) => {
   const isHoveredForest = hoveredForestId === forest.id;
   const isAreaHighlighted = hoveredAreaName !== null && forestBelongsToArea(forest, hoveredAreaName);
-  const markerPaneName = isHoveredForest
-    ? "hovered-forest"
-    : isAreaHighlighted
-      ? "area-highlighted-forests"
+  const markerPaneName = isAreaHighlighted
+    ? "area-highlighted-forests"
+    : isHoveredForest
+      ? "hovered-forest"
       : matchesFilters
         ? "matched-forests"
         : "unmatched-forests";

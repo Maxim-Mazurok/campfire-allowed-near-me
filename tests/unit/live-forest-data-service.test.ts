@@ -9,10 +9,16 @@ import type { ForestryScraper } from "../../apps/api/src/services/forestry-scrap
 import type { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
 import type { RouteService } from "../../apps/api/src/services/google-routes.js";
 import type { TotalFireBanService } from "../../apps/api/src/services/total-fire-ban-service.js";
+import type { ClosureImpactEnricher } from "../../apps/api/src/services/closure-impact-enricher.js";
 import type {
   ForestDirectorySnapshot,
   ForestryScrapeResult
 } from "../../apps/api/src/types/domain.js";
+
+const makePassthroughClosureImpactEnricher = (): ClosureImpactEnricher =>
+  ({
+    enrichNotices: async (notices: unknown[]) => ({ notices, warnings: [] })
+  }) as unknown as ClosureImpactEnricher;
 
 const makeDirectoryFixture = (): ForestDirectorySnapshot => ({
   filters: [
@@ -59,7 +65,7 @@ const makeTotalFireBanServiceStub = (): TotalFireBanService =>
       geoAreas: [],
       warnings: []
     }),
-    lookupStatusByCoordinates: (_snapshot, latitude, longitude) => ({
+    lookupStatusByCoordinates: (_snapshot: unknown, latitude: number | null, longitude: number | null) => ({
       status: latitude === null || longitude === null ? "UNKNOWN" : "NOT_BANNED",
       statusText:
         latitude === null || longitude === null
@@ -83,6 +89,7 @@ describe("LiveForestDataService facilities matching", () => {
         }
       ],
       directory: makeDirectoryFixture(),
+      closures: [],
       warnings: []
     };
 
@@ -184,6 +191,7 @@ describe("LiveForestDataService facilities matching", () => {
         }
       ],
       directory: makeDirectoryFixture(),
+      closures: [],
       warnings: []
     };
 
@@ -243,6 +251,7 @@ describe("LiveForestDataService facilities matching", () => {
         forests: [],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -434,7 +443,8 @@ describe("LiveForestDataService facilities matching", () => {
       const service = new LiveForestDataService({
         snapshotPath,
         scraper: scraper as unknown as ForestryScraper,
-        geocoder: geocoder as unknown as ForestGeocoder
+        geocoder: geocoder as unknown as ForestGeocoder,
+        closureImpactEnricher: makePassthroughClosureImpactEnricher()
       });
 
       const response = await service.getForestData({
@@ -504,6 +514,7 @@ describe("LiveForestDataService facilities matching", () => {
         ],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -587,6 +598,7 @@ describe("LiveForestDataService facilities matching", () => {
         ],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -678,6 +690,7 @@ describe("LiveForestDataService facilities matching", () => {
         ],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -834,6 +847,7 @@ describe("LiveForestDataService facilities matching", () => {
             ],
             warnings: []
           },
+          closures: [],
           warnings: []
         };
       }
@@ -959,6 +973,7 @@ describe("LiveForestDataService facilities matching", () => {
             ],
             warnings: []
           },
+          closures: [],
           warnings: []
         };
       }
@@ -1102,6 +1117,7 @@ describe("LiveForestDataService facilities matching", () => {
             ],
             warnings: []
           },
+          closures: [],
           warnings: []
         };
       }
@@ -1221,6 +1237,7 @@ describe("LiveForestDataService facilities matching", () => {
         ],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -1309,6 +1326,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
         forests: [],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 
@@ -1403,6 +1421,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
         forests: [],
         warnings: []
       },
+      closures: [],
       warnings: []
     };
 

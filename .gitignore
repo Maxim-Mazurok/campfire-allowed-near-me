@@ -9,6 +9,7 @@ data/cache/geocode-cache.json
 data/cache/*.sqlite
 data/cache/*.sqlite-*
 data/cache/browser-profile/
+data/pipeline/
 .DS_Store
 .env*
 !.env.example

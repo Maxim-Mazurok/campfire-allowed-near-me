@@ -73,16 +73,16 @@ describe("forest marker style", () => {
     );
   });
 
-  it("prefers hovered style over area-highlighted style", () => {
+  it("prefers area-highlighted style over hovered style", () => {
     const markerVisualOptions = getForestMarkerVisualOptions({
       matchesFilters: true,
       isHoveredForest: true,
       isAreaHighlighted: true
     });
 
-    expect(markerVisualOptions.markerRadius).toBe(10);
+    expect(markerVisualOptions.markerRadius).toBe(9);
     expect(markerVisualOptions.markerPathOptions).toEqual(
-      HOVERED_FOREST_MARKER_PATH_OPTIONS
+      AREA_HIGHLIGHTED_FOREST_MARKER_PATH_OPTIONS
     );
   });
 });

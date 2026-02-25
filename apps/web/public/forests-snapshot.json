@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-25T17:38:40.237Z",
+  "fetchedAt": "2026-02-25T18:47:27.529Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -5755,10 +5755,7 @@
           "statusText=Unknown (Total Fire Ban status unavailable)",
           "latitude=null",
           "longitude=null",
-          "fireWeatherAreaName=null",
-          "snapshotAreaStatuses=21",
-          "snapshotGeoAreas=21",
-          "snapshotWarnings=0"
+          "fireWeatherAreaName=null"
         ]
       },
       "latitude": null,
@@ -10104,6 +10101,120 @@
       }
     },
     {
+      "id": "mount-topper-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Cypress pine forests",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        },
+        {
+          "areaName": "Pine forests of the Northern Tablelands",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-of-the-northern-tablelands",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Mount Topper State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -29.917470700000003,
+      "longitude": 151.24062126611375,
+      "geocodeName": "Mount Topper State Forest, Tingha, Inverell Shire Council, New South Wales, 2369, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "munro-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Cypress pine forests",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        }
+      ],
+      "forestName": "Munro State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -30.0141715,
+      "longitude": 150.84567163996738,
+      "geocodeName": "Munro State Forest, Bundarra, Gwydir Shire Council, New South Wales, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "milbrulong-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -10482,66 +10593,6 @@
       }
     },
     {
-      "id": "mount-topper-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Cypress pine forests",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned"
-        },
-        {
-          "areaName": "Pine forests of the Northern Tablelands",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-of-the-northern-tablelands",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban"
-        }
-      ],
-      "forestName": "Mount Topper State Forest",
-      "forestUrl": null,
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -29.917470700000003,
-      "longitude": 151.24062126611375,
-      "geocodeName": "Mount Topper State Forest, Tingha, Inverell Shire Council, New South Wales, 2369, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": null,
-        "walking_track": null,
-        "4wd_tracks": null,
-        "designated_mountain_bike_track": null,
-        "designated_horse_riding_track": null,
-        "canoeingkayaking": null,
-        "waterways": null,
-        "fishing": null,
-        "cabins_or_huts_available": null,
-        "fireplace": null,
-        "caravan_site": null,
-        "2wd_access": null,
-        "picnic_area": null,
-        "toilets": null,
-        "wheelchair_access": null,
-        "lookouts": null,
-        "hunting": null
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
       "id": "mulyandry-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -10560,60 +10611,6 @@
       "latitude": -33.5652241,
       "longitude": 148.14730459049443,
       "geocodeName": "Mulyandry State Forest, Forbes Shire Council, New South Wales, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": null,
-        "walking_track": null,
-        "4wd_tracks": null,
-        "designated_mountain_bike_track": null,
-        "designated_horse_riding_track": null,
-        "canoeingkayaking": null,
-        "waterways": null,
-        "fishing": null,
-        "cabins_or_huts_available": null,
-        "fireplace": null,
-        "caravan_site": null,
-        "2wd_access": null,
-        "picnic_area": null,
-        "toilets": null,
-        "wheelchair_access": null,
-        "lookouts": null,
-        "hunting": null
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
-      "id": "munro-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Cypress pine forests",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned"
-        }
-      ],
-      "forestName": "Munro State Forest",
-      "forestUrl": null,
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -30.0141715,
-      "longitude": 150.84567163996738,
-      "geocodeName": "Munro State Forest, Bundarra, Gwydir Shire Council, New South Wales, Australia",
       "geocodeConfidence": 0.10667666666666664,
       "geocodeDiagnostics": null,
       "facilities": {
@@ -29146,10 +29143,11 @@
     }
   ],
   "warnings": [
-    "AI structured 1 closure notice(s) to extract camping and 2WD/4WD access impacts.",
     "Rejected implausible result \"Carabost State Forest, Carabost NSW 2650, Australia\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Croft Knoll State Forest\"",
+    "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
+    "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 9 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Perricoota State Forest, Tallaganda State Forest, Vulcan State Forest, Wingello State Forest, Yambulla State Forest (+1 more).",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
     "Could not match 4 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed, Myrtle Creek State Forest: Partial closure, Yessabah State Forest closed.",

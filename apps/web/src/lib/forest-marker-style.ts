@@ -52,17 +52,17 @@ export const getForestMarkerVisualOptions = ({
   isHoveredForest: boolean;
   isAreaHighlighted: boolean;
 }): ForestMarkerVisualOptions => {
-  if (isHoveredForest) {
-    return {
-      markerRadius: HOVERED_MARKER_RADIUS,
-      markerPathOptions: HOVERED_FOREST_MARKER_PATH_OPTIONS
-    };
-  }
-
   if (isAreaHighlighted) {
     return {
       markerRadius: matchesFilters ? MATCHED_MARKER_RADIUS : UNMATCHED_MARKER_RADIUS,
       markerPathOptions: AREA_HIGHLIGHTED_FOREST_MARKER_PATH_OPTIONS
+    };
+  }
+
+  if (isHoveredForest) {
+    return {
+      markerRadius: HOVERED_MARKER_RADIUS,
+      markerPathOptions: HOVERED_FOREST_MARKER_PATH_OPTIONS
     };
   }
 

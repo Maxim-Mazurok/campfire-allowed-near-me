@@ -11,7 +11,6 @@ import {
   parseForestDirectoryWithFacilities,
   parseMainFireBanPage
 } from "./forestry-parser.js";
-import { ClosureImpactEnricher } from "./closure-impact-enricher.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH, DEFAULT_BROWSER_PROFILE_PATH } from "../utils/default-cache-paths.js";
 import { installResourceBlockingRoutes } from "../utils/resource-blocking.js";
@@ -45,7 +44,6 @@ export type BrowserContextFactory = () => Promise<BrowserContextFactoryResult>;
 
 interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptions> {
   rawPageCache?: RawPageCache;
-  closureImpactEnricher?: ClosureImpactEnricher;
   browserContextFactory?: BrowserContextFactory;
   verbose?: boolean;
   proxyUrl?: string | null;
@@ -69,7 +67,6 @@ const errorMessage = (error: unknown): string =>
 export class ForestryScraper {
   private readonly options: ForestryScraperOptions;
   private readonly rawPageCache: RawPageCache;
-  private readonly closureImpactEnricher: ClosureImpactEnricher;
   private readonly browserContextFactory: BrowserContextFactory | null;
   private readonly log: (message: string) => void;
 
@@ -80,9 +77,6 @@ export class ForestryScraper {
         filePath: this.options.rawPageCachePath,
         ttlMs: this.options.rawPageCacheTtlMs
       });
-    this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher({
-      verbose: options?.verbose
-    });
     this.browserContextFactory = options?.browserContextFactory ?? null;
     this.log = options?.verbose ? (message) => console.log(`  ${message}`) : () => {};
   }
@@ -297,7 +291,7 @@ export class ForestryScraper {
   }
 
   private async scrapeClosures(): Promise<{
-    closures: ForestryScrapeResult["closures"];
+    closures: ForestClosureNotice[];
     warnings: string[];
   }> {
     let response: { html: string; url: string };
@@ -349,19 +343,21 @@ export class ForestryScraper {
       )
     );
 
-    const structured = await this.closureImpactEnricher.enrichNotices(closuresWithDetails);
     this.log(`[scrapeClosures] Closure scraping complete.`);
-    const closureWarnings = new Set<string>(structured.warnings);
+    const closureWarnings = new Set<string>();
     if (detailChallengeCount > 0) {
       closureWarnings.add(`Could not load ${detailChallengeCount} closure detail page(s) due to anti-bot verification.`);
     }
     if (detailFailureCount > 0) {
       closureWarnings.add(`Could not load ${detailFailureCount} closure detail page(s); list titles were used instead.`);
     }
-    return { closures: structured.notices, warnings: [...closureWarnings] };
+    return { closures: closuresWithDetails, warnings: [...closureWarnings] };
   }
 
-  async scrape(): Promise<ForestryScrapeResult> {
+  private createBrowserContextManager(): {
+    getContext: () => Promise<BrowserContext>;
+    cleanup: () => Promise<void>;
+  } {
     const runtime: { browser: Browser | null; context: BrowserContext | null; externalCleanup: (() => Promise<void>) | null } =
       { browser: null, context: null, externalCleanup: null };
 
@@ -394,6 +390,60 @@ export class ForestryScraper {
       return contextPromise;
     };
 
+    const cleanup = async () => {
+      if (runtime.externalCleanup) {
+        await runtime.externalCleanup();
+      } else if (runtime.context) {
+        await runtime.context.close();
+      }
+    };
+
+    return { getContext, cleanup };
+  }
+
+  /**
+   * Scrape Forestry fire ban pages and directory (facilities).
+   * Requires a browser for Cloudflare-protected pages.
+   * Returns areas with forest names, directory with facilities, and warnings.
+   */
+  async scrapeForestryPages(): Promise<{
+    areas: ForestAreaWithForests[];
+    directory: ForestDirectorySnapshot;
+    warnings: string[];
+  }> {
+    const { getContext, cleanup } = this.createBrowserContextManager();
+    try {
+      const areas = await this.scrapeAreas(getContext);
+      const directory = await this.scrapeDirectory(getContext);
+      return {
+        areas,
+        directory,
+        warnings: [...directory.warnings]
+      };
+    } finally {
+      await cleanup();
+    }
+  }
+
+  /**
+   * Scrape closure notices from FCNSW.
+   * Does not require a browser — uses plain fetch.
+   * Returns raw closure notices (without LLM enrichment) and warnings.
+   */
+  async scrapeClosureNotices(): Promise<{
+    closures: ForestClosureNotice[];
+    warnings: string[];
+  }> {
+    return this.scrapeClosures();
+  }
+
+  /**
+   * Scrape all sources: forestry pages + closures.
+   * This is the combined method for full pipeline or live service use.
+   */
+  async scrape(): Promise<ForestryScrapeResult> {
+    const { getContext, cleanup } = this.createBrowserContextManager();
+
     try {
       // Sequential scraping avoids CDP session races in playwright-extra's
       // stealth plugin when multiple pages are opened concurrently on the
@@ -405,16 +455,11 @@ export class ForestryScraper {
       return {
         areas,
         directory,
-        closures: closuresResult.closures ?? [],
+        closures: closuresResult.closures,
         warnings: [...new Set([...directory.warnings, ...closuresResult.warnings])]
       };
     } finally {
-      if (runtime.externalCleanup) {
-        await runtime.externalCleanup();
-      } else if (runtime.context) {
-        // launchPersistentContext: closing the context also closes the browser
-        await runtime.context.close();
-      }
+      await cleanup();
     }
   }
 }

@@ -1727,3 +1727,201 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
   }, greenFill);
   expect(remainingMatchedFills).toEqual([greenFill]);
 });
+
+test("hovering each area link in multi-area forest list row highlights correct markers", async ({ page }) => {
+  await clearStoredPreferences({ page });
+
+  /**
+   * Setup:
+   *   - "Multi Forest" belongs to BOTH "Alpha Area" and "Beta Area"
+   *   - "Alpha Only Forest" belongs to "Alpha Area" only
+   *   - "Beta Only Forest" belongs to "Beta Area" only
+   *
+   * Hovering "Alpha Area" → Multi + Alpha Only highlighted (2 orange)
+   * Hovering "Beta Area"  → Multi + Beta Only highlighted (2 orange)
+   */
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "multi-forest",
+            source: "Forestry Corporation NSW",
+            areas: [
+              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
+              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+            ],
+            forestName: "Multi Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/multi-forest",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.0,
+            longitude: 151.0,
+            geocodeName: "Multi Forest",
+            geocodeConfidence: 0.8,
+            facilities: {},
+            distanceKm: 10,
+            travelDurationMinutes: 15
+          },
+          {
+            id: "alpha-only-forest",
+            source: "Forestry Corporation NSW",
+            areas: [
+              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+            ],
+            forestName: "Alpha Only Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-only",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.1,
+            longitude: 151.1,
+            geocodeName: "Alpha Only Forest",
+            geocodeConfidence: 0.8,
+            facilities: {},
+            distanceKm: 20,
+            travelDurationMinutes: 25
+          },
+          {
+            id: "beta-only-forest",
+            source: "Forestry Corporation NSW",
+            areas: [
+              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+            ],
+            forestName: "Beta Only Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/beta-only",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.2,
+            longitude: 150.9,
+            geocodeName: "Beta Only Forest",
+            geocodeConfidence: 0.8,
+            facilities: {},
+            distanceKm: 30,
+            travelDurationMinutes: 35
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
+
+  const orangeFill = "#fb923c";
+  const greenFill = "#4ade80";
+
+  // Wait for all 3 markers to render on the map
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) return 0;
+      const matchedPane = leafletMap.getPane("matched-forests");
+      if (!matchedPane) return 0;
+      const paths = matchedPane.querySelectorAll("path");
+      return Array.from(paths)
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent")
+        .length;
+    });
+  }).toBeGreaterThanOrEqual(3);
+
+  // Find the multi-area forest row (first row, since distanceKm is smallest)
+  const multiForestRow = page.getByTestId("forest-row").filter({ hasText: "Multi Forest" });
+  await expect(multiForestRow).toBeVisible();
+
+  // Get both area links within the multi-area forest row
+  const areaLinks = multiForestRow.getByTestId("forest-area-link");
+  await expect(areaLinks).toHaveCount(2);
+
+  const alphaAreaLink = areaLinks.filter({ hasText: "Alpha Area" });
+  const betaAreaLink = areaLinks.filter({ hasText: "Beta Area" });
+  await expect(alphaAreaLink).toBeVisible();
+  await expect(betaAreaLink).toBeVisible();
+
+  // ---- Hover "Alpha Area" → 2 orange markers (Multi + Alpha Only) ----
+  await alphaAreaLink.hover();
+
+  await expect.poll(async () => {
+    return page.evaluate((expectedOrangeFill) => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) return { orangeCount: 0 };
+      const highlightedPane = leafletMap.getPane("area-highlighted-forests");
+      if (!highlightedPane) return { orangeCount: 0 };
+      const paths = highlightedPane.querySelectorAll("path");
+      const fills = Array.from(paths)
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent");
+      return { orangeCount: fills.filter((fill) => fill === expectedOrangeFill).length };
+    }, orangeFill);
+  }).toEqual(expect.objectContaining({ orangeCount: 2 }));
+
+  // 1 forest (Beta Only) should remain green
+  const alphaHoverMatchedFills = await page.evaluate((expectedGreenFill) => {
+    const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+    if (!leafletMap) return [];
+    const matchedPane = leafletMap.getPane("matched-forests");
+    if (!matchedPane) return [];
+    return Array.from(matchedPane.querySelectorAll("path"))
+      .map((path) => path.getAttribute("fill"))
+      .filter((fill) => fill && fill !== "transparent");
+  }, greenFill);
+  expect(alphaHoverMatchedFills).toEqual([greenFill]);
+
+  // ---- Move mouse away to clear hover ----
+  await page.mouse.move(0, 0);
+
+  // Wait for highlighting to clear
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) return -1;
+      const highlightedPane = leafletMap.getPane("area-highlighted-forests");
+      if (!highlightedPane) return 0;
+      return Array.from(highlightedPane.querySelectorAll("path"))
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent")
+        .length;
+    });
+  }).toBe(0);
+
+  // ---- Hover "Beta Area" → 2 orange markers (Multi + Beta Only) ----
+  await betaAreaLink.hover();
+
+  await expect.poll(async () => {
+    return page.evaluate((expectedOrangeFill) => {
+      const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+      if (!leafletMap) return { orangeCount: 0 };
+      const highlightedPane = leafletMap.getPane("area-highlighted-forests");
+      if (!highlightedPane) return { orangeCount: 0 };
+      const paths = highlightedPane.querySelectorAll("path");
+      const fills = Array.from(paths)
+        .map((path) => path.getAttribute("fill"))
+        .filter((fill) => fill && fill !== "transparent");
+      return { orangeCount: fills.filter((fill) => fill === expectedOrangeFill).length };
+    }, orangeFill);
+  }).toEqual(expect.objectContaining({ orangeCount: 2 }));
+
+  // 1 forest (Alpha Only) should remain green
+  const betaHoverMatchedFills = await page.evaluate((expectedGreenFill) => {
+    const leafletMap = (window as Window & { campfireLeafletMap?: { getPane: (name: string) => HTMLElement | undefined } }).campfireLeafletMap;
+    if (!leafletMap) return [];
+    const matchedPane = leafletMap.getPane("matched-forests");
+    if (!matchedPane) return [];
+    return Array.from(matchedPane.querySelectorAll("path"))
+      .map((path) => path.getAttribute("fill"))
+      .filter((fill) => fill && fill !== "transparent");
+  }, greenFill);
+  expect(betaHoverMatchedFills).toEqual([greenFill]);
+});

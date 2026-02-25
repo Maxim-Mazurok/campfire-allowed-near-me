@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import React from "react";
+import React, { useState } from "react";
 import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { renderToStaticMarkupWithMantine, renderWithMantine } from "../test-utils";
 import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
@@ -379,5 +379,63 @@ describe("ForestCardContent", () => {
 
     fireEvent.mouseLeave(betaLink);
     expect(onHoveredAreaNameChange).toHaveBeenCalledWith(null);
+  });
+
+  it("updates real React state correctly when hovering each area of a multi-area forest", () => {
+    const forest = buildForest({
+      areas: [
+        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban" },
+        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned" }
+      ]
+    });
+
+    function StatefulTestHarness() {
+      const [hoveredAreaName, setHoveredAreaName] = useState<string | null>(null);
+
+      return (
+        <>
+          <ForestCardContent
+            forest={forest}
+            availableFacilities={[]}
+            avoidTolls={true}
+            onHoveredAreaNameChange={setHoveredAreaName}
+          />
+          <div data-testid="current-hovered-area">{hoveredAreaName ?? "none"}</div>
+        </>
+      );
+    }
+
+    renderWithMantine(<StatefulTestHarness />);
+
+    const indicator = screen.getByTestId("current-hovered-area");
+    expect(indicator.textContent).toBe("none");
+
+    const alphaLink = screen.getByText("Alpha Area");
+    const betaLink = screen.getByText("Beta Area");
+
+    // Hover Alpha
+    fireEvent.mouseEnter(alphaLink);
+    expect(indicator.textContent).toBe("Alpha Area");
+
+    fireEvent.mouseLeave(alphaLink);
+    expect(indicator.textContent).toBe("none");
+
+    // Hover Beta
+    fireEvent.mouseEnter(betaLink);
+    expect(indicator.textContent).toBe("Beta Area");
+
+    fireEvent.mouseLeave(betaLink);
+    expect(indicator.textContent).toBe("none");
+
+    // Direct transition: Alpha → Beta (leave Alpha, then enter Beta)
+    fireEvent.mouseEnter(alphaLink);
+    expect(indicator.textContent).toBe("Alpha Area");
+
+    fireEvent.mouseLeave(alphaLink);
+    fireEvent.mouseEnter(betaLink);
+    expect(indicator.textContent).toBe("Beta Area");
+
+    fireEvent.mouseLeave(betaLink);
+    expect(indicator.textContent).toBe("none");
   });
 });

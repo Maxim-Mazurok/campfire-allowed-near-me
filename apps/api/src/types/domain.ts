@@ -63,7 +63,7 @@ export interface ForestDataServiceInput {
 export interface ForestryScrapeResult {
   areas: ForestAreaWithForests[];
   directory: ForestDirectorySnapshot;
-  closures?: ForestClosureNotice[];
+  closures: ForestClosureNotice[];
   warnings: string[];
 }
 
