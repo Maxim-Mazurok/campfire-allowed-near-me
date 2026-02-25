@@ -89,6 +89,9 @@ export const parseClosureNoticeStatus = (rawTitle: string): ClosureNoticeStatus 
   }
 
   if (/\bclosed|closure\b/.test(title)) {
+    if (/\b(road|roads|track|tracks|trail|trails|bridge|bridges|fire\s+trail)\b/.test(title)) {
+      return "PARTIAL";
+    }
     return "CLOSED";
   }
 

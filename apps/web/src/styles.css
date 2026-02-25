@@ -279,14 +279,15 @@ body {
 }
 
 .forest-notice-link {
-  color: var(--mantine-color-anchor);
+  color: var(--mantine-color-text);
   text-decoration: underline;
   text-underline-offset: 2px;
+  opacity: 0.75;
 }
 
 .forest-notice-link:hover {
-  color: var(--mantine-color-anchor);
-  opacity: 0.85;
+  color: var(--mantine-color-text);
+  opacity: 1;
 }
 
 /* ================================================================
@@ -317,6 +318,12 @@ body {
   color: var(--mantine-color-blue-7);
   border-color: var(--mantine-color-blue-3);
   background: var(--mantine-color-blue-0);
+}
+
+[data-mantine-color-scheme='dark'] .facility-indicator.present {
+  color: var(--mantine-color-blue-4);
+  border-color: var(--mantine-color-dark-4);
+  background: var(--mantine-color-dark-6);
 }
 
 .facility-indicator.absent,
@@ -522,6 +529,18 @@ body {
   .facility-icon-glyph {
     font-size: 0.9rem;
   }
+}
+
+/* ================================================================
+   Dark Mode — Leaflet overrides
+   ================================================================ */
+
+/* ================================================================
+   Dark Mode — Badge border for better contrast
+   ================================================================ */
+
+[data-mantine-color-scheme='dark'] .status-pill-row .mantine-Badge-root {
+  border: 1px solid var(--mantine-color-dark-4);
 }
 
 /* ================================================================

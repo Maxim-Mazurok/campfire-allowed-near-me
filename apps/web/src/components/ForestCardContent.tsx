@@ -1,10 +1,11 @@
 import { IconCar, IconMapPinOff } from "@tabler/icons-react";
 import { Badge, Tooltip } from "@mantine/core";
-import { memo, useCallback, useRef } from "react";
+import { memo, useCallback, useMemo, useRef } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
 import {
   buildGoogleMapsDrivingNavigationUrl,
+  buildSolidFuelBanDetailsUrl,
   buildTextHighlightUrl,
   buildTotalFireBanDetailsUrl,
   forestHasCoordinates,
@@ -20,6 +21,10 @@ import {
   inferFacilityImpactTarget,
   isImpactWarning
 } from "../lib/app-domain-status";
+
+function shortenForestName(fullName: string): string {
+  return fullName.replace(/\s+state\s+forests?$/i, "").trim();
+}
 
 type ForestCardContentProps = {
   forest: ForestApiResponse["forests"][number];
@@ -72,6 +77,37 @@ export const ForestCardContent = memo(({
     ? buildGoogleMapsDrivingNavigationUrl(forest)
     : null;
   const closureNotices = forest.closureNotices ?? [];
+  const cleanNoticeTitle = useMemo(
+    () => {
+      const colonPrefix = `${forest.forestName}: `;
+      const spacePrefix = `${forest.forestName} `;
+      return (title: string) => {
+        let cleaned = title;
+        if (cleaned.startsWith(colonPrefix)) cleaned = cleaned.slice(colonPrefix.length);
+        else if (cleaned.startsWith(spacePrefix)) cleaned = cleaned.slice(spacePrefix.length);
+        return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+      };
+    },
+    [forest.forestName]
+  );
+
+  const closureBadgeLabel = (forestClosureStatus === "CLOSED" || forestClosureStatus === "PARTIAL")
+    ? getClosureStatusLabel(forestClosureStatus)
+    : null;
+
+  const primaryClosureNotice = closureBadgeLabel
+    ? closureNotices.find((notice) => notice.status === forestClosureStatus) ?? null
+    : null;
+
+  const closureBadgeUrl = primaryClosureNotice && isHttpUrl(primaryClosureNotice.detailUrl)
+    ? primaryClosureNotice.detailUrl
+    : null;
+
+  const BADGE_REDUNDANT_LABELS = new Set(["closed", "partly closed", "partial closure"]);
+  const visibleClosureNotices = closureNotices.filter((notice) => {
+    const cleaned = cleanNoticeTitle(notice.title).toLowerCase();
+    return !BADGE_REDUNDANT_LABELS.has(cleaned);
+  });
   const locationNotFoundTooltipLabel = (
     <>
       Location not found — coordinates unavailable for this forest.
@@ -111,7 +147,7 @@ export const ForestCardContent = memo(({
                 </span>
               </Tooltip>
             )}
-            <strong>
+            <strong title={forest.forestName}>
               {isHttpUrl(forest.forestUrl) ? (
                 <a
                   href={forest.forestUrl}
@@ -119,10 +155,10 @@ export const ForestCardContent = memo(({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {forest.forestName}
+                  {shortenForestName(forest.forestName)}
                 </a>
               ) : (
-                forest.forestName
+                shortenForestName(forest.forestName)
               )}
             </strong>
           </div>
@@ -134,6 +170,7 @@ export const ForestCardContent = memo(({
               target="_blank"
               rel="noreferrer"
               data-testid="forest-area-link"
+              title={`Forest region (FCNSW management area): ${forest.areaName}`}
             >
               {forest.areaName}
             </a>
@@ -142,6 +179,7 @@ export const ForestCardContent = memo(({
               ref={areaHoverReference}
               className="muted forest-region-link"
               data-testid="forest-area-link"
+              title={`Forest region (FCNSW management area): ${forest.areaName}`}
             >
               {forest.areaName}
             </div>
@@ -150,10 +188,15 @@ export const ForestCardContent = memo(({
         <div className="status-block">
           <div className="status-pill-row">
             <Badge
+              component="a"
+              href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
+              target="_blank"
+              rel="noreferrer"
               color={forest.banStatus === "NOT_BANNED" ? "green" : forest.banStatus === "BANNED" ? "red" : "gray"}
-              variant="filled"
+              variant="light"
               size="sm"
               radius="xl"
+              style={{ cursor: "pointer", textDecoration: "none" }}
             >
               {getSolidFuelStatusLabel(forest.banStatus)}
             </Badge>
@@ -163,22 +206,40 @@ export const ForestCardContent = memo(({
               target="_blank"
               rel="noreferrer"
               color={forest.totalFireBanStatus === "NOT_BANNED" ? "green" : forest.totalFireBanStatus === "BANNED" ? "red" : "gray"}
-              variant="filled"
+              variant="light"
               size="sm"
               radius="xl"
               style={{ cursor: "pointer", textDecoration: "none" }}
             >
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
             </Badge>
-            {forestClosureStatus === "CLOSED" || forestClosureStatus === "PARTIAL" ? (
-              <Badge
-                color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
-                variant="filled"
-                size="sm"
-                radius="xl"
-              >
-                {getClosureStatusLabel(forestClosureStatus)}
-              </Badge>
+            {closureBadgeLabel ? (
+              closureBadgeUrl ? (
+                <Badge
+                  component="a"
+                  href={closureBadgeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                  variant="light"
+                  size="sm"
+                  radius="xl"
+                  style={{ cursor: "pointer", textDecoration: "none" }}
+                  data-testid="closure-badge"
+                >
+                  {closureBadgeLabel}
+                </Badge>
+              ) : (
+                <Badge
+                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                  variant="light"
+                  size="sm"
+                  radius="xl"
+                  data-testid="closure-badge"
+                >
+                  {closureBadgeLabel}
+                </Badge>
+              )
             ) : null}
           </div>
           <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
@@ -195,11 +256,11 @@ export const ForestCardContent = memo(({
           </Tooltip>
         </div>
       </div>
-      {closureNotices.length > 0 ? (
+      {visibleClosureNotices.length > 0 ? (
         <div className="forest-notice-list-wrap" data-testid="forest-notice-list">
           <div className="forest-notice-list-label">Notices:</div>
           <ul className="forest-notice-list">
-            {closureNotices.map((closureNotice) => (
+            {visibleClosureNotices.map((closureNotice) => (
               <li key={closureNotice.id} className="forest-notice-item">
                 {isHttpUrl(closureNotice.detailUrl) ? (
                   <a
@@ -208,10 +269,10 @@ export const ForestCardContent = memo(({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {closureNotice.title}
+                    {cleanNoticeTitle(closureNotice.title)}
                   </a>
                 ) : (
-                  <span>{closureNotice.title}</span>
+                  <span>{cleanNoticeTitle(closureNotice.title)}</span>
                 )}
               </li>
             ))}

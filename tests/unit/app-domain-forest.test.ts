@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
-import { compareForestsByListSortOption } from "../../apps/web/src/lib/app-domain-forest";
+import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption } from "../../apps/web/src/lib/app-domain-forest";
 
 const buildForest = (
   id: string,
@@ -98,5 +98,49 @@ describe("compareForestsByListSortOption", () => {
       "Forest A",
       "Forest C"
     ]);
+  });
+});
+
+describe("buildSolidFuelBanDetailsUrl", () => {
+  it("builds URL with area name and 'banned' end text for BANNED status", () => {
+    const url = buildSolidFuelBanDetailsUrl({
+      areaName: "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
+      banStatus: "BANNED"
+    });
+
+    expect(url).toBe(
+      "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans" +
+      "#:~:text=State%20forests%20of%20the%20Central%20West%20around%20Bathurst%2C%20Orange%2C%20Oberon%2C%20Rylstone%2C%20Kandos%20and%20Gulgong,banned"
+    );
+  });
+
+  it("builds URL with area name and 'No ban' end text for NOT_BANNED status", () => {
+    const url = buildSolidFuelBanDetailsUrl({
+      areaName: "Native forests of the North Coast",
+      banStatus: "NOT_BANNED"
+    });
+
+    expect(url).toBe(
+      "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans" +
+      "#:~:text=Native%20forests%20of%20the%20North%20Coast,No%20ban"
+    );
+  });
+
+  it("returns null for UNKNOWN ban status", () => {
+    const url = buildSolidFuelBanDetailsUrl({
+      areaName: "Not listed on Solid Fuel Fire Ban pages",
+      banStatus: "UNKNOWN"
+    });
+
+    expect(url).toBeNull();
+  });
+
+  it("returns null for empty area name", () => {
+    const url = buildSolidFuelBanDetailsUrl({
+      areaName: "  ",
+      banStatus: "BANNED"
+    });
+
+    expect(url).toBeNull();
   });
 });

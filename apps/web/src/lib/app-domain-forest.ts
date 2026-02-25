@@ -1,6 +1,6 @@
 import type { ForestApiResponse } from "./api";
 import type { ForestListSortOption } from "./app-domain-types";
-import { FORESTRY_BASE_URL, TOTAL_FIRE_BAN_SOURCE_URL } from "./app-domain-constants";
+import { FORESTRY_BASE_URL, SOLID_FUEL_FIRE_BAN_SOURCE_URL, TOTAL_FIRE_BAN_SOURCE_URL } from "./app-domain-constants";
 
 export const isHttpUrl = (value?: string | null): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
@@ -166,6 +166,19 @@ export const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string):
   }
 
   return `${baseUrl}#:~:text=${encodedTextToHighlight}`;
+};
+
+export const buildSolidFuelBanDetailsUrl = (
+  forest: Pick<ForestApiResponse["forests"][number], "areaName" | "banStatus">
+): string | null => {
+  const areaName = forest.areaName.trim();
+  if (!areaName || forest.banStatus === "UNKNOWN") {
+    return null;
+  }
+
+  const endText = forest.banStatus === "BANNED" ? "banned" : "No ban";
+  const fragment = `#:~:text=${encodeURIComponent(areaName)},${encodeURIComponent(endText)}`;
+  return `${SOLID_FUEL_FIRE_BAN_SOURCE_URL}${fragment}`;
 };
 
 export const buildTotalFireBanDetailsUrl = (

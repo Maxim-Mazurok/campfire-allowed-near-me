@@ -1,14 +1,11 @@
 import {
-  ActionIcon,
   Button,
   Group,
   Stack,
   Text,
-  Title,
-  useComputedColorScheme,
-  useMantineColorScheme
+  Title
 } from "@mantine/core";
-import { IconSettings, IconAlertTriangle, IconSun, IconMoon } from "@tabler/icons-react";
+import { IconSettings, IconAlertTriangle } from "@tabler/icons-react";
 
 const formatTimeSince = (isoTimestamp: string): string => {
   const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
@@ -46,9 +43,6 @@ export const AppHeader = ({
   onOpenWarnings,
   snapshotFetchedAt
 }: AppHeaderProps) => {
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme("light", { getInitialValueInEffect: true });
-
   return (
     <header className="panel">
       <Title order={1} size="h3">Campfire Allowed Near Me</Title>
@@ -58,14 +52,6 @@ export const AppHeader = ({
       </Text>
 
       <Group gap="sm" wrap="wrap">
-        <ActionIcon
-          variant="default"
-          size="lg"
-          aria-label="Toggle color scheme"
-          onClick={() => setColorScheme(computedColorScheme === "light" ? "dark" : "light")}
-        >
-          {computedColorScheme === "light" ? <IconMoon size={18} /> : <IconSun size={18} />}
-        </ActionIcon>
         <Button
           variant="default"
           size="xs"

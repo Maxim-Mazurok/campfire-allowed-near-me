@@ -96,6 +96,30 @@ describe("closure notices parsing", () => {
     );
   });
 
+  it("classifies road/track closures as PARTIAL instead of CLOSED", () => {
+    expect(
+      parseClosureNoticeStatus("Temporary closure of Blackbutt Road, Kerewong State Forest")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Temporary closure of Kerewong Road")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Ourimbah State Forest's Wallaby Road and Middle Ridge Road closed indefinitely")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Bondo State Forest: Partial Road Closure Notice")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Styx River State Forest trail closed")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Bridge closure in Watagan State Forest")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Fire trail closure near campground")
+    ).toBe("PARTIAL");
+  });
+
   it("classifies closure tags from title text", () => {
     expect(classifyClosureNoticeTags("Bondo State Forest: Partial Road Closure Notice")).toEqual(
       expect.arrayContaining(["ROAD_ACCESS"])
