@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-25T18:47:27.529Z",
+  "fetchedAt": "2026-02-25T19:19:34.593Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -130,12 +130,8 @@
       "Coolangubra State Forest",
       "Cumberland State Forest",
       "Micalong State Forest",
-      "Perricoota State Forest",
       "Tallaganda State Forest",
-      "Vulcan State Forest",
-      "Wingello State Forest",
-      "Yambulla State Forest",
-      "Yurammie State Forest"
+      "Yambulla State Forest"
     ],
     "fuzzyMatches": [
       {
@@ -212,29 +208,6 @@
           "access2wdImpact": "UNKNOWN",
           "access4wdImpact": "UNKNOWN",
           "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
-        }
-      },
-      {
-        "id": "1816",
-        "title": "Yessabah State Forest closed",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1816",
-        "listedAt": "2020-01-13T13:00:00.000Z",
-        "listedAtText": "2020-01-13T13:00:00.0000000Z",
-        "untilAt": null,
-        "untilText": "further notice",
-        "forestNameHint": "Yessabah State Forest",
-        "status": "CLOSED",
-        "tags": [
-          "OPERATIONS"
-        ],
-        "detailText": "Yessabah State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
-        "structuredImpact": {
-          "source": "RULES",
-          "confidence": "HIGH",
-          "campingImpact": "CLOSED",
-          "access2wdImpact": "CLOSED",
-          "access4wdImpact": "CLOSED",
-          "rationale": "Notice is marked closed with no partial/open exception wording."
         }
       }
     ],
@@ -1936,6 +1909,84 @@
       }
     },
     {
+      "id": "vulcan-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel Fires banned"
+        }
+      ],
+      "forestName": "Vulcan State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/vulcan-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -33.8857125,
+      "longitude": 149.82492961062502,
+      "geocodeName": "Vulcan State Forest, Oberon, Oberon Council, New South Wales, 2787, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": true,
+        "walking_track": true,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": true,
+        "caravan_site": false,
+        "2wd_access": true,
+        "picnic_area": true,
+        "toilets": true,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": true
+      },
+      "closureStatus": "CLOSED",
+      "closureNotices": [
+        {
+          "id": "1982",
+          "title": "Vulcan State Forest: Blue Hill quarry area closed to fossicking",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1982",
+          "listedAt": "2025-03-21T05:03:00.000Z",
+          "listedAtText": "2025-03-21T05:03:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Vulcan State Forest",
+          "status": "CLOSED",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted.We encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation.Please note that all quarries are always closed to the public.Further information on fossicking within State forests is available here.Contact: Statewide Information Centre 1300 655 687",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Notice is marked closed with no partial/open exception wording."
+          }
+        }
+      ],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": true
+      },
+      "closureImpactSummary": {
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
+      }
+    },
+    {
       "id": "bago-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -2790,6 +2841,66 @@
       }
     },
     {
+      "id": "woomargama-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest."
+        },
+        {
+          "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        }
+      ],
+      "forestName": "Woomargama State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -35.8327027,
+      "longitude": 147.2504313,
+      "geocodeName": "Woomargama NSW 2644, Australia",
+      "geocodeConfidence": 0.5,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "belanglo-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -2978,6 +3089,60 @@
       }
     },
     {
+      "id": "wingello-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Southern Highlands around Moss Vale",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/southern-highlands-around-moss-vale",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        }
+      ],
+      "forestName": "Wingello State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/wingello-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -34.73194065,
+      "longitude": 150.19324932714437,
+      "geocodeName": "Wingello State Forest, Wingello, Wingecarribee Shire Council, New South Wales, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": true,
+        "walking_track": false,
+        "4wd_tracks": false,
+        "designated_mountain_bike_track": true,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": true,
+        "caravan_site": false,
+        "2wd_access": true,
+        "picnic_area": true,
+        "toilets": true,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": false
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "campbells-island-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -3065,6 +3230,60 @@
         "fireplace": false,
         "caravan_site": false,
         "2wd_access": true,
+        "picnic_area": false,
+        "toilets": false,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": true
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "perricoota-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Native forests of the Riverina",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        }
+      ],
+      "forestName": "Perricoota State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/perricoota-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -35.8336276,
+      "longitude": 144.42006796559434,
+      "geocodeName": "Perricoota State Forest, Womboota, Murray River Council, New South Wales, 2731, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": true,
+        "walking_track": true,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": true,
+        "waterways": false,
+        "fishing": true,
+        "cabins_or_huts_available": false,
+        "fireplace": false,
+        "caravan_site": false,
+        "2wd_access": false,
         "picnic_area": false,
         "toilets": false,
         "wheelchair_access": false,
@@ -4184,6 +4403,60 @@
       "latitude": -31.0425281,
       "longitude": 149.1305966625941,
       "geocodeName": "Wittenbra State Forest, Baradine, Warrumbungle Shire Council, New South Wales, 2396, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "yearinan-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Native forests of the Pilliga",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid fuel fires banned"
+        }
+      ],
+      "forestName": "Yearinan State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -31.0819067,
+      "longitude": 149.14064513965172,
+      "geocodeName": "Yearinan State Forest, Bugaldie, Warrumbungle Shire Council, New South Wales, 2357, Australia",
       "geocodeConfidence": 0.10667666666666664,
       "geocodeDiagnostics": null,
       "facilities": {
@@ -14344,6 +14617,60 @@
       }
     },
     {
+      "id": "tantawangalo-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Tantawangalo State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.7946935,
+      "longitude": 149.5937875,
+      "geocodeName": "Tantawangalo NSW 2550, Australia",
+      "geocodeConfidence": 0.5,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "benandarah-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -16507,6 +16834,60 @@
         "wheelchair_access": null,
         "lookouts": null,
         "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "yurammie-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests of the South Coast",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Yurammie State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/yurammie-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.897320500000006,
+      "longitude": 149.80174925972017,
+      "geocodeName": "Yurammie State Forest, Bega Valley Shire Council, New South Wales, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": false,
+        "walking_track": false,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": true,
+        "caravan_site": false,
+        "2wd_access": true,
+        "picnic_area": true,
+        "toilets": false,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": false
       },
       "closureStatus": "NONE",
       "closureNotices": [],
@@ -26063,6 +26444,84 @@
       }
     },
     {
+      "id": "yessabah-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Native forests of the North Coast",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-north-coast-of-nsw",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Yessabah State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -31.09432949999999,
+      "longitude": 152.676437,
+      "geocodeName": "Yessabah NSW 2440, Australia",
+      "geocodeConfidence": 0.5,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "CLOSED",
+      "closureNotices": [
+        {
+          "id": "1816",
+          "title": "Yessabah State Forest closed",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1816",
+          "listedAt": "2020-01-13T13:00:00.000Z",
+          "listedAtText": "2020-01-13T13:00:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Yessabah State Forest",
+          "status": "CLOSED",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Yessabah State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Notice is marked closed with no partial/open exception wording."
+          }
+        }
+      ],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": true
+      },
+      "closureImpactSummary": {
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
+      }
+    },
+    {
       "id": "armidale-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -26557,6 +27016,66 @@
         "wheelchair_access": true,
         "lookouts": false,
         "hunting": true
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "riamukka-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Pine forests of the Northern Tablelands",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-of-the-northern-tablelands",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        },
+        {
+          "areaName": "Native forests of the Northern Tablelands",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-northern-tablelands",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Riamukka State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -31.3645765,
+      "longitude": 151.7453155401363,
+      "geocodeName": "Riamukka State Forest, Nowendoc, Walcha Council, New South Wales, 2354, Australia",
+      "geocodeConfidence": 0.10667666666666664,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
       },
       "closureStatus": "NONE",
       "closureNotices": [],
@@ -28001,60 +28520,6 @@
       }
     },
     {
-      "id": "riamukka-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Native forests of the Northern Tablelands",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-northern-tablelands",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban"
-        }
-      ],
-      "forestName": "Riamukka State Forest",
-      "forestUrl": null,
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -31.3645765,
-      "longitude": 151.7453155401363,
-      "geocodeName": "Riamukka State Forest, Nowendoc, Walcha Council, New South Wales, 2354, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": null,
-        "walking_track": null,
-        "4wd_tracks": null,
-        "designated_mountain_bike_track": null,
-        "designated_horse_riding_track": null,
-        "canoeingkayaking": null,
-        "waterways": null,
-        "fishing": null,
-        "cabins_or_huts_available": null,
-        "fireplace": null,
-        "caravan_site": null,
-        "2wd_access": null,
-        "picnic_area": null,
-        "toilets": null,
-        "wheelchair_access": null,
-        "lookouts": null,
-        "hunting": null
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
       "id": "spirabo-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -28584,6 +29049,60 @@
       }
     },
     {
+      "id": "woodenbong-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "Native forests of the Northern Tablelands",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-northern-tablelands",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban"
+        }
+      ],
+      "forestName": "Woodenbong State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -28.3889243,
+      "longitude": 152.6125625,
+      "geocodeName": "Woodenbong NSW 2476, Australia",
+      "geocodeConfidence": 0.5,
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "coolangubra-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -28746,60 +29265,6 @@
       }
     },
     {
-      "id": "perricoota-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)"
-        }
-      ],
-      "forestName": "Perricoota State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/perricoota-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -35.8336276,
-      "longitude": 144.42006796559434,
-      "geocodeName": "Perricoota State Forest, Womboota, Murray River Council, New South Wales, 2731, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": true,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": true,
-        "waterways": false,
-        "fishing": true,
-        "cabins_or_huts_available": false,
-        "fireplace": false,
-        "caravan_site": false,
-        "2wd_access": false,
-        "picnic_area": false,
-        "toilets": false,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": true
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
       "id": "tallaganda-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -28902,138 +29367,6 @@
       }
     },
     {
-      "id": "vulcan-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)"
-        }
-      ],
-      "forestName": "Vulcan State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/vulcan-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -33.8857125,
-      "longitude": 149.82492961062502,
-      "geocodeName": "Vulcan State Forest, Oberon, Oberon Council, New South Wales, 2787, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": true,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": true,
-        "caravan_site": false,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": true
-      },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "1982",
-          "title": "Vulcan State Forest: Blue Hill quarry area closed to fossicking",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1982",
-          "listedAt": "2025-03-21T05:03:00.000Z",
-          "listedAtText": "2025-03-21T05:03:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Vulcan State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted.We encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation.Please note that all quarries are always closed to the public.Further information on fossicking within State forests is available here.Contact: Statewide Information Centre 1300 655 687",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        }
-      ],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": true
-      },
-      "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
-      }
-    },
-    {
-      "id": "wingello-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)"
-        }
-      ],
-      "forestName": "Wingello State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/wingello-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -34.73194065,
-      "longitude": 150.19324932714437,
-      "geocodeName": "Wingello State Forest, Wingello, Wingecarribee Shire Council, New South Wales, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": false,
-        "4wd_tracks": false,
-        "designated_mountain_bike_track": true,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": true,
-        "caravan_site": false,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": false
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
       "id": "yambulla-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -29086,71 +29419,18 @@
         "access2wdImpact": "NONE",
         "access4wdImpact": "NONE"
       }
-    },
-    {
-      "id": "yurammie-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)"
-        }
-      ],
-      "forestName": "Yurammie State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/yurammie-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -36.897320500000006,
-      "longitude": 149.80174925972017,
-      "geocodeName": "Yurammie State Forest, Bega Valley Shire Council, New South Wales, Australia",
-      "geocodeConfidence": 0.10667666666666664,
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": false,
-        "walking_track": false,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": true,
-        "caravan_site": false,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": false,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": false
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
     }
   ],
   "warnings": [
+    "Rejected implausible result \"New South Wales, Australia\" for forest \"Yearinan State Forest\"",
     "Rejected implausible result \"Carabost State Forest, Carabost NSW 2650, Australia\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Brewombenia State Forest\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Croft Knoll State Forest\"",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
-    "Facilities page includes 9 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Perricoota State Forest, Tallaganda State Forest, Vulcan State Forest, Wingello State Forest, Yambulla State Forest (+1 more).",
+    "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
-    "Could not match 4 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed, Myrtle Creek State Forest: Partial closure, Yessabah State Forest closed.",
+    "Could not match 3 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed, Myrtle Creek State Forest: Partial closure.",
     "Applied fuzzy closure notice matching for 1 notice(s) with minor naming differences."
   ]
 }

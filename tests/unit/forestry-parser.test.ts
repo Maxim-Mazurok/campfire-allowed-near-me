@@ -250,4 +250,90 @@ describe("parseAreaForestNames", () => {
 
     expect(parseAreaForestNames(html)).toEqual(["Coolangubra State Forest"]);
   });
+
+  it("appends State Forest suffix to bare names without it", () => {
+    const html = `
+      <p>This area includes the following State forests:</p>
+      <ul>
+        <li>Micalong</li>
+        <li>Mowamba.</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual([
+      "Micalong State Forest",
+      "Mowamba State Forest"
+    ]);
+  });
+
+  it("collects only included forests when page has exclusion list with bare names", () => {
+    const html = `
+      <p>This area includes the following State forests:</p>
+      <ul>
+        <li>Micalong</li>
+        <li>Mowamba.</li>
+      </ul>
+      <p>
+        Please note that the following State forests are excluded in this list
+        and sit in the <a href="/other">Pine forests around Tumut</a> area list:
+      </p>
+      <ul>
+        <li>Bago State Forest</li>
+        <li>Billapaloola State Forest</li>
+        <li>Bondo State Forest</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual([
+      "Micalong State Forest",
+      "Mowamba State Forest"
+    ]);
+  });
+
+  it("handles multiple exclusion blocks after the main include list", () => {
+    const html = `
+      <p>State forests of the South Coast include:</p>
+      <ul>
+        <li>Bermagui State Forest</li>
+        <li>Bodalla State Forest</li>
+      </ul>
+      <h2>Please note</h2>
+      <p>
+        The following State forests are excluded in this list and sit in the
+        Southern Highlands area list:
+      </p>
+      <ul>
+        <li>Belanglo State Forest</li>
+        <li>Wingello State Forest</li>
+      </ul>
+      <p>
+        The following State forests are excluded in this list and sit in the
+        Bombala area list:
+      </p>
+      <ul>
+        <li>Badja State Forest</li>
+        <li>Nalbaugh State Forest</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual([
+      "Bermagui State Forest",
+      "Bodalla State Forest"
+    ]);
+  });
+
+  it("strips trailing periods from forest names with State Forest suffix", () => {
+    const html = `
+      <p>This area includes the following State forests:</p>
+      <ul>
+        <li>Vulcan State Forest.</li>
+        <li>Woomargama State Forest.</li>
+      </ul>
+    `;
+
+    expect(parseAreaForestNames(html)).toEqual([
+      "Vulcan State Forest",
+      "Woomargama State Forest"
+    ]);
+  });
 });

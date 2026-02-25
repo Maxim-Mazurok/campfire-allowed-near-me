@@ -290,12 +290,21 @@ export const parseAreaForestNames = (html: string): string[] => {
         return;
       }
 
-      const normalizedName = normalizeForestLabel(name.replace(/[;,]$/, ""));
-      if (!isLikelyStateForestName(normalizedName)) {
+      const normalizedName = normalizeForestLabel(name.replace(/[.,;]$/, ""));
+      if (isLikelyStateForestName(normalizedName)) {
+        names.add(normalizedName);
         return;
       }
 
-      names.add(normalizedName);
+      // Some area pages list forest names without the "State Forest" suffix
+      // (e.g. "Micalong" instead of "Micalong State Forest").
+      // Only auto-suffix names that don't already mention "state forest".
+      if (normalizedName && !/state forest/i.test(normalizedName)) {
+        const withSuffix = `${normalizedName} State Forest`;
+        if (isLikelyStateForestName(withSuffix)) {
+          names.add(withSuffix);
+        }
+      }
     });
   };
 
@@ -336,7 +345,7 @@ export const parseAreaForestNames = (html: string): string[] => {
         return;
       }
 
-      const normalizedName = normalizeForestLabel(name.replace(/[;,]$/, ""));
+      const normalizedName = normalizeForestLabel(name.replace(/[.,;]$/, ""));
       if (!isLikelyStateForestName(normalizedName)) {
         return;
       }
