@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
-import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption } from "../../apps/web/src/lib/app-domain-forest";
+import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption, forestBelongsToArea } from "../../apps/web/src/lib/app-domain-forest";
 
 const buildForest = (
   id: string,
@@ -10,12 +10,9 @@ const buildForest = (
 ): ForestApiResponse["forests"][number] => ({
   id,
   source: "Forestry Corporation NSW",
-  areaName: "Area",
-  areaUrl: "https://example.com/area",
+  areas: [{ areaName: "Area", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
   forestName,
   forestUrl: "https://example.com/forest",
-  banStatus: "NOT_BANNED",
-  banStatusText: "No Solid Fuel Fire Ban",
   totalFireBanStatus: "NOT_BANNED",
   totalFireBanStatusText: "No Total Fire Ban",
   latitude: -33.9,
@@ -104,8 +101,7 @@ describe("compareForestsByListSortOption", () => {
 describe("buildSolidFuelBanDetailsUrl", () => {
   it("builds URL with area name and 'banned' end text for BANNED status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areaName: "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
-      banStatus: "BANNED"
+      areas: [{ areaName: "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }]
     });
 
     expect(url).toBe(
@@ -116,8 +112,7 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("builds URL with area name and 'No ban' end text for NOT_BANNED status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areaName: "Native forests of the North Coast",
-      banStatus: "NOT_BANNED"
+      areas: [{ areaName: "Native forests of the North Coast", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }]
     });
 
     expect(url).toBe(
@@ -128,8 +123,7 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("returns null for UNKNOWN ban status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areaName: "Not listed on Solid Fuel Fire Ban pages",
-      banStatus: "UNKNOWN"
+      areas: [{ areaName: "Not listed on Solid Fuel Fire Ban pages", areaUrl: "https://example.com/area", banStatus: "UNKNOWN", banStatusText: "Unknown" }]
     });
 
     expect(url).toBeNull();
@@ -137,10 +131,50 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("returns null for empty area name", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areaName: "  ",
-      banStatus: "BANNED"
+      areas: [{ areaName: "  ", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }]
     });
 
     expect(url).toBeNull();
+  });
+});
+
+describe("forestBelongsToArea", () => {
+  it("returns true when areaName matches the primary area", () => {
+    const forest = buildForest("forest-1", "Forest One", 10, 15);
+    expect(forestBelongsToArea(forest, "Area")).toBe(true);
+  });
+
+  it("returns false when areaName does not match any area", () => {
+    const forest = buildForest("forest-1", "Forest One", 10, 15);
+    expect(forestBelongsToArea(forest, "Nonexistent Area")).toBe(false);
+  });
+
+  it("returns false when areaName is null", () => {
+    const forest = buildForest("forest-1", "Forest One", 10, 15);
+    expect(forestBelongsToArea(forest, null)).toBe(false);
+  });
+
+  it("matches any area in the areas array for multi-area forests", () => {
+    const forest = {
+      ...buildForest("forest-1", "Multi-Area Forest", 10, 15),
+      areas: [
+        { areaName: "First Area", areaUrl: "https://example.com/first", banStatus: "BANNED" as const, banStatusText: "Banned" },
+        { areaName: "Second Area", areaUrl: "https://example.com/second", banStatus: "NOT_BANNED" as const, banStatusText: "No ban" }
+      ]
+    };
+
+    expect(forestBelongsToArea(forest, "First Area")).toBe(true);
+    expect(forestBelongsToArea(forest, "Second Area")).toBe(true);
+    expect(forestBelongsToArea(forest, "Third Area")).toBe(false);
+  });
+
+  it("returns false for any area name when areas array is empty", () => {
+    const forest = {
+      ...buildForest("forest-1", "Fallback Forest", 10, 15),
+      areas: [] as ForestApiResponse["forests"][number]["areas"]
+    };
+
+    expect(forestBelongsToArea(forest, "Area")).toBe(false);
+    expect(forestBelongsToArea(forest, "Other")).toBe(false);
   });
 });

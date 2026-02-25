@@ -9,6 +9,7 @@ import { LiveForestDataService } from "../apps/api/src/services/live-forest-data
 import { DEFAULT_BROWSER_PROFILE_PATH } from "../apps/api/src/utils/default-cache-paths.js";
 import "dotenv/config";
 import type { PersistedSnapshot } from "../packages/shared/src/contracts.js";
+import { getForestBanStatus } from "../packages/shared/src/forest-helpers.js";
 
 // ---------------------------------------------------------------------------
 // playwright-extra stealth plugin workaround
@@ -135,7 +136,7 @@ const validateSnapshot = (snapshot: PersistedSnapshot): string[] => {
   }
 
   const forestsWithBanStatus = snapshot.forests.filter(
-    (forest) => forest.banStatus !== "UNKNOWN"
+    (forest) => getForestBanStatus(forest.areas) !== "UNKNOWN"
   );
 
   if (forestsWithBanStatus.length < 10) {
@@ -313,10 +314,10 @@ const main = async () => {
     (forest) => forest.latitude !== null && forest.longitude !== null
   );
   const forestsNotBanned = savedSnapshot.forests.filter(
-    (forest) => forest.banStatus === "NOT_BANNED"
+    (forest) => getForestBanStatus(forest.areas) === "NOT_BANNED"
   );
   const forestsBanned = savedSnapshot.forests.filter(
-    (forest) => forest.banStatus === "BANNED"
+    (forest) => getForestBanStatus(forest.areas) === "BANNED"
   );
   const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
 

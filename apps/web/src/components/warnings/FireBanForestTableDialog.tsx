@@ -1,4 +1,5 @@
 import { Button, Modal, Table, Text } from "@mantine/core";
+import { getForestPrimaryAreaName } from "../../lib/api";
 import type { FireBanForestTableProps } from "./WarningsTypes";
 
 export const FireBanForestTableDialog = ({
@@ -64,7 +65,7 @@ export const FireBanForestTableDialog = ({
             sortedFireBanPageForests.map((forest) => (
               <Table.Tr key={`${forest.id}:fire-ban-table`} data-testid="fire-ban-forest-table-row">
                 <Table.Td>{forest.forestName}</Table.Td>
-                <Table.Td>{forest.areaName}</Table.Td>
+                <Table.Td>{getForestPrimaryAreaName(forest.areas)}</Table.Td>
               </Table.Tr>
             ))
           ) : (

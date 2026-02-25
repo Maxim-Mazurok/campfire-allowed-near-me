@@ -8,7 +8,7 @@ import {
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithMantine } from "../test-utils";
 import { MapView } from "../../apps/web/src/components/MapView";
-import type { ForestPoint } from "../../apps/web/src/lib/api";
+import type { BanStatus, ForestPoint } from "../../apps/web/src/lib/api";
 
 vi.mock("../../apps/web/src/components/PopupShadowContainer", () => ({
   PopupShadowContainer: ({
@@ -105,18 +105,15 @@ const buildForestPoint = ({
 }: {
   id: string;
   forestName: string;
-  banStatus: ForestPoint["banStatus"];
+  banStatus: BanStatus;
   areaName?: string;
   areaUrl?: string;
 }): ForestPoint => ({
   id,
   source: "Forestry Corporation NSW",
-  areaName,
-  areaUrl,
+  areas: [{ areaName, areaUrl, banStatus, banStatusText: banStatus === "BANNED" ? "Solid Fuel Fire Ban" : "No Solid Fuel Fire Ban" }],
   forestName,
   forestUrl: `https://example.com/forests/${id}`,
-  banStatus,
-  banStatusText: banStatus === "BANNED" ? "Solid Fuel Fire Ban" : "No Solid Fuel Fire Ban",
   totalFireBanStatus: "NOT_BANNED",
   totalFireBanStatusText: "No Total Fire Ban",
   latitude: -32.1633,

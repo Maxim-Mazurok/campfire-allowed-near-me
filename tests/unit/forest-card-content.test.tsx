@@ -13,12 +13,9 @@ afterEach(() => {
 const buildForest = (overrides?: Partial<ForestApiResponse["forests"][number]>): ForestApiResponse["forests"][number] => ({
   id: "forest-a",
   source: "Forestry Corporation NSW",
-  areaName: "Area 1",
-  areaUrl: "https://example.com/area-1",
+  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
   forestName: "Forest A",
   forestUrl: "https://example.com/forest-a",
-  banStatus: "NOT_BANNED",
-  banStatusText: "No Solid Fuel Fire Ban",
   totalFireBanStatus: "NOT_BANNED",
   totalFireBanStatusText: "No Total Fire Ban",
   latitude: -33.9,
@@ -295,7 +292,7 @@ describe("ForestCardContent", () => {
   });
 
   it("renders status badges with light variant", () => {
-    const forest = buildForest({ banStatus: "NOT_BANNED", totalFireBanStatus: "BANNED" });
+    const forest = buildForest({ areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }], totalFireBanStatus: "BANNED" });
 
     const html = renderToStaticMarkupWithMantine(
       <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
@@ -321,12 +318,66 @@ describe("ForestCardContent", () => {
   });
 
   it("renders area name with descriptive title attribute", () => {
-    const forest = buildForest({ areaName: "Manning" });
+    const forest = buildForest({
+      areas: [{ areaName: "Manning", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }]
+    });
 
     const html = renderToStaticMarkupWithMantine(
       <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
     );
 
     expect(html).toContain('title="Forest region (FCNSW management area): Manning"');
+  });
+
+  it("renders multiple areas for a multi-area forest", () => {
+    const forest = buildForest({
+      areas: [
+        { areaName: "Pine Forests of Tumut", areaUrl: "https://example.com/pine-tumut", banStatus: "BANNED", banStatusText: "Banned" },
+        { areaName: "Native Forests of Bago", areaUrl: "https://example.com/native-bago", banStatus: "NOT_BANNED", banStatusText: "No ban" }
+      ]
+    });
+
+    const html = renderToStaticMarkupWithMantine(
+      <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
+    );
+
+    expect(html).toContain("Pine Forests of Tumut");
+    expect(html).toContain("Native Forests of Bago");
+    expect(html).toContain("https://example.com/pine-tumut");
+    expect(html).toContain("https://example.com/native-bago");
+  });
+
+  it("fires hover callback with correct area name for each area in multi-area forest", () => {
+    const onHoveredAreaNameChange = vi.fn();
+    const forest = buildForest({
+      areas: [
+        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban" },
+        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned" }
+      ]
+    });
+
+    renderWithMantine(
+      <ForestCardContent
+        forest={forest}
+        availableFacilities={[]}
+        onHoveredAreaNameChange={onHoveredAreaNameChange}
+        avoidTolls={true}
+      />
+    );
+
+    const alphaLink = screen.getByText("Alpha Area");
+    const betaLink = screen.getByText("Beta Area");
+
+    fireEvent.mouseEnter(alphaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith("Alpha Area");
+
+    fireEvent.mouseLeave(alphaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith(null);
+
+    fireEvent.mouseEnter(betaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith("Beta Area");
+
+    fireEvent.mouseLeave(betaLink);
+    expect(onHoveredAreaNameChange).toHaveBeenCalledWith(null);
   });
 });

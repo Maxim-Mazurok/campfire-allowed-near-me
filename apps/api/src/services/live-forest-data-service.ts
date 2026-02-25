@@ -38,6 +38,7 @@ import type {
   FacilityMatchDiagnostics,
   FacilityValue,
   ForestApiResponse,
+  ForestAreaReference,
   ForestAreaWithForests,
   ForestClosureNotice,
   ForestDataService,
@@ -51,6 +52,7 @@ import type {
   RefreshTaskProgress,
   UserLocation
 } from "../types/domain.js";
+import { getForestBanStatus } from "../types/domain.js";
 
 interface LiveForestDataServiceOptions {
   snapshotPath?: string | null;
@@ -467,7 +469,7 @@ export class LiveForestDataService implements ForestDataService {
     );
 
     return snapshot.forests.some((forest) => {
-      if (forest.banStatus !== "UNKNOWN") {
+      if (getForestBanStatus(forest.areas) !== "UNKNOWN") {
         return false;
       }
 
@@ -1392,16 +1394,18 @@ export class LiveForestDataService implements ForestDataService {
         }
 
         points.push({
-          id: `${slugify(area.areaName)}-${slugify(forestName)}`,
+          id: slugify(forestName),
           source: this.options.sourceName,
-          areaName: area.areaName,
-          areaUrl: area.areaUrl,
+          areas: [{
+            areaName: area.areaName,
+            areaUrl: area.areaUrl,
+            banStatus: area.status,
+            banStatusText: this.normalizeBanStatusText(area.status, area.statusText)
+          }],
           forestName,
           forestUrl: facilityMatch.matchedDirectoryForestName
             ? (byForestUrl.get(facilityMatch.matchedDirectoryForestName) ?? null)
             : null,
-          banStatus: banSummary.status,
-          banStatusText: banSummary.statusText,
           totalFireBanStatus: totalFireBanLookup.status,
           totalFireBanStatusText: totalFireBanLookup.statusText,
           totalFireBanDiagnostics,
@@ -1471,14 +1475,16 @@ export class LiveForestDataService implements ForestDataService {
       }
 
       points.push({
-        id: `${slugify("unmatched-fire-ban")}-${slugify(forestName)}`,
+        id: slugify(forestName),
         source: this.options.sourceName,
-        areaName: UNKNOWN_FIRE_BAN_AREA_NAME,
-        areaUrl: FIRE_BAN_ENTRY_URL,
+        areas: [{
+          areaName: UNKNOWN_FIRE_BAN_AREA_NAME,
+          areaUrl: FIRE_BAN_ENTRY_URL,
+          banStatus: "UNKNOWN",
+          banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT
+        }],
         forestName,
         forestUrl: byForestUrl.get(forestName) ?? null,
-        banStatus: "UNKNOWN",
-        banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT,
         totalFireBanStatus: totalFireBanLookup.status,
         totalFireBanStatusText: totalFireBanLookup.statusText,
         totalFireBanDiagnostics,
@@ -1569,13 +1575,103 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     return {
-      forests: pointsWithClosures,
+      forests: this.mergeMultiAreaForests(pointsWithClosures),
       diagnostics: {
         unmatchedFacilitiesForests,
         fuzzyMatches: fuzzyMatchesList
       },
       closureDiagnostics: closureAssignments.diagnostics
     };
+  }
+
+  private mergeMultiAreaForests(
+    points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[]
+  ): Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] {
+    const groupsByForestKey = new Map<
+      string,
+      Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[]
+    >();
+    const insertionOrder: string[] = [];
+
+    for (const point of points) {
+      const key = this.buildForestStatusKey(point.forestName);
+      const existing = groupsByForestKey.get(key);
+
+      if (existing) {
+        existing.push(point);
+      } else {
+        groupsByForestKey.set(key, [point]);
+        insertionOrder.push(key);
+      }
+    }
+
+    const merged: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
+
+    for (const key of insertionOrder) {
+      const group = groupsByForestKey.get(key);
+
+      if (!group || group.length === 0) {
+        continue;
+      }
+
+      if (group.length === 1) {
+        const singlePoint = group[0];
+
+        if (singlePoint) {
+          merged.push(singlePoint);
+        }
+
+        continue;
+      }
+
+      // Pick the primary point: prefer the one with the best geocode confidence
+      // (non-null coordinates first, then highest confidence).
+      const primary = group.reduce((best, candidate) => {
+        const bestHasCoordinates = best.latitude !== null && best.longitude !== null;
+        const candidateHasCoordinates = candidate.latitude !== null && candidate.longitude !== null;
+
+        if (candidateHasCoordinates && !bestHasCoordinates) {
+          return candidate;
+        }
+
+        if (!candidateHasCoordinates && bestHasCoordinates) {
+          return best;
+        }
+
+        if (
+          typeof candidate.geocodeConfidence === "number" &&
+          (typeof best.geocodeConfidence !== "number" ||
+            candidate.geocodeConfidence > best.geocodeConfidence)
+        ) {
+          return candidate;
+        }
+
+        return best;
+      });
+
+      // Collect unique areas from ALL entries in the group, preserving order.
+      const seenAreaKeys = new Set<string>();
+      const mergedAreas: ForestAreaReference[] = [];
+
+      for (const point of group) {
+        for (const area of point.areas) {
+          const areaKey = area.areaName.toLowerCase();
+
+          if (!seenAreaKeys.has(areaKey)) {
+            seenAreaKeys.add(areaKey);
+            mergedAreas.push(area);
+          }
+        }
+      }
+
+      merged.push({
+        ...primary,
+        id: slugify(primary.forestName),
+        areas: mergedAreas
+      });
+    }
+
+    return merged;
   }
 
   private async addTravelMetrics(
@@ -1676,7 +1772,7 @@ export class LiveForestDataService implements ForestDataService {
 
     for (const forest of forests) {
       if (
-        forest.banStatus !== "NOT_BANNED" ||
+        getForestBanStatus(forest.areas) !== "NOT_BANNED" ||
         forest.totalFireBanStatus === "BANNED" ||
         forest.closureStatus === "CLOSED"
       ) {
@@ -1715,7 +1811,6 @@ export class LiveForestDataService implements ForestDataService {
     return {
       id: forest.id,
       forestName: forest.forestName,
-      areaName: forest.areaName,
       distanceKm: forest.distanceKm ?? nearest.effectiveDistanceKm,
       travelDurationMinutes: forest.travelDurationMinutes
     };

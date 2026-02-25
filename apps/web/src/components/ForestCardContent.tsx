@@ -3,6 +3,7 @@ import { Badge, Tooltip } from "@mantine/core";
 import { memo, useCallback, useMemo, useRef } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
+import { getForestBanStatus } from "../lib/api";
 import {
   buildGoogleMapsDrivingNavigationUrl,
   buildSolidFuelBanDetailsUrl,
@@ -39,39 +40,42 @@ export const ForestCardContent = memo(({
   avoidTolls,
   onHoveredAreaNameChange
 }: ForestCardContentProps) => {
-  const areaCleanupReference = useRef<(() => void) | null>(null);
+  const areaCleanupReferences = useRef<Map<string, () => void>>(new Map());
+
+  const resolvedAreas = forest.areas;
 
   /**
-   * Callback ref: fires immediately when the element is committed to the DOM,
-   * regardless of portal nesting depth or shadow DOM boundaries.
-   * Unlike useEffect (which depends on render cycle ordering), this guarantees
-   * listeners are attached the instant the element exists.
+   * Creates a callback ref for each area element. Fires immediately when the element
+   * is committed to the DOM, regardless of portal nesting depth or shadow DOM boundaries.
    */
-  const areaHoverReference = useCallback((element: HTMLElement | null) => {
-    // Clean up previous listeners if any
-    if (areaCleanupReference.current) {
-      areaCleanupReference.current();
-      areaCleanupReference.current = null;
-    }
+  const createAreaHoverReference = useCallback((areaName: string) => {
+    return (element: HTMLElement | null) => {
+      const existingCleanup = areaCleanupReferences.current.get(areaName);
+      if (existingCleanup) {
+        existingCleanup();
+        areaCleanupReferences.current.delete(areaName);
+      }
 
-    if (!element || !onHoveredAreaNameChange) {
-      return;
-    }
+      if (!element || !onHoveredAreaNameChange) {
+        return;
+      }
 
-    const handleMouseEnter = () => onHoveredAreaNameChange(forest.areaName);
-    const handleMouseLeave = () => onHoveredAreaNameChange(null);
+      const handleMouseEnter = () => onHoveredAreaNameChange(areaName);
+      const handleMouseLeave = () => onHoveredAreaNameChange(null);
 
-    element.addEventListener("mouseenter", handleMouseEnter);
-    element.addEventListener("mouseleave", handleMouseLeave);
+      element.addEventListener("mouseenter", handleMouseEnter);
+      element.addEventListener("mouseleave", handleMouseLeave);
 
-    areaCleanupReference.current = () => {
-      element.removeEventListener("mouseenter", handleMouseEnter);
-      element.removeEventListener("mouseleave", handleMouseLeave);
+      areaCleanupReferences.current.set(areaName, () => {
+        element.removeEventListener("mouseenter", handleMouseEnter);
+        element.removeEventListener("mouseleave", handleMouseLeave);
+      });
     };
-  }, [onHoveredAreaNameChange, forest.areaName]);
+  }, [onHoveredAreaNameChange]);
 
   const forestClosureStatus = getForestClosureStatus(forest);
   const impactSummary = getForestImpactSummary(forest);
+  const forestBanStatus = getForestBanStatus(forest.areas);
   const hasCoordinates = forestHasCoordinates(forest);
   const googleMapsDrivingNavigationUrl = hasCoordinates
     ? buildGoogleMapsDrivingNavigationUrl(forest)
@@ -162,28 +166,32 @@ export const ForestCardContent = memo(({
               )}
             </strong>
           </div>
-          {isHttpUrl(forest.areaUrl) ? (
-            <a
-              ref={areaHoverReference}
-              href={buildTextHighlightUrl(forest.areaUrl, forest.forestName)}
-              className="muted forest-region-link"
-              target="_blank"
-              rel="noreferrer"
-              data-testid="forest-area-link"
-              title={`Forest region (FCNSW management area): ${forest.areaName}`}
-            >
-              {forest.areaName}
-            </a>
-          ) : (
-            <div
-              ref={areaHoverReference}
-              className="muted forest-region-link"
-              data-testid="forest-area-link"
-              title={`Forest region (FCNSW management area): ${forest.areaName}`}
-            >
-              {forest.areaName}
-            </div>
-          )}
+          {resolvedAreas.map((area) => (
+            isHttpUrl(area.areaUrl) ? (
+              <a
+                key={area.areaName}
+                ref={createAreaHoverReference(area.areaName)}
+                href={buildTextHighlightUrl(area.areaUrl, forest.forestName)}
+                className="muted forest-region-link"
+                target="_blank"
+                rel="noreferrer"
+                data-testid="forest-area-link"
+                title={`Forest region (FCNSW management area): ${area.areaName}`}
+              >
+                {area.areaName}
+              </a>
+            ) : (
+              <div
+                key={area.areaName}
+                ref={createAreaHoverReference(area.areaName)}
+                className="muted forest-region-link"
+                data-testid="forest-area-link"
+                title={`Forest region (FCNSW management area): ${area.areaName}`}
+              >
+                {area.areaName}
+              </div>
+            )
+          ))}
         </div>
         <div className="status-block">
           <div className="status-pill-row">
@@ -192,13 +200,13 @@ export const ForestCardContent = memo(({
               href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
               target="_blank"
               rel="noreferrer"
-              color={forest.banStatus === "NOT_BANNED" ? "green" : forest.banStatus === "BANNED" ? "red" : "gray"}
+              color={forestBanStatus === "NOT_BANNED" ? "green" : forestBanStatus === "BANNED" ? "red" : "gray"}
               variant="light"
               size="sm"
               radius="xl"
               style={{ cursor: "pointer", textDecoration: "none" }}
             >
-              {getSolidFuelStatusLabel(forest.banStatus)}
+              {getSolidFuelStatusLabel(forestBanStatus)}
             </Badge>
             <Badge
               component="a"

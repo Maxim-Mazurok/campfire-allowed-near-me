@@ -50,8 +50,7 @@ export const LocationStatusPanels = ({
             <span>Using your current location. Click to refresh if you move.</span>
           </p>
           <p className="nearest-copy">
-            Closest legal campfire spot: <strong>{payload.nearestLegalSpot.forestName}</strong> in{" "}
-            {payload.nearestLegalSpot.areaName} (
+            Closest legal campfire spot: <strong>{payload.nearestLegalSpot.forestName}</strong> (
             {formatDriveSummary(
               payload.nearestLegalSpot.distanceKm,
               payload.nearestLegalSpot.travelDurationMinutes

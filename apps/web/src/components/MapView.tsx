@@ -10,6 +10,7 @@ import {
 import { ForestCardContent } from "./ForestCardContent";
 import { PopupShadowContainer } from "./PopupShadowContainer";
 import type { FacilityDefinition, ForestPoint } from "../lib/api";
+import { forestBelongsToArea } from "../lib/app-domain-forest";
 import {
   getForestMarkerVisualOptions
 } from "../lib/forest-marker-style";
@@ -179,7 +180,7 @@ const ForestMarker = memo(({
   selectForestPopup: (selectedForestPopupState: SelectedForestPopupState) => void;
 }) => {
   const isHoveredForest = hoveredForestId === forest.id;
-  const isAreaHighlighted = hoveredAreaName !== null && forest.areaName === hoveredAreaName;
+  const isAreaHighlighted = hoveredAreaName !== null && forestBelongsToArea(forest, hoveredAreaName);
   const markerPaneName = isHoveredForest
     ? "hovered-forest"
     : isAreaHighlighted
@@ -427,7 +428,7 @@ const VisibleForestMarkers = ({
     <>
       <Pane name="unmatched-forests" style={{ zIndex: 610 }}>
         {renderedUnmatchedForests
-          .filter((forest) => hoveredAreaName === null || forest.areaName !== hoveredAreaName)
+          .filter((forest) => hoveredAreaName === null || !forestBelongsToArea(forest, hoveredAreaName))
           .map((forest) => (
             <ForestMarker
               key={forest.id}
@@ -442,7 +443,7 @@ const VisibleForestMarkers = ({
 
       <Pane name="matched-forests" style={{ zIndex: 660 }}>
         {visibleMatchedForests
-          .filter((forest) => hoveredAreaName === null || forest.areaName !== hoveredAreaName)
+          .filter((forest) => hoveredAreaName === null || !forestBelongsToArea(forest, hoveredAreaName))
           .map((forest) => (
             <ForestMarker
               key={forest.id}
@@ -458,7 +459,7 @@ const VisibleForestMarkers = ({
       {hoveredAreaName !== null ? (
         <Pane name="area-highlighted-forests" style={{ zIndex: 700 }}>
           {renderedUnmatchedForests
-            .filter((forest) => forest.areaName === hoveredAreaName)
+            .filter((forest) => forestBelongsToArea(forest, hoveredAreaName))
             .map((forest) => (
               <ForestMarker
                 key={forest.id}
@@ -470,7 +471,7 @@ const VisibleForestMarkers = ({
               />
             ))}
           {visibleMatchedForests
-            .filter((forest) => forest.areaName === hoveredAreaName)
+            .filter((forest) => forestBelongsToArea(forest, hoveredAreaName))
             .map((forest) => (
               <ForestMarker
                 key={forest.id}

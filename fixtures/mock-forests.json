@@ -8,115 +8,91 @@
     "fuzzyMatches": []
   },
   "availableFacilities": [
-    {
-      "key": "camping",
-      "label": "Camping",
-      "paramName": "camping",
-      "iconKey": "camping"
-    },
-    {
-      "key": "fishing",
-      "label": "Fishing",
-      "paramName": "fishing",
-      "iconKey": "fishing"
-    },
-    {
-      "key": "cycling",
-      "label": "Designated mntn bike track",
-      "paramName": "cycling",
-      "iconKey": "cycling"
-    },
-    {
-      "key": "lookout",
-      "label": "Lookouts",
-      "paramName": "lookout",
-      "iconKey": "lookout"
-    }
+    { "key": "camping", "label": "Camping", "paramName": "camping", "iconKey": "camping" },
+    { "key": "fishing", "label": "Fishing", "paramName": "fishing", "iconKey": "fishing" },
+    { "key": "cycling", "label": "Designated mntn bike track", "paramName": "cycling", "iconKey": "cycling" },
+    { "key": "lookout", "label": "Lookouts", "paramName": "lookout", "iconKey": "lookout" }
   ],
   "forests": [
     {
-      "id": "sydney-sandstone-marramarra",
+      "id": "marramarra",
       "source": "Forestry Corporation NSW",
-      "areaName": "Sydney Sandstone",
-      "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+      "areas": [
+        {
+          "areaName": "Sydney Sandstone",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No Solid Fuel Fire Ban"
+        }
+      ],
       "forestName": "Marramarra",
-      "banStatus": "NOT_BANNED",
-      "banStatusText": "No Solid Fuel Fire Ban",
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "latitude": -33.531,
       "longitude": 151.113,
       "geocodeName": "Marramarra National Park",
       "geocodeConfidence": 0.6,
-      "facilities": {
-        "camping": true,
-        "fishing": true,
-        "cycling": false,
-        "lookout": true
-      }
+      "facilities": { "camping": true, "fishing": true, "cycling": false, "lookout": true }
     },
     {
-      "id": "sydney-sandstone-wattamolla",
+      "id": "wattamolla",
       "source": "Forestry Corporation NSW",
-      "areaName": "Sydney Sandstone",
-      "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+      "areas": [
+        {
+          "areaName": "Sydney Sandstone",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/sydney-sandstone",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel Fire Ban"
+        }
+      ],
       "forestName": "Wattamolla",
-      "banStatus": "BANNED",
-      "banStatusText": "Solid Fuel Fire Ban",
       "totalFireBanStatus": "BANNED",
       "totalFireBanStatusText": "Total Fire Ban",
       "latitude": -34.133,
       "longitude": 151.111,
       "geocodeName": "Wattamolla",
       "geocodeConfidence": 0.5,
-      "facilities": {
-        "camping": false,
-        "fishing": true,
-        "cycling": true,
-        "lookout": false
-      }
+      "facilities": { "camping": false, "fishing": true, "cycling": true, "lookout": false }
     },
     {
-      "id": "southern-highlands-belanglo",
+      "id": "belanglo",
       "source": "Forestry Corporation NSW",
-      "areaName": "Southern Highlands",
-      "areaUrl": "https://www.forestrycorporation.com.au/visit/southern-highlands",
+      "areas": [
+        {
+          "areaName": "Southern Highlands",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/southern-highlands",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No Solid Fuel Fire Ban"
+        }
+      ],
       "forestName": "Belanglo",
-      "banStatus": "NOT_BANNED",
-      "banStatusText": "No Solid Fuel Fire Ban",
       "totalFireBanStatus": "BANNED",
       "totalFireBanStatusText": "Total Fire Ban",
       "latitude": -34.512,
       "longitude": 150.361,
       "geocodeName": "Belanglo State Forest",
       "geocodeConfidence": 0.75,
-      "facilities": {
-        "camping": true,
-        "fishing": false,
-        "cycling": true,
-        "lookout": false
-      }
+      "facilities": { "camping": true, "fishing": false, "cycling": true, "lookout": false }
     },
     {
-      "id": "north-coast-jackadgery",
+      "id": "jackadgery",
       "source": "Forestry Corporation NSW",
-      "areaName": "North Coast",
-      "areaUrl": "https://www.forestrycorporation.com.au/visit/north-coast",
+      "areas": [
+        {
+          "areaName": "North Coast",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/north-coast",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel Fire Ban"
+        }
+      ],
       "forestName": "Jackadgery",
-      "banStatus": "BANNED",
-      "banStatusText": "Solid Fuel Fire Ban",
       "totalFireBanStatus": "UNKNOWN",
       "totalFireBanStatusText": "Unknown (Total Fire Ban status unavailable)",
       "latitude": -29.613,
       "longitude": 152.705,
       "geocodeName": "Jackadgery",
       "geocodeConfidence": 0.49,
-      "facilities": {
-        "camping": false,
-        "fishing": false,
-        "cycling": false,
-        "lookout": true
-      }
+      "facilities": { "camping": false, "fishing": false, "cycling": false, "lookout": true }
     }
   ]
 }

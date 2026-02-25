@@ -1,9 +1,21 @@
 import type { ForestApiResponse } from "./api";
+import { getForestBanStatus, getForestPrimaryAreaName } from "./api";
 import type { ForestListSortOption } from "./app-domain-types";
 import { FORESTRY_BASE_URL, SOLID_FUEL_FIRE_BAN_SOURCE_URL, TOTAL_FIRE_BAN_SOURCE_URL } from "./app-domain-constants";
 
 export const isHttpUrl = (value?: string | null): value is string =>
   typeof value === "string" && /^https?:\/\//i.test(value);
+
+export const forestBelongsToArea = (
+  forest: Pick<ForestApiResponse["forests"][number], "areas">,
+  areaName: string | null
+): boolean => {
+  if (areaName === null) {
+    return false;
+  }
+
+  return forest.areas.some((area) => area.areaName === areaName);
+};
 
 export const forestHasCoordinates = (
   forest: Pick<ForestApiResponse["forests"][number], "latitude" | "longitude">
@@ -169,14 +181,15 @@ export const buildTextHighlightUrl = (baseUrl: string, textToHighlight: string):
 };
 
 export const buildSolidFuelBanDetailsUrl = (
-  forest: Pick<ForestApiResponse["forests"][number], "areaName" | "banStatus">
+  forest: Pick<ForestApiResponse["forests"][number], "areas">
 ): string | null => {
-  const areaName = forest.areaName.trim();
-  if (!areaName || forest.banStatus === "UNKNOWN") {
+  const banStatus = getForestBanStatus(forest.areas);
+  const areaName = getForestPrimaryAreaName(forest.areas).trim();
+  if (!areaName || banStatus === "UNKNOWN") {
     return null;
   }
 
-  const endText = forest.banStatus === "BANNED" ? "banned" : "No ban";
+  const endText = banStatus === "BANNED" ? "banned" : "No ban";
   const fragment = `#:~:text=${encodeURIComponent(areaName)},${encodeURIComponent(endText)}`;
   return `${SOLID_FUEL_FIRE_BAN_SOURCE_URL}${fragment}`;
 };
@@ -203,7 +216,7 @@ export const buildGoogleMapsDrivingNavigationUrl = (
 ): string => {
   const destination = forestHasCoordinates(forest)
     ? `${forest.latitude},${forest.longitude}`
-    : `${forest.forestName}, ${forest.areaName}, NSW`;
+    : `${forest.forestName}, ${getForestPrimaryAreaName(forest.areas)}, NSW`;
 
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&travelmode=driving`;
 };

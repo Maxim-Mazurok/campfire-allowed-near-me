@@ -13,6 +13,7 @@ export type {
   FacilityMatchDiagnostics,
   FacilityValue,
   ForestApiResponse,
+  ForestAreaReference,
   ForestClosureNotice,
   ForestGeocodeDiagnostics,
   ForestPoint,
@@ -20,3 +21,10 @@ export type {
   NearestForest,
   TotalFireBanLookupCode
 } from "../../../../packages/shared/src/contracts.js";
+
+export {
+  getForestBanStatus,
+  getForestBanStatusText,
+  getForestPrimaryAreaName,
+  getForestPrimaryAreaUrl
+} from "../../../../packages/shared/src/forest-helpers.js";

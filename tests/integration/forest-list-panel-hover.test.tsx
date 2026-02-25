@@ -21,12 +21,9 @@ const buildForest = (
 ): ForestApiResponse["forests"][number] => ({
   id,
   source: "Forestry Corporation NSW",
-  areaName: "Area 1",
-  areaUrl: "https://example.com/area-1",
+  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
   forestName,
   forestUrl: `https://example.com/forests/${id}`,
-  banStatus: "NOT_BANNED",
-  banStatusText: "No Solid Fuel Fire Ban",
   totalFireBanStatus: "NOT_BANNED",
   totalFireBanStatusText: "No Total Fire Ban",
   latitude: -33.9,

@@ -1,9 +1,9 @@
-import type { ClosureImpactLevel, ForestApiResponse } from "./api";
+import type { BanStatus, ClosureImpactLevel, ForestApiResponse } from "./api";
 import type { BanFilterMode } from "./app-domain-types";
 
 export const matchesBanFilter = (
   mode: BanFilterMode,
-  status: ForestApiResponse["forests"][number]["banStatus"]
+  status: BanStatus
 ): boolean => {
   if (mode === "ALL") {
     return true;
@@ -13,7 +13,7 @@ export const matchesBanFilter = (
 };
 
 export const getSolidFuelStatusLabel = (
-  status: ForestApiResponse["forests"][number]["banStatus"]
+  status: BanStatus
 ): string => {
   if (status === "NOT_BANNED") {
     return "Solid fuel: not banned";

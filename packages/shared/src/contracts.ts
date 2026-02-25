@@ -112,15 +112,19 @@ export interface ForestAreaWithForests extends ForestAreaSummary {
   forests: string[];
 }
 
+export interface ForestAreaReference {
+  areaName: string;
+  areaUrl: string;
+  banStatus: BanStatus;
+  banStatusText: string;
+}
+
 export interface ForestPoint {
   id: string;
   source: string;
-  areaName: string;
-  areaUrl: string;
+  areas: ForestAreaReference[];
   forestName: string;
   forestUrl?: string | null;
-  banStatus: BanStatus;
-  banStatusText: string;
   totalFireBanStatus: BanStatus;
   totalFireBanStatusText: string;
   latitude: number | null;
@@ -146,7 +150,6 @@ export interface UserLocation {
 export interface NearestForest {
   id: string;
   forestName: string;
-  areaName: string;
   distanceKm: number;
   travelDurationMinutes: number | null;
 }

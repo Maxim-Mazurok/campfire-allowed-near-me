@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { writeFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { LiveForestDataService } from "../../apps/api/src/services/live-forest-data-service.js";
+import { getForestBanStatus } from "../../packages/shared/src/forest-helpers.js";
 import type { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
 import type { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
 import type { RouteService } from "../../apps/api/src/services/google-routes.js";
@@ -138,8 +139,8 @@ describe("LiveForestDataService facilities matching", () => {
         camping: null
       });
       expect(unmatched?.forestUrl).toBeNull();
-      expect(awaba?.banStatus).toBe("UNKNOWN");
-      expect(awaba?.banStatusText).toContain("Unknown");
+      expect(getForestBanStatus(awaba!.areas)).toBe("UNKNOWN");
+      expect(awaba?.areas[0]?.banStatusText).toContain("Unknown");
       expect(awaba?.facilities).toEqual({
         fishing: false,
         camping: true
@@ -749,11 +750,22 @@ describe("LiveForestDataService facilities matching", () => {
         (forest) => forest.forestName === "Carwong State Forest"
       );
 
-      expect(carwongEntries).toHaveLength(2);
-      expect(carwongEntries.every((forest) => forest.banStatus === "BANNED")).toBe(true);
-      expect(carwongEntries.every((forest) => forest.banStatusText === "Solid Fuel Fire Ban")).toBe(
-        true
-      );
+      // Multi-area dedup merges duplicates into a single entry
+      expect(carwongEntries).toHaveLength(1);
+
+      const carwong = carwongEntries[0]!;
+
+      // Pessimistic ban: BANNED wins over NOT_BANNED
+      expect(getForestBanStatus(carwong.areas)).toBe("BANNED");
+      expect(carwong.areas.find((area) => area.banStatus === "BANNED")?.banStatusText).toBe("Solid Fuel Fire Ban");
+
+      // Both areas preserved in the areas array
+      expect(carwong.areas).toHaveLength(2);
+      expect(carwong.areas[0]!.areaName).toBe("State Forests of the North Coast of NSW");
+      expect(carwong.areas[0]!.banStatus).toBe("NOT_BANNED");
+      expect(carwong.areas[1]!.areaName).toBe("Pine Forests of North Coast");
+      expect(carwong.areas[1]!.banStatus).toBe("BANNED");
+
       expect(response.nearestLegalSpot?.forestName).toBe("Nymboida State Forest");
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
@@ -1267,6 +1279,183 @@ describe("LiveForestDataService facilities matching", () => {
       for (const debugEntry of unmappedForest?.geocodeDiagnostics?.debug ?? []) {
         expect(debugEntry).toMatch(/^Forest lookup:/);
       }
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("LiveForestDataService multi-area forest deduplication", () => {
+  it("merges a forest appearing in two areas into one entry with both areas", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "Pine forests around Tumut",
+          areaUrl: "https://example.com/pine-tumut",
+          status: "BANNED",
+          statusText: "Solid Fuel Fires banned",
+          forests: ["Bago State Forest", "Other Pine Forest"]
+        },
+        {
+          areaName: "Native forest areas in Bago and Bondo",
+          areaUrl: "https://example.com/bago-bondo",
+          status: "BANNED",
+          statusText: "Solid fuel fires banned",
+          forests: ["Bago State Forest", "Bondo State Forest"]
+        }
+      ],
+      directory: {
+        filters: [],
+        forests: [],
+        warnings: []
+      },
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocoder = {
+      geocodeForest: async () => ({
+        latitude: -35.5,
+        longitude: 148.3,
+        displayName: "Mock Forest",
+        confidence: 0.8
+      })
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-multi-area-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as ForestGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
+      });
+
+      const response = await service.getForestData({
+        userLocation: { latitude: -35.52, longitude: 148.35 },
+        forceRefresh: true
+      });
+
+      // Bago should appear only once
+      const bagoForests = response.forests.filter((forest) =>
+        forest.forestName === "Bago State Forest"
+      );
+      expect(bagoForests).toHaveLength(1);
+
+      const bago = bagoForests[0]!;
+      expect(bago.areas).toHaveLength(2);
+      expect(bago.areas[0]!.areaName).toBe("Pine forests around Tumut");
+      expect(bago.areas[1]!.areaName).toBe("Native forest areas in Bago and Bondo");
+
+      // Primary area should be the first one
+      expect(bago.areas[0]!.areaName).toBe("Pine forests around Tumut");
+      expect(bago.areas[0]!.areaUrl).toBe("https://example.com/pine-tumut");
+
+      // Ban status should be pessimistic (BANNED since both areas are BANNED)
+      expect(getForestBanStatus(bago.areas)).toBe("BANNED");
+
+      // Per-area ban statuses
+      expect(bago.areas[0]!.banStatus).toBe("BANNED");
+      expect(bago.areas[1]!.banStatus).toBe("BANNED");
+
+      // Other forests should remain separate and single-area
+      const otherPine = response.forests.find((forest) =>
+        forest.forestName === "Other Pine Forest"
+      );
+      expect(otherPine).toBeDefined();
+      expect(otherPine!.areas).toHaveLength(1);
+
+      const bondo = response.forests.find((forest) =>
+        forest.forestName === "Bondo State Forest"
+      );
+      expect(bondo).toBeDefined();
+      expect(bondo!.areas).toHaveLength(1);
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("uses pessimistic ban status when areas differ (BANNED wins over NOT_BANNED)", async () => {
+    const scrapeFixture: ForestryScrapeResult = {
+      areas: [
+        {
+          areaName: "Area with ban",
+          areaUrl: "https://example.com/area-ban",
+          status: "BANNED",
+          statusText: "Solid Fuel Fires banned",
+          forests: ["Disputed Forest"]
+        },
+        {
+          areaName: "Area without ban",
+          areaUrl: "https://example.com/area-no-ban",
+          status: "NOT_BANNED",
+          statusText: "No ban",
+          forests: ["Disputed Forest"]
+        }
+      ],
+      directory: {
+        filters: [],
+        forests: [],
+        warnings: []
+      },
+      warnings: []
+    };
+
+    const scraper = {
+      scrape: async (): Promise<ForestryScrapeResult> => scrapeFixture
+    };
+
+    const geocoder = {
+      geocodeForest: async () => ({
+        latitude: -34.0,
+        longitude: 150.0,
+        displayName: "Disputed Forest",
+        confidence: 0.9
+      })
+    };
+
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-pessimistic-ban-"));
+    const snapshotPath = join(tmpDir, "snapshot.json");
+
+    try {
+      const service = new LiveForestDataService({
+        snapshotPath,
+        scraper: scraper as unknown as ForestryScraper,
+        geocoder: geocoder as unknown as ForestGeocoder,
+        totalFireBanService: makeTotalFireBanServiceStub()
+      });
+
+      const response = await service.getForestData({
+        userLocation: { latitude: -34.02, longitude: 150.05 },
+        forceRefresh: true
+      });
+
+      const disputed = response.forests.find((forest) =>
+        forest.forestName === "Disputed Forest"
+      );
+      expect(disputed).toBeDefined();
+
+      // Only one card
+      expect(
+        response.forests.filter((forest) => forest.forestName === "Disputed Forest")
+      ).toHaveLength(1);
+
+      // Overall ban is pessimistic: BANNED wins
+      expect(getForestBanStatus(disputed!.areas)).toBe("BANNED");
+
+      // Both areas present
+      expect(disputed!.areas).toHaveLength(2);
+
+      // Per-area ban statuses preserved
+      expect(disputed!.areas[0]!.banStatus).toBe("BANNED");
+      expect(disputed!.areas[0]!.banStatusText).toBe("Solid Fuel Fires banned");
+      expect(disputed!.areas[1]!.banStatus).toBe("NOT_BANNED");
+      expect(disputed!.areas[1]!.banStatusText).toBe("No ban");
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
     }

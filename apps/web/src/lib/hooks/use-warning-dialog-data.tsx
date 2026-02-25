@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import type { ForestApiResponse, ClosureMatchDiagnostics, FacilityMatchDiagnostics } from "../api";
+import { getForestPrimaryAreaName, getForestPrimaryAreaUrl } from "../api";
 import {
   ALPHABETICAL_COLLATOR,
   FACILITIES_SOURCE_URL,
@@ -167,7 +168,7 @@ export const useWarningDialogData = ({
     const getSortValue = (
       forest: ForestApiResponse["forests"][number],
       sortColumn: FireBanForestSortColumn
-    ): string => (sortColumn === "forestName" ? forest.forestName : forest.areaName);
+    ): string => (sortColumn === "forestName" ? forest.forestName : getForestPrimaryAreaName(forest.areas));
 
     const sortedFireBanPageForests = [...fireBanPageForests].sort((left, right) => {
       const primaryResult = ALPHABETICAL_COLLATOR.compare(
@@ -198,7 +199,7 @@ export const useWarningDialogData = ({
     for (const forest of forests) {
       const normalizedForestName = normalizeForestName(forest.forestName);
       if (!fireBanAreaUrlByForestName.has(normalizedForestName)) {
-        fireBanAreaUrlByForestName.set(normalizedForestName, forest.areaUrl);
+        fireBanAreaUrlByForestName.set(normalizedForestName, getForestPrimaryAreaUrl(forest.areas));
       }
     }
 
@@ -219,13 +220,14 @@ export const useWarningDialogData = ({
         };
       }
 
-      const areaTarget = isHttpUrl(forest.areaUrl)
-        ? forest.areaUrl
+      const primaryAreaUrl = getForestPrimaryAreaUrl(forest.areas);
+      const areaTarget = isHttpUrl(primaryAreaUrl)
+        ? primaryAreaUrl
         : `${FORESTRY_BASE_URL}/visit/solid-fuel-fire-bans`;
 
       return {
         href: buildTextHighlightUrl(areaTarget, forest.forestName),
-        label: `${forest.areaName} region`
+        label: `${getForestPrimaryAreaName(forest.areas)} region`
       };
     };
 

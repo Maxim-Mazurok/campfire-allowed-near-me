@@ -1,4 +1,5 @@
 import { haversineDistanceKm } from "../../../../packages/shared/src/distance.js";
+import { getForestBanStatus } from "../../../../packages/shared/src/forest-helpers.js";
 import type {
   ForestApiResponse,
   ForestPoint,
@@ -18,7 +19,7 @@ const findNearestLegalSpot = (
 
   for (const forest of forests) {
     if (
-      forest.banStatus !== "NOT_BANNED" ||
+      getForestBanStatus(forest.areas) !== "NOT_BANNED" ||
       forest.totalFireBanStatus === "BANNED" ||
       forest.closureStatus === "CLOSED"
     ) {
@@ -56,7 +57,6 @@ const findNearestLegalSpot = (
   return {
     id: forest.id,
     forestName: forest.forestName,
-    areaName: forest.areaName,
     distanceKm: forest.distanceKm ?? nearest.effectiveDistanceKm,
     travelDurationMinutes: forest.travelDurationMinutes
   };

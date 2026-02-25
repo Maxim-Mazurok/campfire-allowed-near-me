@@ -1,4 +1,5 @@
 import { LiveForestDataService } from "../services/live-forest-data-service.js";
+import { getForestBanStatus } from "../types/domain.js";
 import "dotenv/config";
 
 const run = async () => {
@@ -11,7 +12,8 @@ const run = async () => {
 
   const statusCounts = response.forests.reduce<Record<string, number>>(
     (acc, forest) => {
-      acc[forest.banStatus] = (acc[forest.banStatus] ?? 0) + 1;
+      const status = getForestBanStatus(forest.areas);
+      acc[status] = (acc[status] ?? 0) + 1;
       return acc;
     },
     {}

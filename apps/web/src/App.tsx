@@ -27,6 +27,7 @@ import {
   buildFacilitiesForestUrl,
   buildTotalFireBanDetailsUrl
 } from "./lib/app-domain-forest";
+import { getForestBanStatus } from "./lib/api";
 import {
   getForestClosureStatus,
   getForestImpactSummary,
@@ -227,7 +228,7 @@ export const App = () => {
         isImpactWarning(impactSummary.access2wdImpact) ||
         isImpactWarning(impactSummary.access4wdImpact);
 
-      if (!matchesBanFilter(solidFuelBanFilterMode, forest.banStatus)) {
+      if (!matchesBanFilter(solidFuelBanFilterMode, getForestBanStatus(forest.areas))) {
         return false;
       }
 
