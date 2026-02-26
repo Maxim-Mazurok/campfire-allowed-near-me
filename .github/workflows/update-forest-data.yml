@@ -68,7 +68,7 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: update forest data snapshot [skip ci]"
-            git push
+            git push origin "HEAD:$GITHUB_REF"
           fi
 
       - name: Upload snapshot artifact
