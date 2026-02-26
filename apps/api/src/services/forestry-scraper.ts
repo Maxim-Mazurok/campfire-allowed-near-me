@@ -56,7 +56,7 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   entryUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
   forestsDirectoryUrl: "https://www.forestrycorporation.com.au/visiting/forests",
   closuresUrl: "https://forestclosure.fcnsw.net/indexframe",
-  timeoutMs: 90_000,
+  timeoutMs: 120_000,
   maxAreaConcurrency: 1,
   maxClosureConcurrency: 1,
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,

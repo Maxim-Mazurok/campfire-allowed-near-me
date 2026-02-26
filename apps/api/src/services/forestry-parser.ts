@@ -386,6 +386,6 @@ export const parseAreaForestNames = (html: string): string[] => {
 };
 
 export const isCloudflareChallengeHtml = (html: string): boolean =>
-  /Just a moment|Performing security verification|Enable JavaScript and cookies to continue/i.test(
+  /Just a moment|Performing security verification|Verifying you are human|Enable JavaScript and cookies to continue/i.test(
     html
   );

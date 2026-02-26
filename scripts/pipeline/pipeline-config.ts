@@ -54,10 +54,12 @@ export const SCRAPE_DEBUG_ARTIFACT_DIRECTORY =
   process.env.SCRAPE_DEBUG_ARTIFACT_DIR ?? null;
 
 export const IS_RUNNING_IN_CI = Boolean(process.env.CI);
-export const HAS_PROXY = IS_RUNNING_IN_CI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
+export const FORCE_PROXY = Boolean(process.env.FORCE_PROXY);
+export const HAS_PROXY = (IS_RUNNING_IN_CI || FORCE_PROXY) && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 
-if (!IS_RUNNING_IN_CI && PROXY_USERNAME) {
+if (!IS_RUNNING_IN_CI && !FORCE_PROXY && PROXY_USERNAME) {
   console.log("⚠ Proxy credentials found but CI env not detected — skipping proxy (local run).");
+  console.log("  Set FORCE_PROXY=true to use the proxy locally for debugging.");
 }
 
 // ---------------------------------------------------------------------------
