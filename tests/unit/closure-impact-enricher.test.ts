@@ -41,4 +41,21 @@ describe("inferClosureStructuredImpactByRules", () => {
     expect(result.access4wdImpact).toBe("NONE");
     expect(result.confidence).toBe("MEDIUM");
   });
+
+  it("does not produce HIGH confidence for walk/feature closures classified as PARTIAL", () => {
+    const result = inferClosureStructuredImpactByRules({
+      title: "Wang Wauk State Forests: Wootton historic railway walk closed",
+      detailText:
+        "Please note that the Wootton Historic Railway Walk and Sam's Camp will be closed for public use from Monday 9 December until further notice. This is to ensure public safety while Forestry Corporation staff undertake routine maintenance activities. The walk will be re-opened upon completion of the maintenance work.",
+      status: "PARTIAL"
+    });
+
+    expect(result.confidence).not.toBe("HIGH");
+    expect(result.source).toBe("RULES");
+    // Detail text mentions "Camp...closed" so camping impact is detected,
+    // but crucially this is NOT a full-forest closure (HIGH + all CLOSED).
+    expect(result.campingImpact).toBe("CLOSED");
+    expect(result.access2wdImpact).not.toBe("CLOSED");
+    expect(result.access4wdImpact).not.toBe("CLOSED");
+  });
 });

@@ -98,48 +98,72 @@ describe("closure notices parsing", () => {
     ).toBe("Dalmorton State Forest");
   });
 
-  it("classifies closure status from title text", () => {
+  it("classifies definitive full-forest closures as CLOSED", () => {
     expect(parseClosureNoticeStatus("Boonanghi State Forest: Closed")).toBe("CLOSED");
+    expect(parseClosureNoticeStatus("Avon River State Forest closed")).toBe("CLOSED");
+    expect(parseClosureNoticeStatus("Vittoria State Forest: Closed for pest control operations")).toBe("CLOSED");
+    expect(parseClosureNoticeStatus("Nerong State Forest closed")).toBe("CLOSED");
+    expect(parseClosureNoticeStatus("Clouds Creek State Forest: Closed")).toBe("CLOSED");
+  });
+
+  it("classifies explicit partial keywords as PARTIAL", () => {
     expect(parseClosureNoticeStatus("Cherry Tree State Forest: Partial closure")).toBe("PARTIAL");
-    expect(parseClosureNoticeStatus("Belanglo State Forest: Large community event")).toBe(
-      "NOTICE"
-    );
+    expect(parseClosureNoticeStatus("Nowendoc State Forest: Partially closed")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Dalmorton State Forest partially closed")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Green Hills State Forest: Partially closed")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Putty State Forest: partly closed")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Bondo State Forest: Partial Road Closure Notice")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Bago State Forest: Sections of plantations closed")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Leard State Forest: Exclusive use on part")).toBe("PARTIAL");
+    expect(parseClosureNoticeStatus("Penrose State Forest closed - Limited camping only off Paddys River Road")).toBe("PARTIAL");
   });
 
-  it("classifies 'Partially closed' wording as PARTIAL", () => {
+  it("classifies non-definitive closures as PARTIAL for LLM resolution", () => {
     expect(
-      parseClosureNoticeStatus("Nowendoc State Forest: Partially closed")
+      parseClosureNoticeStatus("Wang Wauk State Forests: Wootton historic railway walk closed")
     ).toBe("PARTIAL");
     expect(
-      parseClosureNoticeStatus("Dalmorton State Forest partially closed")
+      parseClosureNoticeStatus("Bellangry State Forest: Number 1 Tower Picnic Area closed")
     ).toBe("PARTIAL");
     expect(
-      parseClosureNoticeStatus("Green Hills State Forest: Partially closed")
+      parseClosureNoticeStatus("Masseys Creek State Forest campgrounds closed due to bushfire impact")
     ).toBe("PARTIAL");
-  });
-
-  it("classifies road/track closures as PARTIAL instead of CLOSED", () => {
+    expect(
+      parseClosureNoticeStatus("Masseys Creek State Forest: Boonabilla Road and Basin Road closed to vehicle traffic")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Sunny Corner State Forest: Mary's Park closed for restoration")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Vulcan State Forest: Blue Hill quarry area closed to fossicking")
+    ).toBe("PARTIAL");
     expect(
       parseClosureNoticeStatus("Temporary closure of Blackbutt Road, Kerewong State Forest")
-    ).toBe("PARTIAL");
-    expect(
-      parseClosureNoticeStatus("Temporary closure of Kerewong Road")
-    ).toBe("PARTIAL");
-    expect(
-      parseClosureNoticeStatus("Ourimbah State Forest's Wallaby Road and Middle Ridge Road closed indefinitely")
-    ).toBe("PARTIAL");
-    expect(
-      parseClosureNoticeStatus("Bondo State Forest: Partial Road Closure Notice")
-    ).toBe("PARTIAL");
-    expect(
-      parseClosureNoticeStatus("Styx River State Forest trail closed")
     ).toBe("PARTIAL");
     expect(
       parseClosureNoticeStatus("Bridge closure in Watagan State Forest")
     ).toBe("PARTIAL");
     expect(
+      parseClosureNoticeStatus("Glenwood State Forest: Closure of Mountain Bike Trails due to harvesting")
+    ).toBe("PARTIAL");
+    expect(
       parseClosureNoticeStatus("Fire trail closure near campground")
     ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Styx River State Forest trail closed")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Ourimbah State Forest's Wallaby Road and Middle Ridge Road closed indefinitely")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Mount Boss State Forest: Fire Tower No.1 Picnic Area closed")
+    ).toBe("PARTIAL");
+  });
+
+  it("classifies notices without closure language as NOTICE", () => {
+    expect(parseClosureNoticeStatus("Belanglo State Forest: Large community event")).toBe("NOTICE");
+    expect(parseClosureNoticeStatus("Coopernook State Forest: Increased truck traffic")).toBe("NOTICE");
+    expect(parseClosureNoticeStatus("Barrington Tops State Forest: Landslip on Barrington Tops Forest Road")).toBe("NOTICE");
   });
 
   it("classifies closure tags from title text", () => {

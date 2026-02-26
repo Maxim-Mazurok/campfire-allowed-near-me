@@ -88,11 +88,16 @@ export const parseClosureNoticeStatus = (rawTitle: string): ClosureNoticeStatus 
     return "PARTIAL";
   }
 
-  if (/\bclosed|closure\b/.test(title)) {
-    if (/\b(road|roads|track|tracks|trail|trails|bridge|bridges|fire\s+trail)\b/.test(title)) {
-      return "PARTIAL";
-    }
+  // Definitive full-forest closure: "X State Forest: Closed" or "X State Forest closed"
+  if (/\bstate\s+forests?\s*:?\s*closed\b/.test(title)) {
     return "CLOSED";
+  }
+
+  // Contains "closed" or "closure" but doesn't match the definitive pattern.
+  // Likely a feature/area closure (walk, road, campground, etc.).
+  // Mark as PARTIAL so the LLM enricher can clarify.
+  if (/\bclosed|closure\b/.test(title)) {
+    return "PARTIAL";
   }
 
   return "NOTICE";
