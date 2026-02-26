@@ -164,7 +164,8 @@ export class ForestryScraper {
         expectedPattern,
         this.options.timeoutMs,
         url,
-        this.log
+        this.log,
+        this.options.debugArtifactDirectory
       );
       const finalUrl = page.url();
 
