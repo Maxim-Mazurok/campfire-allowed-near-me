@@ -87,6 +87,15 @@ const resolvePreferredNominatimBaseUrl = (): string => {
   return `http://localhost:${nominatimPort}`;
 };
 
+/**
+ * Round a coordinate to 7 decimal places (~1.1 cm precision).
+ * Different Nominatim instances (local Docker vs public) return coordinates
+ * with varying precision. Normalising here prevents noisy diffs in snapshots
+ * while retaining more than enough accuracy for forest-level geocoding.
+ */
+const roundCoordinate = (value: number): number =>
+  Math.round(value * 1e7) / 1e7;
+
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -704,8 +713,8 @@ export class ForestGeocoder {
       };
     }
 
-    const latitude = Number(first.geometry.location.lat);
-    const longitude = Number(first.geometry.location.lng);
+    const latitude = roundCoordinate(Number(first.geometry.location.lat));
+    const longitude = roundCoordinate(Number(first.geometry.location.lng));
 
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
       return {
@@ -848,8 +857,8 @@ export class ForestGeocoder {
         break;
       }
 
-      const latitude = Number(top.lat);
-      const longitude = Number(top.lon);
+      const latitude = roundCoordinate(Number(top.lat));
+      const longitude = roundCoordinate(Number(top.lon));
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
         lastErrorMessage = `Invalid coordinates from ${baseUrl}`;
         break;
@@ -1159,6 +1168,44 @@ export class ForestGeocoder {
           }
 
           continue;
+        }
+
+        // When Google returns a result whose display name doesn't mention
+        // "state forest", also try Nominatim. OSM often has the actual state
+        // forest boundary as a landuse=forest feature, yielding a more precise
+        // centroid than Google's nearest-town or nearby-feature approximation.
+        // Google's derived confidence score is unreliable for distinguishing
+        // "the actual forest" from "a nearby locality with the same name".
+        const isGoogleResult = geocodeResult.provider === "GOOGLE_GEOCODING";
+        const displayNameMentionsStateForest =
+          resultDisplayName.toLowerCase().includes("state forest");
+
+        if (isGoogleResult && !displayNameMentionsStateForest) {
+          const queryKey = `query:${this.normalizeKey(query)}`;
+          const nominatimSupplement = await this.lookupNominatim(query, null, queryKey);
+          attempts.push(nominatimSupplement.attempt);
+
+          if (nominatimSupplement.hit) {
+            const nominatimDisplayName = nominatimSupplement.hit.displayName;
+            const nominatimIsPlausible = isPlausibleForestMatch(
+              nominatimDisplayName,
+              forestNameSignificantWords
+            );
+            const nominatimMentionsStateForest =
+              nominatimDisplayName.toLowerCase().includes("state forest");
+
+            if (nominatimIsPlausible && nominatimMentionsStateForest) {
+              // Nominatim found the actual state forest feature — prefer it
+              // over Google's locality-level approximation.
+              this.putCached(queryKey, nominatimSupplement.hit);
+              this.putCached(aliasKeyNormalized, nominatimSupplement.hit);
+              return this.toGeocodeResponse(
+                nominatimSupplement.hit,
+                attempts,
+                [...new Set(warnings)]
+              );
+            }
+          }
         }
 
         const hit: GeocodeHit = {
