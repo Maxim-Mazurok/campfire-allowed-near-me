@@ -90,7 +90,7 @@ interface TargetResult {
 
 const BROWSER_HEADERS = {
   "User-Agent":
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
   Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
   "Accept-Language": "en-AU,en;q=0.9",
 };
@@ -272,8 +272,6 @@ const createProxyBrowserContext = async (): Promise<{
       username: PROXY_USERNAME,
       password: PROXY_PASSWORD,
     },
-    userAgent:
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
     locale: "en-AU",
     viewport: { width: 1920, height: 1080 },
     timezoneId: "Australia/Sydney",
