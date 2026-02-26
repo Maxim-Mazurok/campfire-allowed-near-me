@@ -87,7 +87,6 @@ Scraping all 5 data sources from GitHub Actions is validated. See [docs/scraping
 - **RFS endpoints** (fire danger): Plain `fetch()`, no proxy needed.
 - **Proxy service**: Decodo (Smartproxy), `au.decodo.com:30000`, $3.50/GB Pay-As-You-Go. GitHub Secrets: `DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`.
 - **Cost**: ~$3.65/year at 2x/day schedule (~1.55 MB/run for proxy targets).
-- **Test workflow**: `.github/workflows/scrape-test.yml` (manual dispatch), `scripts/scrape-test.ts`.
 
 ## Future AI operating mode
 

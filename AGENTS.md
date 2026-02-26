@@ -12,8 +12,10 @@ This file gives baseline instructions for AI coding agents collaborating in this
 ## Engineering constraints
 - Prefer small, testable changes.
 - Update or add tests when behavior changes.
-- Run `npm run typecheck` and `npm test` before finalizing.
 - Keep map UX resilient: avoid regressions that hide all markers.
+
+### Pre-handoff verification
+Before finishing any task that includes code changes, run **`npm test`** (which executes `npm run typecheck && npm run test:unit && npm run test:integration && npm run test:e2e`) and confirm all checks pass. If a single combined run is too slow or a specific suite is irrelevant, you may run the sub-commands individually, but every sub-command must pass before handoff. Do not hand off with known test or type-check failures.
 
 ## Architecture guardrails
 - Keep modules focused and small:
@@ -56,7 +58,6 @@ This file gives baseline instructions for AI coding agents collaborating in this
 - Always use a shared `BrowserContext` for multiple pages on the same Cloudflare-protected domain.
 - Proxy credentials are in GitHub Secrets (`DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`). Never hardcode them.
 - Do not route RFS requests through the proxy — it wastes bandwidth unnecessarily.
-- The scrape-test workflow (`.github/workflows/scrape-test.yml`) is the validation tool. Run it after any scraping changes.
 
 ## Documentation
 - Keep README quick starts current for users and developers.

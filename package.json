@@ -10,7 +10,7 @@
     "build": "npm run build:web",
     "build:web": "vite build --config apps/web/vite.config.ts",
     "typecheck": "tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test": "npm run typecheck && npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:integration:nominatim-live": "NOMINATIM_LIVE_TEST=1 vitest run tests/integration/nominatim-live.test.ts",

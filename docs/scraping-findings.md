@@ -131,11 +131,11 @@ Evaluated several residential proxy providers:
 - **Timeout**: 15 minutes (accounts for Playwright launch + proxy latency + Cloudflare wait times)
 - **Secrets**: `DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`
 
-### Script Architecture (`scripts/scrape-test.ts`)
+### Scraping Methods
 
-Three methods, applied per-target based on flags:
+Three methods, applied per-target based on requirements:
 
-1. **`direct-fetch`**: Plain `fetch()` with browser-like headers. Always run as baseline.
+1. **`direct-fetch`**: Plain `fetch()` with browser-like headers. Used as baseline for unprotected targets.
 2. **`proxy-fetch`**: `fetch()` routed through Decodo via `undici.ProxyAgent`. Used for IP-blocked (non-Cloudflare) targets.
 3. **`proxy-browser`**: Playwright (via `playwright-extra` + stealth plugin) in headed mode, with proxy configured at the `BrowserContext` level. Used for Cloudflare JS challenge targets. A single shared context is reused across same-domain targets for cookie/session continuity.
 

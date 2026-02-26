@@ -64,8 +64,7 @@
 
 ## Phase 1: Validate Scraping in CI ✅ COMPLETE
 
-> Validated 2026-02-24 across 6 iterations of `scripts/scrape-test.ts`.
-> Full findings: [docs/scraping-findings.md](scraping-findings.md)
+> Validated 2026-02-24. Full findings: [docs/scraping-findings.md](scraping-findings.md)
 
 ### Result
 
@@ -94,11 +93,9 @@ All 5 data sources are scrapeable from GitHub Actions. Three different methods a
 - **Annual cost**: ~$3.65/year at 2x/day
 - **GitHub Secrets**: `DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`
 
-### Artifacts
+### Dependencies
 
-- Workflow: `.github/workflows/scrape-test.yml` (manual trigger)
-- Script: `scripts/scrape-test.ts` (3 methods: `direct-fetch`, `proxy-fetch`, `proxy-browser`)
-- Dependencies: `playwright-extra`, `puppeteer-extra-plugin-stealth`
+- `playwright-extra`, `puppeteer-extra-plugin-stealth`
 
 ---
 
@@ -306,8 +303,6 @@ Keep the current Express + WebSocket setup for local development:
 ## Implementation Order
 
 ### Milestone 1: Validate ✅ COMPLETE
-- [x] Create `scrape-test.yml` GHA workflow
-- [x] Run it and analyze results (6 iterations)
 - [x] Determine scraping strategy: stealth + residential proxy + headed browser
 - [x] Select and configure proxy service (Decodo AU, $3.50/GB)
 - [x] Verify all 5 targets pass consistently from GHA
@@ -364,7 +359,7 @@ Keep the current Express + WebSocket setup for local development:
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Cloudflare tightens bot detection | Proxy-browser method stops working | Monitor scrape-test results; try different proxy regions; try different stealth plugin versions; worst case: manual local scrape + commit |
+| Cloudflare tightens bot detection | Proxy-browser method stops working | Monitor update-forest-data workflow results; try different proxy regions; try different stealth plugin versions; worst case: manual local scrape + commit |
 | Decodo proxy service outage or shutdown | Scraping fails for 3/5 targets | Switch to alternative proxy (IPRoyal, Bright Data); credentials are easily rotated via GitHub Secrets |
 | Proxy IP gets flagged by Cloudflare | Intermittent failures | Decodo rotates residential IPs per-request; retry logic in pipeline; different session on each run |
 | Forestry Corporation changes page structure | Parser breaks, no data | Schema validation in GHA alerts via GitHub issue; parsers are already robust with fuzzy matching |
