@@ -3,8 +3,8 @@ import type {
   ForestClosureNotice,
   ForestDirectorySnapshot,
   ForestGeocodeDiagnostics
-} from "../../apps/api/src/types/domain.js";
-import type { TotalFireBanSnapshot } from "../../apps/api/src/services/total-fire-ban-service.js";
+} from "./contracts.js";
+import type { TotalFireBanSnapshot } from "../../../apps/api/src/services/total-fire-ban-service.js";
 
 // ---------------------------------------------------------------------------
 // Common envelope for all pipeline stage outputs
