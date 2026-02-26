@@ -4,7 +4,8 @@
  *
  * Usage: PROXY_USERNAME=... PROXY_PASSWORD=... npx -y tsx scripts/scrape-smoke.ts
  */
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { isCloudflareChallengeHtml } from "../apps/api/src/services/forestry-parser.js";
@@ -29,6 +30,8 @@ const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
 const PROXY_PORT = process.env.PROXY_PORT ?? "30001";
 const BROWSER_PROFILE_DIRECTORY =
   process.env.BROWSER_PROFILE_DIR ?? DEFAULT_BROWSER_PROFILE_PATH;
+const SCRAPE_DEBUG_ARTIFACT_DIRECTORY =
+  process.env.SCRAPE_DEBUG_ARTIFACT_DIR ?? null;
 
 const TARGET_URL =
   "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
@@ -201,6 +204,26 @@ const main = async () => {
     console.log(`\n✗ FAILED after ${totalSeconds}s`);
     console.log(`  Cloudflare blocked: ${isCloudflare}`);
     console.log(`  Body length: ${html.length}`);
+
+    // Capture debug artifacts (screenshot + HTML) for CI diagnosis
+    if (SCRAPE_DEBUG_ARTIFACT_DIRECTORY) {
+      try {
+        if (!existsSync(SCRAPE_DEBUG_ARTIFACT_DIRECTORY)) {
+          mkdirSync(SCRAPE_DEBUG_ARTIFACT_DIRECTORY, { recursive: true });
+        }
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const screenshotPath = join(SCRAPE_DEBUG_ARTIFACT_DIRECTORY, `${timestamp}_smoke-failure.png`);
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+        console.log(`  [debug-artifact] Screenshot saved: ${screenshotPath}`);
+        const htmlPath = join(SCRAPE_DEBUG_ARTIFACT_DIRECTORY, `${timestamp}_smoke-failure.html`);
+        writeFileSync(htmlPath, html, "utf-8");
+        console.log(`  [debug-artifact] HTML saved: ${htmlPath}`);
+      } catch (artifactError) {
+        console.log(
+          `  [debug-artifact] Failed to capture: ${artifactError instanceof Error ? artifactError.message : artifactError}`
+        );
+      }
+    }
 
     if (html.length < 3000) {
       console.log("  Full HTML:");

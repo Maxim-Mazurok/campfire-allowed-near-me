@@ -143,10 +143,11 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId={null}
+        hoveredAreaName={null}
       />
     );
 
-    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]!);
 
     const forestPopupCard = screen.getByTestId("forest-popup-card");
     expect(forestPopupCard).toBeTruthy();
@@ -170,6 +171,7 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId={null}
+        hoveredAreaName={null}
       />
     );
 
@@ -204,10 +206,11 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId={null}
+        hoveredAreaName={null}
       />
     );
 
-    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]!);
     expect(screen.getByTestId("forest-popup-card").textContent).toContain("Forest A");
     expect(mockedMap.panInside).toHaveBeenCalledTimes(1);
 
@@ -219,6 +222,7 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId="forest-b"
+        hoveredAreaName={null}
       />
     );
 
@@ -251,6 +255,7 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId={null}
+        hoveredAreaName={null}
       />
     );
 
@@ -267,6 +272,7 @@ describe("MapView marker popup interactions", () => {
         availableFacilities={[]}
         avoidTolls={true}
         hoveredForestId="forest-a"
+        hoveredAreaName={null}
       />
     );
 
@@ -298,7 +304,7 @@ describe("MapView marker popup interactions", () => {
       />
     );
 
-    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]!);
     expect(screen.getByTestId("forest-popup-card")).toBeTruthy();
 
     const areaLink = screen.getByTestId("forest-area-link");
@@ -339,24 +345,24 @@ describe("MapView marker popup interactions", () => {
       />
     );
 
-    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]);
+    fireEvent.click(screen.getAllByTestId("circle-marker-matched-forests-interactive")[0]!);
     expect(screen.getByTestId("forest-popup-card")).toBeTruthy();
 
     const areaLinks = screen.getAllByTestId("forest-area-link");
     expect(areaLinks).toHaveLength(2);
 
     // Hover first area link
-    fireEvent.mouseEnter(areaLinks[0]);
+    fireEvent.mouseEnter(areaLinks[0]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("Hunter Area");
 
-    fireEvent.mouseLeave(areaLinks[0]);
+    fireEvent.mouseLeave(areaLinks[0]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
 
     // Hover second area link
-    fireEvent.mouseEnter(areaLinks[1]);
+    fireEvent.mouseEnter(areaLinks[1]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("South Coast Area");
 
-    fireEvent.mouseLeave(areaLinks[1]);
+    fireEvent.mouseLeave(areaLinks[1]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
   });
 

@@ -37,6 +37,7 @@ jobs:
         run: xvfb-run --auto-servernum -- npx -y tsx scripts/scrape-test.ts
         env:
           SCRAPE_TEST_ARTIFACT_DIR: scrape-artifacts
+          SCRAPE_DEBUG_ARTIFACT_DIR: scrape-debug-artifacts
           PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
           PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
 
@@ -47,3 +48,12 @@ jobs:
           name: scrape-results
           path: scrape-artifacts/
           retention-days: 7
+
+      - name: Upload scrape debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-debug-artifacts
+          path: scrape-debug-artifacts/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -47,6 +47,8 @@ describe("ForestListPanel hover behavior", () => {
         avoidTolls={true}
         hoveredForestId={null}
         onHoveredForestIdChange={onHoveredForestIdChange}
+        hoveredAreaName={null}
+        onHoveredAreaNameChange={() => {}}
         forestListSortOption="DRIVING_DISTANCE_ASC"
         onForestListSortOptionChange={() => {}}
       />
@@ -74,6 +76,8 @@ describe("ForestListPanel hover behavior", () => {
         avoidTolls={true}
         hoveredForestId="forest-a"
         onHoveredForestIdChange={onHoveredForestIdChange}
+        hoveredAreaName={null}
+        onHoveredAreaNameChange={() => {}}
         forestListSortOption="DRIVING_DISTANCE_ASC"
         onForestListSortOptionChange={() => {}}
       />
@@ -117,17 +121,17 @@ describe("ForestListPanel hover behavior", () => {
     expect(areaLinks).toHaveLength(2);
 
     // Hover first area
-    fireEvent.mouseEnter(areaLinks[0]);
+    fireEvent.mouseEnter(areaLinks[0]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("Hunter Area");
 
-    fireEvent.mouseLeave(areaLinks[0]);
+    fireEvent.mouseLeave(areaLinks[0]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
 
     // Hover second area
-    fireEvent.mouseEnter(areaLinks[1]);
+    fireEvent.mouseEnter(areaLinks[1]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith("South Coast Area");
 
-    fireEvent.mouseLeave(areaLinks[1]);
+    fireEvent.mouseLeave(areaLinks[1]!);
     expect(onHoveredAreaNameChange).toHaveBeenLastCalledWith(null);
   });
 });

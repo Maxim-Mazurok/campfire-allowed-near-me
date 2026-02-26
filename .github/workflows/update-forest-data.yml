@@ -54,6 +54,10 @@ jobs:
           PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           NOMINATIM_BASE_URL: https://nominatim.openstreetmap.org
+          SCRAPE_DEBUG_ARTIFACT_DIR: scrape-debug-artifacts
+
+      - name: Mark workspace as safe directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Commit and push snapshot
         uses: stefanzweifel/git-auto-commit-action@v7
@@ -69,5 +73,14 @@ jobs:
           path: |
             apps/web/public/forests-snapshot.json
             apps/web/public/forests-snapshot.meta.json
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload scrape debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrape-debug-artifacts
+          path: scrape-debug-artifacts/
           retention-days: 7
           if-no-files-found: ignore

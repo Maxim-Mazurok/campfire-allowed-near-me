@@ -50,6 +50,9 @@ export const BROWSER_PROFILE_DIRECTORY =
 export const SNAPSHOT_OUTPUT_PATH =
   process.env.SNAPSHOT_OUTPUT_PATH ?? "apps/web/public/forests-snapshot.json";
 
+export const SCRAPE_DEBUG_ARTIFACT_DIRECTORY =
+  process.env.SCRAPE_DEBUG_ARTIFACT_DIR ?? null;
+
 export const IS_RUNNING_IN_CI = Boolean(process.env.CI);
 export const HAS_PROXY = IS_RUNNING_IN_CI && Boolean(PROXY_USERNAME && PROXY_PASSWORD);
 

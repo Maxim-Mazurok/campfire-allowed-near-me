@@ -1,5 +1,6 @@
 import pLimit from "p-limit";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { chromium, type Browser, type BrowserContext } from "playwright";
 import { ProxyAgent } from "undici";
 import {
@@ -33,6 +34,7 @@ interface ForestryScraperOptions {
   rawPageCacheTtlMs: number;
   proxyUrl: string | null;
   browserProfileDirectory: string;
+  debugArtifactDirectory: string | null;
 }
 
 interface BrowserContextFactoryResult {
@@ -47,6 +49,7 @@ interface ForestryScraperConstructorOptions extends Partial<ForestryScraperOptio
   browserContextFactory?: BrowserContextFactory;
   verbose?: boolean;
   proxyUrl?: string | null;
+  debugArtifactDirectory?: string | null;
 }
 
 const DEFAULT_OPTIONS: ForestryScraperOptions = {
@@ -59,7 +62,8 @@ const DEFAULT_OPTIONS: ForestryScraperOptions = {
   rawPageCachePath: DEFAULT_FORESTRY_RAW_CACHE_PATH,
   rawPageCacheTtlMs: 60 * 60 * 1000,
   proxyUrl: null,
-  browserProfileDirectory: DEFAULT_BROWSER_PROFILE_PATH
+  browserProfileDirectory: DEFAULT_BROWSER_PROFILE_PATH,
+  debugArtifactDirectory: null
 };
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -79,6 +83,40 @@ export class ForestryScraper {
       });
     this.browserContextFactory = options?.browserContextFactory ?? null;
     this.log = options?.verbose ? (message) => console.log(`  ${message}`) : () => {};
+  }
+
+  private async captureDebugArtifacts(
+    page: import("playwright").Page,
+    url: string,
+    html: string
+  ): Promise<void> {
+    const artifactDirectory = this.options.debugArtifactDirectory;
+    if (!artifactDirectory) return;
+
+    try {
+      if (!existsSync(artifactDirectory)) {
+        mkdirSync(artifactDirectory, { recursive: true });
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const sanitizedUrl = url
+        .replace(/^https?:\/\//, "")
+        .replace(/[^a-zA-Z0-9-]/g, "_")
+        .slice(0, 80);
+      const baseFilename = `${timestamp}_${sanitizedUrl}`;
+
+      const screenshotPath = join(artifactDirectory, `${baseFilename}.png`);
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+      this.log(`[debug-artifact] Screenshot saved: ${screenshotPath}`);
+
+      const htmlPath = join(artifactDirectory, `${baseFilename}.html`);
+      writeFileSync(htmlPath, html, "utf-8");
+      this.log(`[debug-artifact] HTML saved: ${htmlPath}`);
+    } catch (artifactError) {
+      this.log(
+        `[debug-artifact] Failed to capture debug artifacts: ${errorMessage(artifactError)}`
+      );
+    }
   }
 
   private async fetchHtml(
@@ -129,6 +167,10 @@ export class ForestryScraper {
         this.log
       );
       const finalUrl = page.url();
+
+      if (isCloudflareChallengeHtml(html)) {
+        await this.captureDebugArtifacts(page, url, html);
+      }
 
       if (!isCloudflareChallengeHtml(html)) {
         try {

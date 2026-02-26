@@ -17,7 +17,8 @@ import {
   BROWSER_PROFILE_DIRECTORY,
   createProxyBrowserContextFactory,
   buildProxyUrl,
-  runWithProxyRetries
+  runWithProxyRetries,
+  SCRAPE_DEBUG_ARTIFACT_DIRECTORY
 } from "./pipeline-config.js";
 
 const scrapeForestryWithPort = async (proxyPort: string): Promise<RawPageCache> => {
@@ -32,7 +33,8 @@ const scrapeForestryWithPort = async (proxyPort: string): Promise<RawPageCache> 
     rawPageCache,
     rawPageCacheTtlMs: 0,
     proxyUrl: buildProxyUrl(proxyPort),
-    browserProfileDirectory: BROWSER_PROFILE_DIRECTORY
+    browserProfileDirectory: BROWSER_PROFILE_DIRECTORY,
+    debugArtifactDirectory: SCRAPE_DEBUG_ARTIFACT_DIRECTORY
   });
 
   console.log("[scrape-forestry] Scraping fire ban pages and directory (fetching raw HTML)...");
