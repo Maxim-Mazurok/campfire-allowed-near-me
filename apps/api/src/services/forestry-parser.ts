@@ -251,23 +251,46 @@ export const parseClosureNoticesPage = (
   return [...noticesById.values()];
 };
 
+const extractBlockText = ($: ReturnType<typeof load>, container: ReturnType<ReturnType<typeof load>>): string | null => {
+  container.find("br").replaceWith("\n");
+  container.find("p, div, li, h1, h2, h3, h4, h5, h6").each((_, element) => {
+    $(element).prepend("\n");
+    $(element).append("\n");
+  });
+
+  const rawText = container.text();
+  const result = rawText
+    .split("\n")
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter((line) => line.length > 0)
+    .join("\n");
+
+  return result || null;
+};
+
 export const parseClosureNoticeDetailPage = (html: string): string | null => {
   const $ = load(html);
 
-  const detailText = normalizeText($("main .text-container-wd").first().text());
-  if (detailText) {
-    return detailText;
+  const container = $("main .text-container-wd").first();
+  if (container.length > 0) {
+    const detailText = extractBlockText($, container);
+    if (detailText) {
+      return detailText;
+    }
   }
 
-  const fallbackDetailText = normalizeText(
-    $("main h3")
-      .filter((_, node) => /more information/i.test(normalizeText($(node).text())))
-      .first()
-      .next("p")
-      .text()
-  );
+  const headingNode = $("main h3")
+    .filter((_, node) => /more information/i.test(normalizeText($(node).text())))
+    .first();
+  const fallbackParagraph = headingNode.next("p");
+  if (fallbackParagraph.length > 0) {
+    const fallbackDetailText = extractBlockText($, fallbackParagraph);
+    if (fallbackDetailText) {
+      return fallbackDetailText;
+    }
+  }
 
-  return fallbackDetailText || null;
+  return null;
 };
 
 export const parseAreaForestNames = (html: string): string[] => {

@@ -236,7 +236,40 @@ describe("closure notices parsing", () => {
     `;
 
     expect(parseClosureNoticeDetailPage(html)).toBe(
-      "Camping areas remain open. Knodingbul Road is closed at the Mount George end."
+      "Camping areas remain open.\nKnodingbul Road is closed at the Mount George end."
+    );
+  });
+
+  it("preserves paragraph breaks between consecutive paragraphs without extra whitespace", () => {
+    const html = `
+      <main>
+        <div class="text-container-wd">
+          <p>Camping areas at Blowering dam are open.</p><p>Please note that sections of plantations in Bago State Forest, west of Blowering Dam, remain closed due to significant impact from severe weather and bushfires.</p><p>Main access roads to Blowering Dam are open and safe. However minor roads remain closed and are generally inaccessible.</p><p>Please follow any road signage and pay attention to conditions when driving.</p>
+        </div>
+      </main>
+    `;
+
+    expect(parseClosureNoticeDetailPage(html)).toBe(
+      [
+        "Camping areas at Blowering dam are open.",
+        "Please note that sections of plantations in Bago State Forest, west of Blowering Dam, remain closed due to significant impact from severe weather and bushfires.",
+        "Main access roads to Blowering Dam are open and safe. However minor roads remain closed and are generally inaccessible.",
+        "Please follow any road signage and pay attention to conditions when driving."
+      ].join("\n")
+    );
+  });
+
+  it("converts br tags to line breaks in detail text", () => {
+    const html = `
+      <main>
+        <div class="text-container-wd">
+          <p>Road closed at bridge crossing.<br>Detour via Old Pacific Highway.<br>Expected to reopen March 2026.</p>
+        </div>
+      </main>
+    `;
+
+    expect(parseClosureNoticeDetailPage(html)).toBe(
+      "Road closed at bridge crossing.\nDetour via Old Pacific Highway.\nExpected to reopen March 2026."
     );
   });
 });

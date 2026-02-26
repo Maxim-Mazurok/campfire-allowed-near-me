@@ -5,7 +5,7 @@ import { TriStateToggle } from "./TriStateToggle";
 import type { ClosureTagDefinition, FacilityDefinition } from "../lib/api";
 import {
   type BanFilterMode,
-  type ClosureFilterMode,
+  type ClosureStatusFilterMode,
   type TriStateMode
 } from "../lib/app-domain-types";
 import {
@@ -23,8 +23,10 @@ export type FilterPanelProps = {
   setSolidFuelBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
   totalFireBanFilterMode: BanFilterMode;
   setTotalFireBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
-  closureFilterMode: ClosureFilterMode;
-  setClosureFilterMode: Dispatch<SetStateAction<ClosureFilterMode>>;
+  closureStatusFilterMode: ClosureStatusFilterMode;
+  setClosureStatusFilterMode: Dispatch<SetStateAction<ClosureStatusFilterMode>>;
+  hasNoticesFilterMode: TriStateMode;
+  setHasNoticesFilterMode: Dispatch<SetStateAction<TriStateMode>>;
   availableClosureTags: ClosureTagDefinition[];
   closureTagFilterModes: Record<string, TriStateMode>;
   clearClosureTagModes: () => void;
@@ -32,8 +34,10 @@ export type FilterPanelProps = {
   setSingleClosureTagMode: (key: string, mode: TriStateMode) => void;
   impactCampingFilterMode: TriStateMode;
   setImpactCampingFilterMode: Dispatch<SetStateAction<TriStateMode>>;
-  impactAccessFilterMode: TriStateMode;
-  setImpactAccessFilterMode: Dispatch<SetStateAction<TriStateMode>>;
+  impactAccess2wdFilterMode: TriStateMode;
+  setImpactAccess2wdFilterMode: Dispatch<SetStateAction<TriStateMode>>;
+  impactAccess4wdFilterMode: TriStateMode;
+  setImpactAccess4wdFilterMode: Dispatch<SetStateAction<TriStateMode>>;
   availableFacilities: FacilityDefinition[];
   facilityFilterModes: Record<string, TriStateMode>;
   clearFacilityModes: () => void;
@@ -48,8 +52,10 @@ export const FilterPanel = ({
   setSolidFuelBanFilterMode,
   totalFireBanFilterMode,
   setTotalFireBanFilterMode,
-  closureFilterMode,
-  setClosureFilterMode,
+  closureStatusFilterMode,
+  setClosureStatusFilterMode,
+  hasNoticesFilterMode,
+  setHasNoticesFilterMode,
   availableClosureTags,
   closureTagFilterModes,
   clearClosureTagModes,
@@ -57,8 +63,10 @@ export const FilterPanel = ({
   setSingleClosureTagMode,
   impactCampingFilterMode,
   setImpactCampingFilterMode,
-  impactAccessFilterMode,
-  setImpactAccessFilterMode,
+  impactAccess2wdFilterMode,
+  setImpactAccess2wdFilterMode,
+  impactAccess4wdFilterMode,
+  setImpactAccess4wdFilterMode,
   availableFacilities,
   facilityFilterModes,
   clearFacilityModes,
@@ -131,18 +139,84 @@ export const FilterPanel = ({
               </Anchor>
             </Title>
             <SegmentedControl
-              aria-label="Closure filter"
+              aria-label="Closure status filter"
               fullWidth
               size="xs"
-              value={closureFilterMode}
-              onChange={(value) => setClosureFilterMode(value as ClosureFilterMode)}
+              value={closureStatusFilterMode}
+              onChange={(value) => setClosureStatusFilterMode(value as ClosureStatusFilterMode)}
               data={[
                 { label: "All", value: "ALL" },
-                { label: "Open only", value: "OPEN_ONLY" },
-                { label: "No full closures", value: "NO_FULL_CLOSURES" },
-                { label: "Has notices", value: "HAS_NOTICE" },
+                { label: "Open", value: "OPEN" },
+                { label: "Partly closed", value: "PARTIAL" },
+                { label: "Closed", value: "CLOSED" },
               ]}
             />
+            <Stack gap={7} mt={10}>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">Has notices</Text>
+                <TriStateToggle
+                  mode={hasNoticesFilterMode}
+                  onToggle={(targetMode) =>
+                    setHasNoticesFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setHasNoticesFilterMode("ANY")}
+                  label="Has notices"
+                  includeTestId="has-notices-filter-include"
+                  excludeTestId="has-notices-filter-exclude"
+                  anyTestId="has-notices-filter-any"
+                />
+              </Group>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">Camping open</Text>
+                <TriStateToggle
+                  mode={impactCampingFilterMode}
+                  onToggle={(targetMode) =>
+                    setImpactCampingFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setImpactCampingFilterMode("ANY")}
+                  label="Camping impact"
+                  includeTestId="impact-filter-camping-include"
+                  excludeTestId="impact-filter-camping-exclude"
+                  anyTestId="impact-filter-camping-any"
+                />
+              </Group>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">2WD access</Text>
+                <TriStateToggle
+                  mode={impactAccess2wdFilterMode}
+                  onToggle={(targetMode) =>
+                    setImpactAccess2wdFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setImpactAccess2wdFilterMode("ANY")}
+                  label="2WD access impact"
+                  includeTestId="impact-filter-access-2wd-include"
+                  excludeTestId="impact-filter-access-2wd-exclude"
+                  anyTestId="impact-filter-access-2wd-any"
+                />
+              </Group>
+              <Group justify="space-between" gap="xs">
+                <Text size="xs">4WD access</Text>
+                <TriStateToggle
+                  mode={impactAccess4wdFilterMode}
+                  onToggle={(targetMode) =>
+                    setImpactAccess4wdFilterMode((current) =>
+                      current === targetMode ? "ANY" : targetMode
+                    )
+                  }
+                  onReset={() => setImpactAccess4wdFilterMode("ANY")}
+                  label="4WD access impact"
+                  includeTestId="impact-filter-access-4wd-include"
+                  excludeTestId="impact-filter-access-4wd-exclude"
+                  anyTestId="impact-filter-access-4wd-any"
+                />
+              </Group>
+            </Stack>
           </div>
 
           {availableClosureTags.length ? (
@@ -177,48 +251,6 @@ export const FilterPanel = ({
               </div>
             </>
           ) : null}
-
-          <Divider />
-          <div>
-            <Title order={3} size="sm" mb={4}>Planning impact warnings</Title>
-            <Text size="xs" c="dimmed" mb={8}>
-              Highlight forests where notices suggest camping or access restrictions.
-            </Text>
-            <Stack gap={7}>
-              <Group justify="space-between" gap="xs">
-                <Text size="xs">Camping</Text>
-                <TriStateToggle
-                  mode={impactCampingFilterMode}
-                  onToggle={(targetMode) =>
-                    setImpactCampingFilterMode((current) =>
-                      current === targetMode ? "ANY" : targetMode
-                    )
-                  }
-                  onReset={() => setImpactCampingFilterMode("ANY")}
-                  label="Camping impact"
-                  includeTestId="impact-filter-camping-include"
-                  excludeTestId="impact-filter-camping-exclude"
-                  anyTestId="impact-filter-camping-any"
-                />
-              </Group>
-              <Group justify="space-between" gap="xs">
-                <Text size="xs">2WD/4WD access</Text>
-                <TriStateToggle
-                  mode={impactAccessFilterMode}
-                  onToggle={(targetMode) =>
-                    setImpactAccessFilterMode((current) =>
-                      current === targetMode ? "ANY" : targetMode
-                    )
-                  }
-                  onReset={() => setImpactAccessFilterMode("ANY")}
-                  label="Access impact"
-                  includeTestId="impact-filter-access-include"
-                  excludeTestId="impact-filter-access-exclude"
-                  anyTestId="impact-filter-access-any"
-                />
-              </Group>
-            </Stack>
-          </div>
 
           <Divider />
           <div>

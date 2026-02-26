@@ -107,6 +107,10 @@ export const ForestCardContent = memo(({
     ? primaryClosureNotice.detailUrl
     : null;
 
+  const closureBadgeTooltip = primaryClosureNotice
+    ? (primaryClosureNotice.detailText ?? primaryClosureNotice.title)
+    : null;
+
   const BADGE_REDUNDANT_LABELS = new Set(["closed", "partly closed", "partially closed", "partial closure"]);
   const visibleClosureNotices = closureNotices.filter((notice) => {
     const cleaned = cleanNoticeTitle(notice.title).toLowerCase();
@@ -222,32 +226,48 @@ export const ForestCardContent = memo(({
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
             </Badge>
             {closureBadgeLabel ? (
-              closureBadgeUrl ? (
-                <Badge
-                  component="a"
-                  href={closureBadgeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
-                  variant="light"
-                  size="sm"
-                  radius="xl"
-                  style={{ cursor: "pointer", textDecoration: "none" }}
-                  data-testid="closure-badge"
-                >
-                  {closureBadgeLabel}
-                </Badge>
-              ) : (
-                <Badge
-                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
-                  variant="light"
-                  size="sm"
-                  radius="xl"
-                  data-testid="closure-badge"
-                >
-                  {closureBadgeLabel}
-                </Badge>
-              )
+              <Tooltip
+                label={closureBadgeTooltip}
+                disabled={!closureBadgeTooltip}
+                position="top"
+                openDelay={0}
+                closeDelay={0}
+                multiline
+                w={300}
+                styles={{ tooltip: {
+                  whiteSpace: "pre-line",
+                  backgroundColor: "var(--mantine-color-body)",
+                  color: "var(--mantine-color-text)",
+                  border: "1px solid var(--mantine-color-default-border)",
+                } }}
+              >
+                {closureBadgeUrl ? (
+                  <Badge
+                    component="a"
+                    href={closureBadgeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                    variant="light"
+                    size="sm"
+                    radius="xl"
+                    style={{ cursor: "pointer", textDecoration: "none" }}
+                    data-testid="closure-badge"
+                  >
+                    {closureBadgeLabel}
+                  </Badge>
+                ) : (
+                  <Badge
+                    color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                    variant="light"
+                    size="sm"
+                    radius="xl"
+                    data-testid="closure-badge"
+                  >
+                    {closureBadgeLabel}
+                  </Badge>
+                )}
+              </Tooltip>
             ) : null}
           </div>
           <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>

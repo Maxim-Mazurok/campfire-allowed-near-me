@@ -892,20 +892,28 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
     page.locator("[data-testid='forest-row'] .status-pill-row").getByText("Partly closed", { exact: true })
   ).toHaveCount(1);
 
-  const closureFilter = page.getByRole("radiogroup", { name: "Closure filter" });
+  const closureStatusFilter = page.getByRole("radiogroup", { name: "Closure status filter" });
 
-  await closureFilter.getByText("Open only").click();
+  await closureStatusFilter.getByText("Open").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
 
-  await closureFilter.getByText("Has notices").click();
+  await closureStatusFilter.getByText("Partly closed").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await closureStatusFilter.getByText("Closed").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
+
+  await closureStatusFilter.getByText("All").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
+
+  await page.getByTestId("has-notices-filter-include").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
-  await closureFilter.getByText("No full closures").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+  await page.getByTestId("has-notices-filter-any").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
 
   await page.getByTestId("closure-tag-filter-ROAD_ACCESS-include").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(1);
-  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
   const partialRow = page
     .locator("[data-testid='forest-row']")
@@ -915,20 +923,23 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
   await expect(partialRow.locator("[data-facility-key='fourwheeling'][data-warning='false']")).toHaveCount(1);
 
   await page.getByTestId("closure-tag-filter-ROAD_ACCESS-any").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+  await expect(page.getByTestId("forest-row")).toHaveCount(3);
 
   await page.getByTestId("impact-filter-camping-include").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(1);
-  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
   await page.getByTestId("impact-filter-camping-exclude").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
   await expect(page.getByTestId("forest-row").first()).toContainText("Open Forest");
 
   await page.getByTestId("impact-filter-camping-any").click();
-  await page.getByTestId("impact-filter-access-include").click();
+  await page.getByTestId("impact-filter-access-2wd-include").click();
+  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+
+  await page.getByTestId("impact-filter-access-2wd-any").click();
+  await page.getByTestId("impact-filter-access-4wd-include").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
-  await expect(page.getByTestId("forest-row").first()).toContainText("Partial Forest");
+  await expect(page.getByTestId("forest-row").first()).toContainText("Closed Forest");
 });
 
 test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({

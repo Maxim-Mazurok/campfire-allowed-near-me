@@ -16,7 +16,7 @@ import {
 } from "./lib/forests-query";
 import {
   type BanFilterMode,
-  type ClosureFilterMode,
+  type ClosureStatusFilterMode,
   type FireBanForestSortColumn,
   type ForestListSortOption,
   type SortDirection,
@@ -68,8 +68,11 @@ export const App = () => {
   const [totalFireBanFilterMode, setTotalFireBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().totalFireBanFilterMode ?? "ALL"
   );
-  const [closureFilterMode, setClosureFilterMode] = useState<ClosureFilterMode>(
-    () => getInitialPreferences().closureFilterMode ?? "ALL"
+  const [closureStatusFilterMode, setClosureStatusFilterMode] = useState<ClosureStatusFilterMode>(
+    () => getInitialPreferences().closureStatusFilterMode ?? "ALL"
+  );
+  const [hasNoticesFilterMode, setHasNoticesFilterMode] = useState<TriStateMode>(
+    () => getInitialPreferences().hasNoticesFilterMode ?? "ANY"
   );
   const [facilityFilterModes, setFacilityFilterModes] = useState<Record<string, TriStateMode>>(
     () => getInitialPreferences().facilityFilterModes ?? {}
@@ -80,8 +83,11 @@ export const App = () => {
   const [impactCampingFilterMode, setImpactCampingFilterMode] = useState<TriStateMode>(
     () => getInitialPreferences().impactCampingFilterMode ?? "ANY"
   );
-  const [impactAccessFilterMode, setImpactAccessFilterMode] = useState<TriStateMode>(
-    () => getInitialPreferences().impactAccessFilterMode ?? "ANY"
+  const [impactAccess2wdFilterMode, setImpactAccess2wdFilterMode] = useState<TriStateMode>(
+    () => getInitialPreferences().impactAccess2wdFilterMode ?? "ANY"
+  );
+  const [impactAccess4wdFilterMode, setImpactAccess4wdFilterMode] = useState<TriStateMode>(
+    () => getInitialPreferences().impactAccess4wdFilterMode ?? "ANY"
   );
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
     () => getInitialPreferences().userLocation ?? null
@@ -153,11 +159,13 @@ export const App = () => {
     writeUserPreferences({
       solidFuelBanFilterMode,
       totalFireBanFilterMode,
-      closureFilterMode,
+      closureStatusFilterMode,
+      hasNoticesFilterMode,
       facilityFilterModes,
       closureTagFilterModes,
       impactCampingFilterMode,
-      impactAccessFilterMode,
+      impactAccess2wdFilterMode,
+      impactAccess4wdFilterMode,
       userLocation,
       avoidTolls,
       forestListSortOption
@@ -165,11 +173,13 @@ export const App = () => {
   }, [
     solidFuelBanFilterMode,
     totalFireBanFilterMode,
-    closureFilterMode,
+    closureStatusFilterMode,
+    hasNoticesFilterMode,
     facilityFilterModes,
     closureTagFilterModes,
     impactCampingFilterMode,
-    impactAccessFilterMode,
+    impactAccess2wdFilterMode,
+    impactAccess4wdFilterMode,
     userLocation,
     avoidTolls,
     forestListSortOption
@@ -224,9 +234,9 @@ export const App = () => {
       const closureStatus = getForestClosureStatus(forest);
       const impactSummary = getForestImpactSummary(forest);
       const hasCampingImpactWarning = isImpactWarning(impactSummary.campingImpact);
-      const hasAccessImpactWarning =
-        isImpactWarning(impactSummary.access2wdImpact) ||
-        isImpactWarning(impactSummary.access4wdImpact);
+      const hasAccess2wdImpactWarning = isImpactWarning(impactSummary.access2wdImpact);
+      const hasAccess4wdImpactWarning = isImpactWarning(impactSummary.access4wdImpact);
+      const hasNotices = (forest.closureNotices ?? []).length > 0;
 
       if (!matchesBanFilter(solidFuelBanFilterMode, getForestBanStatus(forest.areas))) {
         return false;
@@ -236,15 +246,23 @@ export const App = () => {
         return false;
       }
 
-      if (closureFilterMode === "OPEN_ONLY" && closureStatus !== "NONE") {
+      if (closureStatusFilterMode === "OPEN" && closureStatus !== "NONE") {
         return false;
       }
 
-      if (closureFilterMode === "NO_FULL_CLOSURES" && closureStatus === "CLOSED") {
+      if (closureStatusFilterMode === "PARTIAL" && closureStatus !== "PARTIAL" && closureStatus !== "NOTICE") {
         return false;
       }
 
-      if (closureFilterMode === "HAS_NOTICE" && closureStatus === "NONE") {
+      if (closureStatusFilterMode === "CLOSED" && closureStatus !== "CLOSED") {
+        return false;
+      }
+
+      if (hasNoticesFilterMode === "INCLUDE" && !hasNotices) {
+        return false;
+      }
+
+      if (hasNoticesFilterMode === "EXCLUDE" && hasNotices) {
         return false;
       }
 
@@ -272,11 +290,19 @@ export const App = () => {
         return false;
       }
 
-      if (impactAccessFilterMode === "INCLUDE" && !hasAccessImpactWarning) {
+      if (impactAccess2wdFilterMode === "INCLUDE" && !hasAccess2wdImpactWarning) {
         return false;
       }
 
-      if (impactAccessFilterMode === "EXCLUDE" && hasAccessImpactWarning) {
+      if (impactAccess2wdFilterMode === "EXCLUDE" && hasAccess2wdImpactWarning) {
+        return false;
+      }
+
+      if (impactAccess4wdFilterMode === "INCLUDE" && !hasAccess4wdImpactWarning) {
+        return false;
+      }
+
+      if (impactAccess4wdFilterMode === "EXCLUDE" && hasAccess4wdImpactWarning) {
         return false;
       }
 
@@ -301,11 +327,13 @@ export const App = () => {
   }, [
     availableClosureTags,
     availableFacilities,
-    closureFilterMode,
+    closureStatusFilterMode,
+    hasNoticesFilterMode,
     closureTagFilterModes,
     facilityFilterModes,
     forests,
-    impactAccessFilterMode,
+    impactAccess2wdFilterMode,
+    impactAccess4wdFilterMode,
     impactCampingFilterMode,
     solidFuelBanFilterMode,
     totalFireBanFilterMode
@@ -433,8 +461,10 @@ export const App = () => {
           setSolidFuelBanFilterMode={setSolidFuelBanFilterMode}
           totalFireBanFilterMode={totalFireBanFilterMode}
           setTotalFireBanFilterMode={setTotalFireBanFilterMode}
-          closureFilterMode={closureFilterMode}
-          setClosureFilterMode={setClosureFilterMode}
+          closureStatusFilterMode={closureStatusFilterMode}
+          setClosureStatusFilterMode={setClosureStatusFilterMode}
+          hasNoticesFilterMode={hasNoticesFilterMode}
+          setHasNoticesFilterMode={setHasNoticesFilterMode}
           availableClosureTags={availableClosureTags}
           closureTagFilterModes={closureTagFilterModes}
           clearClosureTagModes={clearClosureTagModes}
@@ -442,8 +472,10 @@ export const App = () => {
           setSingleClosureTagMode={setSingleClosureTagMode}
           impactCampingFilterMode={impactCampingFilterMode}
           setImpactCampingFilterMode={setImpactCampingFilterMode}
-          impactAccessFilterMode={impactAccessFilterMode}
-          setImpactAccessFilterMode={setImpactAccessFilterMode}
+          impactAccess2wdFilterMode={impactAccess2wdFilterMode}
+          setImpactAccess2wdFilterMode={setImpactAccess2wdFilterMode}
+          impactAccess4wdFilterMode={impactAccess4wdFilterMode}
+          setImpactAccess4wdFilterMode={setImpactAccess4wdFilterMode}
           availableFacilities={availableFacilities}
           facilityFilterModes={facilityFilterModes}
           clearFacilityModes={clearFacilityModes}

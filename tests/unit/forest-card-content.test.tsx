@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import React, { useState } from "react";
-import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderToStaticMarkupWithMantine, renderWithMantine } from "../test-utils";
 import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
 import type { ForestApiResponse } from "../../apps/web/src/lib/api";
@@ -295,6 +296,73 @@ describe("ForestCardContent", () => {
 
     expect(html).not.toContain('data-testid="closure-badge"');
     expect(html).not.toContain('data-testid="forest-notice-list"');
+  });
+
+  it("shows detailText in tooltip when hovering closure badge", async () => {
+    const forest = buildForest({
+      closureStatus: "CLOSED",
+      closureNotices: [
+        {
+          id: "notice-closed",
+          title: "Test Forest: Closed for hazard reduction",
+          detailUrl: "https://example.com/notices/closed",
+          listedAt: null,
+          listedAtText: null,
+          untilAt: null,
+          untilText: null,
+          forestNameHint: "Test Forest",
+          status: "CLOSED",
+          tags: ["EVENT"],
+          detailText: "This forest is closed until further notice due to hazard reduction burning."
+        }
+      ]
+    });
+
+    renderWithMantine(
+      <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
+    );
+
+    const badge = screen.getByTestId("closure-badge");
+    await userEvent.hover(badge);
+
+    await waitFor(() => {
+      expect(screen.getByRole("tooltip").textContent).toContain(
+        "This forest is closed until further notice due to hazard reduction burning."
+      );
+    });
+  });
+
+  it("falls back to notice title in tooltip when detailText is absent", async () => {
+    const forest = buildForest({
+      closureStatus: "PARTIAL",
+      closureNotices: [
+        {
+          id: "notice-partial",
+          title: "Test Forest: Partial road closure",
+          detailUrl: "https://example.com/notices/partial",
+          listedAt: null,
+          listedAtText: null,
+          untilAt: null,
+          untilText: null,
+          forestNameHint: "Test Forest",
+          status: "PARTIAL",
+          tags: ["ROAD_ACCESS"]
+        }
+      ]
+    });
+
+    renderWithMantine(
+      <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
+    );
+
+    const badge = screen.getByTestId("closure-badge");
+    await userEvent.hover(badge);
+
+    await waitFor(() => {
+      expect(screen.getByRole("tooltip").textContent).toContain(
+        "Test Forest: Partial road closure"
+      );
+    });
   });
 
   it("calls onHoveredAreaNameChange on area name mouseenter and mouseleave", () => {

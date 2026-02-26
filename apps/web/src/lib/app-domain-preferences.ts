@@ -1,4 +1,4 @@
-import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, ClosureFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
+import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, ClosureStatusFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
 
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 
@@ -23,11 +23,11 @@ const toModernBanFilterMode = (mode: LegacyBanFilterMode): BanFilterMode => {
   return "ALL";
 };
 
-const isClosureFilterMode = (value: unknown): value is ClosureFilterMode =>
+const isClosureStatusFilterMode = (value: unknown): value is ClosureStatusFilterMode =>
   value === "ALL" ||
-  value === "OPEN_ONLY" ||
-  value === "NO_FULL_CLOSURES" ||
-  value === "HAS_NOTICE";
+  value === "OPEN" ||
+  value === "PARTIAL" ||
+  value === "CLOSED";
 
 const isTriStateMode = (value: unknown): value is TriStateMode =>
   value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
@@ -68,8 +68,8 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
       preferences.totalFireBanFilterMode = rawPreferences.totalFireBanFilterMode;
     }
 
-    if (isClosureFilterMode(rawPreferences.closureFilterMode)) {
-      preferences.closureFilterMode = rawPreferences.closureFilterMode;
+    if (isClosureStatusFilterMode(rawPreferences.closureStatusFilterMode)) {
+      preferences.closureStatusFilterMode = rawPreferences.closureStatusFilterMode;
     }
 
     if (
@@ -98,12 +98,20 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
       preferences.closureTagFilterModes = nextClosureTagFilterModes;
     }
 
+    if (isTriStateMode(rawPreferences.hasNoticesFilterMode)) {
+      preferences.hasNoticesFilterMode = rawPreferences.hasNoticesFilterMode;
+    }
+
     if (isTriStateMode(rawPreferences.impactCampingFilterMode)) {
       preferences.impactCampingFilterMode = rawPreferences.impactCampingFilterMode;
     }
 
-    if (isTriStateMode(rawPreferences.impactAccessFilterMode)) {
-      preferences.impactAccessFilterMode = rawPreferences.impactAccessFilterMode;
+    if (isTriStateMode(rawPreferences.impactAccess2wdFilterMode)) {
+      preferences.impactAccess2wdFilterMode = rawPreferences.impactAccess2wdFilterMode;
+    }
+
+    if (isTriStateMode(rawPreferences.impactAccess4wdFilterMode)) {
+      preferences.impactAccess4wdFilterMode = rawPreferences.impactAccess4wdFilterMode;
     }
 
     if (rawPreferences.userLocation === null) {
