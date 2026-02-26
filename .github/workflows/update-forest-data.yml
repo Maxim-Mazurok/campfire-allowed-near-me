@@ -60,10 +60,16 @@ jobs:
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Commit and push snapshot
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "chore: update forest data snapshot [skip ci]"
-          file_pattern: "apps/web/public/forests-snapshot.json apps/web/public/forests-snapshot.meta.json"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/forests-snapshot.json apps/web/public/forests-snapshot.meta.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update forest data snapshot [skip ci]"
+            git push
+          fi
 
       - name: Upload snapshot artifact
         if: always()
