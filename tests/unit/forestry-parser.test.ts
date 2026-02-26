@@ -86,6 +86,16 @@ describe("closure notices parsing", () => {
         "Ourimbah State Forest's Wallaby Road and Middle Ridge Road closed indefinitely"
       )
     ).toBe("Ourimbah State Forest");
+    expect(
+      parseClosureNoticeForestNameHint(
+        "Nowendoc State Forest: Partially closed"
+      )
+    ).toBe("Nowendoc State Forest");
+    expect(
+      parseClosureNoticeForestNameHint(
+        "Dalmorton State Forest partially closed"
+      )
+    ).toBe("Dalmorton State Forest");
   });
 
   it("classifies closure status from title text", () => {
@@ -94,6 +104,18 @@ describe("closure notices parsing", () => {
     expect(parseClosureNoticeStatus("Belanglo State Forest: Large community event")).toBe(
       "NOTICE"
     );
+  });
+
+  it("classifies 'Partially closed' wording as PARTIAL", () => {
+    expect(
+      parseClosureNoticeStatus("Nowendoc State Forest: Partially closed")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Dalmorton State Forest partially closed")
+    ).toBe("PARTIAL");
+    expect(
+      parseClosureNoticeStatus("Green Hills State Forest: Partially closed")
+    ).toBe("PARTIAL");
   });
 
   it("classifies road/track closures as PARTIAL instead of CLOSED", () => {

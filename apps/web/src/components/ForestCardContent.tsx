@@ -107,7 +107,7 @@ export const ForestCardContent = memo(({
     ? primaryClosureNotice.detailUrl
     : null;
 
-  const BADGE_REDUNDANT_LABELS = new Set(["closed", "partly closed", "partial closure"]);
+  const BADGE_REDUNDANT_LABELS = new Set(["closed", "partly closed", "partially closed", "partial closure"]);
   const visibleClosureNotices = closureNotices.filter((notice) => {
     const cleaned = cleanNoticeTitle(notice.title).toLowerCase();
     return !BADGE_REDUNDANT_LABELS.has(cleaned);

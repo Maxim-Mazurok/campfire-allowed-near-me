@@ -211,6 +211,35 @@ describe("ForestCardContent", () => {
     expect(html).not.toContain('data-testid="forest-notice-list"');
   });
 
+  it("filters 'Partially closed' notice title as redundant badge label", () => {
+    const forest = buildForest({
+      forestName: "Nowendoc State Forest",
+      closureStatus: "PARTIAL",
+      closureNotices: [
+        {
+          id: "notice-partial",
+          title: "Nowendoc State Forest: Partially closed",
+          detailUrl: "https://example.com/notices/nowendoc",
+          listedAt: null,
+          listedAtText: null,
+          untilAt: null,
+          untilText: null,
+          forestNameHint: "Nowendoc State Forest",
+          status: "PARTIAL",
+          tags: []
+        }
+      ]
+    });
+
+    const html = renderToStaticMarkupWithMantine(
+      <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
+    );
+
+    expect(html).toContain('data-testid="closure-badge"');
+    expect(html).toContain("Partly closed");
+    expect(html).not.toContain('data-testid="forest-notice-list"');
+  });
+
   it("shows all specific notices for partly closed forest with road closures", () => {
     const forest = buildForest({
       forestName: "Kerewong State Forest",
