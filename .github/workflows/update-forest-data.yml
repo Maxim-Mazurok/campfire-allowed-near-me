@@ -68,6 +68,8 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: update forest data snapshot [skip ci]"
+            git fetch origin "$GITHUB_REF"
+            git rebase "origin/${GITHUB_REF#refs/heads/}"
             git push origin "HEAD:$GITHUB_REF"
           fi
 
