@@ -435,6 +435,7 @@ export class ClosureImpactEnricher {
 
       enriched.push({
         ...normalizedNotice,
+        detailText: notice.detailText ?? null,
         structuredImpact: selectedImpact
       });
     }

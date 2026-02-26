@@ -97,4 +97,41 @@ describe("RawPageCache", () => {
       rmSync(tmpDir, { recursive: true, force: true });
     }
   });
+
+  it("exports all pages including ones added during this session", async () => {
+    const tmpDir = mkdtempSync(join(tmpdir(), "campfire-raw-page-cache-"));
+    const cachePath = join(tmpDir, "raw-pages.json");
+
+    try {
+      const cache = new RawPageCache({
+        filePath: cachePath,
+        ttlMs: 0 // TTL=0 — as used by pipeline scrape scripts
+      });
+
+      await cache.set("https://example.com/a", {
+        finalUrl: "https://example.com/a-final",
+        html: "<html>A</html>"
+      });
+
+      await cache.set("https://example.com/b", {
+        finalUrl: "https://example.com/b",
+        html: "<html>B</html>"
+      });
+
+      const allPages = await cache.exportAllPages();
+
+      expect(Object.keys(allPages)).toHaveLength(2);
+      expect(allPages["https://example.com/a"]).toMatchObject({
+        finalUrl: "https://example.com/a-final",
+        html: "<html>A</html>"
+      });
+      expect(allPages["https://example.com/b"]).toMatchObject({
+        finalUrl: "https://example.com/b",
+        html: "<html>B</html>"
+      });
+      expect(allPages["https://example.com/a"]!.fetchedAt).toBeDefined();
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
 });

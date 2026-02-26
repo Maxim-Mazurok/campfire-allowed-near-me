@@ -2,12 +2,19 @@
  * Forest Snapshot Generator — pipeline orchestrator.
  *
  * Runs all pipeline stages in sequence:
- *   1a. scrape-forestry    — fire ban pages + directory (browser + proxy)
- *   1b. scrape-closures    — FCNSW closure notices (fetch + proxy)
- *   1c. scrape-total-fire-ban — RFS TFB data (plain fetch)
- *   2.  geocode-forests    — resolve coordinates (Nominatim + Google)
- *   3.  enrich-closures    — LLM impact analysis (OpenAI)
- *   4.  assemble-snapshot  — combine everything into forests-snapshot.json
+ *   1a. scrape-forestry       — fetch fire ban pages + directory (browser + proxy)
+ *   1b. scrape-closures       — fetch FCNSW closure pages (fetch + proxy)
+ *   1c. scrape-total-fire-ban — fetch RFS TFB data (plain fetch)
+ *   2a. parse-forestry        — parse areas + directory from raw HTML
+ *   2b. parse-closures        — parse closure notices from raw HTML
+ *   2c. parse-total-fire-ban  — parse TFB snapshot from raw JSON
+ *   3.  geocode-forests       — resolve coordinates (Nominatim + Google)
+ *   4.  enrich-closures       — LLM impact analysis (OpenAI)
+ *   5.  assemble-snapshot     — combine everything into forests-snapshot.json
+ *
+ * Scrape stages (1a–1c) save raw HTML/JSON archives in data/pipeline/.
+ * Parse stages (2a–2c) read those archives and produce structured JSON.
+ * This separation lets you re-run parsing without expensive re-scraping.
  *
  * Each stage produces a JSON checkpoint in data/pipeline/, so individual
  * stages can be re-run independently via:
@@ -24,12 +31,15 @@ import "dotenv/config";
 // ---------------------------------------------------------------------------
 
 const STAGE_SCRIPTS = [
-  { label: "1a. Scrape Forestry", script: "scripts/pipeline/scrape-forestry.ts" },
-  { label: "1b. Scrape Closures", script: "scripts/pipeline/scrape-closures.ts" },
-  { label: "1c. Scrape Total Fire Ban", script: "scripts/pipeline/scrape-total-fire-ban.ts" },
-  { label: "2.  Geocode Forests", script: "scripts/pipeline/geocode-forests.ts" },
-  { label: "3.  Enrich Closures", script: "scripts/pipeline/enrich-closures.ts" },
-  { label: "4.  Assemble Snapshot", script: "scripts/pipeline/assemble-snapshot.ts" }
+  { label: "1a. Scrape Forestry (raw HTML)", script: "scripts/pipeline/scrape-forestry.ts" },
+  { label: "1b. Scrape Closures (raw HTML)", script: "scripts/pipeline/scrape-closures.ts" },
+  { label: "1c. Scrape Total Fire Ban (raw JSON)", script: "scripts/pipeline/scrape-total-fire-ban.ts" },
+  { label: "2a. Parse Forestry", script: "scripts/pipeline/parse-forestry.ts" },
+  { label: "2b. Parse Closures", script: "scripts/pipeline/parse-closures.ts" },
+  { label: "2c. Parse Total Fire Ban", script: "scripts/pipeline/parse-total-fire-ban.ts" },
+  { label: "3.  Geocode Forests", script: "scripts/pipeline/geocode-forests.ts" },
+  { label: "4.  Enrich Closures", script: "scripts/pipeline/enrich-closures.ts" },
+  { label: "5.  Assemble Snapshot", script: "scripts/pipeline/assemble-snapshot.ts" }
 ];
 
 // ---------------------------------------------------------------------------

@@ -100,12 +100,32 @@ export const ENRICH_CLOSURES_VERSION = 1;
 export type EnrichClosuresOutput = PipelineStageOutput<EnrichClosuresData>;
 
 // ---------------------------------------------------------------------------
+// Raw pages archive (output of scrape stages)
+// ---------------------------------------------------------------------------
+
+export interface RawPagesArchiveEntry {
+  fetchedAt: string;
+  finalUrl: string;
+  html: string;
+}
+
+export interface RawPagesArchive {
+  schemaVersion: number;
+  pages: Record<string, RawPagesArchiveEntry>;
+}
+
+export const RAW_PAGES_ARCHIVE_VERSION = 1;
+
+// ---------------------------------------------------------------------------
 // Pipeline paths
 // ---------------------------------------------------------------------------
 
 export const PIPELINE_DIRECTORY = "data/pipeline";
 
 export const PIPELINE_PATHS = {
+  rawForestryPages: `${PIPELINE_DIRECTORY}/raw-forestry-pages.json`,
+  rawClosurePages: `${PIPELINE_DIRECTORY}/raw-closure-pages.json`,
+  rawTotalFireBan: `${PIPELINE_DIRECTORY}/raw-total-fire-ban.json`,
   scrapeForestry: `${PIPELINE_DIRECTORY}/scrape-forestry.json`,
   scrapeClosures: `${PIPELINE_DIRECTORY}/scrape-closures.json`,
   scrapeTotalFireBan: `${PIPELINE_DIRECTORY}/scrape-total-fire-ban.json`,

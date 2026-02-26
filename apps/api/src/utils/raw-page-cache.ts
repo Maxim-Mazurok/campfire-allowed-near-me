@@ -11,7 +11,7 @@ interface RawPageCacheOptions {
   ttlMs: number;
 }
 
-interface RawPageArchiveEntry extends RawPageCacheEntry {
+export interface RawPageArchiveEntry extends RawPageCacheEntry {
   fetchedAt: string;
 }
 
@@ -73,6 +73,16 @@ export class RawPageCache {
     });
 
     await this.persist();
+  }
+
+  /**
+   * Returns all pages currently in the cache (including expired entries that
+   * were added during this session). Useful for exporting the cache contents
+   * as a raw pages archive after a scraping session.
+   */
+  async exportAllPages(): Promise<Record<string, RawPageArchiveEntry>> {
+    await this.loadIfNeeded();
+    return Object.fromEntries(this.pages.entries());
   }
 
   private async loadIfNeeded(): Promise<void> {

@@ -84,10 +84,16 @@ export const App = () => {
     () => getInitialPreferences().impactCampingFilterMode ?? "ANY"
   );
   const [impactAccess2wdFilterMode, setImpactAccess2wdFilterMode] = useState<TriStateMode>(
-    () => getInitialPreferences().impactAccess2wdFilterMode ?? "ANY"
+    () => {
+      const stored = getInitialPreferences().impactAccess2wdFilterMode;
+      return stored === "ANY" || stored === undefined ? "EXCLUDE" : stored;
+    }
   );
   const [impactAccess4wdFilterMode, setImpactAccess4wdFilterMode] = useState<TriStateMode>(
-    () => getInitialPreferences().impactAccess4wdFilterMode ?? "ANY"
+    () => {
+      const stored = getInitialPreferences().impactAccess4wdFilterMode;
+      return stored === "ANY" || stored === undefined ? "EXCLUDE" : stored;
+    }
   );
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
     () => getInitialPreferences().userLocation ?? null

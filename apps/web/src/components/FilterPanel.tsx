@@ -184,38 +184,30 @@ export const FilterPanel = ({
                   anyTestId="impact-filter-camping-any"
                 />
               </Group>
-              <Group justify="space-between" gap="xs">
-                <Text size="xs">2WD access</Text>
-                <TriStateToggle
-                  mode={impactAccess2wdFilterMode}
-                  onToggle={(targetMode) =>
-                    setImpactAccess2wdFilterMode((current) =>
-                      current === targetMode ? "ANY" : targetMode
-                    )
-                  }
-                  onReset={() => setImpactAccess2wdFilterMode("ANY")}
-                  label="2WD access impact"
-                  includeTestId="impact-filter-access-2wd-include"
-                  excludeTestId="impact-filter-access-2wd-exclude"
-                  anyTestId="impact-filter-access-2wd-any"
-                />
-              </Group>
-              <Group justify="space-between" gap="xs">
-                <Text size="xs">4WD access</Text>
-                <TriStateToggle
-                  mode={impactAccess4wdFilterMode}
-                  onToggle={(targetMode) =>
-                    setImpactAccess4wdFilterMode((current) =>
-                      current === targetMode ? "ANY" : targetMode
-                    )
-                  }
-                  onReset={() => setImpactAccess4wdFilterMode("ANY")}
-                  label="4WD access impact"
-                  includeTestId="impact-filter-access-4wd-include"
-                  excludeTestId="impact-filter-access-4wd-exclude"
-                  anyTestId="impact-filter-access-4wd-any"
-                />
-              </Group>
+              <Text size="xs" mt={4}>2WD access</Text>
+              <SegmentedControl
+                aria-label="2WD access impact filter"
+                fullWidth
+                size="xs"
+                value={impactAccess2wdFilterMode === "ANY" ? "EXCLUDE" : impactAccess2wdFilterMode}
+                onChange={(value) => setImpactAccess2wdFilterMode(value as TriStateMode)}
+                data={[
+                  { label: "No warning", value: "EXCLUDE" },
+                  { label: "Warning", value: "INCLUDE" },
+                ]}
+              />
+              <Text size="xs" mt={4}>4WD access</Text>
+              <SegmentedControl
+                aria-label="4WD access impact filter"
+                fullWidth
+                size="xs"
+                value={impactAccess4wdFilterMode === "ANY" ? "EXCLUDE" : impactAccess4wdFilterMode}
+                onChange={(value) => setImpactAccess4wdFilterMode(value as TriStateMode)}
+                data={[
+                  { label: "No warning", value: "EXCLUDE" },
+                  { label: "Warning", value: "INCLUDE" },
+                ]}
+              />
             </Stack>
           </div>
 

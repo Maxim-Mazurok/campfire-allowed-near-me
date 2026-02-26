@@ -933,11 +933,11 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
   await expect(page.getByTestId("forest-row").first()).toContainText("Open Forest");
 
   await page.getByTestId("impact-filter-camping-any").click();
-  await page.getByTestId("impact-filter-access-2wd-include").click();
+  await page.getByRole("radiogroup", { name: "2WD access impact filter" }).getByText("Warning").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(2);
 
-  await page.getByTestId("impact-filter-access-2wd-any").click();
-  await page.getByTestId("impact-filter-access-4wd-include").click();
+  await page.getByRole("radiogroup", { name: "2WD access impact filter" }).getByText("No warning").click();
+  await page.getByRole("radiogroup", { name: "4WD access impact filter" }).getByText("Warning").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
   await expect(page.getByTestId("forest-row").first()).toContainText("Closed Forest");
 });

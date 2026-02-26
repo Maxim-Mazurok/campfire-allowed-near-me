@@ -2,17 +2,17 @@
  * Pipeline Stage 1a: Scrape Forestry pages (fire ban areas + forest directory).
  *
  * Requires a browser for Cloudflare-protected pages.
- * Produces: data/pipeline/scrape-forestry.json
+ * Saves raw HTML pages to data/pipeline/raw-forestry-pages.json.
+ * The separate parse-forestry stage reads this archive and produces
+ * data/pipeline/scrape-forestry.json (parsed areas + directory).
  */
 import { ForestryScraper } from "../../apps/api/src/services/forestry-scraper.js";
+import { RawPageCache } from "../../apps/api/src/utils/raw-page-cache.js";
 import {
   PIPELINE_PATHS,
-  SCRAPE_FORESTRY_STAGE,
-  SCRAPE_FORESTRY_VERSION,
-  createStageOutput,
-  type ScrapeForestryData
+  RAW_PAGES_ARCHIVE_VERSION
 } from "../../packages/shared/src/pipeline-types.js";
-import { writePipelineFile } from "./pipeline-io.js";
+import { writeRawPagesArchive } from "./pipeline-io.js";
 import {
   BROWSER_PROFILE_DIRECTORY,
   createProxyBrowserContextFactory,
@@ -20,51 +20,55 @@ import {
   runWithProxyRetries
 } from "./pipeline-config.js";
 
-const scrapeForestryWithPort = async (proxyPort: string): Promise<ScrapeForestryData> => {
+const scrapeForestryWithPort = async (proxyPort: string): Promise<RawPageCache> => {
+  const rawPageCache = new RawPageCache({
+    filePath: PIPELINE_PATHS.rawForestryPages,
+    ttlMs: 0
+  });
+
   const scraper = new ForestryScraper({
     browserContextFactory: createProxyBrowserContextFactory(proxyPort),
     verbose: true,
+    rawPageCache,
     rawPageCacheTtlMs: 0,
     proxyUrl: buildProxyUrl(proxyPort),
     browserProfileDirectory: BROWSER_PROFILE_DIRECTORY
   });
 
-  console.log("[scrape-forestry] Scraping fire ban pages and directory...");
+  console.log("[scrape-forestry] Scraping fire ban pages and directory (fetching raw HTML)...");
   const result = await scraper.scrapeForestryPages();
 
-  console.log(`[scrape-forestry] Found ${result.areas.length} area(s)`);
+  console.log(`[scrape-forestry] Fetched pages for ${result.areas.length} area(s)`);
   const totalForests = result.areas.reduce(
     (count, area) => count + area.forests.length, 0
   );
   console.log(`[scrape-forestry] Found ${totalForests} forest entries across areas`);
   console.log(`[scrape-forestry] Directory: ${result.directory.forests.length} forest(s), ${result.directory.filters.length} filter(s)`);
 
-  return result;
+  if (result.warnings.length) {
+    for (const warning of result.warnings) {
+      console.log(`  ⚠ ${warning}`);
+    }
+  }
+
+  return rawPageCache;
 };
 
 const main = async () => {
   const startTime = Date.now();
-  console.log("=== Pipeline: Scrape Forestry ===\n");
+  console.log("=== Pipeline: Scrape Forestry (raw HTML) ===\n");
 
-  const data = await runWithProxyRetries(scrapeForestryWithPort);
+  const rawPageCache = await runWithProxyRetries(scrapeForestryWithPort);
 
-  const output = createStageOutput(
-    SCRAPE_FORESTRY_STAGE,
-    SCRAPE_FORESTRY_VERSION,
-    data
-  );
+  const allPages = await rawPageCache.exportAllPages();
 
-  writePipelineFile(PIPELINE_PATHS.scrapeForestry, output);
+  writeRawPagesArchive(PIPELINE_PATHS.rawForestryPages, {
+    schemaVersion: RAW_PAGES_ARCHIVE_VERSION,
+    pages: allPages
+  });
 
   const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(`\n✓ Scrape-forestry complete (${elapsedSeconds}s)`);
-
-  if (data.warnings.length) {
-    console.log(`  Warnings: ${data.warnings.length}`);
-    for (const warning of data.warnings) {
-      console.log(`    ⚠ ${warning}`);
-    }
-  }
 };
 
 main().catch((error) => {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-26T12:10:06.419Z",
+  "fetchedAt": "2026-02-26T12:48:41.890Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -200,14 +200,14 @@
         "forestNameHint": "Myrtle Creek State Forest",
         "status": "PARTIAL",
         "tags": [],
-        "detailText": "Please note that parts of Myrtle State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026. Download the closure notice and map below for further detail. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+        "detailText": "Please note that parts of Myrtle State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
         "structuredImpact": {
-          "source": "RULES",
-          "confidence": "MEDIUM",
-          "campingImpact": "NONE",
-          "access2wdImpact": "RESTRICTED",
-          "access4wdImpact": "RESTRICTED",
-          "rationale": "Partial closure status implies at least some access restrictions."
+          "source": "LLM",
+          "confidence": "HIGH",
+          "campingImpact": "UNKNOWN",
+          "access2wdImpact": "UNKNOWN",
+          "access4wdImpact": "UNKNOWN",
+          "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
         }
       }
     ],
@@ -816,14 +816,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations. Thank you to all our visitors and riders for your patience. Please download the map below for more details.",
+          "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
           "structuredImpact": {
-            "source": "RULES",
+            "source": "LLM",
             "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice mentions closure of mountain bike trails and access points but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -835,8 +835,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -1650,14 +1650,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests: Colo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations. Carrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south. Rocky Bridge crossing is open; however the road is not open to the public. Kentucky road from Neville is open, however Carrollina is not. Tea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -1669,8 +1669,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -1728,14 +1728,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests: Colo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations. Carrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south. Rocky Bridge crossing is open; however the road is not open to the public. Kentucky road from Neville is open, however Carrollina is not. Tea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -1747,8 +1747,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -1808,12 +1808,12 @@
           ],
           "detailText": "Please note that Mary's Park in Sunny Corner State Forest is closed for restoration.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Mary's Park is explicitly closed for restoration, but no information on vehicle access."
           }
         }
       ],
@@ -1824,9 +1824,9 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -1885,7 +1885,7 @@
             "OPERATIONS",
             "ROAD_ACCESS"
           ],
-          "detailText": "Vittoria State Forest will be closed for pest control operations from 23 February 2026 to 20 March 2026. No public access will be permitted during this time.",
+          "detailText": "Vittoria State Forest will be closed for pest control operations from 23 February 2026 to 20 March 2026.\nNo public access will be permitted during this time.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -1963,14 +1963,14 @@
           "tags": [
             "OPERATIONS"
           ],
-          "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted. We encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation. Please note that all quarries are always closed to the public. Further information on fossicking within State forests is available here. Contact: Statewide Information Centre 1300 655 687",
+          "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted.\nWe encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation.\nPlease note that all quarries are always closed to the public.\nFurther information on fossicking within State forests is available here.\nContact: Statewide Information Centre 1300 655 687",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice only mentions closure to fossicking and quarries are always closed to the public; no information on camping or vehicle access."
           }
         }
       ],
@@ -1982,8 +1982,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -2049,7 +2049,7 @@
             "CAMPING",
             "OPERATIONS"
           ],
-          "detailText": "Camping areas at Blowering dam are open. Please note that sections of plantations in Bago State Forest, west of Blowering Dam, remain closed due to significant impact from severe weather and bushfires. Main access roads to Blowering Dam are open and safe. However minor roads remain closed and are generally inaccessible. Please follow any road signage and pay attention to conditions when driving.",
+          "detailText": "Camping areas at Blowering dam are open.\nPlease note that sections of plantations in Bago State Forest, west of Blowering Dam, remain closed due to significant impact from severe weather and bushfires.\nMain access roads to Blowering Dam are open and safe. However minor roads remain closed and are generally inaccessible.\nPlease follow any road signage and pay attention to conditions when driving.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -2193,7 +2193,7 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Due to the structural damage of a log bridge over Oaks Creek, Nottingham Road will remain closed between Brindabella Road and Ridge Road until further notice. Road closure signs will be in place for the affected section of road and traffic will be detoured via Nottingham Road, Ridge Road and Brindabella Road.",
+          "detailText": "Due to the structural damage of a log bridge over Oaks Creek, Nottingham Road will remain closed between Brindabella Road and Ridge Road until further notice.\nRoad closure signs will be in place for the affected section of road and traffic will be detoured via Nottingham Road, Ridge Road and Brindabella Road.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -3065,14 +3065,14 @@
             "CAMPING",
             "OPERATIONS"
           ],
-          "detailText": "Penrose State Forests has been closed due to serious concerns for visitor safety. Hazardous road conditions, created by vehicles using roads during wet weather, forced this closure. Find out more about visiting sustainably. Restoration work has commenced however it is extensive and weather-dependent. Visitors can access the designated camp areas via the advised routes. Low impact recreational activities (non-vehicle) are permitted in the closed forest. Locally Wingello State Forest has partially reopened and is an option for vehicle recreational activities. Observe all signage and please visit sustainably. A 400m area off Paddys River Road will remain open for camping. Access only via Penrose Forest Way. Nearest facilities are located at Kingsbury VC rest area. Visitors may park safety off Penrose Forest Way.",
+          "detailText": "Penrose State Forests has been closed due to serious concerns for visitor safety.\nHazardous road conditions, created by vehicles using roads during wet weather, forced this closure.\nFind out more about visiting sustainably.\nRestoration work has commenced however it is extensive and weather-dependent. Visitors can access the designated camp areas via the advised routes.\nLow impact recreational activities (non-vehicle) are permitted in the closed forest. Locally Wingello State Forest has partially reopened and is an option for vehicle recreational activities. Observe all signage and please visit sustainably.\nA 400m area off Paddys River Road will remain open for camping.\nAccess only via Penrose Forest Way. Nearest facilities are located at Kingsbury VC rest area.\nVisitors may park safety off Penrose Forest Way.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure and restricted vehicle access."
           }
         }
       ],
@@ -3083,7 +3083,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -11928,7 +11928,7 @@
             "OPERATIONS",
             "ROAD_ACCESS"
           ],
-          "detailText": "Strahorn State Forest will be closed for pest control operations from 22 February 2026 to 28 February 2026. No public access will be permitted during this time.",
+          "detailText": "Strahorn State Forest will be closed for pest control operations from 22 February 2026 to 28 February 2026.\nNo public access will be permitted during this time.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -16621,14 +16621,14 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Knowles Road in Wandera State Forest will be closed from 12 January 2025 until further notice for road maintenance activities. Please exercise caution when travelling near the work site due to heavy vehicle traffic. Download map below for detail.",
+          "detailText": "Knowles Road in Wandera State Forest will be closed from 12 January 2025 until further notice for road maintenance activities.\nPlease exercise caution when travelling near the work site due to heavy vehicle traffic.\nDownload map below for detail.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Knowles Road and Wandera Trig Fire Trail are closed for road maintenance, restricting vehicle access; camping impact is not specified."
           }
         },
         {
@@ -16664,8 +16664,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -17501,14 +17501,14 @@
           "forestNameHint": "Mount Pikapene State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Mount Pikapene State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026 Please follow signage on the site and follow any direction from Forestry Corporation staff. Download the document below for a detailed map of the closed area. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Mount Pikapene State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -17520,8 +17520,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -17934,7 +17934,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of several State forests in the Hunter and Central Coast Areas. This includes Avon River State Forest. Forestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitors. Forests will progressively reopen once they are made safe and accessible.",
+          "detailText": "Recent flooding and sever weather impacts have resulted in\ntemporary closures of several State forests in the Hunter and Central Coast Areas. This includes Avon River State Forest.\nForestry Corporation staff are continuing to undertake work\nand assessments to clear roads and make areas safe for visitors. Forests will\nprogressively reopen once they are made safe and accessible.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -18252,7 +18252,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "State forest users and motorists are advised to avoid Barrington Tops State Forest following a landslip on Barrington Tops Road. Damage assessments are being carried out on State forest roads and closures will remain in place until further notice.",
+          "detailText": "State forest users and motorists are advised to avoid Barrington Tops State Forest following a landslip on Barrington Tops Road.\nDamage assessments are being carried out on State forest roads and closures will remain in place until further notice.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "MEDIUM",
@@ -18332,7 +18332,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Number 1 Tower Picnic Area has been closed due to rehabilitation works taking place. There is no access to Number 1 Tower as this work was scheduled, but has had to take place earlier than expected due to the grassed areas being extensively damaged over the Easter Weekend. Visitors are asked to adhere to signage, barricades and any direction given from any Forestry Corporation Staff and to avoid the area at all times. Contact: Statewide Information Centre 1300 655 687",
+          "detailText": "Number 1 Tower Picnic Area has been closed due to rehabilitation works taking place.\nThere is no access to Number 1 Tower as this work was scheduled, but has had to take place earlier than expected due to the grassed areas being extensively damaged over the Easter Weekend.\nVisitors are asked to adhere to signage, barricades and any direction given from any Forestry Corporation Staff and to avoid the area at all times.\nContact: Statewide Information Centre 1300 655 687",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -19460,7 +19460,7 @@
           "tags": [
             "OPERATIONS"
           ],
-          "detailText": "Please note that timber harvesting is taking place in parts of Carrai State Forest from 7:00 am Monday 13 October 2025. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence). Please note that Carrai State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
+          "detailText": "Please note that timber harvesting is taking place in parts of Carrai State Forest from 7:00 am Monday 13 October 2025.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).\nPlease note that Carrai State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -19644,7 +19644,7 @@
           "forestNameHint": "Cherry Tree State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Cherry Tree State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026 Please follow signage on the site and follow any direction from Forestry Corporation staff. Download the document below for a detailed map of the closed area. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Cherry Tree State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -19720,7 +19720,7 @@
           "forestNameHint": "Cherry Tree West State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Cherry Tree West State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026. Please follow signage on the site and follow any direction from Forestry Corporation staff. Download the document below for a detailed map of the closed area. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Cherry Tree West State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -19799,7 +19799,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Chichester State Forest: Partial closures and vehicle load limits due to severe weather impacts Parts of Chichester State Forest are inaccessible and closed for all visitors until further notice due to damage and various hazards including landslips following extreme weather events. Road Closures and Vehicle Load Limits at Allyn River Visitor Sites: Mount Allyn Forest Road – Closed – due to bridge damage. No access to Mount Allyn or Shellbrook Road Allyn River Forest Road – Load Limits – several bridges on Allyn River Forest Road have load and speed limit restrictions. A bridge north of Ladies Well has a max load limit of 5 Tonnes. Please follow any signage and directions in place when travelling this area. Forestry Corporation staff are continuing to undertake work to make areas safe for visitation and thank everyone for their patience.",
+          "detailText": "Chichester State Forest: Partial closures and vehicle\nload limits due to severe weather impacts\nParts of Chichester State Forest are inaccessible and closed\nfor all visitors until further notice due to damage and various hazards\nincluding landslips following extreme weather events.\nRoad Closures and Vehicle Load Limits at Allyn River Visitor\nSites:\nMount\nAllyn Forest Road – Closed – due to bridge damage. No\naccess to Mount Allyn or Shellbrook Road\nAllyn\nRiver Forest Road – Load Limits – several bridges on\nAllyn River Forest Road have load and speed limit restrictions. A bridge\nnorth of Ladies Well has a max load limit of 5 Tonnes. Please\nfollow any signage and directions in place when travelling this area.\nForestry Corporation staff are continuing to undertake work\nto make areas safe for visitation and thank everyone for their patience.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -19931,14 +19931,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note that Waitui Road is closed as a result of landslips. Waitui Falls is no longer accessible via Waitui Road. Please follow all road closure signs and do not attempt to access 4WD trails and fire trails to detour around as these are also not trafficable.",
+          "detailText": "Please note that Waitui Road is closed as a result of landslips. Waitui Falls is no longer accessible via Waitui Road.\nPlease follow all road closure signs and do not attempt to access 4WD trails and fire trails to detour around as these are also not trafficable.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
           }
         }
       ],
@@ -19950,8 +19950,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -20173,14 +20173,14 @@
             "ROAD_ACCESS",
             "CAMPING"
           ],
-          "detailText": "Timber harvesting will commence in Coopernook State Forest from 3 February until further notice. Parts of this operation will take place in close proximity to Coopernook HQ Camping Ground. However, access to the popular camping area will remain open. There will be an increase in traffic due to harvesting activities, with haulage trucks using visitor access routes, including Juhles Mountain Road, Langley Vale Way, Bangalow Road, and particularly Forest Road, which runs parallel to the camping area. View a map of the affected roads PDF, 370.04 KB Visitors are asked to: be vigilant with children and animals follow all signage, barricades and directions from Forestry Corporation staff avoid the harvesting operation area at all times.",
+          "detailText": "Timber harvesting will commence in Coopernook State Forest from 3 February until further notice.\nParts of this operation will take place in close proximity to Coopernook HQ Camping Ground. However, access to the popular camping area will remain open.\nThere will be an increase in traffic due to harvesting activities, with haulage trucks using visitor access routes, including Juhles Mountain Road, Langley Vale Way, Bangalow Road, and particularly Forest Road, which runs parallel to the camping area.\nView a map of the affected roads PDF, 370.04 KB\nVisitors are asked to:\nbe vigilant with children and animals\nfollow all signage, barricades and directions from Forestry Corporation staff\navoid the harvesting operation area at all times.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
+            "source": "LLM",
+            "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Advisory travel/crowding language detected."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow signage."
           }
         }
       ],
@@ -20192,8 +20192,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -20357,14 +20357,14 @@
           "forestNameHint": "Dalmorton State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026. Download the closure notice and map below. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20376,8 +20376,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -20973,14 +20973,14 @@
           "forestNameHint": "Ewingar State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Ewingar State Forest will be closed from 9:00 am Tuesday 25 November 2025 to Tuesday 6:00 pm 30 June 2026. Download the closure map below for further detail. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Ewingar State Forest will be closed from 9:00 am Tuesday 25 November 2025 to Tuesday 6:00 pm 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20992,8 +20992,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21344,14 +21344,14 @@
           "forestNameHint": "Grange State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Wednesday 18 February 2026 to 6:00 pm Tuesday 30 June 2026. Please follow signage on the site and follow any direction from Forestry Corporation staff. Download the document below for a detailed map of the closed area. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Wednesday 18 February 2026 to 6:00 pm Tuesday 30 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed with no specific details on camping or vehicle access."
           }
         }
       ],
@@ -21363,8 +21363,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21878,14 +21878,14 @@
             "ROAD_ACCESS",
             "CAMPING"
           ],
-          "detailText": "Harvesting will commence in Kerewong State Forest northwest of Swans Crossing Camping area from 17 March until further notice. This may impact tourists and members of the public. The Swans Crossing Camping area will remain open, as will Upsalls Creek Road access, however the alternate route of Kerewong Road heading south from Comboyne Tower will be closed for the duration of this harvesting operation. Please observe all signs and any direction given by Forestry staff. These measures are for the safety of road users, contractors, pedestrians and forest users. Thank you for your patience.",
+          "detailText": "Harvesting will commence in Kerewong State Forest northwest of Swans Crossing Camping area from 17 March until further notice. This may impact tourists and members of the public.\nThe Swans Crossing Camping area will remain open, as will Upsalls Creek Road access, however the alternate route of Kerewong Road heading south from Comboyne Tower will be closed for the duration of this harvesting operation.\nPlease observe all signs and any direction given by Forestry staff. These measures are for the safety of road users, contractors, pedestrians and forest users.\nThank you for your patience.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
+            "source": "LLM",
+            "confidence": "HIGH",
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed, Upsalls Creek Road open."
           }
         }
       ],
@@ -22678,14 +22678,14 @@
             "OPERATIONS",
             "CAMPING"
           ],
-          "detailText": "Bushfires are currently burning in the Upper Allyn area and are affecting some State forests. Campgrounds in the following State forests are closed while fire operations are underway: Chichester State Forest (Allyn River) – north-west of Dungog. Includes Old Camp Campground, Ladies Well, Dobbie Rim Campground, Pademelon Campground, Allyn River Forest Rest Area/Campground, White Rock Campground, Peach Tree Picnic Area. Masseys Creek State Forest – north-west of Dungog Alternative campgrounds remain open at Chichester State Forest (Telegherry River) – North of Dungog. You can stay up to date on bushfires by visiting the NSW Rural Fire Service website or using the NSW Hazards Near Me app.",
+          "detailText": "Bushfires are currently burning in the Upper Allyn area and are affecting some State forests. Campgrounds in the following State forests are closed while fire operations are underway:\nChichester State Forest (Allyn River) – north-west of Dungog. Includes Old Camp Campground, Ladies Well, Dobbie Rim Campground, Pademelon Campground, Allyn River Forest Rest Area/Campground, White Rock Campground, Peach Tree Picnic Area.\nMasseys Creek State Forest – north-west of Dungog\nAlternative campgrounds remain open at Chichester State Forest (Telegherry River) – North of Dungog.\nYou can stay up to date on bushfires by visiting the NSW Rural Fire Service website or using the NSW Hazards Near Me app.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Campgrounds in Masseys Creek State Forest are explicitly closed due to bushfire impact; no information on vehicle access."
           }
         },
         {
@@ -22702,7 +22702,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of several State forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest. Forestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitors. Forests will progressively reopen once they are made safe and accessible.",
+          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of several State forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest.\nForestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitors. Forests will progressively reopen once they are made safe and accessible.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -22725,14 +22725,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note that Boonabilla Road (particularly the section within the State Forest and north of the bridge over Paterson River) and the entire Basin Road in Masseys Creek State Forest are closed to all vehicle traffic due to unsafe bridges. The roads will remain closed until further notice.",
+          "detailText": "Please note that Boonabilla Road (particularly the section within the State Forest and north of the bridge over Paterson River) and the entire Basin Road in Masseys Creek State Forest are closed to all vehicle traffic due to unsafe bridges.\nThe roads will remain closed until further notice.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, indicating no vehicle access."
           }
         }
       ],
@@ -23125,14 +23125,14 @@
           "forestNameHint": "Mount Belmore State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026. Download the closure notice and map below. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so camping and vehicle access are advised to be cautious and follow signage."
           }
         }
       ],
@@ -23143,9 +23143,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -23204,14 +23204,14 @@
             "CAMPING",
             "OPERATIONS"
           ],
-          "detailText": "Fire Tower No.1 Picnic Area in Mount Boss State Forest is closed until further notice due to severe weather damage. Please note the marked area is indicative only. Please follow local signage and instruction from forestry staff.",
+          "detailText": "Fire Tower No.1 Picnic Area in Mount Boss State Forest is closed until further notice due to severe weather damage.\nPlease note the marked area is indicative only. Please follow local signage and instruction from forestry staff.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Only the Fire Tower No.1 Picnic Area is closed; no specific information on camping or vehicle access impacts."
           }
         }
       ],
@@ -23223,8 +23223,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -23607,7 +23607,7 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of State Forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest. Forestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitation. Forests will progressively reopen once they are made safe and accessible.",
+          "detailText": "Recent flooding and sever weather impacts have resulted in\ntemporary closures of State Forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest.\nForestry Corporation staff are continuing to undertake work\nand assessments to clear roads and make areas safe for visitation. Forests will\nprogressively reopen once they are made safe and accessible.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -23737,14 +23737,14 @@
           "forestNameHint": "Newfoundland State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026. Download the closure notice and map below for further detail. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23756,8 +23756,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24515,14 +24515,14 @@
           "forestNameHint": "Pine Creek State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that Pine Creek State Forest will be partly closed between 9:00 am Monday 3rd November 2025 and 6:00 pm Tuesday 30th June 2026. Download the detailed closure notice and map below. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200).",
+          "detailText": "Please note that Pine Creek State Forest will be partly closed between 9:00 am Monday 3rd November 2025 and 6:00 pm Tuesday 30th June 2026.\nDownload the detailed closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -24534,8 +24534,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24648,14 +24648,14 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": "Please note that areas pf Putty State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. Putty State Forest consists of two areas. One is managed by Forestry Corporation, the other, a Flora Reserve, managed by the National Parks and Wildlife Service. This advisory refers only to the area managed by Forestry Corporation - a defined area generally the eastern part of Putty State Forest. Commission Road and a section of Main Hunter Trail are currently opened. All other roads, tracks and fire trails including their parts within the defined area remain closed. For information on roads outside the definite area, within Flora Reserve, please contact the National Parks and Wildlife Service.",
+          "detailText": "Please note that areas pf Putty State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.\nPutty State Forest consists of two areas. One is managed by Forestry Corporation, the other, a Flora Reserve, managed by the National Parks and Wildlife Service.\nThis advisory refers only to the area managed by Forestry Corporation - a defined area generally the eastern part of Putty State Forest.\nCommission Road and a section of Main Hunter Trail are currently opened. All other roads, tracks and fire trails including their parts within the defined area remain closed.\nFor information on roads outside the definite area, within Flora Reserve, please contact the National Parks and Wildlife Service.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Most roads and tracks in the Forestry Corporation area are closed, limiting vehicle access and camping."
           }
         }
       ],
@@ -24666,9 +24666,9 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -26023,14 +26023,14 @@
             "CAMPING",
             "OPERATIONS"
           ],
-          "detailText": "Please note that the Wootton Historic Railway Walk and Sam's Camp will be closed for public use from Monday 9 December until further notice. This is to ensure public safety while Forestry Corporation staff undertake routine maintenance activities. The walk will be re-opened upon completion of the maintenance work. Thank you for your patience while this work takes place.",
+          "detailText": "Please note that the Wootton Historic Railway Walk and Sam's Camp will be closed for public use from Monday 9 December until further notice.\nThis is to ensure public safety while Forestry Corporation staff undertake routine maintenance activities.\nThe walk will be re-opened upon completion of the maintenance work. Thank you for your patience while this work takes place.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
+            "source": "LLM",
+            "confidence": "HIGH",
             "campingImpact": "CLOSED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping closure language detected. Partial closure status implies at least some access restrictions."
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "The notice states the walk and Sam's Camp are closed, but does not mention vehicle access restrictions."
           }
         }
       ],
@@ -26042,8 +26042,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -28607,14 +28607,14 @@
           "forestNameHint": "Styx River State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026. Download the closure map below for further detail. Please follow signage on the site and follow any direction from Forestry Corporation staff. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         },
         {
@@ -28628,14 +28628,14 @@
           "forestNameHint": "Styx River State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Styx River State Forest will be closed from 9:00 am Tuesday 27 January 2026 to 6:00 pm Tuesday 30 June 2026. Please follow signage on the site and follow any direction from Forestry Corporation staff. Download the document below for a detailed map of the closed area. Entry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Styx River State Forest will be closed from 9:00 am Tuesday 27 January 2026 to 6:00 pm Tuesday 30 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -28646,7 +28646,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -29326,12 +29326,12 @@
           ],
           "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "Only the Lowden Forest Rest Area is closed; the rest of the forest remains open with no access restrictions mentioned."
           }
         }
       ],
@@ -29342,7 +29342,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "CLOSED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -29403,8 +29403,6 @@
     }
   ],
   "warnings": [
-    "AI structured 12 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 33 closure notice(s) due to per-refresh budget limit (12).",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Croft Knoll State Forest\"",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
