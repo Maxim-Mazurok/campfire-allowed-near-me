@@ -2,12 +2,11 @@ import { readJsonFile, writeJsonFile } from "../utils/fs-cache.js";
 import {
   findBestForestNameMatch,
   normalizeForestNameForMatch
-} from "../utils/fuzzy-forest-match.js";
+} from "../../../../packages/shared/src/fuzzy-forest-match.js";
 import {
-  isLikelyStateForestName,
-  normalizeForestLabel
+  isLikelyStateForestName
 } from "../utils/forest-name-validation.js";
-import { slugify } from "../utils/slugs.js";
+import { normalizeForestLabel, slugify } from "../../../../packages/shared/src/text-utils.js";
 import { haversineDistanceKm } from "../utils/distance.js";
 import { DEFAULT_FORESTRY_RAW_CACHE_PATH } from "../utils/default-cache-paths.js";
 import { ForestryScraper } from "./forestry-scraper.js";
@@ -34,7 +33,6 @@ import type {
   ClosureImpactSummary,
   ClosureMatchDiagnostics,
   ClosureStatus,
-  ClosureTagDefinition,
   ClosureTagKey,
   FacilityMatchDiagnostics,
   FacilityValue,
@@ -54,6 +52,26 @@ import type {
   UserLocation
 } from "../types/domain.js";
 import { getForestBanStatus } from "../types/domain.js";
+import {
+  CLOSURE_TAG_DEFINITIONS,
+  buildClosureTagsFromNotices,
+  buildClosureStatusFromNotices,
+  buildClosureImpactSummaryFromNotices,
+  isClosureNoticeActive
+} from "../../../../packages/shared/src/closure-helpers.js";
+import {
+  buildForestStatusKey,
+  buildMostRestrictiveBanByForest,
+  normalizeBanStatusText
+} from "../../../../packages/shared/src/ban-status-helpers.js";
+import { mergeMultiAreaForests } from "../../../../packages/shared/src/forest-merge.js";
+import {
+  buildFacilityAssignments,
+  buildClosureAssignments,
+  buildUnknownFacilities,
+  createMatchedFacilities,
+  type FacilityMatchResult
+} from "../../../../packages/shared/src/facility-matching.js";
 
 interface LiveForestDataServiceOptions {
   snapshotPath?: string | null;
@@ -78,8 +96,6 @@ const DEFAULT_OPTIONS: LiveForestDataServiceResolvedOptions = {
   sourceName: "Forestry Corporation NSW"
 };
 
-const FACILITY_MATCH_THRESHOLD = 0.62;
-const CLOSURE_MATCH_THRESHOLD = 0.68;
 const SNAPSHOT_FORMAT_VERSION = 7;
 const FIRE_BAN_ENTRY_URL = "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans";
 const UNKNOWN_FIRE_BAN_AREA_NAME = "Not listed on Solid Fuel Fire Ban pages";
@@ -90,42 +106,9 @@ const MISSING_GEOCODE_ATTEMPTS_MESSAGE =
 const MISSING_TOTAL_FIRE_BAN_DIAGNOSTICS_MESSAGE =
   "No Total Fire Ban diagnostics were captured in this snapshot.";
 
-const CLOSURE_TAG_DEFINITIONS: ClosureTagDefinition[] = [
-  { key: "ROAD_ACCESS", label: "Road/trail access" },
-  { key: "CAMPING", label: "Camping impact" },
-  { key: "EVENT", label: "Event closure" },
-  { key: "OPERATIONS", label: "Operations/safety" }
-];
-
 const EMPTY_CLOSURE_DIAGNOSTICS: ClosureMatchDiagnostics = {
   unmatchedNotices: [],
   fuzzyMatches: []
-};
-
-const CLOSURE_IMPACT_ORDER: Record<ClosureImpactLevel, number> = {
-  NONE: 0,
-  ADVISORY: 1,
-  RESTRICTED: 2,
-  CLOSED: 3,
-  UNKNOWN: -1
-};
-
-interface FacilityMatchResult {
-  facilities: Record<string, FacilityValue>;
-  matchedDirectoryForestName: string | null;
-  score: number | null;
-  matchType: "EXACT" | "FUZZY" | "UNMATCHED";
-}
-
-interface ForestBanSummary {
-  status: BanStatus;
-  statusText: string;
-}
-
-const BAN_STATUS_PRIORITY: Record<BanStatus, number> = {
-  UNKNOWN: 0,
-  NOT_BANNED: 1,
-  BANNED: 2
 };
 
 export class LiveForestDataService implements ForestDataService {
@@ -659,7 +642,7 @@ export class LiveForestDataService implements ForestDataService {
         const unresolvedForestStatusKeys = new Set(
           (staleFallbackSnapshot?.forests ?? [])
             .filter((forest) => forest.latitude === null || forest.longitude === null)
-            .map((forest) => this.buildForestStatusKey(forest.forestName))
+            .map((forest) => buildForestStatusKey(forest.forestName))
             .filter(Boolean)
         );
         const forestResult = await this.buildForestPoints(
@@ -879,381 +862,6 @@ export class LiveForestDataService implements ForestDataService {
     }
   }
 
-  private buildUnknownFacilities(directory: ForestDirectorySnapshot): Record<string, FacilityValue> {
-    return Object.fromEntries(
-      directory.filters.map((facility) => [facility.key, null])
-    ) as Record<string, FacilityValue>;
-  }
-
-  private normalizeBanStatusText(status: BanStatus, statusText: string): string {
-    const normalized = statusText.trim();
-    if (normalized) {
-      return normalized;
-    }
-
-    if (status === "BANNED") {
-      return "Solid Fuel Fire Ban";
-    }
-
-    if (status === "NOT_BANNED") {
-      return "No Solid Fuel Fire Ban";
-    }
-
-    return "Unknown";
-  }
-
-  private buildForestStatusKey(forestName: string): string {
-    return normalizeForestLabel(forestName).toLowerCase();
-  }
-
-  private buildMostRestrictiveBanByForest(
-    areas: ForestAreaWithForests[]
-  ): Map<string, ForestBanSummary> {
-    const byForest = new Map<string, ForestBanSummary>();
-
-    for (const area of areas) {
-      const uniqueForestNames = [...new Set(
-        area.forests.map((forest) => normalizeForestLabel(forest)).filter(Boolean)
-      )];
-      const candidateSummary: ForestBanSummary = {
-        status: area.status,
-        statusText: this.normalizeBanStatusText(area.status, area.statusText)
-      };
-
-      for (const forestName of uniqueForestNames) {
-        const key = this.buildForestStatusKey(forestName);
-        const existingSummary = byForest.get(key);
-
-        if (
-          !existingSummary ||
-          BAN_STATUS_PRIORITY[candidateSummary.status] >
-            BAN_STATUS_PRIORITY[existingSummary.status]
-        ) {
-          byForest.set(key, candidateSummary);
-        }
-      }
-    }
-
-    return byForest;
-  }
-
-  private hasDirectionalConflict(leftName: string, rightName: string): boolean {
-    const left = normalizeForestNameForMatch(leftName);
-    const right = normalizeForestNameForMatch(rightName);
-
-    if (
-      (/\beast\b/.test(left) && /\bwest\b/.test(right)) ||
-      (/\bwest\b/.test(left) && /\beast\b/.test(right))
-    ) {
-      return true;
-    }
-
-    if (
-      (/\bnorth\b/.test(left) && /\bsouth\b/.test(right)) ||
-      (/\bsouth\b/.test(left) && /\bnorth\b/.test(right))
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private createMatchedFacilities(
-    directory: ForestDirectorySnapshot,
-    byForestName: Map<string, Record<string, boolean>>,
-    sourceForestNames: string[]
-  ): Record<string, FacilityValue> {
-    return Object.fromEntries(
-      directory.filters.map((filter) => [
-        filter.key,
-        sourceForestNames.some((name) => Boolean(byForestName.get(name)?.[filter.key]))
-      ])
-    ) as Record<string, FacilityValue>;
-  }
-
-  private buildFacilityAssignments(
-    fireBanForestNames: string[],
-    directory: ForestDirectorySnapshot,
-    byForestName: Map<string, Record<string, boolean>>
-  ): {
-    byFireBanForestName: Map<string, FacilityMatchResult>;
-    diagnostics: FacilityMatchDiagnostics;
-  } {
-    const byFireBanForestName = new Map<string, FacilityMatchResult>();
-    const unknown = this.buildUnknownFacilities(directory);
-
-    if (!directory.filters.length || !directory.forests.length) {
-      for (const forestName of fireBanForestNames) {
-        byFireBanForestName.set(forestName, {
-          facilities: unknown,
-          matchedDirectoryForestName: null,
-          score: null,
-          matchType: "UNMATCHED"
-        });
-      }
-
-      return {
-        byFireBanForestName,
-        diagnostics: {
-          unmatchedFacilitiesForests: directory.forests.map((entry) => entry.forestName),
-          fuzzyMatches: []
-        }
-      };
-    }
-
-    const uniqueFireBanNames = [...new Set(fireBanForestNames)];
-    const availableDirectoryNames = new Set(byForestName.keys());
-    const byNormalizedDirectoryName = new Map<string, string[]>();
-    const fireBanCountByNormalizedName = new Map<string, number>();
-
-    for (const fireBanForestName of uniqueFireBanNames) {
-      const normalized = normalizeForestNameForMatch(fireBanForestName);
-      fireBanCountByNormalizedName.set(
-        normalized,
-        (fireBanCountByNormalizedName.get(normalized) ?? 0) + 1
-      );
-    }
-
-    for (const directoryForestName of availableDirectoryNames) {
-      const normalized = normalizeForestNameForMatch(directoryForestName);
-      const rows = byNormalizedDirectoryName.get(normalized) ?? [];
-      rows.push(directoryForestName);
-      byNormalizedDirectoryName.set(normalized, rows);
-    }
-
-    const unresolvedFireBanNames: string[] = [];
-
-    // Pass 1: exact normalized matching, one-to-one.
-    for (const fireBanForestName of uniqueFireBanNames) {
-      const normalized = normalizeForestNameForMatch(fireBanForestName);
-      const exactCandidates = (byNormalizedDirectoryName.get(normalized) ?? [])
-        .filter((candidate) => availableDirectoryNames.has(candidate))
-        .sort((left, right) => left.localeCompare(right));
-
-      if (!exactCandidates.length) {
-        unresolvedFireBanNames.push(fireBanForestName);
-        continue;
-      }
-
-      const allowVariantMerge =
-        exactCandidates.length > 1 && (fireBanCountByNormalizedName.get(normalized) ?? 0) === 1;
-      const matchedExactNames = allowVariantMerge ? exactCandidates : [exactCandidates[0]!];
-
-      byFireBanForestName.set(fireBanForestName, {
-        facilities: this.createMatchedFacilities(directory, byForestName, matchedExactNames),
-        matchedDirectoryForestName: matchedExactNames[0]!,
-        score: 1,
-        matchType: "EXACT"
-      });
-      for (const matchedName of matchedExactNames) {
-        availableDirectoryNames.delete(matchedName);
-      }
-    }
-
-    // Pass 2: fuzzy matching only among remaining unmatched names/candidates.
-    for (const fireBanForestName of unresolvedFireBanNames) {
-      const candidates = [...availableDirectoryNames];
-      const fuzzy = findBestForestNameMatch(fireBanForestName, candidates);
-
-      if (
-        !fuzzy ||
-        fuzzy.score < FACILITY_MATCH_THRESHOLD ||
-        this.hasDirectionalConflict(fireBanForestName, fuzzy.candidateName)
-      ) {
-        byFireBanForestName.set(fireBanForestName, {
-          facilities: unknown,
-          matchedDirectoryForestName: null,
-          score: fuzzy?.score ?? null,
-          matchType: "UNMATCHED"
-        });
-        continue;
-      }
-
-      byFireBanForestName.set(fireBanForestName, {
-        facilities: this.createMatchedFacilities(
-          directory,
-          byForestName,
-          [fuzzy.candidateName]
-        ),
-        matchedDirectoryForestName: fuzzy.candidateName,
-        score: fuzzy.score,
-        matchType: "FUZZY"
-      });
-      availableDirectoryNames.delete(fuzzy.candidateName);
-    }
-
-    const fuzzyMatches = [...byFireBanForestName.entries()]
-      .filter(([, match]) => match.matchType === "FUZZY")
-      .map(([fireBanForestName, match]) => ({
-        fireBanForestName,
-        facilitiesForestName: match.matchedDirectoryForestName!,
-        score: match.score ?? 0
-      }))
-      .sort((left, right) => left.fireBanForestName.localeCompare(right.fireBanForestName));
-
-    return {
-      byFireBanForestName,
-      diagnostics: {
-        unmatchedFacilitiesForests: [...availableDirectoryNames].sort((left, right) =>
-          left.localeCompare(right)
-        ),
-        fuzzyMatches
-      }
-    };
-  }
-
-  private isClosureNoticeActive(notice: ForestClosureNotice, nowMs: number): boolean {
-    const listedAtMs = notice.listedAt ? Date.parse(notice.listedAt) : Number.NaN;
-    if (!Number.isNaN(listedAtMs) && listedAtMs > nowMs) {
-      return false;
-    }
-
-    const untilAtMs = notice.untilAt ? Date.parse(notice.untilAt) : Number.NaN;
-    if (!Number.isNaN(untilAtMs) && untilAtMs < nowMs) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private mergeClosureImpactLevel(
-    leftImpact: ClosureImpactLevel,
-    rightImpact: ClosureImpactLevel
-  ): ClosureImpactLevel {
-    if (CLOSURE_IMPACT_ORDER[rightImpact] > CLOSURE_IMPACT_ORDER[leftImpact]) {
-      return rightImpact;
-    }
-
-    return leftImpact;
-  }
-
-  private buildClosureTagsFromNotices(
-    notices: ForestClosureNotice[]
-  ): Partial<Record<ClosureTagKey, boolean>> {
-    const tags: Partial<Record<ClosureTagKey, boolean>> = Object.fromEntries(
-      CLOSURE_TAG_DEFINITIONS.map((definition) => [definition.key, false])
-    ) as Partial<Record<ClosureTagKey, boolean>>;
-
-    for (const notice of notices) {
-      for (const tagKey of notice.tags) {
-        tags[tagKey] = true;
-      }
-    }
-
-    return tags;
-  }
-
-  private buildClosureStatusFromNotices(notices: ForestClosureNotice[]): ClosureStatus {
-    if (notices.some((notice) => notice.status === "CLOSED")) {
-      return "CLOSED";
-    }
-
-    if (notices.some((notice) => notice.status === "PARTIAL")) {
-      return "PARTIAL";
-    }
-
-    if (notices.length > 0) {
-      return "NOTICE";
-    }
-
-    return "NONE";
-  }
-
-  private buildClosureImpactSummaryFromNotices(
-    notices: ForestClosureNotice[]
-  ): ClosureImpactSummary {
-    const summary: ClosureImpactSummary = {
-      campingImpact: "NONE",
-      access2wdImpact: "NONE",
-      access4wdImpact: "NONE"
-    };
-
-    for (const notice of notices) {
-      const impact = notice.structuredImpact;
-      if (!impact) {
-        continue;
-      }
-
-      summary.campingImpact = this.mergeClosureImpactLevel(
-        summary.campingImpact,
-        impact.campingImpact
-      );
-      summary.access2wdImpact = this.mergeClosureImpactLevel(
-        summary.access2wdImpact,
-        impact.access2wdImpact
-      );
-      summary.access4wdImpact = this.mergeClosureImpactLevel(
-        summary.access4wdImpact,
-        impact.access4wdImpact
-      );
-    }
-
-    return summary;
-  }
-
-  private buildClosureAssignments(
-    notices: ForestClosureNotice[],
-    forestNames: string[]
-  ): {
-    byForestName: Map<string, ForestClosureNotice[]>;
-    diagnostics: ClosureMatchDiagnostics;
-  } {
-    const byForestName = new Map<string, ForestClosureNotice[]>();
-    for (const forestName of forestNames) {
-      byForestName.set(forestName, []);
-    }
-
-    const unmatchedNotices: ForestClosureNotice[] = [];
-    const fuzzyMatches: ClosureMatchDiagnostics["fuzzyMatches"] = [];
-    const nowMs = Date.now();
-
-    for (const notice of notices) {
-      if (!this.isClosureNoticeActive(notice, nowMs)) {
-        continue;
-      }
-
-      const hint = notice.forestNameHint ? normalizeForestLabel(notice.forestNameHint) : "";
-      if (!hint) {
-        unmatchedNotices.push(notice);
-        continue;
-      }
-
-      const exactMatchForestName = forestNames.find(
-        (forestName) => normalizeForestLabel(forestName) === hint
-      );
-
-      if (exactMatchForestName) {
-        const existing = byForestName.get(exactMatchForestName) ?? [];
-        existing.push(notice);
-        byForestName.set(exactMatchForestName, existing);
-        continue;
-      }
-
-      const fuzzyMatch = findBestForestNameMatch(hint, forestNames);
-      if (!fuzzyMatch || fuzzyMatch.score < CLOSURE_MATCH_THRESHOLD) {
-        unmatchedNotices.push(notice);
-        continue;
-      }
-
-      const existing = byForestName.get(fuzzyMatch.candidateName) ?? [];
-      existing.push(notice);
-      byForestName.set(fuzzyMatch.candidateName, existing);
-      fuzzyMatches.push({
-        noticeId: notice.id,
-        noticeTitle: notice.title,
-        matchedForestName: fuzzyMatch.candidateName,
-        score: fuzzyMatch.score
-      });
-    }
-
-    return {
-      byForestName,
-      diagnostics: {
-        unmatchedNotices,
-        fuzzyMatches
-      }
-    };
-  }
 
   private async buildForestPoints(
     areas: ForestAreaWithForests[],
@@ -1279,11 +887,11 @@ export class LiveForestDataService implements ForestDataService {
     const byForestUrl = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.forestUrl ?? null] as const)
     );
-    const mostRestrictiveBanByForest = this.buildMostRestrictiveBanByForest(areas);
+    const mostRestrictiveBanByForest = buildMostRestrictiveBanByForest(areas);
     const uniqueFireBanNames = [...new Set(
       areas.flatMap((area) => area.forests.map((forest) => forest.trim()).filter(Boolean))
     )];
-    const facilityAssignments = this.buildFacilityAssignments(
+    const facilityAssignments = buildFacilityAssignments(
       uniqueFireBanNames,
       directory,
       byForestName
@@ -1312,12 +920,12 @@ export class LiveForestDataService implements ForestDataService {
     const sortForestNamesForRetryPriority = (forestNames: string[]): string[] =>
       [...forestNames].sort((leftForestName, rightForestName) => {
         const leftPriority = unresolvedForestStatusKeys.has(
-          this.buildForestStatusKey(leftForestName)
+          buildForestStatusKey(leftForestName)
         )
           ? 0
           : 1;
         const rightPriority = unresolvedForestStatusKeys.has(
-          this.buildForestStatusKey(rightForestName)
+          buildForestStatusKey(rightForestName)
         )
           ? 0
           : 1;
@@ -1340,9 +948,9 @@ export class LiveForestDataService implements ForestDataService {
         }
 
         const banSummary =
-          mostRestrictiveBanByForest.get(this.buildForestStatusKey(forestName)) ?? {
+          mostRestrictiveBanByForest.get(buildForestStatusKey(forestName)) ?? {
             status: area.status,
-            statusText: this.normalizeBanStatusText(area.status, area.statusText)
+            statusText: normalizeBanStatusText(area.status, area.statusText)
           };
         const facilityMatchForGeocode = facilityAssignments.byFireBanForestName.get(forestName);
         const directoryForestName =
@@ -1379,7 +987,7 @@ export class LiveForestDataService implements ForestDataService {
         const facilityMatch =
           facilityAssignments.byFireBanForestName.get(forestName) ??
           ({
-            facilities: this.buildUnknownFacilities(directory),
+            facilities: buildUnknownFacilities(directory),
             matchedDirectoryForestName: null,
             score: null,
             matchType: "UNMATCHED"
@@ -1411,7 +1019,7 @@ export class LiveForestDataService implements ForestDataService {
             areaName: area.areaName,
             areaUrl: area.areaUrl,
             banStatus: area.status,
-            banStatusText: this.normalizeBanStatusText(area.status, area.statusText)
+            banStatusText: normalizeBanStatusText(area.status, area.statusText)
           }],
           forestName,
           forestUrl: facilityMatch.matchedDirectoryForestName
@@ -1459,7 +1067,7 @@ export class LiveForestDataService implements ForestDataService {
         geocode.latitude === null || geocode.longitude === null
           ? this.buildGeocodeDiagnostics(geocode)
           : null;
-      const directoryFacilities = this.createMatchedFacilities(
+      const directoryFacilities = createMatchedFacilities(
         directory,
         byForestName,
         [forestName]
@@ -1548,7 +1156,7 @@ export class LiveForestDataService implements ForestDataService {
       );
     }
 
-    const closureAssignments = this.buildClosureAssignments(
+    const closureAssignments = buildClosureAssignments(
       closureNotices,
       points.map((point) => point.forestName)
     );
@@ -1557,10 +1165,10 @@ export class LiveForestDataService implements ForestDataService {
       const notices = closureAssignments.byForestName.get(point.forestName) ?? [];
       return {
         ...point,
-        closureStatus: this.buildClosureStatusFromNotices(notices),
+        closureStatus: buildClosureStatusFromNotices(notices),
         closureNotices: notices,
-        closureTags: this.buildClosureTagsFromNotices(notices),
-        closureImpactSummary: this.buildClosureImpactSummaryFromNotices(notices)
+        closureTags: buildClosureTagsFromNotices(notices),
+        closureImpactSummary: buildClosureImpactSummaryFromNotices(notices)
       };
     });
 
@@ -1584,94 +1192,13 @@ export class LiveForestDataService implements ForestDataService {
     }
 
     return {
-      forests: this.mergeMultiAreaForests(pointsWithClosures),
+      forests: mergeMultiAreaForests(pointsWithClosures),
       diagnostics: {
         unmatchedFacilitiesForests,
         fuzzyMatches: fuzzyMatchesList
       },
       closureDiagnostics: closureAssignments.diagnostics
     };
-  }
-
-  private mergeMultiAreaForests(
-    points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[]
-  ): Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] {
-    const groupsByForestKey = new Map<
-      string,
-      Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[]
-    >();
-    const insertionOrder: string[] = [];
-
-    for (const point of points) {
-      const key = this.buildForestStatusKey(point.forestName);
-      const existing = groupsByForestKey.get(key);
-
-      if (existing) {
-        existing.push(point);
-      } else {
-        groupsByForestKey.set(key, [point]);
-        insertionOrder.push(key);
-      }
-    }
-
-    const merged: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
-
-    for (const key of insertionOrder) {
-      const group = groupsByForestKey.get(key);
-
-      if (!group || group.length === 0) {
-        continue;
-      }
-
-      if (group.length === 1) {
-        const singlePoint = group[0];
-
-        if (singlePoint) {
-          merged.push(singlePoint);
-        }
-
-        continue;
-      }
-
-      // Pick the primary point: prefer the one with non-null coordinates.
-      const primary = group.reduce((best, candidate) => {
-        const bestHasCoordinates = best.latitude !== null && best.longitude !== null;
-        const candidateHasCoordinates = candidate.latitude !== null && candidate.longitude !== null;
-
-        if (candidateHasCoordinates && !bestHasCoordinates) {
-          return candidate;
-        }
-
-        if (!candidateHasCoordinates && bestHasCoordinates) {
-          return best;
-        }
-
-        return best;
-      });
-
-      // Collect unique areas from ALL entries in the group, preserving order.
-      const seenAreaKeys = new Set<string>();
-      const mergedAreas: ForestAreaReference[] = [];
-
-      for (const point of group) {
-        for (const area of point.areas) {
-          const areaKey = area.areaName.toLowerCase();
-
-          if (!seenAreaKeys.has(areaKey)) {
-            seenAreaKeys.add(areaKey);
-            mergedAreas.push(area);
-          }
-        }
-      }
-
-      merged.push({
-        ...primary,
-        id: slugify(primary.forestName),
-        areas: mergedAreas
-      });
-    }
-
-    return merged;
   }
 
   private async addTravelMetrics(

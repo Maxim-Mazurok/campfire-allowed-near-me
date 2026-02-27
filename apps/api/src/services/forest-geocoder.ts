@@ -520,8 +520,8 @@ export class ForestGeocoder {
         : "OSM_NOMINATIM";
 
     return {
-      latitude: row.latitude,
-      longitude: row.longitude,
+      latitude: roundCoordinate(row.latitude),
+      longitude: roundCoordinate(row.longitude),
       displayName: row.display_name,
       importance: row.importance,
       provider,

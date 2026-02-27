@@ -3,7 +3,7 @@ import {
   findBestForestNameMatch,
   normalizeForestNameForMatch,
   scoreForestNameSimilarity
-} from "../../apps/api/src/utils/fuzzy-forest-match.js";
+} from "../../packages/shared/src/fuzzy-forest-match.js";
 
 describe("normalizeForestNameForMatch", () => {
   it("normalizes punctuation and bracket suffixes", () => {

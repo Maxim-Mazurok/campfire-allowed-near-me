@@ -1,3 +1,5 @@
+import { normalizeWhitespace } from "./text-utils.js";
+
 const STOP_WORDS = new Set([
   "state",
   "forest",
@@ -11,8 +13,6 @@ const STOP_WORDS = new Set([
   "native",
   "around"
 ]);
-
-const normalizeWhitespace = (value: string): string => value.replace(/\s+/g, " ").trim();
 
 const cleanForestName = (value: string): string =>
   normalizeWhitespace(
@@ -47,29 +47,29 @@ const toBigrams = (value: string): string[] => {
   return grams;
 };
 
-const diceCoefficient = (a: string, b: string): number => {
-  if (!a || !b) {
+const diceCoefficient = (leftValue: string, rightValue: string): number => {
+  if (!leftValue || !rightValue) {
     return 0;
   }
 
-  if (a === b) {
+  if (leftValue === rightValue) {
     return 1;
   }
 
-  const aBigrams = toBigrams(a);
-  const bBigrams = toBigrams(b);
+  const leftBigrams = toBigrams(leftValue);
+  const rightBigrams = toBigrams(rightValue);
 
-  if (!aBigrams.length || !bBigrams.length) {
+  if (!leftBigrams.length || !rightBigrams.length) {
     return 0;
   }
 
   const counts = new Map<string, number>();
-  for (const gram of aBigrams) {
+  for (const gram of leftBigrams) {
     counts.set(gram, (counts.get(gram) ?? 0) + 1);
   }
 
   let overlap = 0;
-  for (const gram of bBigrams) {
+  for (const gram of rightBigrams) {
     const remaining = counts.get(gram) ?? 0;
     if (remaining > 0) {
       overlap += 1;
@@ -77,7 +77,7 @@ const diceCoefficient = (a: string, b: string): number => {
     }
   }
 
-  return (2 * overlap) / (aBigrams.length + bBigrams.length);
+  return (2 * overlap) / (leftBigrams.length + rightBigrams.length);
 };
 
 const jaccardSimilarity = (leftTokens: string[], rightTokens: string[]): number => {

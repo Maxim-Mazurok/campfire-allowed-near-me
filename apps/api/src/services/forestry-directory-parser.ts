@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import { DEFAULT_FACILITY_DEFINITIONS } from "../constants/facilities.js";
-import { isLikelyStateForestName, normalizeForestLabel } from "../utils/forest-name-validation.js";
-import { slugify } from "../utils/slugs.js";
+import { isLikelyStateForestName } from "../utils/forest-name-validation.js";
+import { normalizeForestLabel, slugify } from "../../../../packages/shared/src/text-utils.js";
 import type {
   FacilityDefinition,
   FacilityForestEntry,

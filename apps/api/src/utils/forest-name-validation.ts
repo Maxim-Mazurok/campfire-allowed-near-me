@@ -1,6 +1,4 @@
-const normalizeWhitespace = (value: string): string => value.replace(/\s+/g, " ").trim();
-
-export const normalizeForestLabel = (value: string): string => normalizeWhitespace(value);
+import { normalizeForestLabel } from "../../../../packages/shared/src/text-utils.js";
 
 export const isLikelyStateForestName = (value: string): boolean => {
   const name = normalizeForestLabel(value);

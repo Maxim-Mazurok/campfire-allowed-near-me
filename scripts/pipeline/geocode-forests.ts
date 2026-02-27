@@ -9,8 +9,8 @@
  */
 import { ForestGeocoder, type GeocodeResponse } from "../../apps/api/src/services/forest-geocoder.js";
 import type { ForestGeocodeDiagnostics } from "../../apps/api/src/types/domain.js";
-import { normalizeForestLabel } from "../../apps/api/src/utils/forest-name-validation.js";
-import { findBestForestNameMatch, normalizeForestNameForMatch } from "../../apps/api/src/utils/fuzzy-forest-match.js";
+import { normalizeForestLabel } from "../../packages/shared/src/text-utils.js";
+import { findBestForestNameMatch, normalizeForestNameForMatch } from "../../packages/shared/src/fuzzy-forest-match.js";
 import {
   PIPELINE_PATHS,
   SCRAPE_FORESTRY_STAGE,
