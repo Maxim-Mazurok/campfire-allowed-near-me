@@ -457,11 +457,6 @@ const mergeMultiAreaForests = (
       const candidateHasCoordinates = candidate.latitude !== null && candidate.longitude !== null;
       if (candidateHasCoordinates && !bestHasCoordinates) return candidate;
       if (!candidateHasCoordinates && bestHasCoordinates) return best;
-      if (
-        typeof candidate.geocodeConfidence === "number" &&
-        (typeof best.geocodeConfidence !== "number" ||
-          candidate.geocodeConfidence > best.geocodeConfidence)
-      ) return candidate;
       return best;
     });
 
@@ -701,7 +696,6 @@ const main = async () => {
         latitude,
         longitude,
         geocodeName: geocodeEntry?.displayName ?? null,
-        geocodeConfidence: geocodeEntry?.confidence ?? null,
         geocodeDiagnostics: geocodeEntry?.diagnostics ?? null,
         facilities: facilityMatch.facilities
       });
@@ -746,7 +740,6 @@ const main = async () => {
       latitude,
       longitude,
       geocodeName: geocodeEntry?.displayName ?? null,
-      geocodeConfidence: geocodeEntry?.confidence ?? null,
       geocodeDiagnostics: geocodeEntry?.diagnostics ?? null,
       facilities: directoryFacilities
     });

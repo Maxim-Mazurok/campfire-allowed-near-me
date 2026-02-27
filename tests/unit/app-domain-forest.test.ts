@@ -18,7 +18,6 @@ const buildForest = (
   latitude: -33.9,
   longitude: 151.1,
   geocodeName: "Forest",
-  geocodeConfidence: 0.9,
   facilities: {},
   distanceKm,
   travelDurationMinutes

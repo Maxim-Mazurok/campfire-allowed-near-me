@@ -24,7 +24,6 @@ const buildForest = (): ForestApiResponse["forests"][number] => ({
   latitude: -33.9,
   longitude: 151.1,
   geocodeName: "Forest A, NSW",
-  geocodeConfidence: 0.85,
   facilities: {},
   distanceKm: 14.2,
   travelDurationMinutes: 20

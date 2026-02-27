@@ -55,6 +55,10 @@ jobs:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           NOMINATIM_BASE_URL: https://nominatim.openstreetmap.org
           SCRAPE_DEBUG_ARTIFACT_DIR: scrape-debug-artifacts
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_DEPLOYMENT_REASONER: ${{ secrets.AZURE_OPENAI_DEPLOYMENT_REASONER }}
+          CLOSURE_LLM_ENABLED: ${{ vars.CLOSURE_LLM_ENABLED }}
 
       - name: Mark workspace as safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"

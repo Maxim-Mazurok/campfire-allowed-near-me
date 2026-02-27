@@ -146,7 +146,6 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -198,7 +197,6 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest Green",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -245,7 +243,6 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest Grey",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -293,7 +290,6 @@ test("keeps map position after panning with popup open", async ({ page }) => {
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest Pan",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -372,7 +368,6 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -386,7 +381,6 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             latitude: -32.2633,
             longitude: 147.1166,
             geocodeName: "Forest B",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -465,7 +459,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {
               fishing: true,
               camping: true
@@ -482,7 +475,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             latitude: -34.0,
             longitude: 151.3,
             geocodeName: "Forest B",
-            geocodeConfidence: 0.8,
             facilities: {
               fishing: false,
               camping: true
@@ -499,7 +491,6 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
             latitude: -35.0,
             longitude: 151.4,
             geocodeName: "Forest C",
-            geocodeConfidence: 0.8,
             facilities: {
               fishing: true,
               camping: false
@@ -654,7 +645,6 @@ test("persists location and filters across reloads", async ({ page }) => {
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {
               fishing: false
             }
@@ -670,7 +660,6 @@ test("persists location and filters across reloads", async ({ page }) => {
             latitude: -34.5,
             longitude: 149.1,
             geocodeName: "Forest B",
-            geocodeConfidence: 0.8,
             facilities: {
               fishing: true
             }
@@ -753,7 +742,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Open Forest",
-            geocodeConfidence: 0.8,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -782,7 +770,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             latitude: -34.1,
             longitude: 151.3,
             geocodeName: "Closed Forest",
-            geocodeConfidence: 0.8,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -832,7 +819,6 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
             latitude: -34.3,
             longitude: 151.4,
             geocodeName: "Partial Forest",
-            geocodeConfidence: 0.8,
             facilities: {
               camping: true,
               twowheeling: true,
@@ -1034,7 +1020,6 @@ test("uses current location on page load when permission is already granted", as
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -1081,7 +1066,6 @@ test("keeps nearest spot when non-location response resolves after location resp
             latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Fast Forest",
-            geocodeConfidence: 0.9,
             facilities: {}
           }
         ]
@@ -1136,7 +1120,6 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
             latitude: -35.2,
             longitude: 150.4,
             geocodeName: "Belangalo State Forest",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -1211,7 +1194,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             latitude: -29.2,
             longitude: 153.5,
             geocodeName: "Zulu State Forest",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -1224,7 +1206,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             latitude: -35.5,
             longitude: 150.2,
             geocodeName: "Alpha State Forest",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -1237,7 +1218,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             latitude: -33.4,
             longitude: 149.6,
             geocodeName: "Beta State Forest",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -1250,7 +1230,6 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
             latitude: -36.4,
             longitude: 149.2,
             geocodeName: "Coolangubra State Forest",
-            geocodeConfidence: 0.5,
             facilities: {}
           }
         ]
@@ -1318,7 +1297,6 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
             latitude: null,
             longitude: null,
             geocodeName: null,
-            geocodeConfidence: null,
             geocodeDiagnostics: {
               reason: "Geocoding lookup limit reached before coordinates were resolved.",
               debug: [
@@ -1337,7 +1315,6 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
             latitude: null,
             longitude: null,
             geocodeName: null,
-            geocodeConfidence: null,
             geocodeDiagnostics: {
               reason: "No usable geocoding results were returned for this forest.",
               debug: [
@@ -1454,7 +1431,6 @@ test("settings dialog is visible above the map and interactable by coordinates",
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest Z-Test",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -1527,7 +1503,6 @@ test("warnings dialog is visible above the map and interactable by coordinates",
             latitude: -32.1633,
             longitude: 147.0166,
             geocodeName: "Forest W-Test",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -1596,7 +1571,6 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             latitude: -32.8,
             longitude: 151.7,
             geocodeName: "Forest A",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -1610,7 +1584,6 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             latitude: -32.9,
             longitude: 151.6,
             geocodeName: "Forest B",
-            geocodeConfidence: 0.8,
             facilities: {}
           },
           {
@@ -1624,7 +1597,6 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             latitude: -35.2,
             longitude: 150.5,
             geocodeName: "Forest C",
-            geocodeConfidence: 0.8,
             facilities: {}
           }
         ]
@@ -1751,7 +1723,6 @@ test("hovering each area link in multi-area forest list row highlights correct m
             latitude: -33.0,
             longitude: 151.0,
             geocodeName: "Multi Forest",
-            geocodeConfidence: 0.8,
             facilities: {},
             distanceKm: 10,
             travelDurationMinutes: 15
@@ -1769,7 +1740,6 @@ test("hovering each area link in multi-area forest list row highlights correct m
             latitude: -33.1,
             longitude: 151.1,
             geocodeName: "Alpha Only Forest",
-            geocodeConfidence: 0.8,
             facilities: {},
             distanceKm: 20,
             travelDurationMinutes: 25
@@ -1787,7 +1757,6 @@ test("hovering each area link in multi-area forest list row highlights correct m
             latitude: -33.2,
             longitude: 150.9,
             geocodeName: "Beta Only Forest",
-            geocodeConfidence: 0.8,
             facilities: {},
             distanceKm: 30,
             travelDurationMinutes: 35

@@ -20,7 +20,6 @@ const buildForestPoint = (
   latitude,
   longitude,
   geocodeName: `Forest ${id}`,
-  geocodeConfidence: 0.9,
   facilities: {},
   distanceKm: null,
   travelDurationMinutes: null

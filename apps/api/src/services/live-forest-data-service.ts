@@ -1423,7 +1423,6 @@ export class LiveForestDataService implements ForestDataService {
           latitude: geocode.latitude,
           longitude: geocode.longitude,
           geocodeName: geocode.displayName,
-          geocodeConfidence: geocode.confidence,
           geocodeDiagnostics,
           facilities: facilityMatch.facilities
         });
@@ -1502,7 +1501,6 @@ export class LiveForestDataService implements ForestDataService {
         latitude: geocode.latitude,
         longitude: geocode.longitude,
         geocodeName: geocode.displayName,
-        geocodeConfidence: geocode.confidence,
         geocodeDiagnostics,
         facilities: directoryFacilities
       });
@@ -1635,8 +1633,7 @@ export class LiveForestDataService implements ForestDataService {
         continue;
       }
 
-      // Pick the primary point: prefer the one with the best geocode confidence
-      // (non-null coordinates first, then highest confidence).
+      // Pick the primary point: prefer the one with non-null coordinates.
       const primary = group.reduce((best, candidate) => {
         const bestHasCoordinates = best.latitude !== null && best.longitude !== null;
         const candidateHasCoordinates = candidate.latitude !== null && candidate.longitude !== null;
@@ -1647,14 +1644,6 @@ export class LiveForestDataService implements ForestDataService {
 
         if (!candidateHasCoordinates && bestHasCoordinates) {
           return best;
-        }
-
-        if (
-          typeof candidate.geocodeConfidence === "number" &&
-          (typeof best.geocodeConfidence !== "number" ||
-            candidate.geocodeConfidence > best.geocodeConfidence)
-        ) {
-          return candidate;
         }
 
         return best;

@@ -88,13 +88,15 @@ const resolvePreferredNominatimBaseUrl = (): string => {
 };
 
 /**
- * Round a coordinate to 7 decimal places (~1.1 cm precision).
+ * Round a coordinate to 6 decimal places (~11 cm precision).
  * Different Nominatim instances (local Docker vs public) return coordinates
- * with varying precision. Normalising here prevents noisy diffs in snapshots
- * while retaining more than enough accuracy for forest-level geocoding.
+ * with varying precision. Public Nominatim returns 7dp but local Docker
+ * returns full IEEE 754 doubles, causing last-digit rounding disagreements
+ * at the 7th decimal place. Using 6dp eliminates these while retaining
+ * more than enough accuracy for forest-level geocoding.
  */
 const roundCoordinate = (value: number): number =>
-  Math.round(value * 1e7) / 1e7;
+  Math.round(value * 1e6) / 1e6;
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));

@@ -45,7 +45,6 @@ const buildSnapshot = (overrides: Partial<PersistedSnapshot> = {}): PersistedSna
       latitude: -33.9,
       longitude: 151.1,
       geocodeName: "Forest A",
-      geocodeConfidence: 0.8,
       facilities: {}
     }
   ],
@@ -150,7 +149,6 @@ describe("forests query options", () => {
                 latitude: -33.8,
                 longitude: 151.0,
                 geocodeName: "Banned Forest",
-                geocodeConfidence: 0.9,
                 facilities: {}
               },
               {
@@ -164,7 +162,6 @@ describe("forests query options", () => {
                 latitude: -33.9,
                 longitude: 151.1,
                 geocodeName: "Legal Forest",
-                geocodeConfidence: 0.9,
                 facilities: {}
               }
             ]

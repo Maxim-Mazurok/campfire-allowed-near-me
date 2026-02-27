@@ -808,7 +808,6 @@ describe("LiveForestDataService facilities matching", () => {
           latitude: -33.9,
           longitude: 151.2,
           geocodeName: "Legacy Forest",
-          geocodeConfidence: 0.7
         }
       ]
     };
@@ -931,7 +930,6 @@ describe("LiveForestDataService facilities matching", () => {
           latitude: -33.5,
           longitude: 150.5,
           geocodeName: "Old Forest",
-          geocodeConfidence: 0.6,
           facilities: {
             fishing: false
           }
@@ -1048,7 +1046,6 @@ describe("LiveForestDataService facilities matching", () => {
           latitude: -33.9,
           longitude: 151.2,
           geocodeName: "Mapped State Forest",
-          geocodeConfidence: 0.8,
           geocodeDiagnostics: null,
           facilities: {
             camping: true
@@ -1068,7 +1065,6 @@ describe("LiveForestDataService facilities matching", () => {
           latitude: null,
           longitude: null,
           geocodeName: null,
-          geocodeConfidence: null,
           geocodeDiagnostics: null,
           facilities: {
             camping: true

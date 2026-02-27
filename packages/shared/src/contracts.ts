@@ -130,7 +130,6 @@ export interface ForestPoint {
   latitude: number | null;
   longitude: number | null;
   geocodeName: string | null;
-  geocodeConfidence: number | null;
   geocodeDiagnostics?: ForestGeocodeDiagnostics | null;
   totalFireBanDiagnostics?: ForestTotalFireBanDiagnostics | null;
   facilities: Record<string, FacilityValue>;
