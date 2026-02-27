@@ -238,12 +238,7 @@ export const ForestCardContent = memo(({
                 closeDelay={0}
                 multiline
                 w={300}
-                styles={{ tooltip: {
-                  whiteSpace: "pre-line",
-                  backgroundColor: "var(--mantine-color-body)",
-                  color: "var(--mantine-color-text)",
-                  border: "1px solid var(--mantine-color-default-border)",
-                } }}
+                styles={{ tooltip: { whiteSpace: "pre-line" } }}
               >
                 {closureBadgeUrl ? (
                   <Badge

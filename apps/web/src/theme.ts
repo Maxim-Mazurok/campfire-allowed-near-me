@@ -9,4 +9,15 @@ export const campfireTheme = createTheme({
       light: "orange",
     }),
   },
+  components: {
+    Tooltip: {
+      styles: {
+        tooltip: {
+          backgroundColor: "var(--mantine-color-body)",
+          color: "var(--mantine-color-text)",
+          border: "1px solid var(--mantine-color-default-border)",
+        },
+      },
+    },
+  },
 });
