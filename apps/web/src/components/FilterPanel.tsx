@@ -5,6 +5,7 @@ import { TriStateToggle } from "./TriStateToggle";
 import type { ClosureTagDefinition, FacilityDefinition } from "../lib/api";
 import {
   type BanFilterMode,
+  type BanScopeFilterMode,
   type ClosureStatusFilterMode,
   type TriStateMode
 } from "../lib/app-domain-types";
@@ -21,6 +22,8 @@ export type FilterPanelProps = {
   forestsCount: number;
   solidFuelBanFilterMode: BanFilterMode;
   setSolidFuelBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
+  solidFuelBanScopeFilterMode: BanScopeFilterMode;
+  setSolidFuelBanScopeFilterMode: Dispatch<SetStateAction<BanScopeFilterMode>>;
   totalFireBanFilterMode: BanFilterMode;
   setTotalFireBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
   closureStatusFilterMode: ClosureStatusFilterMode;
@@ -50,6 +53,8 @@ export const FilterPanel = ({
   forestsCount,
   solidFuelBanFilterMode,
   setSolidFuelBanFilterMode,
+  solidFuelBanScopeFilterMode,
+  setSolidFuelBanScopeFilterMode,
   totalFireBanFilterMode,
   setTotalFireBanFilterMode,
   closureStatusFilterMode,
@@ -73,6 +78,9 @@ export const FilterPanel = ({
   toggleFacilityMode,
   setSingleFacilityMode
 }: FilterPanelProps) => {
+  const showBanScopeSubFilter =
+    solidFuelBanFilterMode === "NOT_BANNED" || solidFuelBanFilterMode === "BANNED";
+
   return (
     <aside className="panel filter-panel">
       <Title order={2} size="h4">Filters</Title>
@@ -101,6 +109,25 @@ export const FilterPanel = ({
                 { label: "Unknown", value: "UNKNOWN" },
               ]}
             />
+            {showBanScopeSubFilter ? (
+              <>
+                <Text size="xs" c="dimmed" mt={6} mb={4}>
+                  Where?
+                </Text>
+                <SegmentedControl
+                  aria-label="Solid fuel ban scope filter"
+                  fullWidth
+                  size="xs"
+                  value={solidFuelBanScopeFilterMode}
+                  onChange={(value) => setSolidFuelBanScopeFilterMode(value as BanScopeFilterMode)}
+                  data={[
+                    { label: "Anywhere", value: "ANYWHERE" },
+                    { label: "Camps", value: "CAMPS" },
+                    { label: "Not camps", value: "NOT_CAMPS" },
+                  ]}
+                />
+              </>
+            ) : null}
           </div>
 
           <Divider />

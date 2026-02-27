@@ -12,7 +12,7 @@ const buildForestPoint = (
 ): ForestPoint => ({
   id,
   source: "Forestry Corporation NSW",
-  areas: [{ areaName: "Test Area", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+  areas: [{ areaName: "Test Area", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
   forestName: `Forest ${id}`,
   forestUrl: `https://example.com/forest/${id}`,
   totalFireBanStatus: "NOT_BANNED",

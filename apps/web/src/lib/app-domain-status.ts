@@ -1,5 +1,5 @@
-import type { BanStatus, ClosureImpactLevel, ForestApiResponse } from "./api";
-import type { BanFilterMode } from "./app-domain-types";
+import type { BanStatus, ClosureImpactLevel, ForestApiResponse, SolidFuelBanScope } from "./api";
+import type { BanFilterMode, BanScopeFilterMode } from "./app-domain-types";
 
 export const matchesBanFilter = (
   mode: BanFilterMode,
@@ -12,14 +12,83 @@ export const matchesBanFilter = (
   return status === mode;
 };
 
+/**
+ * Scope-aware filter for solid fuel fire ban.
+ *
+ * The scope sub-filter answers the question "Is fire allowed/banned WHERE?"
+ * relative to designated campgrounds:
+ *
+ * | banStatus   | banScope        | fire in camps? | fire outside camps? |
+ * |-------------|-----------------|----------------|---------------------|
+ * | NOT_BANNED  | ALL             | allowed        | allowed             |
+ * | BANNED      | ALL             | banned         | banned              |
+ * | BANNED      | OUTSIDE_CAMPS   | allowed        | banned              |
+ * | BANNED      | INCLUDING_CAMPS | banned         | banned              |
+ *
+ * When scopeMode is ANYWHERE the scope is ignored (standard behaviour).
+ */
+export const matchesSolidFuelBanFilter = (
+  banMode: BanFilterMode,
+  scopeMode: BanScopeFilterMode,
+  banStatus: BanStatus,
+  banScope: SolidFuelBanScope
+): boolean => {
+  // Primary filter: ALL means show everything regardless of ban or scope
+  if (banMode === "ALL") {
+    return true;
+  }
+
+  // UNKNOWN status: only matched by the "UNKNOWN" primary filter
+  if (banStatus === "UNKNOWN") {
+    return banMode === "UNKNOWN";
+  }
+
+  // When scope sub-filter is ANYWHERE, fall back to simple status check
+  if (scopeMode === "ANYWHERE") {
+    return banStatus === banMode;
+  }
+
+  // Derive whether fire is allowed/banned in the queried location
+  const fireAllowedInCamps = banStatus === "NOT_BANNED" || banScope === "OUTSIDE_CAMPS";
+  const fireAllowedOutsideCamps = banStatus === "NOT_BANNED";
+
+  if (banMode === "NOT_BANNED") {
+    // "Not banned" + "Camps": show forests where fire IS allowed in camps
+    if (scopeMode === "CAMPS") {
+      return fireAllowedInCamps;
+    }
+
+    // "Not banned" + "Not camps": show forests where fire IS allowed outside camps
+    return fireAllowedOutsideCamps;
+  }
+
+  // banMode === "BANNED"
+  // "Banned" + "Camps": show forests where fire IS banned in camps
+  if (scopeMode === "CAMPS") {
+    return !fireAllowedInCamps;
+  }
+
+  // "Banned" + "Not camps": show forests where fire IS banned outside camps
+  return !fireAllowedOutsideCamps;
+};
+
 export const getSolidFuelStatusLabel = (
-  status: BanStatus
+  status: BanStatus,
+  scope?: SolidFuelBanScope
 ): string => {
   if (status === "NOT_BANNED") {
     return "Solid fuel: not banned";
   }
 
   if (status === "BANNED") {
+    if (scope === "OUTSIDE_CAMPS") {
+      return "Solid fuel: banned outside camps";
+    }
+
+    if (scope === "INCLUDING_CAMPS") {
+      return "Solid fuel: banned (incl. camps)";
+    }
+
     return "Solid fuel: banned";
   }
 

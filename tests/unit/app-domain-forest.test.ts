@@ -10,7 +10,7 @@ const buildForest = (
 ): ForestApiResponse["forests"][number] => ({
   id,
   source: "Forestry Corporation NSW",
-  areas: [{ areaName: "Area", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+  areas: [{ areaName: "Area", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
   forestName,
   forestUrl: "https://example.com/forest",
   totalFireBanStatus: "NOT_BANNED",
@@ -100,7 +100,7 @@ describe("compareForestsByListSortOption", () => {
 describe("buildSolidFuelBanDetailsUrl", () => {
   it("builds URL with area name and 'banned' end text for BANNED status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areas: [{ areaName: "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }]
+      areas: [{ areaName: "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }]
     });
 
     expect(url).toBe(
@@ -111,7 +111,7 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("builds URL with area name and 'No ban' end text for NOT_BANNED status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areas: [{ areaName: "Native forests of the North Coast", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }]
+      areas: [{ areaName: "Native forests of the North Coast", areaUrl: "https://example.com/area", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }]
     });
 
     expect(url).toBe(
@@ -122,7 +122,7 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("returns null for UNKNOWN ban status", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areas: [{ areaName: "Not listed on Solid Fuel Fire Ban pages", areaUrl: "https://example.com/area", banStatus: "UNKNOWN", banStatusText: "Unknown" }]
+      areas: [{ areaName: "Not listed on Solid Fuel Fire Ban pages", areaUrl: "https://example.com/area", banStatus: "UNKNOWN", banStatusText: "Unknown", banScope: "ALL" }]
     });
 
     expect(url).toBeNull();
@@ -130,7 +130,7 @@ describe("buildSolidFuelBanDetailsUrl", () => {
 
   it("returns null for empty area name", () => {
     const url = buildSolidFuelBanDetailsUrl({
-      areas: [{ areaName: "  ", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }]
+      areas: [{ areaName: "  ", areaUrl: "https://example.com/area", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }]
     });
 
     expect(url).toBeNull();
@@ -157,8 +157,8 @@ describe("forestBelongsToArea", () => {
     const forest = {
       ...buildForest("forest-1", "Multi-Area Forest", 10, 15),
       areas: [
-        { areaName: "First Area", areaUrl: "https://example.com/first", banStatus: "BANNED" as const, banStatusText: "Banned" },
-        { areaName: "Second Area", areaUrl: "https://example.com/second", banStatus: "NOT_BANNED" as const, banStatusText: "No ban" }
+        { areaName: "First Area", areaUrl: "https://example.com/first", banStatus: "BANNED" as const, banStatusText: "Banned", banScope: "ALL" as const },
+        { areaName: "Second Area", areaUrl: "https://example.com/second", banStatus: "NOT_BANNED" as const, banStatusText: "No ban", banScope: "ALL" as const }
       ]
     };
 

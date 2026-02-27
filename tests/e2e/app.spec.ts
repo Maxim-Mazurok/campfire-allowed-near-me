@@ -138,7 +138,7 @@ test("highlights matching map pin when hovering a forest row", async ({ page }) 
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -189,7 +189,7 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
           {
             id: "forest-green",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest Green",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-green",
             totalFireBanStatus: "NOT_BANNED",
@@ -235,7 +235,7 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
           {
             id: "forest-grey",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest Grey",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-grey",
             totalFireBanStatus: "NOT_BANNED",
@@ -282,7 +282,7 @@ test("keeps map position after panning with popup open", async ({ page }) => {
           {
             id: "forest-pan",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest Pan",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-pan",
             totalFireBanStatus: "NOT_BANNED",
@@ -360,7 +360,7 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -373,7 +373,7 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
           {
             id: "forest-b",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/b", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/b", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest B",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
@@ -451,7 +451,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -467,7 +467,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
           {
             id: "forest-b",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/b", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/b", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest B",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
@@ -483,7 +483,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
           {
             id: "forest-c",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/c", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/c", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest C",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
             totalFireBanStatus: "BANNED",
@@ -637,7 +637,7 @@ test("persists location and filters across reloads", async ({ page }) => {
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -652,7 +652,7 @@ test("persists location and filters across reloads", async ({ page }) => {
           {
             id: "forest-b",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/b", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/b", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest B",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
@@ -736,7 +736,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
           {
             id: "forest-open",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/open", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/open", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Open Forest",
             forestUrl: "https://example.com/open",
             latitude: -33.9,
@@ -764,7 +764,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
           {
             id: "forest-closed",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/closed", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/closed", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Closed Forest",
             forestUrl: "https://example.com/closed",
             latitude: -34.1,
@@ -813,7 +813,7 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
           {
             id: "forest-partial",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/partial", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 2", areaUrl: "https://example.com/partial", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Partial Forest",
             forestUrl: "https://example.com/partial",
             latitude: -34.3,
@@ -1012,7 +1012,7 @@ test("uses current location on page load when permission is already granted", as
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -1058,7 +1058,7 @@ test("keeps nearest spot when non-location response resolves after location resp
           {
             id: "forest-fast",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area Fast", areaUrl: "https://example.com/fast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area Fast", areaUrl: "https://example.com/fast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Fast Forest",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/fast-forest",
             totalFireBanStatus: "NOT_BANNED",
@@ -1113,7 +1113,7 @@ test("shows facilities mismatch and fuzzy-match details in warnings dialog with 
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "South Coast", areaUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "South Coast", areaUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast-of-nsw", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Belangalo State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1187,7 +1187,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
           {
             id: "fire-ban-zulu",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Far North", areaUrl: "https://example.com/far-north", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Far North", areaUrl: "https://example.com/far-north", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Zulu State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1199,7 +1199,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
           {
             id: "fire-ban-alpha",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "South Coast", areaUrl: "https://example.com/south-coast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "South Coast", areaUrl: "https://example.com/south-coast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Alpha State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1211,7 +1211,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
           {
             id: "fire-ban-beta",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Central West", areaUrl: "https://example.com/central-west", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Central West", areaUrl: "https://example.com/central-west", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Beta State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1223,7 +1223,7 @@ test("opens fire-ban forest table from warnings and sorts by forest and region",
           {
             id: "facilities-only-coolangubra",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Unknown (not listed on Solid Fuel Fire Ban pages)", areaUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans", banStatus: "UNKNOWN", banStatusText: "Unknown (not listed on Solid Fuel Fire Ban pages)" }],
+            areas: [{ areaName: "Unknown (not listed on Solid Fuel Fire Ban pages)", areaUrl: "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans", banStatus: "UNKNOWN", banStatusText: "Unknown (not listed on Solid Fuel Fire Ban pages)", banScope: "ALL" }],
             forestName: "Coolangubra State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1289,7 +1289,7 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
           {
             id: "alpha",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "North Region", areaUrl: "https://example.com/north-region", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "North Region", areaUrl: "https://example.com/north-region", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Alpha State Forest",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-state-forest",
             totalFireBanStatus: "NOT_BANNED",
@@ -1308,7 +1308,7 @@ test("shows unmapped forests with diagnostics and fallback links in warnings dia
           {
             id: "bravo",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "South Region", areaUrl: "https://example.com/south-region", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "South Region", areaUrl: "https://example.com/south-region", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Bravo State Forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
@@ -1423,7 +1423,7 @@ test("settings dialog is visible above the map and interactable by coordinates",
           {
             id: "forest-ztest",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest Z-Test",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-ztest",
             totalFireBanStatus: "NOT_BANNED",
@@ -1495,7 +1495,7 @@ test("warnings dialog is visible above the map and interactable by coordinates",
           {
             id: "forest-wtest",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest W-Test",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-wtest",
             totalFireBanStatus: "NOT_BANNED",
@@ -1563,7 +1563,7 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
           {
             id: "forest-a",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest A",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
@@ -1576,7 +1576,7 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
           {
             id: "forest-b",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest B",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
@@ -1589,7 +1589,7 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
           {
             id: "forest-c",
             source: "Forestry Corporation NSW",
-            areas: [{ areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+            areas: [{ areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
             forestName: "Forest C",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
             totalFireBanStatus: "NOT_BANNED",
@@ -1713,8 +1713,8 @@ test("hovering each area link in multi-area forest list row highlights correct m
             id: "multi-forest",
             source: "Forestry Corporation NSW",
             areas: [
-              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
-              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" },
+              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }
             ],
             forestName: "Multi Forest",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/multi-forest",
@@ -1731,7 +1731,7 @@ test("hovering each area link in multi-area forest list row highlights correct m
             id: "alpha-only-forest",
             source: "Forestry Corporation NSW",
             areas: [
-              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+              { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }
             ],
             forestName: "Alpha Only Forest",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-only",
@@ -1748,7 +1748,7 @@ test("hovering each area link in multi-area forest list row highlights correct m
             id: "beta-only-forest",
             source: "Forestry Corporation NSW",
             areas: [
-              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }
+              { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }
             ],
             forestName: "Beta Only Forest",
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/beta-only",

@@ -33,9 +33,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/cache/coordinates.sqlite
-          key: geocoding-cache-${{ runner.os }}-v3-${{ github.run_id }}
+          key: geocoding-cache-${{ runner.os }}-v4-${{ github.run_id }}
           restore-keys: |
-            geocoding-cache-${{ runner.os }}-v3-
+            geocoding-cache-${{ runner.os }}-v4-
           save-always: true
 
       - name: Restore browser profile cache

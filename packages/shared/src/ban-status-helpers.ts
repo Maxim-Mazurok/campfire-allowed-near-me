@@ -1,9 +1,10 @@
-import type { BanStatus, ForestAreaWithForests } from "./contracts.js";
+import type { BanStatus, ForestAreaWithForests, SolidFuelBanScope } from "./contracts.js";
 import { normalizeForestLabel } from "./text-utils.js";
 
 export interface ForestBanSummary {
   status: BanStatus;
   statusText: string;
+  banScope: SolidFuelBanScope;
 }
 
 /**
@@ -38,7 +39,8 @@ export const buildMostRestrictiveBanByForest = (
     )];
     const candidateSummary: ForestBanSummary = {
       status: area.status,
-      statusText: normalizeBanStatusText(area.status, area.statusText)
+      statusText: normalizeBanStatusText(area.status, area.statusText),
+      banScope: area.banScope
     };
     for (const forestName of uniqueForestNames) {
       const key = buildForestStatusKey(forestName);

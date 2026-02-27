@@ -107,6 +107,7 @@ The following high-leverage refactors are done:
 - **Map viewport-aware rendering**: Marker culling to padded viewport bounds, zoom-aware unmatched marker budgets, memoized marker components. Logic extracted to `apps/web/src/lib/map-marker-rendering.ts`.
 - **Memoized selectors**: Filter/sort/warning derivations moved to dedicated modules with stable inputs.
 - **Closure impact enricher**: Rules-based structured impact extraction with optional LLM enrichment layer (activates when Azure OpenAI credentials are provided).
+- **FCNSW ArcGIS polygon-first geocoding**: `ForestGeocoder` now queries the official FCNSW Feature Server as the top-priority provider, demoting Google and Nominatim to fallback-only. Polygon centroids provide authoritative forest locations.
 
 ## Remaining Refactoring
 
@@ -116,7 +117,6 @@ See [`/todo.md`](/todo.md) for the current task list. Key remaining items:
 - Source connector abstraction for multi-source expansion.
 - New data source connectors (NSW Parks, Google reviews).
 - Canonical confidence scoring and explainability payload per forest.
-- FCNSW ArcGIS polygon-first integration and fallback geocoder demotion.
 
 ## Recommended File/Module Direction
 

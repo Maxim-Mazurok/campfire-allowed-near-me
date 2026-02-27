@@ -2,7 +2,7 @@
  * Pipeline Stage 2: Geocode forests.
  *
  * Reads scrape-forestry output, resolves coordinates for each forest name
- * using the geocoding service (Nominatim + Google fallback).
+ * using the geocoding service (FCNSW ArcGIS → Google → Nominatim fallback).
  *
  * Requires: data/pipeline/scrape-forestry.json
  * Produces: data/pipeline/geocoded-forests.json

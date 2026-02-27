@@ -1,4 +1,13 @@
 export type BanStatus = "BANNED" | "NOT_BANNED" | "UNKNOWN";
+
+/**
+ * Where the solid-fuel fire ban applies.
+ * - ALL: the ban (or absence thereof) applies everywhere – no camp-specific distinction.
+ * - OUTSIDE_CAMPS: fires are banned outside designated campgrounds but *permitted* inside.
+ * - INCLUDING_CAMPS: fires are banned in all areas *including* camping areas.
+ */
+export type SolidFuelBanScope = "ALL" | "OUTSIDE_CAMPS" | "INCLUDING_CAMPS";
+
 export type RefreshTaskStatus = "IDLE" | "RUNNING" | "COMPLETED" | "FAILED";
 export type RefreshTaskPhase =
   | "IDLE"
@@ -106,6 +115,7 @@ export interface ForestAreaSummary {
   areaUrl: string;
   status: BanStatus;
   statusText: string;
+  banScope: SolidFuelBanScope;
 }
 
 export interface ForestAreaWithForests extends ForestAreaSummary {
@@ -117,6 +127,7 @@ export interface ForestAreaReference {
   areaUrl: string;
   banStatus: BanStatus;
   banStatusText: string;
+  banScope: SolidFuelBanScope;
 }
 
 export interface ForestPoint {

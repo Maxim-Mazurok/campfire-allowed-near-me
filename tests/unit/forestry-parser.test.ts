@@ -27,6 +27,14 @@ describe("parseBanStatus", () => {
     ).toBe("BANNED");
   });
 
+  it("detects 'fires are banned' phrasing with auxiliary verb", () => {
+    expect(
+      parseBanStatus(
+        "Solid fuel fires are banned outside designated campgrounds."
+      )
+    ).toBe("BANNED");
+  });
+
   it("falls back to unknown", () => {
     expect(parseBanStatus("Weather advisory only")).toBe("UNKNOWN");
   });
@@ -70,6 +78,34 @@ describe("parseMainFireBanPage", () => {
       areaName: "Snowy Region",
       status: "BANNED",
       statusText: "Solid Fuel Fires banned in all plantation areas"
+    });
+  });
+
+  it("spaces block-level children inside a cell instead of merging text", () => {
+    const html = `
+      <table>
+        <tr>
+          <td><a href="/visit/southern-highlands">Southern Highlands around Moss Vale</a></td>
+          <td>
+            <p><strong>Solid fuel fires are banned outside designated campgrounds.</strong></p>
+            <p>Solid fuel fires are permitted inside designated campgrounds.</p>
+          </td>
+          <td><strong>Firewood collection authorisations not available</strong></td>
+        </tr>
+      </table>
+    `;
+
+    const areas = parseMainFireBanPage(
+      html,
+      "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
+    );
+
+    expect(areas).toHaveLength(1);
+    expect(areas[0]).toMatchObject({
+      areaName: "Southern Highlands around Moss Vale",
+      status: "BANNED",
+      statusText:
+        "Solid fuel fires are banned outside designated campgrounds. Solid fuel fires are permitted inside designated campgrounds."
     });
   });
 });

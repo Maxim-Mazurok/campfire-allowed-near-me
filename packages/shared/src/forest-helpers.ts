@@ -1,4 +1,4 @@
-import type { BanStatus, ForestAreaReference } from "./contracts.js";
+import type { BanStatus, ForestAreaReference, SolidFuelBanScope } from "./contracts.js";
 
 const BAN_STATUS_PRIORITY: Record<BanStatus, number> = {
   BANNED: 3,
@@ -62,3 +62,24 @@ export const getForestPrimaryAreaName = (areas: ForestAreaReference[]): string =
  */
 export const getForestPrimaryAreaUrl = (areas: ForestAreaReference[]): string =>
   areas[0]?.areaUrl ?? "";
+
+/**
+ * Returns the ban scope from the area with the most restrictive ban.
+ * Falls back to "ALL" when the areas array is empty.
+ */
+export const getForestBanScope = (areas: ForestAreaReference[]): SolidFuelBanScope => {
+  if (areas.length === 0) {
+    return "ALL";
+  }
+
+  let worstArea = areas[0]!;
+
+  for (let i = 1; i < areas.length; i++) {
+    const candidate = areas[i]!;
+    if (BAN_STATUS_PRIORITY[candidate.banStatus] > BAN_STATUS_PRIORITY[worstArea.banStatus]) {
+      worstArea = candidate;
+    }
+  }
+
+  return worstArea.banScope;
+};

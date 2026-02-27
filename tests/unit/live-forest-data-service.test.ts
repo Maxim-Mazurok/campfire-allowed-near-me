@@ -85,6 +85,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/southern-highlands",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Belangalo State Forest", "Completely Different Forest"]
         }
       ],
@@ -187,6 +188,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/southern-highlands",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Belangalo State Forest"]
         }
       ],
@@ -243,6 +245,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/cypress-pine-forests",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Alpha State Forest", "Brewombenia State Forest"]
         }
       ],
@@ -314,6 +317,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/south-coast",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Forest A State Forest", "Forest B State Forest"]
         }
       ],
@@ -494,6 +498,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/bombala",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Bondi State Forest", "Bondo State Forest"]
         }
       ],
@@ -562,6 +567,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/north-coast",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Chichester State Forest"]
         }
       ],
@@ -655,6 +661,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/state-forests-of-the-north-coast-of-nsw",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Carwong State Forest", "Nymboida State Forest"]
         },
         {
@@ -662,6 +669,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/pine-forests-of-north-coast",
           status: "BANNED",
           statusText: "Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Carwong State Forest"]
         }
       ],
@@ -824,6 +832,7 @@ describe("LiveForestDataService facilities matching", () => {
               areaUrl: "https://example.com/legacy",
               status: "NOT_BANNED",
               statusText: "No Solid Fuel Fire Ban",
+              banScope: "ALL" as const,
               forests: ["Legacy Forest"]
             }
           ],
@@ -949,6 +958,7 @@ describe("LiveForestDataService facilities matching", () => {
               areaUrl: "https://example.com/new",
               status: "NOT_BANNED",
               statusText: "No Solid Fuel Fire Ban",
+              banScope: "ALL" as const,
               forests: ["New State Forest"]
             }
           ],
@@ -1085,6 +1095,7 @@ describe("LiveForestDataService facilities matching", () => {
               areaUrl: "https://example.com/legacy-area",
               status: "NOT_BANNED",
               statusText: "No Solid Fuel Fire Ban",
+              banScope: "ALL" as const,
               forests: ["Mapped State Forest", "Unmapped State Forest"]
             }
           ],
@@ -1211,6 +1222,7 @@ describe("LiveForestDataService facilities matching", () => {
           areaUrl: "https://example.com/west-region",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Unmapped State Forest"]
         }
       ],
@@ -1307,6 +1319,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
           areaUrl: "https://example.com/pine-tumut",
           status: "BANNED",
           statusText: "Solid Fuel Fires banned",
+          banScope: "ALL" as const,
           forests: ["Bago State Forest", "Other Pine Forest"]
         },
         {
@@ -1314,6 +1327,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
           areaUrl: "https://example.com/bago-bondo",
           status: "BANNED",
           statusText: "Solid fuel fires banned",
+          banScope: "ALL" as const,
           forests: ["Bago State Forest", "Bondo State Forest"]
         }
       ],
@@ -1402,6 +1416,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
           areaUrl: "https://example.com/area-ban",
           status: "BANNED",
           statusText: "Solid Fuel Fires banned",
+          banScope: "ALL" as const,
           forests: ["Disputed Forest"]
         },
         {
@@ -1409,6 +1424,7 @@ describe("LiveForestDataService multi-area forest deduplication", () => {
           areaUrl: "https://example.com/area-no-ban",
           status: "NOT_BANNED",
           statusText: "No ban",
+          banScope: "ALL" as const,
           forests: ["Disputed Forest"]
         }
       ],

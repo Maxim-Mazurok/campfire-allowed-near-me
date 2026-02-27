@@ -32,6 +32,7 @@ export type {
   RefreshTaskProgress,
   RefreshTaskState,
   RefreshTaskStatus,
+  SolidFuelBanScope,
   TotalFireBanLookupCode,
   UserLocation
 } from "../../../../packages/shared/src/contracts.js";
@@ -39,6 +40,7 @@ export type {
 export {
   getForestBanStatus,
   getForestBanStatusText,
+  getForestBanScope,
   getForestPrimaryAreaName,
   getForestPrimaryAreaUrl
 } from "../../../../packages/shared/src/forest-helpers.js";

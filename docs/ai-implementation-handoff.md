@@ -42,15 +42,18 @@ These are continuous standards (not a one-time phase plan):
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
 
-### Forest geometry source preference (decision 2026-02-25)
+### Forest geometry source preference (implemented 2026-02-27)
 
-Use FCNSW ArcGIS dedicated-state-forest geometry as the preferred source for forest location and extent.
+FCNSW ArcGIS dedicated-state-forest geometry is the primary source for forest location and extent.
 
-**Decision:** FCNSW polygon-first lookup is now the default architecture direction:
-- Query FCNSW FeatureServer by `SFName` (fuzzy match) and request geometry (`returnGeometry=true`, `outSR=4326`).
-- Persist FCNSW identifiers/signals (for example `SFNo`, normalized `SFName`) in snapshot data where available.
+**Implementation:** `ForestGeocoder.lookupFcnswArcgis()` queries the Feature Server first for every forest:
+- Query FCNSW FeatureServer by `SFName` (fuzzy `LIKE` match) and request geometry (`returnGeometry=true`, `outSR=4326`).
+- Compute polygon centroid from exterior ring for point-based operations.
+- Display name includes `SFName` and `SFNo` (e.g. "BELANGLO State Forest (SF123)").
+- When multiple features match, prefer exact `SFName` match; otherwise report ambiguity and fall through.
+- Both fire-ban name and directory-name variants are tried against FCNSW before falling back.
 - Use fallback geocoding (Google, then Nominatim) only when FCNSW matching is unresolved.
-- Keep source evidence in diagnostics so geospatial provenance is visible.
+- Provider is tracked as `FCNSW_ARCGIS` in diagnostics and cache.
 
 ### Area names are NOT used for geocoding (decision 2026-02-24)
 

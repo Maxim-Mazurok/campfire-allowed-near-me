@@ -21,7 +21,7 @@ const buildForest = (
 ): ForestApiResponse["forests"][number] => ({
   id,
   source: "Forestry Corporation NSW",
-  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
   forestName,
   forestUrl: `https://example.com/forests/${id}`,
   totalFireBanStatus: "NOT_BANNED",
@@ -96,8 +96,8 @@ describe("ForestListPanel hover behavior", () => {
     const multiAreaForest: ForestApiResponse["forests"][number] = {
       ...buildForest("forest-multi", "Multi Area Forest"),
       areas: [
-        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
-        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }
+        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" },
+        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }
       ]
     };
 

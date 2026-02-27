@@ -2,7 +2,7 @@ import { chmodSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-export type GeocodeProvider = "GOOGLE_GEOCODING" | "OSM_NOMINATIM";
+export type GeocodeProvider = "FCNSW_ARCGIS" | "GOOGLE_GEOCODING" | "OSM_NOMINATIM";
 
 interface GeocodeHit {
   latitude: number;
@@ -19,6 +19,84 @@ interface NominatimRow {
   display_name: string;
   importance?: number;
 }
+
+const FCNSW_ARCGIS_QUERY_URL =
+  "https://services2.arcgis.com/iCBB4zKDwkw2iwDD/arcgis/rest/services/NSW_Dedicated_State_Forests/FeatureServer/0/query";
+
+interface FcnswArcgisFeatureAttributes {
+  SFName: string;
+  SFNo: number;
+  [key: string]: unknown;
+}
+
+interface FcnswArcgisRing {
+  rings: number[][][];
+}
+
+interface FcnswArcgisFeature {
+  attributes: FcnswArcgisFeatureAttributes;
+  geometry?: FcnswArcgisRing;
+}
+
+interface FcnswArcgisQueryResponse {
+  features?: FcnswArcgisFeature[];
+  error?: { code: number; message: string };
+}
+
+/**
+ * Compute the centroid of a polygon defined by its rings.
+ * Uses the signed-area formula for the exterior ring (first ring).
+ * Falls back to a simple bounding-box center if the area is degenerate.
+ */
+const computePolygonCentroid = (
+  rings: number[][][]
+): { latitude: number; longitude: number } | null => {
+  const exteriorRing = rings[0];
+  if (!exteriorRing || exteriorRing.length < 3) {
+    return null;
+  }
+
+  let signedArea = 0;
+  let centroidX = 0;
+  let centroidY = 0;
+
+  for (let i = 0; i < exteriorRing.length - 1; i += 1) {
+    const [x0, y0] = exteriorRing[i]!;
+    const [x1, y1] = exteriorRing[i + 1]!;
+    const crossProduct = x0! * y1! - x1! * y0!;
+    signedArea += crossProduct;
+    centroidX += (x0! + x1!) * crossProduct;
+    centroidY += (y0! + y1!) * crossProduct;
+  }
+
+  signedArea /= 2;
+
+  if (Math.abs(signedArea) < 1e-10) {
+    // Degenerate polygon — fall back to bounding-box center.
+    let minimumX = Infinity;
+    let maximumX = -Infinity;
+    let minimumY = Infinity;
+    let maximumY = -Infinity;
+    for (const [x, y] of exteriorRing) {
+      if (x! < minimumX) minimumX = x!;
+      if (x! > maximumX) maximumX = x!;
+      if (y! < minimumY) minimumY = y!;
+      if (y! > maximumY) maximumY = y!;
+    }
+    return {
+      latitude: roundCoordinate((minimumY + maximumY) / 2),
+      longitude: roundCoordinate((minimumX + maximumX) / 2)
+    };
+  }
+
+  centroidX /= 6 * signedArea;
+  centroidY /= 6 * signedArea;
+
+  return {
+    latitude: roundCoordinate(centroidY),
+    longitude: roundCoordinate(centroidX)
+  };
+};
 
 interface GoogleGeocodingResult {
   formatted_address?: string;
@@ -44,7 +122,8 @@ export type GeocodeLookupOutcome =
   | "REQUEST_FAILED"
   | "EMPTY_RESULT"
   | "INVALID_COORDINATES"
-  | "GOOGLE_API_KEY_MISSING";
+  | "GOOGLE_API_KEY_MISSING"
+  | "FCNSW_MULTIPLE_MATCHES";
 
 export interface GeocodeLookupAttempt {
   provider: GeocodeProvider | "CACHE";
@@ -514,10 +593,12 @@ export class ForestGeocoder {
 
     // Normalise legacy "GOOGLE_PLACES" cache rows written before the switch to
     // the Geocoding API.  Safe to remove once all caches have been regenerated.
-    const provider =
-      row.provider === "GOOGLE_GEOCODING" || row.provider === "GOOGLE_PLACES"
-        ? "GOOGLE_GEOCODING"
-        : "OSM_NOMINATIM";
+    const provider: GeocodeProvider =
+      row.provider === "FCNSW_ARCGIS"
+        ? "FCNSW_ARCGIS"
+        : row.provider === "GOOGLE_GEOCODING" || row.provider === "GOOGLE_PLACES"
+          ? "GOOGLE_GEOCODING"
+          : "OSM_NOMINATIM";
 
     return {
       latitude: roundCoordinate(row.latitude),
@@ -614,6 +695,233 @@ export class ForestGeocoder {
     return {
       response: null,
       error: lastError
+    };
+  }
+
+  /**
+   * Strip common suffixes like "State Forest" from a forest name to produce
+   * a core name suitable for FCNSW SFName LIKE matching.
+   */
+  private static extractCoreName(forestName: string): string {
+    return forestName
+      .replace(/\bstate\s+forest\b/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  /**
+   * Query the FCNSW ArcGIS Feature Server for a dedicated state forest by name.
+   * Returns the polygon centroid when geometry is available.
+   *
+   * FCNSW stores names in UPPERCASE without "State Forest" (e.g. "BELANGLO").
+   * We strip "State Forest" from our query and do a case-insensitive LIKE search.
+   */
+  private async lookupFcnswArcgis(
+    forestName: string,
+    aliasKey: string | null,
+    cacheKey: string
+  ): Promise<{ hit: GeocodeHit | null; attempt: GeocodeLookupAttempt }> {
+    const coreName = ForestGeocoder.extractCoreName(forestName).toUpperCase();
+
+    if (!coreName) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "EMPTY_RESULT",
+          { errorMessage: "Core forest name is empty after stripping suffixes" }
+        )
+      };
+    }
+
+    const queryUrl = new URL(FCNSW_ARCGIS_QUERY_URL);
+    queryUrl.searchParams.set("where", `UPPER(SFName) LIKE '%${coreName}%'`);
+    queryUrl.searchParams.set("outFields", "SFName,SFNo");
+    queryUrl.searchParams.set("returnGeometry", "true");
+    queryUrl.searchParams.set("outSR", "4326");
+    queryUrl.searchParams.set("f", "json");
+
+    const arcgisRequest = await this.runWithRetries(() =>
+      this.fetchWithTimeout(queryUrl.toString(), {
+        headers: { Accept: "application/json" }
+      })
+    );
+
+    if (!arcgisRequest.response) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "REQUEST_FAILED",
+          { errorMessage: arcgisRequest.error }
+        )
+      };
+    }
+
+    const response = arcgisRequest.response;
+
+    if (!response.ok) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "HTTP_ERROR",
+          { httpStatus: response.status }
+        )
+      };
+    }
+
+    let arcgisResponse: FcnswArcgisQueryResponse;
+    try {
+      arcgisResponse = (await response.json()) as FcnswArcgisQueryResponse;
+    } catch (error) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "REQUEST_FAILED",
+          { errorMessage: `Invalid JSON response: ${toErrorMessage(error)}` }
+        )
+      };
+    }
+
+    if (arcgisResponse.error) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "HTTP_ERROR",
+          { errorMessage: `ArcGIS error ${arcgisResponse.error.code}: ${arcgisResponse.error.message}` }
+        )
+      };
+    }
+
+    const features = arcgisResponse.features ?? [];
+
+    if (features.length === 0) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "EMPTY_RESULT",
+          { resultCount: 0 }
+        )
+      };
+    }
+
+    // When multiple results match, prefer an exact name match over a partial
+    // LIKE hit. If no exact match exists, report ambiguity so fallback
+    // geocoders can attempt resolution.
+    let selectedFeature = features[0]!;
+    if (features.length > 1) {
+      const exactMatch = features.find(
+        (feature) => feature.attributes.SFName.toUpperCase() === coreName
+      );
+      if (exactMatch) {
+        selectedFeature = exactMatch;
+      } else {
+        return {
+          hit: null,
+          attempt: this.buildAttempt(
+            "FCNSW_ARCGIS",
+            forestName,
+            aliasKey,
+            cacheKey,
+            "FCNSW_MULTIPLE_MATCHES",
+            {
+              resultCount: features.length,
+              errorMessage: `Ambiguous: ${features.length} forests match "${coreName}" — ${features.map((feature) => feature.attributes.SFName).join(", ")}`
+            }
+          )
+        };
+      }
+    }
+
+    const geometry = selectedFeature.geometry;
+    if (!geometry?.rings?.length) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "INVALID_COORDINATES",
+          { resultCount: features.length, errorMessage: "Feature has no geometry rings" }
+        )
+      };
+    }
+
+    const centroid = computePolygonCentroid(geometry.rings);
+    if (!centroid) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "INVALID_COORDINATES",
+          { resultCount: features.length, errorMessage: "Unable to compute polygon centroid" }
+        )
+      };
+    }
+
+    if (!Number.isFinite(centroid.latitude) || !Number.isFinite(centroid.longitude)) {
+      return {
+        hit: null,
+        attempt: this.buildAttempt(
+          "FCNSW_ARCGIS",
+          forestName,
+          aliasKey,
+          cacheKey,
+          "INVALID_COORDINATES",
+          { resultCount: features.length }
+        )
+      };
+    }
+
+    const sfName = selectedFeature.attributes.SFName;
+    const sfNumber = selectedFeature.attributes.SFNo;
+    const displayName = `${sfName} State Forest (SF${sfNumber})`;
+
+    const hit: GeocodeHit = {
+      latitude: centroid.latitude,
+      longitude: centroid.longitude,
+      displayName,
+      importance: 1,
+      provider: "FCNSW_ARCGIS",
+      updatedAt: new Date().toISOString()
+    };
+
+    return {
+      hit,
+      attempt: this.buildAttempt(
+        "FCNSW_ARCGIS",
+        forestName,
+        aliasKey,
+        cacheKey,
+        "LOOKUP_SUCCESS",
+        { resultCount: features.length }
+      )
     };
   }
 
@@ -1130,6 +1438,48 @@ export class ForestGeocoder {
       this.deleteCached(aliasKeyNormalized);
     }
 
+    // -----------------------------------------------------------------------
+    // FCNSW ArcGIS is the preferred source of truth for NSW state forests.
+    // Try the official feature server first; if it succeeds, skip Google and
+    // Nominatim entirely.
+    // -----------------------------------------------------------------------
+    const fcnswNames = [
+      forestNameWithoutStateForest,
+      ...(directoryNameWithoutStateForest &&
+        directoryNameWithoutStateForest.toLowerCase() !== forestNameWithoutStateForest.toLowerCase()
+          ? [directoryNameWithoutStateForest]
+          : [])
+    ].filter(Boolean);
+
+    for (const fcnswCandidate of fcnswNames) {
+      const fcnswCacheKey = `query:fcnsw:${this.normalizeKey(fcnswCandidate)}`;
+      const fcnswCached = this.getCached(fcnswCacheKey);
+
+      if (fcnswCached && fcnswCached.provider === "FCNSW_ARCGIS") {
+        this.putCached(aliasKeyNormalized, fcnswCached);
+        return this.toGeocodeResponse(
+          fcnswCached,
+          [this.buildAttempt("CACHE", fcnswCandidate, aliasKeyNormalized, fcnswCacheKey, "CACHE_HIT")],
+        );
+      }
+
+      const fcnswLookup = await this.lookupFcnswArcgis(
+        fcnswCandidate,
+        aliasKeyNormalized,
+        fcnswCacheKey
+      );
+      attempts.push(fcnswLookup.attempt);
+
+      if (fcnswLookup.hit) {
+        this.putCached(fcnswCacheKey, fcnswLookup.hit);
+        this.putCached(aliasKeyNormalized, fcnswLookup.hit);
+        return this.toGeocodeResponse(fcnswLookup.hit, attempts);
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // FCNSW lookup did not resolve — fall back to Google + Nominatim cascade.
+    // -----------------------------------------------------------------------
     for (const query of uniqueCandidates) {
       const geocodeResult = await this.geocodeQuery(query);
       attempts.push(...(geocodeResult.attempts ?? []));

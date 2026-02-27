@@ -111,7 +111,7 @@ const buildForestPoint = ({
 }): ForestPoint => ({
   id,
   source: "Forestry Corporation NSW",
-  areas: [{ areaName, areaUrl, banStatus, banStatusText: banStatus === "BANNED" ? "Solid Fuel Fire Ban" : "No Solid Fuel Fire Ban" }],
+  areas: [{ areaName, areaUrl, banStatus, banStatusText: banStatus === "BANNED" ? "Solid Fuel Fire Ban" : "No Solid Fuel Fire Ban", banScope: "ALL" }],
   forestName,
   forestUrl: `https://example.com/forests/${id}`,
   totalFireBanStatus: "NOT_BANNED",
@@ -326,8 +326,8 @@ describe("MapView marker popup interactions", () => {
         banStatus: "NOT_BANNED"
       }),
       areas: [
-        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
-        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }
+        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" },
+        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }
       ]
     };
 
@@ -456,8 +456,8 @@ describe("MapView marker popup interactions", () => {
         banStatus: "NOT_BANNED"
       }),
       areas: [
-        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" },
-        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }
+        { areaName: "Hunter Area", areaUrl: "https://example.com/hunter", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" },
+        { areaName: "South Coast Area", areaUrl: "https://example.com/south-coast", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }
       ]
     };
 

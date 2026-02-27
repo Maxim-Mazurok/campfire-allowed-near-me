@@ -14,7 +14,7 @@ afterEach(() => {
 const buildForest = (overrides?: Partial<ForestApiResponse["forests"][number]>): ForestApiResponse["forests"][number] => ({
   id: "forest-a",
   source: "Forestry Corporation NSW",
-  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+  areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
   forestName: "Forest A",
   forestUrl: "https://example.com/forest-a",
   totalFireBanStatus: "NOT_BANNED",
@@ -388,7 +388,7 @@ describe("ForestCardContent", () => {
   });
 
   it("renders status badges with light variant", () => {
-    const forest = buildForest({ areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }], totalFireBanStatus: "BANNED" });
+    const forest = buildForest({ areas: [{ areaName: "Area 1", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" as const }], totalFireBanStatus: "BANNED" });
 
     const html = renderToStaticMarkupWithMantine(
       <ForestCardContent forest={forest} availableFacilities={[]} avoidTolls={true} />
@@ -415,7 +415,7 @@ describe("ForestCardContent", () => {
 
   it("renders area name with descriptive title attribute", () => {
     const forest = buildForest({
-      areas: [{ areaName: "Manning", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }]
+      areas: [{ areaName: "Manning", areaUrl: "https://example.com/area-1", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }]
     });
 
     const html = renderToStaticMarkupWithMantine(
@@ -428,8 +428,8 @@ describe("ForestCardContent", () => {
   it("renders multiple areas for a multi-area forest", () => {
     const forest = buildForest({
       areas: [
-        { areaName: "Pine Forests of Tumut", areaUrl: "https://example.com/pine-tumut", banStatus: "BANNED", banStatusText: "Banned" },
-        { areaName: "Native Forests of Bago", areaUrl: "https://example.com/native-bago", banStatus: "NOT_BANNED", banStatusText: "No ban" }
+        { areaName: "Pine Forests of Tumut", areaUrl: "https://example.com/pine-tumut", banStatus: "BANNED", banStatusText: "Banned", banScope: "ALL" },
+        { areaName: "Native Forests of Bago", areaUrl: "https://example.com/native-bago", banStatus: "NOT_BANNED", banStatusText: "No ban", banScope: "ALL" }
       ]
     });
 
@@ -447,8 +447,8 @@ describe("ForestCardContent", () => {
     const onHoveredAreaNameChange = vi.fn();
     const forest = buildForest({
       areas: [
-        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban" },
-        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned" }
+        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban", banScope: "ALL" },
+        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned", banScope: "ALL" }
       ]
     });
 
@@ -480,8 +480,8 @@ describe("ForestCardContent", () => {
   it("updates real React state correctly when hovering each area of a multi-area forest", () => {
     const forest = buildForest({
       areas: [
-        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban" },
-        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned" }
+        { areaName: "Alpha Area", areaUrl: "https://example.com/alpha", banStatus: "NOT_BANNED", banStatusText: "No ban", banScope: "ALL" },
+        { areaName: "Beta Area", areaUrl: "https://example.com/beta", banStatus: "BANNED", banStatusText: "Banned", banScope: "ALL" }
       ]
     });
 

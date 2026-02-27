@@ -37,6 +37,7 @@ describe("LiveForestDataService single-flight refresh", () => {
           areaUrl: "https://example.com/south-coast",
           status: "NOT_BANNED",
           statusText: "No Solid Fuel Fire Ban",
+          banScope: "ALL" as const,
           forests: ["Badja State Forest"]
         }
       ],

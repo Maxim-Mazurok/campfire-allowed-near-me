@@ -50,6 +50,11 @@ Before finishing any task that includes code changes, run **`npm test`** (which 
 	- Preserve existing container data and start the existing container if it is stopped.
 	- Recreate only when explicitly requested by the user in the current session.
 
+### Geocoding cache versioning
+- The GitHub Actions workflow (`update-forest-data.yml`) uses a versioned cache key for geocoding results (e.g. `geocoding-cache-<os>-v4-<run>`).
+- **Whenever geocoding logic changes** (new provider, changed priority, different centroid algorithm, modified query patterns, etc.), **bump the version number** in the cache key (e.g. `v4` → `v5`) so CI discards stale cached coordinates and rebuilds from scratch.
+- Also clear the local cache (`rm -f data/cache/coordinates.sqlite`) and regenerate the snapshot locally to verify the new geocoding behavior.
+
 ## Scraping and proxy
 - Production scraping uses three methods depending on target (see `docs/scraping-findings.md`):
 	- Forestry Corp (Cloudflare): `playwright-extra` + stealth + Decodo AU residential proxy + headed mode.

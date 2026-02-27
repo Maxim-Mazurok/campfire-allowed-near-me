@@ -54,3 +54,11 @@ After building all per-area forest points (including geocoding, facilities, clos
 - Combines the `areas` arrays from all duplicates.
 - Keeps geocode, facilities, closures, and total fire ban data from the entry with the best geocode confidence (preferring non-null coordinates).
 - Generates an `id` based solely on the forest name (no area slug) to ensure uniqueness.
+
+### Geocoding provider priority
+
+Forest coordinates are resolved in a provider cascade:
+
+1. **FCNSW ArcGIS** (primary) — queries the official NSW Dedicated State Forests Feature Server by `SFName`. Returns polygon-centroid coordinates from authoritative surveyed boundaries. Confidence = 1.0.
+2. **Google Geocoding** (fallback) — used when FCNSW returns no match or is ambiguous. Budget-limited per run. Street-level results are rejected.
+3. **OSM Nominatim** (fallback) — used when Google also fails. Tries local Docker instance first, then public nominatim.openstreetmap.org.

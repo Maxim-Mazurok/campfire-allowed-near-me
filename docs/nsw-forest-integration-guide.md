@@ -52,10 +52,14 @@ Example endpoint:
 - Google Geocoding and Nominatim are fallback-only for unresolved or missing FCNSW matches.
 - Any new geocoding/ranking logic must preserve FCNSW-first behavior.
 
-## Implementation checklist
+## Implementation status
 
-1. Query FCNSW ArcGIS by forest name and collect polygon + centroid signals.
-2. Store canonical FCNSW identifiers (`SFNo`, normalized `SFName`) in snapshot records.
-3. Use polygon centroid only when needed for point-based operations.
-4. Apply fallback geocoders only when FCNSW lookup fails or is ambiguous.
-5. Track match source in diagnostics (for example, `FCNSW_POLYGON`, `GOOGLE_FALLBACK`, `NOMINATIM_FALLBACK`).
+All items below are implemented:
+
+1. **FCNSW ArcGIS query** — `ForestGeocoder.lookupFcnswArcgis()` queries the Feature Server by `SFName` with `LIKE` matching and `outSR=4326`.
+2. **Polygon centroid** — `computePolygonCentroid()` derives the signed-area centroid of the exterior ring returned by ArcGIS.
+3. **Canonical identifiers** — display name includes `SFName` and `SFNo` (e.g. "BELANGLO State Forest (SF123)").
+4. **Provider cascade** — FCNSW is attempted first; Google Geocoding and Nominatim are fallback-only.
+5. **Diagnostics tracking** — provider field records `FCNSW_ARCGIS`, `GOOGLE_GEOCODING`, or `OSM_NOMINATIM`.
+6. **Disambiguation** — when multiple forests match a LIKE query, exact `SFName` match is preferred; otherwise the lookup is marked ambiguous and falls through.
+7. **Directory name variant** — if the fire-ban name differs from the facility directory name, both variants are tried against FCNSW before falling back.

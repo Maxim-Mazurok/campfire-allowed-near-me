@@ -16,6 +16,7 @@ import {
 } from "./lib/forests-query";
 import {
   type BanFilterMode,
+  type BanScopeFilterMode,
   type ClosureStatusFilterMode,
   type FireBanForestSortColumn,
   type ForestListSortOption,
@@ -27,12 +28,13 @@ import {
   buildFacilitiesForestUrl,
   buildTotalFireBanDetailsUrl
 } from "./lib/app-domain-forest";
-import { getForestBanStatus } from "./lib/api";
+import { getForestBanStatus, getForestBanScope } from "./lib/api";
 import {
   getForestClosureStatus,
   getForestImpactSummary,
   isImpactWarning,
-  matchesBanFilter
+  matchesBanFilter,
+  matchesSolidFuelBanFilter
 } from "./lib/app-domain-status";
 import {
   readUserPreferences,
@@ -64,6 +66,9 @@ export const App = () => {
     useState<SortDirection>("asc");
   const [solidFuelBanFilterMode, setSolidFuelBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().solidFuelBanFilterMode ?? "ALL"
+  );
+  const [solidFuelBanScopeFilterMode, setSolidFuelBanScopeFilterMode] = useState<BanScopeFilterMode>(
+    () => getInitialPreferences().solidFuelBanScopeFilterMode ?? "ANYWHERE"
   );
   const [totalFireBanFilterMode, setTotalFireBanFilterMode] = useState<BanFilterMode>(
     () => getInitialPreferences().totalFireBanFilterMode ?? "ALL"
@@ -164,6 +169,7 @@ export const App = () => {
   useEffect(() => {
     writeUserPreferences({
       solidFuelBanFilterMode,
+      solidFuelBanScopeFilterMode,
       totalFireBanFilterMode,
       closureStatusFilterMode,
       hasNoticesFilterMode,
@@ -178,6 +184,7 @@ export const App = () => {
     });
   }, [
     solidFuelBanFilterMode,
+    solidFuelBanScopeFilterMode,
     totalFireBanFilterMode,
     closureStatusFilterMode,
     hasNoticesFilterMode,
@@ -244,7 +251,7 @@ export const App = () => {
       const hasAccess4wdImpactWarning = isImpactWarning(impactSummary.access4wdImpact);
       const hasNotices = (forest.closureNotices ?? []).length > 0;
 
-      if (!matchesBanFilter(solidFuelBanFilterMode, getForestBanStatus(forest.areas))) {
+      if (!matchesSolidFuelBanFilter(solidFuelBanFilterMode, solidFuelBanScopeFilterMode, getForestBanStatus(forest.areas), getForestBanScope(forest.areas))) {
         return false;
       }
 
@@ -342,6 +349,7 @@ export const App = () => {
     impactAccess4wdFilterMode,
     impactCampingFilterMode,
     solidFuelBanFilterMode,
+    solidFuelBanScopeFilterMode,
     totalFireBanFilterMode
   ]);
 
@@ -465,6 +473,8 @@ export const App = () => {
           forestsCount={forests.length}
           solidFuelBanFilterMode={solidFuelBanFilterMode}
           setSolidFuelBanFilterMode={setSolidFuelBanFilterMode}
+          solidFuelBanScopeFilterMode={solidFuelBanScopeFilterMode}
+          setSolidFuelBanScopeFilterMode={setSolidFuelBanScopeFilterMode}
           totalFireBanFilterMode={totalFireBanFilterMode}
           setTotalFireBanFilterMode={setTotalFireBanFilterMode}
           closureStatusFilterMode={closureStatusFilterMode}

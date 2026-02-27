@@ -31,10 +31,17 @@ describeLiveNominatim("live Nominatim integration", () => {
         "Belanglo State Forest"
       );
 
-      expect(forestResult.provider).toBe("OSM_NOMINATIM");
+      // FCNSW ArcGIS is preferred; Nominatim is only used as fallback
+      expect(["FCNSW_ARCGIS", "OSM_NOMINATIM"]).toContain(forestResult.provider);
       expect(forestResult.latitude).not.toBeNull();
       expect(forestResult.longitude).not.toBeNull();
-      expect(forestResult.displayName).toContain("New South Wales");
+
+      // FCNSW display names use UPPERCASE + SF number format rather than full address
+      if (forestResult.provider === "FCNSW_ARCGIS") {
+        expect(forestResult.displayName).toContain("BELANGLO");
+      } else {
+        expect(forestResult.displayName).toContain("New South Wales");
+      }
 
       const forestLatitude = forestResult.latitude as number;
       const forestLongitude = forestResult.longitude as number;
@@ -80,9 +87,10 @@ describeLiveNominatim("live Nominatim integration", () => {
       ).toBe(true);
 
       // Brewombenia may or may not be in the local Nominatim database.
+      // FCNSW ArcGIS may also resolve it (as BEREWOMBENIA).
       // If resolved, verify coordinates are within NSW bounds.
       if (brewombeniaResult.latitude !== null) {
-        expect(brewombeniaResult.provider).toBe("OSM_NOMINATIM");
+        expect(["FCNSW_ARCGIS", "OSM_NOMINATIM"]).toContain(brewombeniaResult.provider);
         expect(brewombeniaResult.latitude as number).toBeGreaterThan(-38);
         expect(brewombeniaResult.latitude as number).toBeLessThan(-28);
         expect(brewombeniaResult.longitude as number).toBeGreaterThan(140);

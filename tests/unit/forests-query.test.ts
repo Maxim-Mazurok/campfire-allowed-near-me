@@ -37,7 +37,7 @@ const buildSnapshot = (overrides: Partial<PersistedSnapshot> = {}): PersistedSna
     {
       id: "forest-a",
       source: "Forestry Corporation NSW",
-      areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+      areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
       forestName: "Forest A",
       forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
       totalFireBanStatus: "NOT_BANNED",
@@ -141,7 +141,7 @@ describe("forests query options", () => {
               {
                 id: "forest-banned",
                 source: "Forestry Corporation NSW",
-                areas: [{ areaName: "Area 1", areaUrl: "https://example.com/banned", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban" }],
+                areas: [{ areaName: "Area 1", areaUrl: "https://example.com/banned", banStatus: "BANNED", banStatusText: "Solid Fuel Fire Ban", banScope: "ALL" }],
                 forestName: "Banned Forest",
                 forestUrl: "https://www.forestrycorporation.com.au/visit/forests/banned",
                 totalFireBanStatus: "NOT_BANNED",
@@ -154,7 +154,7 @@ describe("forests query options", () => {
               {
                 id: "forest-legal",
                 source: "Forestry Corporation NSW",
-                areas: [{ areaName: "Area 2", areaUrl: "https://example.com/legal", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban" }],
+                areas: [{ areaName: "Area 2", areaUrl: "https://example.com/legal", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
                 forestName: "Legal Forest",
                 forestUrl: "https://www.forestrycorporation.com.au/visit/forests/legal",
                 totalFireBanStatus: "NOT_BANNED",

@@ -271,7 +271,8 @@ const main = async () => {
           areaName: area.areaName,
           areaUrl: area.areaUrl,
           banStatus: area.status,
-          banStatusText: normalizeBanStatusText(area.status, area.statusText)
+          banStatusText: normalizeBanStatusText(area.status, area.statusText),
+          banScope: area.banScope
         }],
         forestName,
         forestUrl: facilityMatch.matchedDirectoryForestName
@@ -334,7 +335,8 @@ const main = async () => {
         areaName: UNKNOWN_FIRE_BAN_AREA_NAME,
         areaUrl: FIRE_BAN_ENTRY_URL,
         banStatus: "UNKNOWN",
-        banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT
+        banStatusText: UNKNOWN_FIRE_BAN_STATUS_TEXT,
+        banScope: "ALL"
       }],
       forestName,
       forestUrl: byForestUrl.get(forestName) ?? null,

@@ -6,7 +6,8 @@ import type {
   ClosureNoticeStatus,
   ClosureTagKey,
   ForestClosureNotice,
-  ForestAreaSummary
+  ForestAreaSummary,
+  SolidFuelBanScope
 } from "../types/domain.js";
 
 // Re-export directory-related parsers from their dedicated module.
@@ -116,30 +117,151 @@ export const classifyClosureNoticeTags = (rawText: string): ClosureTagKey[] => {
   return [...new Set(tags)];
 };
 
-export const parseBanStatus = (rawStatusText: string): BanStatus => {
-  const text = normalizeText(rawStatusText).toLowerCase();
+export interface BanStatusClassification {
+  status: BanStatus;
+  banScope: SolidFuelBanScope;
+  confidence: "KNOWN" | "QUESTIONABLE";
+}
+
+/**
+ * Trigger words that, when found at the *end* of a status text whose
+ * beginning matched a known pattern, signal the sentence may carry
+ * camp-specific semantics that cannot be resolved by regex alone.
+ */
+const SCOPE_TRIGGER_WORDS =
+  /\b(campground|campgrounds|camping|camp\s+area|camp\s+areas|designated|plantation|foreshore)\b/i;
+
+/**
+ * Known patterns for ban status texts. Order matters – first match wins.
+ * `scope` is the camp-scope the pattern implies.
+ */
+const KNOWN_BAN_PATTERNS: Array<{
+  pattern: RegExp;
+  status: BanStatus;
+  banScope: SolidFuelBanScope;
+}> = [
+  // "No Solid Fuel Fire Ban" / "no ban"
+  {
+    pattern: /^no\s+solid\s+fuel\s+fire\s+ban$/,
+    status: "NOT_BANNED",
+    banScope: "ALL"
+  },
+  {
+    pattern: /^no\s+ban$/,
+    status: "NOT_BANNED",
+    banScope: "ALL"
+  },
+
+  // "Solid fuel fires are banned outside designated campgrounds. … permitted inside …"
+  {
+    pattern:
+      /^solid\s+fuel\s+fires?\s+(?:are\s+)?banned\s+outside\s+designated\s+campgrounds?\.?\s*solid\s+fuel\s+fires?\s+(?:are\s+)?permitted\s+inside\s+designated\s+campgrounds?\.?$/,
+    status: "BANNED",
+    banScope: "OUTSIDE_CAMPS"
+  },
+
+  // "Solid fuel fires are banned outside designated campgrounds."
+  {
+    pattern:
+      /^solid\s+fuel\s+fires?\s+(?:are\s+)?banned\s+outside\s+designated\s+campgrounds?\.?$/,
+    status: "BANNED",
+    banScope: "OUTSIDE_CAMPS"
+  },
+
+  // "Solid fuel fires are permitted inside designated campgrounds."
+  {
+    pattern:
+      /^solid\s+fuel\s+fires?\s+(?:are\s+)?permitted\s+inside\s+designated\s+campgrounds?\.?$/,
+    status: "BANNED",
+    banScope: "OUTSIDE_CAMPS"
+  },
+
+  // "Solid Fuel Fires banned in all plantation areas, including camping areas…"
+  {
+    pattern:
+      /^solid\s+fuel\s+fires?\s+(?:are\s+)?banned\s+in\s+all\s+(?:plantation\s+)?areas?,?\s*including\s+camp/,
+    status: "BANNED",
+    banScope: "INCLUDING_CAMPS"
+  },
+
+  // Generic "Solid Fuel Fire Ban" / "Solid fuel fires banned"
+  {
+    pattern: /^solid\s+fuel\s+fire\s+ban$/,
+    status: "BANNED",
+    banScope: "ALL"
+  },
+  {
+    pattern: /^solid\s+fuel\s+fires?\s+banned$/,
+    status: "BANNED",
+    banScope: "ALL"
+  }
+];
+
+/**
+ * Prefix patterns for partial matching. If the beginning of the text matches
+ * one of these but the full text does not match any KNOWN_BAN_PATTERNS,
+ * we check for trigger words to decide if the status is questionable.
+ */
+const BAN_PREFIX_PATTERNS: Array<{
+  pattern: RegExp;
+  status: BanStatus;
+  banScope: SolidFuelBanScope;
+}> = [
+  { pattern: /^no\s+solid\s+fuel\s+fire\s+ban/, status: "NOT_BANNED", banScope: "ALL" },
+  { pattern: /^no\s+ban/, status: "NOT_BANNED", banScope: "ALL" },
+  { pattern: /^solid\s+fuel\s+fires?\s+(?:are\s+)?banned\s+outside\s+designated/, status: "BANNED", banScope: "OUTSIDE_CAMPS" },
+  { pattern: /^solid\s+fuel\s+fires?\s+(?:are\s+)?permitted\s+inside\s+designated/, status: "BANNED", banScope: "OUTSIDE_CAMPS" },
+  { pattern: /^solid\s+fuel\s+fires?\s+(?:are\s+)?banned\b/, status: "BANNED", banScope: "ALL" },
+  { pattern: /^solid\s+fuel\s+fire\s+ban/, status: "BANNED", banScope: "ALL" },
+  { pattern: /\btotal\s+fire\s+ban/, status: "BANNED", banScope: "ALL" },
+  { pattern: /\bfires?\s+(?:are\s+)?banned\b/, status: "BANNED", banScope: "ALL" }
+];
+
+/**
+ * Classify a ban-status text into BanStatus + SolidFuelBanScope.
+ *
+ * 1. Try each KNOWN_BAN_PATTERNS — full match (case-insensitive, whitespace-collapsed).
+ * 2. If no full match, try prefix matching + trigger-word check.
+ * 3. Return "QUESTIONABLE" confidence when only a prefix matches and the
+ *    remainder contains camp-related trigger words.
+ */
+export const classifyBanStatusText = (rawStatusText: string): BanStatusClassification => {
+  const text = normalizeText(rawStatusText).replace(/\s+/g, " ").trim();
 
   if (!text) {
-    return "UNKNOWN";
+    return { status: "UNKNOWN", banScope: "ALL", confidence: "KNOWN" };
   }
 
-  if (
-    /no\s+solid\s+fuel\s+fire\s+ban/.test(text) ||
-    /(?:^|\s)no\s+ban(?:\s|$)/.test(text)
-  ) {
-    return "NOT_BANNED";
+  const lowerText = text.toLowerCase();
+
+  // Full-match against known patterns
+  for (const known of KNOWN_BAN_PATTERNS) {
+    if (known.pattern.test(lowerText)) {
+      return { status: known.status, banScope: known.banScope, confidence: "KNOWN" };
+    }
   }
 
-  if (
-    /solid\s+fuel\s+fire\s+ban/.test(text) ||
-    /solid\s+fuel\s+fires?\s+banned/.test(text) ||
-    /\bfires?\s+banned\b/.test(text) ||
-    /\btotal\s+fire\s+ban\b/.test(text)
-  ) {
-    return "BANNED";
+  // Prefix matching
+  for (const prefix of BAN_PREFIX_PATTERNS) {
+    const prefixMatch = prefix.pattern.exec(lowerText);
+    if (prefixMatch) {
+      const remainder = lowerText.slice(prefixMatch[0].length);
+      if (SCOPE_TRIGGER_WORDS.test(remainder)) {
+        return { status: prefix.status, banScope: prefix.banScope, confidence: "QUESTIONABLE" };
+      }
+      return { status: prefix.status, banScope: prefix.banScope, confidence: "KNOWN" };
+    }
   }
 
-  return "UNKNOWN";
+  return { status: "UNKNOWN", banScope: "ALL", confidence: "KNOWN" };
+};
+
+export const parseBanStatus = (rawStatusText: string): BanStatus => {
+  return classifyBanStatusText(rawStatusText).status;
+};
+
+export const parseBanScope = (rawStatusText: string): SolidFuelBanScope => {
+  return classifyBanStatusText(rawStatusText).banScope;
 };
 
 export const parseMainFireBanPage = (
@@ -169,18 +291,33 @@ export const parseMainFireBanPage = (
     const cells = $(row)
       .find("th,td")
       .toArray()
-      .map((cell) => normalizeText($(cell).text()))
+      .map((cell) => {
+        // Block-level children (e.g. multiple <p> tags inside a <td>) are
+        // concatenated without whitespace by Cheerio's `.text()`.
+        // Join their text with a space so sentences don't run together.
+        const paragraphs = $(cell).find("p");
+        if (paragraphs.length > 0) {
+          return paragraphs
+            .toArray()
+            .map((paragraph) => normalizeText($(paragraph).text()))
+            .filter(Boolean)
+            .join(" ");
+        }
+        return normalizeText($(cell).text());
+      })
       .filter(Boolean);
 
     // Forestry table is: area | solid fuel fire ban | firewood collection.
     // We intentionally read only the second column and ignore firewood.
     const statusText = cells[1] ?? "Unknown";
+    const classification = classifyBanStatusText(statusText);
 
     rows.push({
       areaName,
       areaUrl,
-      status: parseBanStatus(statusText),
-      statusText
+      status: classification.status,
+      statusText,
+      banScope: classification.banScope
     });
   });
 

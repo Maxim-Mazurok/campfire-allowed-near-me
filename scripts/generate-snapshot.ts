@@ -8,7 +8,7 @@
  *   2a. parse-forestry        — parse areas + directory from raw HTML
  *   2b. parse-closures        — parse closure notices from raw HTML
  *   2c. parse-total-fire-ban  — parse TFB snapshot from raw JSON
- *   3.  geocode-forests       — resolve coordinates (Nominatim + Google)
+ *   3.  geocode-forests       — resolve coordinates (FCNSW ArcGIS → Google → Nominatim)
  *   4.  enrich-closures       — LLM impact analysis (OpenAI)
  *   5.  assemble-snapshot     — combine everything into forests-snapshot.json
  *

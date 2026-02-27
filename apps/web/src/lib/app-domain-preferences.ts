@@ -1,4 +1,4 @@
-import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, ClosureStatusFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
+import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, BanScopeFilterMode, ClosureStatusFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
 
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 
@@ -10,6 +10,9 @@ const isBanFilterMode = (value: unknown): value is BanFilterMode =>
 
 const isLegacyBanFilterMode = (value: unknown): value is LegacyBanFilterMode =>
   value === "ALL" || value === "ALLOWED" || value === "NOT_ALLOWED";
+
+const isBanScopeFilterMode = (value: unknown): value is BanScopeFilterMode =>
+  value === "ANYWHERE" || value === "CAMPS" || value === "NOT_CAMPS";
 
 const toModernBanFilterMode = (mode: LegacyBanFilterMode): BanFilterMode => {
   if (mode === "ALLOWED") {
@@ -62,6 +65,10 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
     } else if (isLegacyBanFilterMode(rawPreferences.banFilterMode)) {
       preferences.solidFuelBanFilterMode = toModernBanFilterMode(rawPreferences.banFilterMode);
       preferences.banFilterMode = rawPreferences.banFilterMode;
+    }
+
+    if (isBanScopeFilterMode(rawPreferences.solidFuelBanScopeFilterMode)) {
+      preferences.solidFuelBanScopeFilterMode = rawPreferences.solidFuelBanScopeFilterMode;
     }
 
     if (isBanFilterMode(rawPreferences.totalFireBanFilterMode)) {
