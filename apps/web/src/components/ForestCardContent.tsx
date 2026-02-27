@@ -3,7 +3,7 @@ import { Badge, Tooltip } from "@mantine/core";
 import { memo, useCallback, useMemo, useRef } from "react";
 import { FacilityIcon } from "./FacilityIcon";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
-import { getForestBanStatus, getForestBanScope } from "../lib/api";
+import { getForestBanStatus, getForestBanScope, getForestBanStatusText } from "../lib/api";
 import {
   buildGoogleMapsDrivingNavigationUrl,
   buildSolidFuelBanDetailsUrl,
@@ -77,6 +77,7 @@ export const ForestCardContent = memo(({
   const impactSummary = getForestImpactSummary(forest);
   const forestBanStatus = getForestBanStatus(forest.areas);
   const forestBanScope = getForestBanScope(forest.areas);
+  const forestBanStatusText = getForestBanStatusText(forest.areas);
   const hasCoordinates = forestHasCoordinates(forest);
   const googleMapsDrivingNavigationUrl = hasCoordinates
     ? buildGoogleMapsDrivingNavigationUrl(forest)
@@ -200,19 +201,21 @@ export const ForestCardContent = memo(({
         </div>
         <div className="status-block">
           <div className="status-pill-row">
-            <Badge
-              component="a"
-              href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
-              target="_blank"
-              rel="noreferrer"
-              color={forestBanStatus === "NOT_BANNED" ? "green" : forestBanStatus === "BANNED" && forestBanScope === "OUTSIDE_CAMPS" ? "yellow" : forestBanStatus === "BANNED" ? "red" : "gray"}
-              variant="light"
-              size="sm"
-              radius="xl"
-              style={{ cursor: "pointer", textDecoration: "none" }}
-            >
-              {getSolidFuelStatusLabel(forestBanStatus, forestBanScope)}
-            </Badge>
+            <Tooltip label={forestBanStatusText} withArrow>
+              <Badge
+                component="a"
+                href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
+                target="_blank"
+                rel="noreferrer"
+                color={forestBanStatus === "NOT_BANNED" ? "green" : forestBanStatus === "BANNED" && forestBanScope === "OUTSIDE_CAMPS" ? "yellow" : forestBanStatus === "BANNED" ? "red" : "gray"}
+                variant="light"
+                size="sm"
+                radius="xl"
+                style={{ cursor: "pointer", textDecoration: "none" }}
+              >
+                {getSolidFuelStatusLabel(forestBanStatus, forestBanScope)}
+              </Badge>
+            </Tooltip>
             <Badge
               component="a"
               href={buildTotalFireBanDetailsUrl(forest)}
