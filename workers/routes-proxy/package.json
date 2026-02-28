@@ -10,5 +10,8 @@
     "@cloudflare/workers-types": "^4.20250124.0",
     "typescript": "^5.7.0",
     "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "@googlemaps/routing": "^2.1.1"
   }
 }

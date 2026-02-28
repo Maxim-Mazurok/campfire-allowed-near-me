@@ -18,6 +18,8 @@ export type TriStateMode = "ANY" | "INCLUDE" | "EXCLUDE";
 export type FireBanForestSortColumn = "forestName" | "areaName";
 export type SortDirection = "asc" | "desc";
 export type ForestListSortOption =
+  | "DIRECT_DISTANCE_ASC"
+  | "DIRECT_DISTANCE_DESC"
   | "DRIVING_DISTANCE_ASC"
   | "DRIVING_DISTANCE_DESC"
   | "DRIVING_TIME_ASC"

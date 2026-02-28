@@ -1,10 +1,24 @@
+import type {
+  ComputeRouteMatrixRequest,
+  RouteMatrixElement
+} from "./routes-rest-types.js";
+import {
+  ROUTES_API_URL,
+  buildRoutesApiHeaders
+} from "./routes-rest-types.js";
+
+interface LatLng {
+  latitude: number;
+  longitude: number;
+}
+
 interface Environment {
   GOOGLE_MAPS_API_KEY: string;
   SNAPSHOT_URL: string;
 }
 
 interface RouteRequest {
-  origin: { latitude: number; longitude: number };
+  origin: LatLng;
   forestIds: string[];
   avoidTolls?: boolean;
 }
@@ -13,20 +27,6 @@ interface ForestCoordinate {
   id: string;
   latitude: number;
   longitude: number;
-}
-
-interface GoogleRouteMatrixElement {
-  condition?: string;
-  distanceMeters?: number;
-  duration?: string;
-}
-
-interface GoogleRouteMatrixResponse {
-  originIndex: number;
-  destinationIndex: number;
-  condition?: string;
-  distanceMeters?: number;
-  duration?: string;
 }
 
 interface RouteResult {
@@ -98,11 +98,11 @@ const fetchForestCoordinates = async (
 
 const computeRouteMatrix = async (
   apiKey: string,
-  origin: { latitude: number; longitude: number },
+  origin: LatLng,
   destinations: ForestCoordinate[],
   avoidTolls: boolean
-): Promise<GoogleRouteMatrixResponse[]> => {
-  const requestBody = {
+): Promise<RouteMatrixElement[]> => {
+  const requestBody: ComputeRouteMatrixRequest = {
     origins: [
       {
         waypoint: {
@@ -132,19 +132,14 @@ const computeRouteMatrix = async (
     routingPreference: "TRAFFIC_AWARE"
   };
 
-  const response = await fetch(
-    "https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": apiKey,
-        "X-Goog-FieldMask":
-          "originIndex,destinationIndex,condition,distanceMeters,duration"
-      },
-      body: JSON.stringify(requestBody)
-    }
-  );
+  const response = await fetch(ROUTES_API_URL, {
+    method: "POST",
+    headers: buildRoutesApiHeaders(
+      apiKey,
+      "originIndex,destinationIndex,condition,distanceMeters,duration"
+    ),
+    body: JSON.stringify(requestBody)
+  });
 
   if (!response.ok) {
     const body = await response.text();
@@ -153,7 +148,7 @@ const computeRouteMatrix = async (
     );
   }
 
-  return (await response.json()) as GoogleRouteMatrixResponse[];
+  return (await response.json()) as RouteMatrixElement[];
 };
 
 const handleRouteRequest = async (

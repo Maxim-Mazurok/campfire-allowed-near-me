@@ -73,6 +73,22 @@ export const compareForestsByListSortOption = (
   const compareByForestName = left.forestName.localeCompare(right.forestName);
 
   switch (forestListSortOption) {
+    case "DIRECT_DISTANCE_ASC": {
+      const distanceComparison = sortWithNullableMetric(
+        left.directDistanceKm,
+        right.directDistanceKm,
+        "asc"
+      );
+      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
+    }
+    case "DIRECT_DISTANCE_DESC": {
+      const distanceComparison = sortWithNullableMetric(
+        left.directDistanceKm,
+        right.directDistanceKm,
+        "desc"
+      );
+      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
+    }
     case "DRIVING_DISTANCE_ASC": {
       const distanceComparison = sortWithNullableMetric(
         left.distanceKm,

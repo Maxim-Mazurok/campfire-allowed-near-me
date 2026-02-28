@@ -121,6 +121,7 @@ const buildForestPoint = ({
   geocodeName: forestName,
   facilities: {},
   distanceKm: null,
+  directDistanceKm: null,
   travelDurationMinutes: null
 });
 

@@ -21,6 +21,8 @@ export type ForestListPanelProps = {
   onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
   forestListSortOption: ForestListSortOption;
   onForestListSortOptionChange: (option: ForestListSortOption) => void;
+  hasUserLocation: boolean;
+  hasDrivingRoutes: boolean;
 };
 
 const FOREST_LIST_VIRTUALIZATION_THRESHOLD = 120;
@@ -201,7 +203,9 @@ export const ForestListPanel = memo(({
   hoveredAreaName,
   onHoveredAreaNameChange,
   forestListSortOption,
-  onForestListSortOptionChange
+  onForestListSortOptionChange,
+  hasUserLocation,
+  hasDrivingRoutes
 }: ForestListPanelProps) => {
   const [forestSearchText, setForestSearchText] = useState("");
   const sortedMatchingForests = useMemo(() => {
@@ -273,11 +277,14 @@ export const ForestListPanel = memo(({
           onForestListSortOptionChange(event.currentTarget.value as ForestListSortOption);
         }}
         data={[
-          { label: "Driving distance (low to high)", value: "DRIVING_DISTANCE_ASC" },
-          { label: "Driving distance (high to low)", value: "DRIVING_DISTANCE_DESC" },
-          { label: "Driving time (short to long)", value: "DRIVING_TIME_ASC" },
-          { label: "Driving time (long to short)", value: "DRIVING_TIME_DESC" },
+          { label: "Direct distance (near to far)", value: "DIRECT_DISTANCE_ASC", disabled: !hasUserLocation },
+          { label: "Direct distance (far to near)", value: "DIRECT_DISTANCE_DESC", disabled: !hasUserLocation },
+          { label: "Driving distance (near to far)", value: "DRIVING_DISTANCE_ASC", disabled: !hasDrivingRoutes },
+          { label: "Driving distance (far to near)", value: "DRIVING_DISTANCE_DESC", disabled: !hasDrivingRoutes },
+          { label: "Driving time (short to long)", value: "DRIVING_TIME_ASC", disabled: !hasDrivingRoutes },
+          { label: "Driving time (long to short)", value: "DRIVING_TIME_DESC", disabled: !hasDrivingRoutes },
         ]}
+        description={!hasUserLocation ? "Enable location access to sort by distance" : undefined}
       />
 
       {shouldUseVirtualizedForestList ? (

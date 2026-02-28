@@ -111,7 +111,7 @@ export const App = () => {
   const [hoveredForestId, setHoveredForestId] = useState<string | null>(null);
   const [hoveredAreaName, setHoveredAreaName] = useState<string | null>(null);
   const [forestListSortOption, setForestListSortOption] = useState<ForestListSortOption>(
-    () => getInitialPreferences().forestListSortOption ?? "DRIVING_TIME_ASC"
+    () => getInitialPreferences().forestListSortOption ?? "DIRECT_DISTANCE_ASC"
   );
   const forestsQueryKey = useMemo(
     () => buildForestsQueryKey(userLocation),
@@ -571,6 +571,8 @@ export const App = () => {
           onHoveredAreaNameChange={setHoveredAreaName}
           forestListSortOption={forestListSortOption}
           onForestListSortOptionChange={setForestListSortOption}
+          hasUserLocation={userLocation !== null}
+          hasDrivingRoutes={Object.keys(routesByForestId).length > 0}
         />
       </section>
     </main>

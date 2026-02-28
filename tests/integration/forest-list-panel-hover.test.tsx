@@ -31,6 +31,7 @@ const buildForest = (
   geocodeName: forestName,
   facilities: {},
   distanceKm: 10,
+  directDistanceKm: null,
   travelDurationMinutes: 15
 });
 
@@ -50,6 +51,8 @@ describe("ForestListPanel hover behavior", () => {
         onHoveredAreaNameChange={() => {}}
         forestListSortOption="DRIVING_DISTANCE_ASC"
         onForestListSortOptionChange={() => {}}
+        hasUserLocation={true}
+        hasDrivingRoutes={true}
       />
     );
 
@@ -79,6 +82,8 @@ describe("ForestListPanel hover behavior", () => {
         onHoveredAreaNameChange={() => {}}
         forestListSortOption="DRIVING_DISTANCE_ASC"
         onForestListSortOptionChange={() => {}}
+        hasUserLocation={true}
+        hasDrivingRoutes={true}
       />
     );
 
@@ -113,6 +118,8 @@ describe("ForestListPanel hover behavior", () => {
         onHoveredAreaNameChange={onHoveredAreaNameChange}
         forestListSortOption="DRIVING_DISTANCE_ASC"
         onForestListSortOptionChange={() => {}}
+        hasUserLocation={true}
+        hasDrivingRoutes={true}
       />
     );
 

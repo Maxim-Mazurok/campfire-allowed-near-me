@@ -20,6 +20,7 @@ const buildForest = (
   geocodeName: "Forest",
   facilities: {},
   distanceKm,
+  directDistanceKm: null,
   travelDurationMinutes
 });
 

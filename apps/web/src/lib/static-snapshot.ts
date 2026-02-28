@@ -66,9 +66,8 @@ const transformSnapshotToApiResponse = (
   snapshot: PersistedSnapshot,
   userLocation?: { latitude: number; longitude: number }
 ): ForestApiResponse => {
-  const forests: ForestPoint[] = snapshot.forests.map((forest) => ({
-    ...forest,
-    distanceKm:
+  const forests: ForestPoint[] = snapshot.forests.map((forest) => {
+    const computedDistanceKm =
       userLocation &&
       forest.latitude !== null &&
       forest.longitude !== null
@@ -78,9 +77,15 @@ const transformSnapshotToApiResponse = (
             forest.latitude,
             forest.longitude
           )
-        : null,
-    travelDurationMinutes: null
-  }));
+        : null;
+
+    return {
+      ...forest,
+      directDistanceKm: computedDistanceKm,
+      distanceKm: computedDistanceKm,
+      travelDurationMinutes: null
+    };
+  });
 
   forests.sort((left, right) => {
     if (left.distanceKm === null) return 1;

@@ -47,6 +47,7 @@ import type {
   ForestPoint,
   ForestTotalFireBanDiagnostics,
   NearestForest,
+  PersistedForestPoint,
   PersistedSnapshot,
   RefreshTaskProgress,
   UserLocation
@@ -159,11 +160,8 @@ export class LiveForestDataService implements ForestDataService {
       });
     this.routeService = options?.routeService ??
       new GoogleRoutesService({
-        apiKey: process.env.GOOGLE_MAPS_API_KEY ?? null,
-        cacheDbPath: process.env.ROUTE_CACHE_DB ?? "data/cache/routes.sqlite",
-        maxConcurrentRequests: Number(
-          process.env.ROUTE_MAX_CONCURRENT_REQUESTS ?? "8"
-        )
+        routesProxyUrl: process.env.ROUTES_PROXY_URL ?? undefined,
+        cacheDbPath: process.env.ROUTE_CACHE_DB ?? "data/cache/routes.sqlite"
       });
     this.totalFireBanService = options?.totalFireBanService ?? new TotalFireBanService();
     this.closureImpactEnricher = options?.closureImpactEnricher ?? new ClosureImpactEnricher();
@@ -872,7 +870,7 @@ export class LiveForestDataService implements ForestDataService {
     unresolvedForestStatusKeys: Set<string>,
     progressCallback?: ForestDataServiceInput["progressCallback"]
   ): Promise<{
-    forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
+    forests: PersistedForestPoint[];
     diagnostics: FacilityMatchDiagnostics;
     closureDiagnostics: ClosureMatchDiagnostics;
   }> {
@@ -880,7 +878,7 @@ export class LiveForestDataService implements ForestDataService {
       this.geocoder.resetLookupBudgetForRun();
     }
 
-    const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
+    const points: PersistedForestPoint[] = [];
     const byForestName = new Map(
       directory.forests.map((entry) => [entry.forestName, entry.facilities] as const)
     );
@@ -1204,7 +1202,7 @@ export class LiveForestDataService implements ForestDataService {
   }
 
   private async addTravelMetrics(
-    forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[],
+    forests: PersistedForestPoint[],
     location: UserLocation | undefined,
     avoidTolls: boolean,
     progressCallback?: ForestDataServiceInput["progressCallback"]
@@ -1216,6 +1214,7 @@ export class LiveForestDataService implements ForestDataService {
       return {
         forests: forests.map((forest) => ({
           ...forest,
+          directDistanceKm: null,
           distanceKm: null,
           travelDurationMinutes: null
         })),
@@ -1282,10 +1281,20 @@ export class LiveForestDataService implements ForestDataService {
     return {
       forests: forests.map((forest) => {
         const metric = routeLookup.byForestId.get(forest.id);
+        const haversineDistance =
+          forest.latitude !== null && forest.longitude !== null
+            ? haversineDistanceKm(
+                location.latitude,
+                location.longitude,
+                forest.latitude,
+                forest.longitude
+              )
+            : null;
 
         return {
           ...forest,
-          distanceKm: metric?.distanceKm ?? null,
+          directDistanceKm: haversineDistance,
+          distanceKm: metric?.distanceKm ?? haversineDistance,
           travelDurationMinutes: metric?.durationMinutes ?? null
         };
       }),

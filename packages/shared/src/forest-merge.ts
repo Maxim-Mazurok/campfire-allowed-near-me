@@ -1,13 +1,11 @@
-import type { ForestAreaReference, ForestPoint } from "./contracts.js";
+import type { ForestAreaReference, PersistedForestPoint } from "./contracts.js";
 import { buildForestStatusKey } from "./ban-status-helpers.js";
 import { slugify } from "./text-utils.js";
 
-type ForestPointWithoutTravel = Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">;
-
 export const mergeMultiAreaForests = (
-  points: ForestPointWithoutTravel[]
-): ForestPointWithoutTravel[] => {
-  const groupsByForestKey = new Map<string, ForestPointWithoutTravel[]>();
+  points: PersistedForestPoint[]
+): PersistedForestPoint[] => {
+  const groupsByForestKey = new Map<string, PersistedForestPoint[]>();
   const insertionOrder: string[] = [];
 
   for (const point of points) {
@@ -21,7 +19,7 @@ export const mergeMultiAreaForests = (
     }
   }
 
-  const merged: ForestPointWithoutTravel[] = [];
+  const merged: PersistedForestPoint[] = [];
 
   for (const key of insertionOrder) {
     const group = groupsByForestKey.get(key);

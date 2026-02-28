@@ -51,6 +51,7 @@ const buildForest = (overrides?: Partial<ForestApiResponse["forests"][number]>):
     }
   ],
   distanceKm: 14.2,
+  directDistanceKm: null,
   travelDurationMinutes: 20,
   ...overrides
 });

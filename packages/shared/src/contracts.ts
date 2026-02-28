@@ -148,9 +148,16 @@ export interface ForestPoint {
   closureNotices?: ForestClosureNotice[];
   closureTags?: Partial<Record<ClosureTagKey, boolean>>;
   closureImpactSummary?: ClosureImpactSummary;
+  directDistanceKm: number | null;
   distanceKm: number | null;
   travelDurationMinutes: number | null;
 }
+
+/** Fields that are computed at runtime on the client, not persisted in snapshots. */
+export type ForestPointRuntimeFields = "directDistanceKm" | "distanceKm" | "travelDurationMinutes";
+
+/** A forest point without client-computed distance/duration fields. */
+export type PersistedForestPoint = Omit<ForestPoint, ForestPointRuntimeFields>;
 
 export interface UserLocation {
   latitude: number;
@@ -217,7 +224,7 @@ export interface PersistedSnapshot {
   availableClosureTags?: ClosureTagDefinition[];
   matchDiagnostics: FacilityMatchDiagnostics;
   closureDiagnostics?: ClosureMatchDiagnostics;
-  forests: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[];
+  forests: PersistedForestPoint[];
   warnings: string[];
 }
 

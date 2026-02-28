@@ -49,7 +49,7 @@ import type {
   ForestAreaWithForests,
   ForestClosureNotice,
   ForestDirectorySnapshot,
-  ForestPoint,
+  PersistedForestPoint,
   PersistedSnapshot
 } from "../../apps/api/src/types/domain.js";
 import type { TotalFireBanSnapshot } from "../../apps/api/src/services/total-fire-ban-service.js";
@@ -217,7 +217,7 @@ const main = async () => {
   ]);
 
   // Build forest points
-  const points: Omit<ForestPoint, "distanceKm" | "travelDurationMinutes">[] = [];
+  const points: PersistedForestPoint[] = [];
   const totalFireBanNoAreaMatchForests = new Set<string>();
   const totalFireBanMissingStatusAreas = new Set<string>();
 
