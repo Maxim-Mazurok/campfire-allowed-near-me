@@ -16,3 +16,5 @@ data/pipeline/
 .tmp*
 **/.tmp*
 .playwright-mcp/
+.wrangler/
+.dev.vars
