@@ -14,7 +14,7 @@
 4. **Accessibility out of the box** — Mantine components handle ARIA, focus management, and keyboard navigation. Do not strip or override those features.
 5. **Use the theme** — Colors, spacing, radii, shadows, and typography should come from the Mantine theme object rather than raw CSS values. This keeps the design system consistent.
 6. **No custom hex colors** — Never use raw hex/RGB/HSL color values anywhere (components, CSS modules, inline styles, or even in the theme file). Always use Mantine's built-in named colors (`green.6`, `gray.3`, `red.5`, `dimmed`, etc.). If a built-in color does not fit, discuss with the user before introducing a new palette.
-7. **Theme changes require approval** — Do not modify `apps/web/src/theme.ts` (add colors, change primary color, adjust radii, spacing, etc.) without explicit permission from the user in the current session. Propose the change and wait for approval.
+7. **Theme changes require approval** — Do not modify `web/src/theme.ts` (add colors, change primary color, adjust radii, spacing, etc.) without explicit permission from the user in the current session. Propose the change and wait for approval.
 
 ---
 
@@ -23,7 +23,7 @@
 | Item | Value |
 |---|---|
 | Mantine version | **v8** (`@mantine/core ^8.3.15`, `@mantine/hooks ^8.3.15`) |
-| Theme file | `apps/web/src/theme.ts` |
+| Theme file | `web/src/theme.ts` |
 | Primary color | `green` (custom 10-shade palette) |
 | Default radius | `md` |
 | Icon library | `@tabler/icons-react` — **do not** use FontAwesome or other icon sets |
@@ -32,7 +32,7 @@
 
 ### Theme extension
 
-Extend `apps/web/src/theme.ts` via `createTheme()` rather than adding ad-hoc inline colors:
+Extend `web/src/theme.ts` via `createTheme()` rather than adding ad-hoc inline colors:
 
 ```tsx
 import { createTheme } from "@mantine/core";

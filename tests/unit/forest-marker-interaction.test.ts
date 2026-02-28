@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getForestMarkerInteractionOptions
-} from "../../apps/web/src/lib/forest-marker-interaction";
+} from "../../web/src/lib/forest-marker-interaction";
 
 describe("forest marker interaction", () => {
   it("keeps green matched markers directly interactive", () => {

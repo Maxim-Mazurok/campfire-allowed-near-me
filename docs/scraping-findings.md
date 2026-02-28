@@ -141,7 +141,7 @@ Three methods, applied per-target based on requirements:
 
 ### Cloudflare Challenge Detection
 
-Reuses existing `isCloudflareChallengeHtml()` from `apps/api/src/services/forestry-parser.ts`:
+Reuses existing `isCloudflareChallengeHtml()` from `pipeline/services/forestry-parser.ts`:
 ```typescript
 // Checks for: "Just a moment" | "Performing security verification" | "Enable JavaScript and cookies"
 ```

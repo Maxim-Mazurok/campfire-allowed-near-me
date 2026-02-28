@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "rootDir": "../../",
-    "outDir": "../../dist/api",
-    "types": ["node", "vitest/globals"]
-  },
-  "include": ["src/**/*.ts", "../../packages/shared/src/**/*.ts"]
-}

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildSelectedForestPopupPosition,
   isSelectedForestStillAvailable
-} from "../../apps/web/src/lib/forest-popup-behavior";
+} from "../../web/src/lib/forest-popup-behavior";
 
 describe("forest popup behavior", () => {
   it("keeps selected popup open while selected forest remains in mapped data", () => {

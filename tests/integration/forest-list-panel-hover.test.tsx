@@ -8,8 +8,8 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithMantine } from "../test-utils";
-import { ForestListPanel } from "../../apps/web/src/components/ForestListPanel";
-import type { ForestApiResponse } from "../../apps/web/src/lib/api";
+import { ForestListPanel } from "../../web/src/components/ForestListPanel";
+import type { ForestApiResponse } from "../../web/src/lib/api";
 
 afterEach(() => {
   cleanup();

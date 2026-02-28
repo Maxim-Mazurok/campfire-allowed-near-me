@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { renderWithMantine } from "../test-utils";
-import { SettingsDialog } from "../../apps/web/src/components/SettingsDialog";
+import { SettingsDialog } from "../../web/src/components/SettingsDialog";
 
 afterEach(() => {
   cleanup();

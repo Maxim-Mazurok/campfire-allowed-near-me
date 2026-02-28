@@ -5,7 +5,7 @@ import {
   HOVERED_FOREST_MARKER_PATH_OPTIONS,
   MATCHED_FOREST_MARKER_PATH_OPTIONS,
   UNMATCHED_FOREST_MARKER_PATH_OPTIONS
-} from "../../apps/web/src/lib/forest-marker-style";
+} from "../../web/src/lib/forest-marker-style";
 
 describe("forest marker style", () => {
   it("returns deep-purple highlight style for hovered forests", () => {

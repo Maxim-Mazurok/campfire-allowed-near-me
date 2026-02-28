@@ -17,14 +17,14 @@ Hard policy constraints:
 ## Ongoing engineering guidance
 
 These are continuous standards (not a one-time phase plan):
-- Keep shared contracts in `packages/shared/src` and consume them from both API and web.
+- Keep shared contracts in `shared/` and consume them from both API and web.
 - Keep UI/business/networking concerns separated into focused modules and hooks.
 - Preserve map/list UX while iterating on performance (no regressions that hide markers or details).
 - Prefer behavior-preserving refactors before adding new feature complexity.
 - Bias toward small, testable changes that can be validated quickly.
 
 ### Current implementation snapshot
-- Shared API and websocket contracts are now consumed from `packages/shared/src` by both API and web.
+- Shared API and websocket contracts are now consumed from `shared/` by both API and web.
 - `App.tsx` has extracted dialog and domain helpers, plus dedicated `FilterPanel` and `ForestListPanel` components.
 - Reconnecting websocket callback handling is stabilized with ref-based callback wiring.
 - Map/list rendering path now includes memoized `MapView` and `ForestListPanel` plus a memoized `ForestListItem` row.
@@ -32,7 +32,7 @@ These are continuous standards (not a one-time phase plan):
 - `ForestListPanel` now uses threshold-based virtualization via `@tanstack/react-virtual` for larger result sets while preserving the existing rendering path for smaller lists.
 - `MapView` now culls rendered markers to the current padded viewport bounds, reducing marker work during pan/zoom on larger datasets.
 - `MapView` now applies zoom-aware unmatched marker budgets at lower zoom levels, prioritizing closest-to-center unmatched forests to reduce dense marker rendering load.
-- Map marker budgeting and closest-selection logic is now extracted into `apps/web/src/lib/map-marker-rendering.ts` with unit coverage for zoom tiers and nearest-selection behavior.
+- Map marker budgeting and closest-selection logic is now extracted into `web/src/lib/map-marker-rendering.ts` with unit coverage for zoom tiers and nearest-selection behavior.
 - `MapView` now renders both matched and unmatched markers through a shared memoized marker component with stable path option objects to reduce marker subtree churn.
 - `VisibleForestMarkers` now computes visible matched markers and rendered unmatched markers in one memoized pass to reduce per-update array churn.
 - `VisibleForestMarkers` now deduplicates viewport event updates via a signature check, reducing redundant recomputation after move/zoom/resize events.

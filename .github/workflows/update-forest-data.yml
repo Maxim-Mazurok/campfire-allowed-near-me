@@ -48,7 +48,7 @@ jobs:
           save-always: true
 
       - name: Generate snapshot
-        run: xvfb-run --auto-servernum -- npx -y tsx scripts/generate-snapshot.ts
+        run: xvfb-run --auto-servernum -- npx -y tsx pipeline/scripts/generate-snapshot.ts
         env:
           PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
           PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
@@ -67,7 +67,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add apps/web/public/forests-snapshot.json apps/web/public/forests-snapshot.meta.json
+          git add web/public/forests-snapshot.json web/public/forests-snapshot.meta.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
@@ -83,8 +83,8 @@ jobs:
         with:
           name: forest-snapshot
           path: |
-            apps/web/public/forests-snapshot.json
-            apps/web/public/forests-snapshot.meta.json
+            web/public/forests-snapshot.json
+            web/public/forests-snapshot.meta.json
           retention-days: 7
           if-no-files-found: ignore
 

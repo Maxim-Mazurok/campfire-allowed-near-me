@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
+import { ForestGeocoder } from "../../pipeline/services/forest-geocoder.js";
 
 /**
  * Live integration tests against the FCNSW ArcGIS Feature Server.

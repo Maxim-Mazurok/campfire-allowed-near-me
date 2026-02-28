@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { classifyBanStatusText } from "../../apps/api/src/services/forestry-parser";
-import type { BanStatusClassification } from "../../apps/api/src/services/forestry-parser";
+import { classifyBanStatusText } from "../../pipeline/services/forestry-parser";
+import type { BanStatusClassification } from "../../pipeline/services/forestry-parser";
 
 describe("classifyBanStatusText", () => {
   describe("KNOWN full-match patterns", () => {

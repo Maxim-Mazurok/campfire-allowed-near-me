@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { inferClosureStructuredImpactByRules } from "../../apps/api/src/services/closure-impact-enricher.js";
+import { inferClosureStructuredImpactByRules } from "../../pipeline/services/closure-impact-enricher.js";
 
 describe("inferClosureStructuredImpactByRules", () => {
   it("marks camping and access as closed for clear full-closure notices", () => {

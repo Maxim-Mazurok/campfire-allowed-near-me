@@ -23,7 +23,7 @@ Last updated: 2026-02-22
 
 ## Phase 1: Contract unification ✅ COMPLETE
 
-Shared contracts live in `packages/shared/src/` (`contracts.ts`, `websocket.ts`, `distance.ts`). Both API and web import from there. No duplicate DTO definitions remain.
+Shared contracts live in `shared/` (`contracts.ts`, `websocket.ts`, `distance.ts`). Both API and web import from there. No duplicate DTO definitions remain.
 
 ## Phase 2: API decomposition
 
@@ -36,7 +36,7 @@ See [`/todo.md`](/todo.md) for the full task list.
 
 ## Phase 3: Web decomposition ✅ COMPLETE
 
-`App.tsx` reduced from ~2300 to ~500 lines. Extracted components: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`. Hooks, selectors, and domain logic extracted into `apps/web/src/lib/`.
+`App.tsx` reduced from ~2300 to ~500 lines. Extracted components: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`. Hooks, selectors, and domain logic extracted into `web/src/lib/`.
 
 ## Phase 4: Code health guardrails
 

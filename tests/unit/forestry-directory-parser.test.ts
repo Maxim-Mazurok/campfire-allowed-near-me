@@ -4,7 +4,7 @@ import {
   parseForestDirectoryForests,
   parseForestDirectoryForestNames,
   parseForestDirectoryWithFacilities
-} from "../../apps/api/src/services/forestry-directory-parser.js";
+} from "../../pipeline/services/forestry-directory-parser.js";
 
 describe("parseForestDirectoryFilters", () => {
   it("extracts all facility filters from the Forestry forests directory form", () => {

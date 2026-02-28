@@ -121,7 +121,7 @@ jobs:
       - setup Node 25
       - npm ci
       - install Playwright Chromium (npx playwright install --with-deps chromium)
-      - run: xvfb-run --auto-servernum -- npx tsx scripts/generate-snapshot.ts
+      - run: xvfb-run --auto-servernum -- npx tsx pipeline/scripts/generate-snapshot.ts
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
@@ -129,7 +129,7 @@ jobs:
       - commit & push snapshot to `data` branch (or upload to R2)
 ```
 
-### New script: `scripts/generate-snapshot.ts`
+### New script: `pipeline/scripts/generate-snapshot.ts`
 
 This script reuses the existing `ForestryScraper`, `TotalFireBanService`, and `ForestGeocoder`, but:
 - Outputs a `PersistedSnapshot` JSON file (same schema as existing snapshots)
@@ -308,7 +308,7 @@ Keep the current Express + WebSocket setup for local development:
 - [x] Verify all 5 targets pass consistently from GHA
 
 ### Milestone 2: Data Pipeline ✅ COMPLETE
-- [x] Create `scripts/generate-snapshot.ts` (reuse existing services)
+- [x] Create `pipeline/scripts/generate-snapshot.ts` (reuse existing services)
 - [x] Create `update-forest-data.yml` GHA workflow
 - [x] Test end-to-end: trigger workflow → snapshot committed
 - [x] Validate snapshot schema and content

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   TotalFireBanService,
   UNKNOWN_TOTAL_FIRE_BAN_STATUS_TEXT
-} from "../../apps/api/src/services/total-fire-ban-service.js";
+} from "../../pipeline/services/total-fire-ban-service.js";
 
 describe("TotalFireBanService", () => {
   it("maps coordinates to current total fire ban status", async () => {

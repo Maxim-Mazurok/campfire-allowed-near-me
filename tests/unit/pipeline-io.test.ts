@@ -2,8 +2,8 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { readRawPagesArchive, writeRawPagesArchive } from "../../scripts/pipeline/pipeline-io.js";
-import type { RawPagesArchive } from "../../packages/shared/src/pipeline-types.js";
+import { readRawPagesArchive, writeRawPagesArchive } from "../../pipeline/scripts/pipeline-io.js";
+import type { RawPagesArchive } from "../../shared/pipeline-types.js";
 
 describe("pipeline-io raw pages archive", () => {
   it("writes and reads a raw pages archive round-trip", () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { matchesSolidFuelBanFilter } from "../../apps/web/src/lib/app-domain-status";
-import type { BanStatus, SolidFuelBanScope } from "../../packages/shared/src/contracts";
-import type { BanFilterMode, BanScopeFilterMode } from "../../apps/web/src/lib/app-domain-types";
+import { matchesSolidFuelBanFilter } from "../../web/src/lib/app-domain-status";
+import type { BanStatus, SolidFuelBanScope } from "../../shared/contracts";
+import type { BanFilterMode, BanScopeFilterMode } from "../../web/src/lib/app-domain-types";
 
 /**
  * Truth table for scope-aware solid fuel ban filtering.

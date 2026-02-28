@@ -9,8 +9,10 @@
     "types": ["node", "vite/client"]
   },
   "include": [
-    "apps/**/*.ts",
-    "apps/**/*.tsx",
+    "web/**/*.ts",
+    "web/**/*.tsx",
+    "pipeline/**/*.ts",
+    "shared/**/*.ts",
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "playwright.config.ts"

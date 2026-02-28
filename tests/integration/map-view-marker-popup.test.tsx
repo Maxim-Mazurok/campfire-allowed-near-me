@@ -7,10 +7,10 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithMantine } from "../test-utils";
-import { MapView } from "../../apps/web/src/components/MapView";
-import type { BanStatus, ForestPoint } from "../../apps/web/src/lib/api";
+import { MapView } from "../../web/src/components/MapView";
+import type { BanStatus, ForestPoint } from "../../web/src/lib/api";
 
-vi.mock("../../apps/web/src/components/PopupShadowContainer", () => ({
+vi.mock("../../web/src/components/PopupShadowContainer", () => ({
   PopupShadowContainer: ({
     children,
     className

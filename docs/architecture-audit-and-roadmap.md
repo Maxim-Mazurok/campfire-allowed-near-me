@@ -29,9 +29,9 @@ This document proposes a pragmatic, startup-appropriate target:
 - E2E tests pass (13 tests).
 
 ### Structural hotspots
-- `apps/api/src/services/live-forest-data-service.ts` remains large (~1800 lines) — decomposition pending.
-- `apps/web/src/App.tsx` reduced from ~2300 to ~500 lines ✅.
-- `packages/shared/src` populated with shared contracts ✅.
+- `LiveForestDataService` removed — pipeline scripts use individual services directly.
+- `web/src/App.tsx` reduced from ~2300 to ~500 lines ✅.
+- `shared/` populated with shared contracts ✅.
 
 ### Performance and UX signals
 - Map renders viewport-culled markers with zoom-aware budgets ✅.
@@ -101,10 +101,10 @@ No explicit architecture decision record trail yet; contributors and AI agents n
 
 The following high-leverage refactors are done:
 
-- **Shared contracts**: `packages/shared/src/` contains `contracts.ts`, `websocket.ts`, `distance.ts`. Both API and web consume from here; no duplicate DTOs.
-- **App.tsx decomposition**: Reduced from ~2300 lines to ~500 lines. Extracted: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`, plus hooks (`use-reconnecting-websocket`, `use-forest-progress`, `use-refresh-and-location`, `use-warning-dialog-data`) and domain/selector modules in `apps/web/src/lib/`.
+- **Shared contracts**: `shared/` contains `contracts.ts`, `websocket.ts`, `distance.ts`. Both API and web consume from here; no duplicate DTOs.
+- **App.tsx decomposition**: Reduced from ~2300 lines to ~500 lines. Extracted: `FilterPanel`, `ForestListPanel`, `MapView`, `WarningsDialog`, `SettingsDialog`, `AppHeader`, `LocationStatusPanels`, plus hooks (`use-reconnecting-websocket`, `use-forest-progress`, `use-refresh-and-location`, `use-warning-dialog-data`) and domain/selector modules in `web/src/lib/`.
 - **List virtualization**: `ForestListPanel` uses `@tanstack/react-virtual` with threshold-based activation.
-- **Map viewport-aware rendering**: Marker culling to padded viewport bounds, zoom-aware unmatched marker budgets, memoized marker components. Logic extracted to `apps/web/src/lib/map-marker-rendering.ts`.
+- **Map viewport-aware rendering**: Marker culling to padded viewport bounds, zoom-aware unmatched marker budgets, memoized marker components. Logic extracted to `web/src/lib/map-marker-rendering.ts`.
 - **Memoized selectors**: Filter/sort/warning derivations moved to dedicated modules with stable inputs.
 - **Closure impact enricher**: Rules-based structured impact extraction with optional LLM enrichment layer (activates when Azure OpenAI credentials are provided).
 - **FCNSW ArcGIS polygon-first geocoding**: `ForestGeocoder` now queries the official FCNSW Feature Server as the top-priority provider, demoting Google and Nominatim to fallback-only. Polygon centroids provide authoritative forest locations.
@@ -120,21 +120,18 @@ See [`/todo.md`](/todo.md) for the current task list. Key remaining items:
 
 ## Recommended File/Module Direction
 
-### API
-- `apps/api/src/domain/connectors/*`
-- `apps/api/src/domain/normalization/*`
-- `apps/api/src/domain/policy/*`
-- `apps/api/src/domain/enrichment/*`
-- `apps/api/src/domain/assembly/*`
-- Keep route/controller thin.
+### Pipeline
+- `pipeline/services/*` — scrapers, parsers, geocoder, enrichers
+- `pipeline/utils/*` — caching, resource blocking, validation
+- `pipeline/constants/*` — facility definitions
 
 ### Web
-- `apps/web/src/features/filters/*`
-- `apps/web/src/features/forests/*`
-- `apps/web/src/features/progress/*`
-- `apps/web/src/features/warnings/*`
-- `apps/web/src/lib/selectors/*`
-- `apps/web/src/lib/hooks/*`
+- `web/src/features/filters/*`
+- `web/src/features/forests/*`
+- `web/src/features/progress/*`
+- `web/src/features/warnings/*`
+- `web/src/lib/selectors/*`
+- `web/src/lib/hooks/*`
 
 ## Non-goals (to stay pragmatic)
 

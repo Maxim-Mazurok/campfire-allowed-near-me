@@ -14,9 +14,9 @@ Three independent scrape sub-stages that fetch raw pages and save them as archiv
 
 | Sub-stage | Script | Output | Needs browser? | Needs proxy? |
 |---|---|---|---|---|
-| Forestry pages | `scripts/pipeline/scrape-forestry.ts` | `data/pipeline/raw-forestry-pages.json` | Yes (Cloudflare) | Yes (CI only) |
-| Closure notices | `scripts/pipeline/scrape-closures.ts` | `data/pipeline/raw-closure-pages.json` | No | Yes (CI only) |
-| Total Fire Ban | `scripts/pipeline/scrape-total-fire-ban.ts` | `data/pipeline/raw-total-fire-ban.json` | No | No |
+| Forestry pages | `pipeline/scripts/scrape-forestry.ts` | `data/pipeline/raw-forestry-pages.json` | Yes (Cloudflare) | Yes (CI only) |
+| Closure notices | `pipeline/scripts/scrape-closures.ts` | `data/pipeline/raw-closure-pages.json` | No | Yes (CI only) |
+| Total Fire Ban | `pipeline/scripts/scrape-total-fire-ban.ts` | `data/pipeline/raw-total-fire-ban.json` | No | No |
 
 Scrape stages save **raw HTML/JSON** (not parsed data). All HTTP requests happen here; no subsequent stage makes network calls to the scraped sources.
 
@@ -26,9 +26,9 @@ Three parse sub-stages that read raw archives and produce structured JSON:
 
 | Sub-stage | Script | Input | Output |
 |---|---|---|---|
-| Forestry | `scripts/pipeline/parse-forestry.ts` | `raw-forestry-pages.json` | `data/pipeline/scrape-forestry.json` |
-| Closures | `scripts/pipeline/parse-closures.ts` | `raw-closure-pages.json` | `data/pipeline/scrape-closures.json` |
-| Total Fire Ban | `scripts/pipeline/parse-total-fire-ban.ts` | `raw-total-fire-ban.json` | `data/pipeline/scrape-total-fire-ban.json` |
+| Forestry | `pipeline/scripts/parse-forestry.ts` | `raw-forestry-pages.json` | `data/pipeline/scrape-forestry.json` |
+| Closures | `pipeline/scripts/parse-closures.ts` | `raw-closure-pages.json` | `data/pipeline/scrape-closures.json` |
+| Total Fire Ban | `pipeline/scripts/parse-total-fire-ban.ts` | `raw-total-fire-ban.json` | `data/pipeline/scrape-total-fire-ban.json` |
 
 **Parse stages make zero HTTP requests.** They re-use the same parser functions as the scrapers but read HTML from saved archives. If you change parsing logic (e.g. fix a regex), re-run only the parse stage.
 
@@ -36,7 +36,7 @@ Three parse sub-stages that read raw archives and produce structured JSON:
 
 | Script | Input | Output |
 |---|---|---|
-| `scripts/pipeline/geocode-forests.ts` | `scrape-forestry.json` | `data/pipeline/geocoded-forests.json` |
+| `pipeline/scripts/geocode-forests.ts` | `scrape-forestry.json` | `data/pipeline/geocoded-forests.json` |
 
 Reads the forest names from the parse-forestry output, runs geocoding (Nominatim + Google fallback), and saves coordinates for each forest. Uses the existing SQLite coordinate cache.
 
@@ -44,7 +44,7 @@ Reads the forest names from the parse-forestry output, runs geocoding (Nominatim
 
 | Script | Input | Output |
 |---|---|---|
-| `scripts/pipeline/enrich-closures.ts` | `scrape-closures.json` | `data/pipeline/enriched-closures.json` |
+| `pipeline/scripts/enrich-closures.ts` | `scrape-closures.json` | `data/pipeline/enriched-closures.json` |
 
 Reads parsed closure notices, runs `ClosureImpactEnricher` (OpenAI LLM analysis), and saves enriched notices with structured impact assessments.
 
@@ -52,7 +52,7 @@ Reads parsed closure notices, runs `ClosureImpactEnricher` (OpenAI LLM analysis)
 
 | Script | Inputs | Output |
 |---|---|---|
-| `scripts/pipeline/assemble-snapshot.ts` | All intermediate files | `apps/web/public/forests-snapshot.json` |
+| `pipeline/scripts/assemble-snapshot.ts` | All intermediate files | `web/public/forests-snapshot.json` |
 
 Reads all intermediate pipeline outputs and assembles the final snapshot:
 - Matches facilities to forests (fuzzy name matching)
@@ -64,7 +64,7 @@ Reads all intermediate pipeline outputs and assembles the final snapshot:
 
 ### Full pipeline (all stages)
 
-`scripts/generate-snapshot.ts` runs all stages in sequence. This is what CI uses.
+`pipeline/scripts/generate-snapshot.ts` runs all stages in sequence. This is what CI uses.
 
 ## Raw pages archive format
 
@@ -110,34 +110,34 @@ data/pipeline/
   enriched-closures.json
 ```
 
-The final snapshot is written to `apps/web/public/forests-snapshot.json` (same as before).
+The final snapshot is written to `web/public/forests-snapshot.json` (same as before).
 
 ## Running individual stages
 
 ```bash
 # --- Scrape (fetch raw data) ---
-npx -y tsx scripts/pipeline/scrape-forestry.ts
-npx -y tsx scripts/pipeline/scrape-closures.ts
-npx -y tsx scripts/pipeline/scrape-total-fire-ban.ts
+npx -y tsx pipeline/scripts/scrape-forestry.ts
+npx -y tsx pipeline/scripts/scrape-closures.ts
+npx -y tsx pipeline/scripts/scrape-total-fire-ban.ts
 
 # --- Parse (from saved HTML/JSON, no HTTP) ---
-npx -y tsx scripts/pipeline/parse-forestry.ts
-npx -y tsx scripts/pipeline/parse-closures.ts
-npx -y tsx scripts/pipeline/parse-total-fire-ban.ts
+npx -y tsx pipeline/scripts/parse-forestry.ts
+npx -y tsx pipeline/scripts/parse-closures.ts
+npx -y tsx pipeline/scripts/parse-total-fire-ban.ts
 
 # --- Re-parse only (skip expensive scraping) ---
 # After changing parsing logic, re-run only parse + downstream:
-npx -y tsx scripts/pipeline/parse-closures.ts
-npx -y tsx scripts/pipeline/enrich-closures.ts
-npx -y tsx scripts/pipeline/assemble-snapshot.ts
+npx -y tsx pipeline/scripts/parse-closures.ts
+npx -y tsx pipeline/scripts/enrich-closures.ts
+npx -y tsx pipeline/scripts/assemble-snapshot.ts
 
 # --- Downstream ---
-npx -y tsx scripts/pipeline/geocode-forests.ts
-npx -y tsx scripts/pipeline/enrich-closures.ts
-npx -y tsx scripts/pipeline/assemble-snapshot.ts
+npx -y tsx pipeline/scripts/geocode-forests.ts
+npx -y tsx pipeline/scripts/enrich-closures.ts
+npx -y tsx pipeline/scripts/assemble-snapshot.ts
 
 # --- Full pipeline (all stages in sequence) ---
-npx -y tsx scripts/generate-snapshot.ts
+npx -y tsx pipeline/scripts/generate-snapshot.ts
 ```
 
 ## Design decisions

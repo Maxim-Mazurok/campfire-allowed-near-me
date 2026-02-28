@@ -8,7 +8,7 @@ import {
   parseClosureNoticesPage,
   classifyClosureNoticeTags,
   parseMainFireBanPage
-} from "../../apps/api/src/services/forestry-parser.js";
+} from "../../pipeline/services/forestry-parser.js";
 
 describe("parseBanStatus", () => {
   it("detects no ban text", () => {

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import type { ForestPoint } from "../../apps/web/src/lib/api";
+import type { ForestPoint } from "../../web/src/lib/api";
 import {
   getUnmatchedMarkerLimitForZoom,
   selectClosestForestsToCenter
-} from "../../apps/web/src/lib/map-marker-rendering";
+} from "../../web/src/lib/map-marker-rendering";
 
 const buildForestPoint = (
   id: string,

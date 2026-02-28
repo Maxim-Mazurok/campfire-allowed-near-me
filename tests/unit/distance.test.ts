@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { haversineDistanceKm } from "../../apps/api/src/utils/distance.js";
+import { haversineDistanceKm } from "../../shared/distance.js";
 
 describe("haversineDistanceKm", () => {
   it("returns near-zero for same coordinate", () => {

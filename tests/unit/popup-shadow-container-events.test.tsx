@@ -4,10 +4,10 @@ import { cleanup, fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { MantineProvider } from "@mantine/core";
-import { PopupShadowContainer } from "../../apps/web/src/components/PopupShadowContainer";
-import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
-import { campfireTheme } from "../../apps/web/src/theme";
-import type { ForestApiResponse } from "../../apps/web/src/lib/api";
+import { PopupShadowContainer } from "../../web/src/components/PopupShadowContainer";
+import { ForestCardContent } from "../../web/src/components/ForestCardContent";
+import { campfireTheme } from "../../web/src/theme";
+import type { ForestApiResponse } from "../../web/src/lib/api";
 
 afterEach(() => {
   cleanup();

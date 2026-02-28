@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ForestGeocoder } from "../../apps/api/src/services/forest-geocoder.js";
+import { ForestGeocoder } from "../../pipeline/services/forest-geocoder.js";
 
 /**
  * Tests for using the matched directory forest name as a geocoding hint.

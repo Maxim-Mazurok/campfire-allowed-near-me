@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderToStaticMarkupWithMantine, renderWithMantine } from "../test-utils";
-import { ForestCardContent } from "../../apps/web/src/components/ForestCardContent";
-import type { ForestApiResponse } from "../../apps/web/src/lib/api";
+import { ForestCardContent } from "../../web/src/components/ForestCardContent";
+import type { ForestApiResponse } from "../../web/src/lib/api";
 
 afterEach(() => {
   cleanup();

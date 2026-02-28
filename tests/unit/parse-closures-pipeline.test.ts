@@ -3,14 +3,14 @@ import {
   parseClosureNoticesPage,
   parseClosureNoticeDetailPage,
   classifyClosureNoticeTags
-} from "../../apps/api/src/services/forestry-parser.js";
-import type { RawPagesArchive, RawPagesArchiveEntry } from "../../packages/shared/src/pipeline-types.js";
+} from "../../pipeline/services/forestry-parser.js";
+import type { RawPagesArchive, RawPagesArchiveEntry } from "../../shared/pipeline-types.js";
 
 /**
  * Tests that verify parse-closures pipeline logic: reading HTML from a raw
  * pages archive and calling parser functions to produce structured closures.
  *
- * These tests exercise the same code path as scripts/pipeline/parse-closures.ts
+ * These tests exercise the same code path as pipeline/scripts/parse-closures.ts
  * but without file I/O.
  */
 

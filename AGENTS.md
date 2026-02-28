@@ -35,7 +35,7 @@ Before finishing any task that includes code changes, run **`npm test`** (which 
 - The web app uses **Mantine v8** (`@mantine/core`, `@mantine/hooks`) with `@tabler/icons-react` for icons.
 - Do not use FontAwesome or tippy.js — they have been removed.
 - Use Mantine components (Modal, Button, Badge, TextInput, SegmentedControl, etc.) instead of hand-rolled HTML+CSS.
-- Theme is in `apps/web/src/theme.ts`; **do not modify it without explicit user approval**.
+- Theme is in `web/src/theme.ts`; **do not modify it without explicit user approval**.
 - **Do not use custom hex/RGB/HSL color values** — always use Mantine's built-in named colors.
 - Prefer semantic theme colors where the intent matches the semantics (e.g. use `color="warning"` for warning indicators, not for unrelated orange UI). Do not repurpose semantic colors for purely decorative or unrelated uses.
 - For jsdom tests rendering Mantine components, use `renderWithMantine` from `tests/test-utils.tsx`.

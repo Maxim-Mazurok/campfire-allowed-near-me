@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { RawPageCache } from "../../apps/api/src/utils/raw-page-cache.js";
+import { RawPageCache } from "../../pipeline/utils/raw-page-cache.js";
 
 describe("RawPageCache", () => {
   it("returns fresh cached pages", async () => {

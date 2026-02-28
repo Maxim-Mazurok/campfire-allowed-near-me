@@ -2,12 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import type { ForestApiResponse } from "../../apps/web/src/lib/api";
-import type { PersistedSnapshot } from "../../packages/shared/src/contracts";
+import type { ForestApiResponse } from "../../web/src/lib/api";
+import type { PersistedSnapshot } from "../../shared/contracts";
 import {
   buildForestsQueryKey,
   forestsQueryFn
-} from "../../apps/web/src/lib/forests-query";
+} from "../../web/src/lib/forests-query";
 
 const SNAPSHOT_URL = "http://localhost/forests-snapshot.json";
 

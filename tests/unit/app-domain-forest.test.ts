@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { ForestApiResponse } from "../../apps/web/src/lib/api";
-import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption, forestBelongsToArea } from "../../apps/web/src/lib/app-domain-forest";
+import type { ForestApiResponse } from "../../web/src/lib/api";
+import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption, forestBelongsToArea } from "../../web/src/lib/app-domain-forest";
 
 const buildForest = (
   id: string,

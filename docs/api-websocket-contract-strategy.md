@@ -4,8 +4,8 @@ Last updated: 2026-02-22
 
 ## What was implemented
 
-- Shared contract source in `packages/shared/src/contracts.ts`.
-- Shared websocket message contracts in `packages/shared/src/websocket.ts`.
+- Shared contract source in `shared/contracts.ts`.
+- Shared websocket message contracts in `shared/websocket.ts`.
 - API websocket publish path emits typed payloads from shared message contracts.
 - Websocket client uses a reusable typed reconnecting hook (`use-reconnecting-websocket.ts`).
 - Frontend API types consume shared contracts (no duplicated DTO definitions).
