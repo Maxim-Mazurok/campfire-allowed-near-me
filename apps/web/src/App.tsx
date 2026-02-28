@@ -7,6 +7,7 @@ import { LocationStatusPanels } from "./components/LocationStatusPanels";
 import { MapView } from "./components/MapView";
 import { SettingsDialog } from "./components/SettingsDialog";
 import { WarningsDialog } from "./components/WarningsDialog";
+import { useDrivingRoutes, mergeDrivingRoutes } from "./lib/hooks/use-driving-routes";
 import { useLocation } from "./lib/hooks/use-refresh-and-location";
 import {
   buildForestsQueryKey,
@@ -14,6 +15,7 @@ import {
   toLoadErrorMessage,
   type UserLocation
 } from "./lib/forests-query";
+import { findNearestLegalSpot } from "./lib/static-snapshot";
 import {
   type BanFilterMode,
   type BanScopeFilterMode,
@@ -130,9 +132,37 @@ export const App = () => {
     setUserLocation
   });
   const queryErrorMessage = toLoadErrorMessage(forestsQuery.error);
-  const error = locationError ?? queryErrorMessage;
 
-  const forests = payload?.forests ?? [];
+  const rawForests = payload?.forests ?? [];
+
+  const { routesByForestId, routesLoading, routesError } = useDrivingRoutes({
+    userLatitude: userLocation?.latitude ?? null,
+    userLongitude: userLocation?.longitude ?? null,
+    forests: rawForests,
+    avoidTolls
+  });
+
+  const forests = useMemo(
+    () => mergeDrivingRoutes(rawForests, routesByForestId),
+    [rawForests, routesByForestId]
+  );
+
+  const nearestLegalSpot = useMemo(
+    () => {
+      if (!userLocation) {
+        return payload?.nearestLegalSpot ?? null;
+      }
+
+      if (Object.keys(routesByForestId).length > 0) {
+        return findNearestLegalSpot(forests, userLocation);
+      }
+
+      return payload?.nearestLegalSpot ?? null;
+    },
+    [forests, userLocation, routesByForestId, payload]
+  );
+
+  const error = locationError ?? queryErrorMessage ?? routesError;
   const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
   const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
   const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
@@ -424,6 +454,7 @@ export const App = () => {
         loading={loading}
         payload={payload}
         userLocation={userLocation}
+        nearestLegalSpot={nearestLegalSpot}
         onRequestLocation={requestLocation}
       />
 

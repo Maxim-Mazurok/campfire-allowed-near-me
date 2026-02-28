@@ -1,7 +1,10 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import "dotenv/config";
 
 const DEFAULT_WEB_PORT = 5173;
+const DEFAULT_ROUTES_PROXY_PORT = 8787;
 const MAX_PORT = 65_535;
 const NOMINATIM_CONTAINER_NAME = "campfire-nominatim";
 const DEFAULT_NOMINATIM_IMAGE = "mediagis/nominatim:4.5";
@@ -334,6 +337,10 @@ const main = async () => {
     process.env.WEB_PORT_START ?? process.env.WEB_PORT,
     DEFAULT_WEB_PORT
   );
+  const routesProxyPort = parsePort(
+    process.env.ROUTES_PROXY_PORT,
+    DEFAULT_ROUTES_PROXY_PORT
+  );
 
   // eslint-disable-next-line no-console
   console.log(
@@ -341,12 +348,72 @@ const main = async () => {
   );
 
   const baseEnv = process.env;
+
+  const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY ?? "";
+  const routesProxyDirectory = resolve(
+    new URL(".", import.meta.url).pathname,
+    "..",
+    "workers",
+    "routes-proxy"
+  );
+
+  if (googleMapsApiKey) {
+    const devVarsPath = resolve(routesProxyDirectory, ".dev.vars");
+    const snapshotUrl = `http://localhost:${webStartPort}/forests-snapshot.json`;
+    const devVarsContent = [
+      `GOOGLE_MAPS_API_KEY=${googleMapsApiKey}`,
+      `SNAPSHOT_URL=${snapshotUrl}`
+    ].join("\n");
+
+    const existingDevVars = existsSync(devVarsPath)
+      ? readFileSync(devVarsPath, "utf-8").trim()
+      : "";
+    if (existingDevVars !== devVarsContent.trim()) {
+      writeFileSync(devVarsPath, `${devVarsContent}\n`, "utf-8");
+      // eslint-disable-next-line no-console
+      console.log("[dev] Wrote routes-proxy .dev.vars (GOOGLE_MAPS_API_KEY + SNAPSHOT_URL).");
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(`[dev] Starting routes-proxy worker on :${routesProxyPort}.`);
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[dev] GOOGLE_MAPS_API_KEY not set — routes-proxy worker will NOT start. Driving distances will be unavailable."
+    );
+  }
+
   const webProcess = spawnProcess(["run", "dev:web"], {
     ...baseEnv,
     WEB_PORT: `${webStartPort}`
   });
 
-  const children = [webProcess];
+  const children: ChildProcess[] = [webProcess];
+
+  if (googleMapsApiKey) {
+    const wranglerProcess = spawn(
+      process.platform === "win32" ? "npx.cmd" : "npx",
+      ["-y", "wrangler", "dev", "--port", `${routesProxyPort}`],
+      {
+        stdio: "inherit",
+        cwd: routesProxyDirectory,
+        env: baseEnv
+      }
+    );
+
+    children.push(wranglerProcess);
+
+    wranglerProcess.on("exit", (code, signal) => {
+      if (shuttingDown) {
+        return;
+      }
+
+      const detail = signal ? `signal ${signal}` : `code ${code ?? 1}`;
+      // eslint-disable-next-line no-console
+      console.warn(`[dev] Routes-proxy worker exited with ${detail}. Driving distances will be unavailable.`);
+    });
+  }
+
   let shuttingDown = false;
 
   const shutdown = (signal: NodeJS.Signals) => {

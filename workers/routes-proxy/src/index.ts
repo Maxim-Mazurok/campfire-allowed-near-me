@@ -112,6 +112,9 @@ const computeRouteMatrix = async (
               longitude: origin.longitude
             }
           }
+        },
+        routeModifiers: {
+          avoidTolls
         }
       }
     ],
@@ -126,10 +129,7 @@ const computeRouteMatrix = async (
       }
     })),
     travelMode: "DRIVE",
-    routingPreference: "TRAFFIC_AWARE",
-    routeModifiers: {
-      avoidTolls
-    }
+    routingPreference: "TRAFFIC_AWARE"
   };
 
   const response = await fetch(

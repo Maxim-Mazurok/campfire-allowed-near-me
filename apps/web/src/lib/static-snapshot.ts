@@ -10,7 +10,7 @@ import type {
 const SNAPSHOT_URL =
   import.meta.env.VITE_SNAPSHOT_URL ?? "/forests-snapshot.json";
 
-const findNearestLegalSpot = (
+export const findNearestLegalSpot = (
   forests: ForestPoint[],
   userLocation?: { latitude: number; longitude: number }
 ): NearestForest | null => {

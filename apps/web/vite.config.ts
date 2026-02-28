@@ -40,6 +40,12 @@ export default defineConfig({
     strictPort,
     fs: {
       allow: fsAllow
+    },
+    proxy: {
+      "/api/routes": {
+        target: "http://localhost:8787",
+        changeOrigin: true
+      }
     }
   },
   preview: {
