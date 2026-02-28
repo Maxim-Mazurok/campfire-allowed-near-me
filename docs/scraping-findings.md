@@ -161,3 +161,33 @@ Reuses existing `isCloudflareChallengeHtml()` from `pipeline/services/forestry-p
 5. **Bandwidth is minimal**: ~1.55 MB per run through the proxy. At 2x/day, annual proxy cost is under $4.
 
 6. **No API key rotation needed**: Decodo credentials are static username/password. No token refresh or OAuth flow to manage.
+
+---
+
+## FCNSW Closure Listing Behavior (observed 2026-02-28)
+
+### Listing page is the source of truth — not detail page dates
+
+The FCNSW closure listing page (`forestclosure.fcnsw.net/indexframe`) is the authoritative index of **active** closures. When Forestry Corp reopens a forest, they remove the closure from the listing page. They do **not** necessarily update the "until" date on the detail page — the detail page often remains accessible at its direct URL even after the closure is no longer active.
+
+### Why closures disappear from the listing
+
+Observed with Styx River State Forest closure id 5052 (compartments 43–48):
+
+- The detail page at `ClosureDetailsFrame?id=5052` was still live and showed an "until" date of 30 June 2026.
+- However, the closure was no longer present on the listing page (only id 3103, covering different compartments 52–60, was listed).
+- This means the forest was reopened for compartments 43–48, but the detail page was never cleaned up.
+
+### Design decision: do not retain de-listed closures
+
+We intentionally do **not** attempt to retain closures that disappear from the listing, even if their detail pages are still live and have future "until" dates. Reasons:
+
+1. **"Until" dates are aspirational, not contractual.** Forestry Corp sets end dates as upper bounds (or "until further notice"). When a closure ends early, they remove it from the listing rather than updating the date.
+2. **The listing page reflects current operational status.** If a closure is removed from the listing, the forest is considered reopened regardless of what the detail page says.
+3. **Retention would produce false positives.** Showing a closure that Forestry Corp considers resolved would mislead users into thinking a forest is restricted when it is not.
+
+### Implications for the pipeline
+
+- The scrape stage fetches only closures present on the listing page.
+- If a closure disappears between two scrape runs, it is treated as resolved and dropped from the snapshot.
+- The "until" date on a closure is used for display purposes only — it does not determine whether the closure is active.

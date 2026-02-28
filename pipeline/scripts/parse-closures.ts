@@ -42,7 +42,7 @@ const main = () => {
   const closures = parseClosureNoticesPage(listEntry.html, listEntry.finalUrl);
   console.log(`[parse-closures] Parsed ${closures.length} closure notice(s) from list page`);
 
-  // --- Parse detail pages ---
+  // --- Parse detail pages for listing closures ---
   let detailSuccessCount = 0;
   let detailMissingCount = 0;
   let detailChallengeCount = 0;

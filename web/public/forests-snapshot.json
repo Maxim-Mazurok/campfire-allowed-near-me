@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-02-27T14:40:07.829Z",
+  "fetchedAt": "2026-02-28T10:23:24.805Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -28652,27 +28652,6 @@
             "access4wdImpact": "UNKNOWN",
             "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
-        },
-        {
-          "id": "5052",
-          "title": "Styx River State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5052",
-          "listedAt": "2026-01-26T13:01:00.000Z",
-          "listedAtText": "2026-01-26T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T13:59:00.000Z",
-          "untilText": "2026-06-30T13:59:00.0000000Z",
-          "forestNameHint": "Styx River State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Styx River State Forest will be closed from 9:00 am Tuesday 27 January 2026 to 6:00 pm Tuesday 30 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
-          }
         }
       ],
       "closureTags": {
@@ -28682,9 +28661,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {

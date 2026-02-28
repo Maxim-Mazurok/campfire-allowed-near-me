@@ -8,10 +8,7 @@
  */
 import { ForestryScraper } from "../services/forestry-scraper.js";
 import { RawPageCache } from "../utils/raw-page-cache.js";
-import {
-  PIPELINE_PATHS,
-  RAW_PAGES_ARCHIVE_VERSION
-} from "../../shared/pipeline-types.js";
+import { PIPELINE_PATHS, RAW_PAGES_ARCHIVE_VERSION } from "../../shared/pipeline-types.js";
 import { writeRawPagesArchive } from "./pipeline-io.js";
 import {
   BROWSER_PROFILE_DIRECTORY,
