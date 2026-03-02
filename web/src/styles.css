@@ -647,6 +647,10 @@ body {
    ================================================================ */
 
 .app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 6px;
   padding: 4px 8px;
   text-align: center;
 }

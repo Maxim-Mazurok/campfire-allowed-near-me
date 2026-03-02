@@ -4,7 +4,7 @@ import { Anchor, Text } from "@mantine/core";
 export const AppFooter = () => {
   return (
     <footer className="app-footer">
-      <Text size="xs" c="dimmed" ta="center">
+      <Text size="xs" c="dimmed" component="span">
         Data sourced from{" "}
         <Anchor href="https://www.forestrycorporation.com.au" target="_blank" rel="noreferrer" size="xs">
           Forestry Corporation of NSW
@@ -15,7 +15,7 @@ export const AppFooter = () => {
         </Anchor>
         . Not official — always verify before lighting a fire.
       </Text>
-      <Text size="xs" c="dimmed" ta="center" mt={2}>
+      <Text size="xs" c="dimmed" component="span">
         Built with <IconHeart size={12} stroke={1.5} color="red" fill="red" style={{ verticalAlign: "middle" }} /> in Sydney by{" "}
         <Anchor href="https://github.com/Maxim-Mazurok" target="_blank" rel="noreferrer" size="xs">
           Maxim Mazurok{/* cspell:words Mazurok */}

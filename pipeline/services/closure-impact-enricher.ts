@@ -39,7 +39,7 @@ interface LlmStructuredImpactDraft {
 const CACHE_SCHEMA_VERSION = 1;
 const MAX_DETAIL_TEXT_CHARS = 5_000;
 const DEFAULT_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const DEFAULT_MAX_NOTICES_PER_REFRESH = 12;
+const DEFAULT_MAX_NOTICES_PER_REFRESH = 50;
 const IMPACT_LEVEL_ORDER: Record<ClosureImpactLevel, number> = {
   NONE: 0,
   ADVISORY: 1,
