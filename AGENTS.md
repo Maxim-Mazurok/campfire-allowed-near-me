@@ -8,6 +8,8 @@ This file gives baseline instructions for AI coding agents collaborating in this
 - Preserve the primary user goal: find the closest NSW forest where campfires are legal now.
 - Treat Forestry NSW `Solid Fuel Fire Ban` as the source of truth for burn legality.
 - Ignore firewood collection status for ban logic.
+- Use **FCNSW ArcGIS dedicated-state-forest geometry** as the preferred source for forest location and boundaries. See `docs/nsw-forest-integration-guide.md`.
+- Use Google Geocoding and Nominatim only as fallback when FCNSW lookup is unresolved.
 
 ## Engineering constraints
 - Prefer small, testable changes.
