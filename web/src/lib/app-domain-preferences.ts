@@ -1,4 +1,5 @@
 import type { UserPreferences, BanFilterMode, LegacyBanFilterMode, BanScopeFilterMode, ClosureStatusFilterMode, TriStateMode, ForestListSortOption } from "./app-domain-types";
+import type { LocationSource } from "./location-constants";
 
 const USER_PREFERENCES_STORAGE_KEY = "campfire-user-preferences";
 
@@ -36,10 +37,17 @@ const isTriStateMode = (value: unknown): value is TriStateMode =>
   value === "ANY" || value === "INCLUDE" || value === "EXCLUDE";
 
 const isForestListSortOption = (value: unknown): value is ForestListSortOption =>
+  value === "DIRECT_DISTANCE_ASC" ||
+  value === "DIRECT_DISTANCE_DESC" ||
   value === "DRIVING_DISTANCE_ASC" ||
   value === "DRIVING_DISTANCE_DESC" ||
   value === "DRIVING_TIME_ASC" ||
   value === "DRIVING_TIME_DESC";
+
+const isLocationSource = (value: unknown): value is LocationSource =>
+  value === "DEFAULT_SYDNEY" ||
+  value === "GEOLOCATION" ||
+  value === "MAP_PIN";
 
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -134,6 +142,10 @@ const parseUserPreferences = (value: string | null): UserPreferences => {
           longitude: rawLocation.longitude
         };
       }
+    }
+
+    if (isLocationSource(rawPreferences.locationSource)) {
+      preferences.locationSource = rawPreferences.locationSource;
     }
 
     if (isBoolean(rawPreferences.avoidTolls)) {

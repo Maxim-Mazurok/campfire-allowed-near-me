@@ -112,7 +112,7 @@ export const App = () => {
     () => getInitialPreferences().userLocation ?? SYDNEY_DEFAULT_LOCATION
   );
   const [locationSource, setLocationSource] = useState<LocationSource>(
-    () => getInitialPreferences().userLocation ? "GEOLOCATION" : "DEFAULT_SYDNEY"
+    () => getInitialPreferences().locationSource ?? (getInitialPreferences().userLocation ? "GEOLOCATION" : "DEFAULT_SYDNEY")
   );
   const [avoidTolls, setAvoidTolls] = useState<boolean>(
     () => getInitialPreferences().avoidTolls ?? true
@@ -251,6 +251,7 @@ export const App = () => {
       impactAccess2wdFilterMode,
       impactAccess4wdFilterMode,
       userLocation,
+      locationSource,
       avoidTolls,
       forestListSortOption
     });
@@ -266,6 +267,7 @@ export const App = () => {
     impactAccess2wdFilterMode,
     impactAccess4wdFilterMode,
     userLocation,
+    locationSource,
     avoidTolls,
     forestListSortOption
   ]);

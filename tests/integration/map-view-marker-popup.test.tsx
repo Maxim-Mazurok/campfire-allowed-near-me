@@ -67,23 +67,27 @@ vi.mock("react-leaflet", () => ({
   CircleMarker: ({
     pane,
     interactive,
-    eventHandlers
+    eventHandlers,
+    bubblingMouseEvents
   }: {
     pane?: string;
     interactive?: boolean;
     eventHandlers?: { click?: () => void };
+    bubblingMouseEvents?: boolean;
   }) => {
     const paneName = pane ?? "default";
     const markerKind = interactive === false ? "display" : "interactive";
+    const bubbling = bubblingMouseEvents === false ? "false" : "true";
 
     if (interactive === false) {
-      return <div data-testid={`circle-marker-${paneName}-${markerKind}`} />;
+      return <div data-testid={`circle-marker-${paneName}-${markerKind}`} data-bubbling={bubbling} />;
     }
 
     return (
       <button
         type="button"
         data-testid={`circle-marker-${paneName}-${markerKind}`}
+        data-bubbling={bubbling}
         onClick={() => {
           eventHandlers?.click?.();
         }}
@@ -584,5 +588,34 @@ describe("MapView marker popup interactions", () => {
 
     expect(screen.queryByTestId("circle-marker-area-highlighted-forests-interactive")).toBeNull();
     expect(screen.getAllByTestId("circle-marker-matched-forests-interactive").length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("sets bubblingMouseEvents to false on interactive forest markers to prevent pin placement", () => {
+    resetMockedMapSpies();
+
+    renderWithMantine(
+      <MapView
+        forests={[
+          buildForestPoint({
+            id: "forest-bubble-test",
+            forestName: "Bubble Test Forest",
+            banStatus: "NOT_BANNED"
+          })
+        ]}
+        matchedForestIds={new Set(["forest-bubble-test"])}
+        userLocation={null}
+        availableFacilities={[]}
+        avoidTolls={true}
+        hoveredForestId={null}
+        hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
+      />
+    );
+
+    const interactiveMarkers = screen.getAllByTestId("circle-marker-matched-forests-interactive");
+    for (const marker of interactiveMarkers) {
+      expect(marker.getAttribute("data-bubbling")).toBe("false");
+    }
   });
 });

@@ -399,6 +399,7 @@ const ForestMarker = memo(({
           center={[forest.latitude, forest.longitude]}
           pane={markerPaneName}
           radius={clickTargetMarkerRadius}
+          bubblingMouseEvents={false}
           pathOptions={{
             color: "transparent",
             fillColor: "transparent",
@@ -421,6 +422,7 @@ const ForestMarker = memo(({
       radius={markerRadius}
       pathOptions={markerPathOptions}
       interactive={displayMarkerInteractive}
+      bubblingMouseEvents={false}
       eventHandlers={{
         click: selectForest
       }}

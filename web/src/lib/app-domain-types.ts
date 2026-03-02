@@ -1,4 +1,5 @@
 import type { UserLocation } from "./forests-query";
+import type { LocationSource } from "./location-constants";
 
 export type BanFilterMode = "ALL" | "NOT_BANNED" | "BANNED" | "UNKNOWN";
 export type LegacyBanFilterMode = "ALL" | "ALLOWED" | "NOT_ALLOWED";
@@ -38,6 +39,7 @@ export type UserPreferences = {
   facilityFilterModes?: Record<string, TriStateMode>;
   closureTagFilterModes?: Record<string, TriStateMode>;
   userLocation?: UserLocation | null;
+  locationSource?: LocationSource;
   avoidTolls?: boolean;
   forestListSortOption?: ForestListSortOption;
 };
