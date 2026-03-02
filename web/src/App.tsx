@@ -702,7 +702,6 @@ export const App = () => {
         <ForestListPanel
           matchingForests={matchingForests}
           availableFacilities={availableFacilities}
-          payload={payload}
           avoidTolls={avoidTolls}
           hoveredForestId={hoveredForestId}
           onHoveredForestIdChange={setHoveredForestId}

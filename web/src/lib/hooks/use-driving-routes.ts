@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import type { ForestApiResponse } from "../api";
 import {
   fetchDrivingRoutes,
+  type RouteDestination,
   type RouteResult,
   type RoutesApiResponse
 } from "../routes-api-client";
@@ -39,15 +40,24 @@ export const useDrivingRoutes = ({
   routesLoading: boolean;
   routesError: string | null;
 } => {
-  const geocodedForestIds = useMemo(
+  const geocodedDestinations = useMemo(
     () =>
       forests
         .filter(
-          (forest) =>
+          (forest): forest is typeof forest & { latitude: number; longitude: number } =>
             forest.latitude !== null && forest.longitude !== null
         )
-        .map((forest) => forest.id),
+        .map((forest) => ({
+          id: forest.id,
+          latitude: forest.latitude,
+          longitude: forest.longitude
+        })),
     [forests]
+  );
+
+  const geocodedForestIds = useMemo(
+    () => geocodedDestinations.map((destination) => destination.id),
+    [geocodedDestinations]
   );
 
   const enabled =
@@ -69,8 +79,8 @@ export const useDrivingRoutes = ({
   const query = useQuery<RoutesApiResponse>({
     queryKey,
     enabled,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 5 * 60 * 1_000,
+    gcTime: 10 * 60 * 1_000,
     retry: 1,
     queryFn: async ({ signal }) => {
       if (userLatitude === null || userLongitude === null) {
@@ -79,28 +89,28 @@ export const useDrivingRoutes = ({
 
       const origin = { latitude: userLatitude, longitude: userLongitude };
 
-      if (geocodedForestIds.length <= MAX_FORESTS_PER_REQUEST) {
+      if (geocodedDestinations.length <= MAX_FORESTS_PER_REQUEST) {
         return fetchDrivingRoutes(
-          { origin, forestIds: geocodedForestIds, avoidTolls },
+          { origin, destinations: geocodedDestinations, avoidTolls },
           signal
         );
       }
 
-      const batches: string[][] = [];
+      const batches: RouteDestination[][] = [];
       for (
         let offset = 0;
-        offset < geocodedForestIds.length;
+        offset < geocodedDestinations.length;
         offset += MAX_FORESTS_PER_REQUEST
       ) {
         batches.push(
-          geocodedForestIds.slice(offset, offset + MAX_FORESTS_PER_REQUEST)
+          geocodedDestinations.slice(offset, offset + MAX_FORESTS_PER_REQUEST)
         );
       }
 
       const batchResults = await Promise.all(
-        batches.map((batchForestIds) =>
+        batches.map((batchDestinations) =>
           fetchDrivingRoutes(
-            { origin, forestIds: batchForestIds, avoidTolls },
+            { origin, destinations: batchDestinations, avoidTolls },
             signal
           )
         )

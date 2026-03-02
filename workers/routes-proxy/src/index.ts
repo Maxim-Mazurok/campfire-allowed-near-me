@@ -14,19 +14,18 @@ interface LatLng {
 
 interface Environment {
   GOOGLE_MAPS_API_KEY: string;
-  SNAPSHOT_URL: string;
+}
+
+interface Destination {
+  id: string;
+  latitude: number;
+  longitude: number;
 }
 
 interface RouteRequest {
   origin: LatLng;
-  forestIds: string[];
+  destinations: Destination[];
   avoidTolls?: boolean;
-}
-
-interface ForestCoordinate {
-  id: string;
-  latitude: number;
-  longitude: number;
 }
 
 interface RouteResult {
@@ -61,45 +60,10 @@ const parseDurationSeconds = (duration: string | undefined): number | null => {
   return match ? Number(match[1]) : null;
 };
 
-const fetchForestCoordinates = async (
-  snapshotUrl: string,
-  requestedIds: Set<string>
-): Promise<Map<string, ForestCoordinate>> => {
-  const response = await fetch(snapshotUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch snapshot: HTTP ${response.status}`);
-  }
-
-  const snapshot = (await response.json()) as {
-    forests: Array<{
-      id: string;
-      latitude: number | null;
-      longitude: number | null;
-    }>;
-  };
-
-  const coordinates = new Map<string, ForestCoordinate>();
-  for (const forest of snapshot.forests) {
-    if (
-      requestedIds.has(forest.id) &&
-      forest.latitude !== null &&
-      forest.longitude !== null
-    ) {
-      coordinates.set(forest.id, {
-        id: forest.id,
-        latitude: forest.latitude,
-        longitude: forest.longitude
-      });
-    }
-  }
-
-  return coordinates;
-};
-
 const computeRouteMatrix = async (
   apiKey: string,
   origin: LatLng,
-  destinations: ForestCoordinate[],
+  destinations: Destination[],
   avoidTolls: boolean
 ): Promise<RouteMatrixElement[]> => {
   const requestBody: ComputeRouteMatrixRequest = {
@@ -170,29 +134,29 @@ const handleRouteRequest = async (
     return errorResponse("Missing or invalid origin coordinates", 400);
   }
 
-  if (!Array.isArray(body.forestIds) || body.forestIds.length === 0) {
-    return errorResponse("forestIds must be a non-empty array", 400);
+  if (!Array.isArray(body.destinations) || body.destinations.length === 0) {
+    return errorResponse("destinations must be a non-empty array", 400);
   }
 
-  if (body.forestIds.length > 25) {
-    return errorResponse("Maximum 25 forest IDs per request", 400);
+  if (body.destinations.length > 25) {
+    return errorResponse("Maximum 25 destinations per request", 400);
+  }
+
+  for (const destination of body.destinations) {
+    if (
+      !destination.id ||
+      typeof destination.latitude !== "number" ||
+      typeof destination.longitude !== "number"
+    ) {
+      return errorResponse(
+        "Each destination must have id, latitude, and longitude",
+        400
+      );
+    }
   }
 
   const avoidTolls = body.avoidTolls ?? true;
-  const requestedIds = new Set(body.forestIds);
-
-  const coordinates = await fetchForestCoordinates(
-    environment.SNAPSHOT_URL,
-    requestedIds
-  );
-
-  const destinations = [...coordinates.values()];
-  if (destinations.length === 0) {
-    return jsonResponse({
-      routes: {},
-      warnings: ["No matching forests with coordinates found"]
-    });
-  }
+  const destinations = body.destinations;
 
   const matrixResults = await computeRouteMatrix(
     environment.GOOGLE_MAPS_API_KEY,
@@ -225,15 +189,6 @@ const handleRouteRequest = async (
       distanceKm: element.distanceMeters / 1000,
       durationMinutes: durationSeconds !== null ? durationSeconds / 60 : 0
     };
-  }
-
-  const missingIds = body.forestIds.filter(
-    (forestId) => !coordinates.has(forestId)
-  );
-  if (missingIds.length > 0) {
-    warnings.push(
-      `${missingIds.length} forest(s) not found or missing coordinates`
-    );
   }
 
   return jsonResponse({ routes, warnings });

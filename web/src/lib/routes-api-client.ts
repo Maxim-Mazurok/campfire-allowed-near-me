@@ -8,9 +8,15 @@ export interface RoutesApiResponse {
   warnings: string[];
 }
 
+export interface RouteDestination {
+  id: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface RoutesApiRequest {
   origin: { latitude: number; longitude: number };
-  forestIds: string[];
+  destinations: RouteDestination[];
   avoidTolls?: boolean;
 }
 

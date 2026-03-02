@@ -1,7 +1,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { NativeSelect, Text, TextInput, Title } from "@mantine/core";
+import { NativeSelect, TextInput, Title } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { ForestCardContent } from "./ForestCardContent";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
@@ -13,7 +13,6 @@ import type { ForestListSortOption } from "../lib/app-domain-types";
 export type ForestListPanelProps = {
   matchingForests: ForestApiResponse["forests"];
   availableFacilities: FacilityDefinition[];
-  payload: ForestApiResponse | null;
   avoidTolls: boolean;
   hoveredForestId: string | null;
   onHoveredForestIdChange: (hoveredForestId: string | null) => void;
@@ -195,7 +194,6 @@ VirtualizedForestList.displayName = "VirtualizedForestList";
 export const ForestListPanel = memo(({
   matchingForests,
   availableFacilities,
-  payload,
   avoidTolls,
   hoveredForestId,
   onHoveredForestIdChange,
@@ -247,10 +245,6 @@ export const ForestListPanel = memo(({
   return (
     <aside className="panel list-panel">
       <Title order={2} size="h4">Forests ({filteredMatchingForests.length})</Title>
-      <Text size="sm" c="dimmed" mt={4} mb={8}>
-        Last fetched: {payload ? new Date(payload.fetchedAt).toLocaleString() : "-"}
-        {payload?.stale ? " (stale cache)" : ""}
-      </Text>
 
       <TextInput
         data-testid="forest-search-input"
