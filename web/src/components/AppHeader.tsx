@@ -2,23 +2,14 @@ import {
   Button,
   Group,
   Text,
-  Title
+  Title,
+  Tooltip
 } from "@mantine/core";
 import { IconSettings, IconAlertTriangle } from "@tabler/icons-react";
+import { formatDistanceToNowStrict } from "date-fns";
 
-const formatTimeSince = (isoTimestamp: string): string => {
-  const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
-  const totalMinutes = Math.floor(elapsedMs / 60_000);
-
-  if (totalMinutes < 1) return "just now";
-  if (totalMinutes < 60) return `${totalMinutes}m ago`;
-
-  const hours = Math.floor(totalMinutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-};
+export const SNAPSHOT_UPDATE_SCHEDULE_TOOLTIP =
+  "Data updates twice daily, around 4\u20135 AM and 4\u20135 PM Sydney time";
 
 export type AppHeaderProps = {
   warningCount: number;
@@ -55,9 +46,18 @@ export const AppHeader = ({
         </Group>
         <Group gap="xs" align="center" className="header-actions">
           {snapshotFetchedAt ? (
-            <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
-              Updated {formatTimeSince(snapshotFetchedAt)}
-            </Text>
+            <Tooltip
+              label={SNAPSHOT_UPDATE_SCHEDULE_TOOLTIP}
+              multiline
+              withArrow
+            >
+              <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
+                Updated{" "}
+                {formatDistanceToNowStrict(new Date(snapshotFetchedAt), {
+                  addSuffix: true
+                })}
+              </Text>
+            </Tooltip>
           ) : null}
           <Button
             variant="default"
