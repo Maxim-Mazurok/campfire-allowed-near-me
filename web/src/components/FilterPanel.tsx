@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
-import { Anchor, Button, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title, Tooltip } from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { FacilityIcon } from "./FacilityIcon";
 import { TriStateToggle } from "./TriStateToggle";
 import type { ClosureTagDefinition, FacilityDefinition } from "../lib/api";
@@ -17,9 +18,9 @@ import {
   TOTAL_FIRE_BAN_SOURCE_URL
 } from "../lib/app-domain-constants";
 
+export type FilterPreset = "LEGAL_CAMPFIRE" | "LEGAL_CAMPFIRE_CAMPING";
+
 export type FilterPanelProps = {
-  matchingForestsCount: number;
-  forestsCount: number;
   solidFuelBanFilterMode: BanFilterMode;
   setSolidFuelBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
   solidFuelBanScopeFilterMode: BanScopeFilterMode;
@@ -49,8 +50,6 @@ export type FilterPanelProps = {
 };
 
 export const FilterPanel = ({
-  matchingForestsCount,
-  forestsCount,
   solidFuelBanFilterMode,
   setSolidFuelBanFilterMode,
   solidFuelBanScopeFilterMode,
@@ -81,21 +80,40 @@ export const FilterPanel = ({
   const showBanScopeSubFilter =
     solidFuelBanFilterMode === "NOT_BANNED" || solidFuelBanFilterMode === "BANNED";
 
+  const showCampingOpenFilter = closureStatusFilterMode === "PARTIAL";
+
+  const HelpIcon = ({ label }: { label: string }) => (
+    <Tooltip label={label} multiline w={260} position="right" withArrow>
+      <IconInfoCircle size={14} style={{ opacity: 0.5, cursor: "help", flexShrink: 0 }} />
+    </Tooltip>
+  );
+
+  const shortenFacilityLabel = (label: string): string =>
+    label.replace(/^Designated\s+/i, "").replace(/\s+Available$/i, "");
+
+  const capitalizeFacilityLabel = (label: string): string =>
+    shortenFacilityLabel(label).replace(/\b\w/g, (character) => character.toUpperCase());
+
+  const closureTagTooltips: Record<string, string> = {
+    ROAD_ACCESS: "Forest has notices about road or trail access restrictions — may affect driving in.",
+    CAMPING: "Forest has notices affecting camping areas — sites may be closed or restricted.",
+    EVENT: "Forest is closed or restricted due to a planned event (e.g. forestry operations, organised event).",
+    OPERATIONS: "Forest has operational or safety-related restrictions (e.g. hazard reduction, timber harvesting)."
+  };
+
   return (
     <aside className="panel filter-panel">
-      <Title order={2} size="h4">Filters</Title>
-      <Text size="sm" c="dimmed" mt={6} mb={12}>
-        Matching {matchingForestsCount} of {forestsCount} forests.
-      </Text>
       <ScrollArea style={{ flex: 1 }} offsetScrollbars>
         <Stack gap="md">
-          <Divider />
           <div>
-            <Title order={3} size="sm" mb={8}>
-              <Anchor href={SOLID_FUEL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
-                Solid Fuel Fire Ban
-              </Anchor>
-            </Title>
+            <Group gap={4} mb={8}>
+              <Title order={3} size="sm">
+                <Anchor href={SOLID_FUEL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                  Solid Fuel Fire Ban
+                </Anchor>
+              </Title>
+              <HelpIcon label="Forestry Corp NSW seasonal ban on solid fuel fires (wood, charcoal) in state forests. 'Solid fuel' means any fire that burns wood, charcoal, or similar material — i.e. a campfire. Checked daily." />
+            </Group>
             <SegmentedControl
               aria-label="Solid fuel fire ban filter"
               fullWidth
@@ -111,9 +129,10 @@ export const FilterPanel = ({
             />
             {showBanScopeSubFilter ? (
               <>
-                <Text size="xs" c="dimmed" mt={6} mb={4}>
-                  Where?
-                </Text>
+                <Group gap={4} mt={6} mb={4}>
+                  <Text size="xs" c="dimmed">Where?</Text>
+                  <HelpIcon label="'Anywhere' = the ban/allow applies everywhere in the forest. 'Camps' = only within designated camping areas. 'Not camps' = outside camping areas only." />
+                </Group>
                 <SegmentedControl
                   aria-label="Solid fuel ban scope filter"
                   fullWidth
@@ -132,11 +151,14 @@ export const FilterPanel = ({
 
           <Divider />
           <div>
-            <Title order={3} size="sm" mb={4}>
-              <Anchor href={TOTAL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
-                Total Fire Ban
-              </Anchor>
-            </Title>
+            <Group gap={4} mb={4}>
+              <Title order={3} size="sm">
+                <Anchor href={TOTAL_FIRE_BAN_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                  Total Fire Ban
+                </Anchor>
+              </Title>
+              <HelpIcon label="NSW RFS Total Fire Ban — declared when weather conditions are extreme. Bans ALL outdoor fires including gas/electric BBQs in some cases. This is separate from the solid fuel ban." />
+            </Group>
             <Text size="xs" c="dimmed" mb={8}>
               <Anchor href={TOTAL_FIRE_BAN_RULES_URL} target="_blank" rel="noreferrer" size="xs">
                 Rules
@@ -160,11 +182,14 @@ export const FilterPanel = ({
 
           <Divider />
           <div>
-            <Title order={3} size="sm" mb={8}>
-              <Anchor href={CLOSURES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
-                Closures & Notices
-              </Anchor>
-            </Title>
+            <Group gap={4} mb={8}>
+              <Title order={3} size="sm">
+                <Anchor href={CLOSURES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                  Closures & Notices
+                </Anchor>
+              </Title>
+              <HelpIcon label="FCNSW forest closures and notices — road closures, event closures, camping restrictions, etc. A forest can be fully open, partly closed, or fully closed." />
+            </Group>
             <SegmentedControl
               aria-label="Closure status filter"
               fullWidth
@@ -180,7 +205,10 @@ export const FilterPanel = ({
             />
             <Stack gap={7} mt={10}>
               <Group justify="space-between" gap="xs">
-                <Text size="xs">Has notices</Text>
+                <Group gap={4}>
+                  <Text size="xs">Has notices</Text>
+                  <HelpIcon label="Filter forests that have active closure notices (road blocks, restrictions, events, etc.)." />
+                </Group>
                 <TriStateToggle
                   mode={hasNoticesFilterMode}
                   onToggle={(targetMode) =>
@@ -195,23 +223,33 @@ export const FilterPanel = ({
                   anyTestId="has-notices-filter-any"
                 />
               </Group>
+              {showCampingOpenFilter ? (
+                <Group justify="space-between" gap="xs">
+                  <Group gap={4}>
+                    <Text size="xs">Camping open</Text>
+                    <HelpIcon label="Filter partly-closed forests by whether their camping areas are still open. 'Yes' = show forests where camping is still available despite partial closures. 'No' = show forests where camping is affected." />
+                  </Group>
+                  <TriStateToggle
+                    mode={impactCampingFilterMode}
+                    onToggle={(targetMode) =>
+                      setImpactCampingFilterMode((current) =>
+                        current === targetMode ? "ANY" : targetMode
+                      )
+                    }
+                    onReset={() => setImpactCampingFilterMode("ANY")}
+                    label="Camping impact"
+                    includeTestId="impact-filter-camping-include"
+                    excludeTestId="impact-filter-camping-exclude"
+                    anyTestId="impact-filter-camping-any"
+                  />
+                </Group>
+              ) : null}
               <Group justify="space-between" gap="xs">
-                <Text size="xs">Camping open</Text>
-                <TriStateToggle
-                  mode={impactCampingFilterMode}
-                  onToggle={(targetMode) =>
-                    setImpactCampingFilterMode((current) =>
-                      current === targetMode ? "ANY" : targetMode
-                    )
-                  }
-                  onReset={() => setImpactCampingFilterMode("ANY")}
-                  label="Camping impact"
-                  includeTestId="impact-filter-camping-include"
-                  excludeTestId="impact-filter-camping-exclude"
-                  anyTestId="impact-filter-camping-any"
-                />
+                <Group gap={4}>
+                  <Text size="xs" mt={4}>2WD access</Text>
+                  <HelpIcon label="Filter by 2WD vehicle access warnings from closure notices. 'No warning' hides forests where 2WD access may be restricted." />
+                </Group>
               </Group>
-              <Text size="xs" mt={4}>2WD access</Text>
               <SegmentedControl
                 aria-label="2WD access impact filter"
                 fullWidth
@@ -223,7 +261,12 @@ export const FilterPanel = ({
                   { label: "Warning", value: "INCLUDE" },
                 ]}
               />
-              <Text size="xs" mt={4}>4WD access</Text>
+              <Group justify="space-between" gap="xs">
+                <Group gap={4}>
+                  <Text size="xs" mt={4}>4WD access</Text>
+                  <HelpIcon label="Filter by 4WD vehicle access warnings from closure notices. 'No warning' hides forests where 4WD access may be restricted." />
+                </Group>
+              </Group>
               <SegmentedControl
                 aria-label="4WD access impact filter"
                 fullWidth
@@ -243,17 +286,31 @@ export const FilterPanel = ({
               <Divider />
               <div>
                 <Group justify="space-between" mb={8}>
-                  <Title order={3} size="sm">Closure tags</Title>
-                  <Button variant="subtle" size="compact-xs" onClick={clearClosureTagModes}>
+                  <Group gap={4}>
+                    <Title order={3} size="sm">Closure tags</Title>
+                    <HelpIcon label="Filter by type of closure notice — road access, camping impact, event closure, or operational. Each tag describes what kind of restriction is in place." />
+                  </Group>
+                  <Text
+                    size="xs"
+                    c="blue"
+                    style={{ cursor: "pointer" }}
+                    onClick={clearClosureTagModes}
+                  >
                     Clear
-                  </Button>
+                  </Text>
                 </Group>
                 <Stack gap={7}>
                   {availableClosureTags.map((closureTag) => {
                     const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
+                    const tagTooltip = closureTagTooltips[closureTag.key];
                     return (
                       <Group key={closureTag.key} justify="space-between" gap="xs">
-                        <Text size="xs" style={{ minWidth: 0 }}>{closureTag.label}</Text>
+                        <Group gap={4} style={{ minWidth: 0 }}>
+                          <Text size="xs" style={{ minWidth: 0 }}>{closureTag.label}</Text>
+                          {tagTooltip ? (
+                            <HelpIcon label={tagTooltip} />
+                          ) : null}
+                        </Group>
                         <TriStateToggle
                           mode={mode}
                           onToggle={(targetMode) => toggleClosureTagMode(closureTag.key, targetMode)}
@@ -274,38 +331,58 @@ export const FilterPanel = ({
           <Divider />
           <div>
             <Group justify="space-between" mb={8}>
-              <Title order={3} size="sm">
-                <Anchor href={FACILITIES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
-                  Facilities
-                </Anchor>
-              </Title>
-              <Button variant="subtle" size="compact-xs" onClick={clearFacilityModes}>
+              <Group gap={4}>
+                <Title order={3} size="sm">
+                  <Anchor href={FACILITIES_SOURCE_URL} target="_blank" rel="noreferrer" c="inherit" underline="always">
+                    Facilities
+                  </Anchor>
+                </Title>
+                <HelpIcon label="Filter forests by available facilities like BBQs, toilets, walking tracks, camping areas, etc. Data from the Forestry Corp NSW facilities pages." />
+              </Group>
+              <Text
+                size="xs"
+                c="blue"
+                style={{ cursor: "pointer" }}
+                onClick={clearFacilityModes}
+              >
                 Clear
-              </Button>
+              </Text>
             </Group>
             {availableFacilities.length ? (
               <Stack gap={7} data-testid="facility-filter-list">
                 {availableFacilities.map((facility) => {
                   const mode = facilityFilterModes[facility.key] ?? "ANY";
+                  const shortened = capitalizeFacilityLabel(facility.label);
+                  const isShortened = shortened !== facility.label;
                   return (
-                    <Group key={facility.key} justify="space-between" gap="xs">
-                      <Group gap={6} style={{ minWidth: 0 }} wrap="nowrap">
-                        <FacilityIcon facility={facility} />
-                        <Text size="xs" truncate>{facility.label}</Text>
+                    <Tooltip
+                      key={facility.key}
+                      label={`${facility.label}: Filter forests that have (or don't have) this facility.`}
+                      position="top"
+                      withArrow
+                      openDelay={400}
+                      multiline
+                      w={240}
+                    >
+                      <Group justify="space-between" gap="xs">
+                        <Group gap={6} style={{ minWidth: 0 }} wrap="nowrap">
+                          <FacilityIcon facility={facility} />
+                          <Text size="xs" truncate>{isShortened ? shortened : shortened}</Text>
+                        </Group>
+                        <TriStateToggle
+                          mode={mode}
+                          onToggle={(targetMode) => toggleFacilityMode(facility.key, targetMode)}
+                          onReset={() => setSingleFacilityMode(facility.key, "ANY")}
+                          label={facility.label}
+                          includeTestId={`facility-filter-${facility.key}-include`}
+                          excludeTestId={`facility-filter-${facility.key}-exclude`}
+                          anyTestId={`facility-filter-${facility.key}-any`}
+                          includeAriaLabel={`Only show forests with ${facility.label.toLowerCase()}`}
+                          excludeAriaLabel={`Only show forests without ${facility.label.toLowerCase()}`}
+                          anyAriaLabel={`${facility.label} does not matter`}
+                        />
                       </Group>
-                      <TriStateToggle
-                        mode={mode}
-                        onToggle={(targetMode) => toggleFacilityMode(facility.key, targetMode)}
-                        onReset={() => setSingleFacilityMode(facility.key, "ANY")}
-                        label={facility.label}
-                        includeTestId={`facility-filter-${facility.key}-include`}
-                        excludeTestId={`facility-filter-${facility.key}-exclude`}
-                        anyTestId={`facility-filter-${facility.key}-any`}
-                        includeAriaLabel={`Only show forests with ${facility.label.toLowerCase()}`}
-                        excludeAriaLabel={`Only show forests without ${facility.label.toLowerCase()}`}
-                        anyAriaLabel={`${facility.label} does not matter`}
-                      />
-                    </Group>
+                    </Tooltip>
                   );
                 })}
               </Stack>

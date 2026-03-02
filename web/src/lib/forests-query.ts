@@ -7,23 +7,15 @@ export type UserLocation = {
   longitude: number;
 };
 
-export const buildForestsQueryKey = (
-  location: UserLocation | null
-) =>
-  [
-    "forests",
-    location?.latitude ?? null,
-    location?.longitude ?? null
-  ] as const;
+export const buildForestsQueryKey = () =>
+  ["forests"] as const;
 
 export type ForestsQueryKey = ReturnType<typeof buildForestsQueryKey>;
 
 export const forestsQueryFn =
-  (
-    location: UserLocation | null
-  ) =>
+  () =>
   ({ signal }: QueryFunctionContext<ForestsQueryKey>): Promise<ForestApiResponse> =>
-    fetchStaticSnapshot(location ?? undefined, signal);
+    fetchStaticSnapshot(signal);
 
 export const toLoadErrorMessage = (error: unknown): string | null => {
   if (!error) {

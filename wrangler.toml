@@ -1,0 +1,8 @@
+name = "campfire-allowed-near-me"
+pages_build_output_dir = "./dist/web"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[services]]
+binding = "ROUTES_PROXY"
+service = "campfire-routes-proxy"

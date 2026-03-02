@@ -21,7 +21,6 @@ export type ForestListPanelProps = {
   onHoveredAreaNameChange: (hoveredAreaName: string | null) => void;
   forestListSortOption: ForestListSortOption;
   onForestListSortOptionChange: (option: ForestListSortOption) => void;
-  hasUserLocation: boolean;
   hasDrivingRoutes: boolean;
 };
 
@@ -204,7 +203,6 @@ export const ForestListPanel = memo(({
   onHoveredAreaNameChange,
   forestListSortOption,
   onForestListSortOptionChange,
-  hasUserLocation,
   hasDrivingRoutes
 }: ForestListPanelProps) => {
   const [forestSearchText, setForestSearchText] = useState("");
@@ -277,14 +275,13 @@ export const ForestListPanel = memo(({
           onForestListSortOptionChange(event.currentTarget.value as ForestListSortOption);
         }}
         data={[
-          { label: "Direct distance (near to far)", value: "DIRECT_DISTANCE_ASC", disabled: !hasUserLocation },
-          { label: "Direct distance (far to near)", value: "DIRECT_DISTANCE_DESC", disabled: !hasUserLocation },
+          { label: "Direct distance (near to far)", value: "DIRECT_DISTANCE_ASC" },
+          { label: "Direct distance (far to near)", value: "DIRECT_DISTANCE_DESC" },
           { label: "Driving distance (near to far)", value: "DRIVING_DISTANCE_ASC", disabled: !hasDrivingRoutes },
           { label: "Driving distance (far to near)", value: "DRIVING_DISTANCE_DESC", disabled: !hasDrivingRoutes },
           { label: "Driving time (short to long)", value: "DRIVING_TIME_ASC", disabled: !hasDrivingRoutes },
           { label: "Driving time (long to short)", value: "DRIVING_TIME_DESC", disabled: !hasDrivingRoutes },
         ]}
-        description={!hasUserLocation ? "Enable location access to sort by distance" : undefined}
       />
 
       {shouldUseVirtualizedForestList ? (

@@ -9,7 +9,7 @@
     "dev:web": "vite --config web/vite.config.ts",
     "build": "npm run build:web",
     "build:web": "vite build --config web/vite.config.ts",
-    "typecheck": "tsc -p pipeline/tsconfig.json --noEmit && tsc -p web/tsconfig.json --noEmit",
+    "typecheck": "tsc -p pipeline/tsconfig.json --noEmit && tsc -p web/tsconfig.json --noEmit && tsc -p functions/tsconfig.json --noEmit",
     "test": "npm run typecheck && npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
@@ -41,6 +41,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260301.1",
     "@playwright/test": "^1.58.2",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

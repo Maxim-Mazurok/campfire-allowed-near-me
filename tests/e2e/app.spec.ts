@@ -251,6 +251,7 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
   });
 
   await page.goto("/");
+  await page.getByTestId("advanced-filters-toggle").click();
   await page.getByRole("radiogroup", { name: "Solid fuel fire ban filter" }).getByText("Not banned").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(0);
 
@@ -504,6 +505,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   await page.goto("/");
 
   await expect(page.getByRole("heading", { name: "Campfire Allowed Near Me" })).toBeVisible();
+  await page.getByTestId("advanced-filters-toggle").click();
   await expect(page.getByRole("link", { name: "Solid Fuel Fire Ban" })).toHaveAttribute(
     "href",
     "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans"
@@ -554,7 +556,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     const bannedStatuses = await page
       .locator("[data-testid='forest-row'] .status-pill-row > *:first-child")
       .allTextContents();
-    expect(bannedStatuses.every((text) => text.includes("Solid fuel: banned"))).toBe(true);
+    expect(bannedStatuses.every((text) => text.includes("Campfire: banned") || text.includes("Campfire: camps only"))).toBe(true);
   }
 
   await solidFuelBanFilter.getByText("Not banned").click();
@@ -564,7 +566,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
     const allowedStatuses = await page
       .locator("[data-testid='forest-row'] .status-pill-row > *:first-child")
       .allTextContents();
-    expect(allowedStatuses.every((text) => text.includes("Solid fuel: not banned"))).toBe(true);
+    expect(allowedStatuses.every((text) => text.includes("Campfire: allowed"))).toBe(true);
   }
 
   await solidFuelBanFilter.getByText("All", { exact: true }).click();
@@ -574,7 +576,7 @@ test("loads forests, applies filters, and resolves nearest legal spot", async ({
   const totalFireBanStatuses = await page
     .locator("[data-testid='forest-row'] .status-pill-row > *:nth-child(2)")
     .allTextContents();
-  expect(totalFireBanStatuses.every((text) => text.includes("Total Fire Ban"))).toBe(true);
+  expect(totalFireBanStatuses.every((text) => text.includes("Fire ban: active"))).toBe(true);
   await totalFireBanFilter.getByText("All", { exact: true }).click();
 
   await page.getByTestId("facility-filter-fishing-include").click();
@@ -670,10 +672,11 @@ test("persists location and filters across reloads", async ({ page }) => {
   });
 
   await page.goto("/");
-  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
+  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire");
 
   const solidFuelBanFilter = page.getByRole("radiogroup", { name: "Solid fuel fire ban filter" });
 
+  await page.getByTestId("advanced-filters-toggle").click();
   await solidFuelBanFilter.getByText("Banned", { exact: true }).click();
   await page.getByTestId("facility-filter-fishing-include").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
@@ -681,11 +684,12 @@ test("persists location and filters across reloads", async ({ page }) => {
   await page.context().clearPermissions();
   await page.reload();
 
+  await page.getByTestId("advanced-filters-toggle").click();
   await expect(solidFuelBanFilter.locator("input[value='BANNED']")
   ).toBeChecked();
   await expect(page.getByTestId("facility-filter-fishing-include")).toHaveClass(/mantine-active/);
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
-  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire spot");
+  await expect(page.getByTestId("nearest-spot")).toContainText("Closest legal campfire");
 });
 
 test("shows closure badges and applies closure filters", async ({ page }) => {
@@ -865,21 +869,22 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
   });
 
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "Closures & Notices" })).toHaveAttribute(
-    "href",
-    "https://forestclosure.fcnsw.net"
-  );
 
   await expect(page.getByTestId("forest-row")).toHaveCount(3);
   await expect(
-    page.locator("[data-testid='forest-row'] .status-pill-row").getByText("Closed", { exact: true })
+    page.locator("[data-testid='forest-row'] .forest-header-rows").getByText("Closed", { exact: true })
   ).toHaveCount(1);
   await expect(
-    page.locator("[data-testid='forest-row'] .status-pill-row").getByText("Partly closed", { exact: true })
+    page.locator("[data-testid='forest-row'] .forest-header-rows").getByText("Partly closed", { exact: true })
   ).toHaveCount(1);
 
   const closureStatusFilter = page.getByRole("radiogroup", { name: "Closure status filter" });
 
+  await page.getByTestId("advanced-filters-toggle").click();
+  await expect(page.getByRole("link", { name: "Closures & Notices" })).toHaveAttribute(
+    "href",
+    "https://forestclosure.fcnsw.net"
+  );
   await closureStatusFilter.getByText("Open").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(1);
 
@@ -911,15 +916,17 @@ test("shows closure badges and applies closure filters", async ({ page }) => {
   await page.getByTestId("closure-tag-filter-ROAD_ACCESS-any").click();
   await expect(page.getByTestId("forest-row")).toHaveCount(3);
 
+  // Camping open filter is only visible when closure status is "Partly closed"
+  await closureStatusFilter.getByText("Partly closed").click();
+
   await page.getByTestId("impact-filter-camping-include").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(2);
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
 
   await page.getByTestId("impact-filter-camping-exclude").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(1);
-  await expect(page.getByTestId("forest-row").first()).toContainText("Open Forest");
+  await expect(page.getByTestId("forest-row")).toHaveCount(0);
 
   await page.getByTestId("impact-filter-camping-any").click();
-  await expect(page.getByTestId("forest-row")).toHaveCount(3);
+  await expect(page.getByTestId("forest-row")).toHaveCount(1);
 });
 
 test("shows stale warning in warnings dialog when upstream scrape falls back to cache", async ({
@@ -981,10 +988,8 @@ test("does not request geolocation on page load when permission is not granted",
   });
 
   await page.goto("/");
-  await expect(page.getByTestId("location-required")).toContainText(
-    "Enable location to find the closest legal campfire spot near you."
-  );
-  await expect(page.getByTestId("nearest-spot")).toHaveCount(0);
+  await expect(page.getByTestId("location-panel")).toContainText("Showing for Sydney");
+  await expect(page.getByTestId("nearest-empty")).toBeVisible();
 });
 
 test("uses current location on page load when permission is already granted", async ({
@@ -1029,7 +1034,7 @@ test("uses current location on page load when permission is already granted", as
 
   await page.goto("/");
   await expect(page.getByTestId("nearest-spot")).toContainText(
-    "Closest legal campfire spot:"
+    "Closest legal campfire"
   );
 });
 
@@ -1389,10 +1394,8 @@ test("prompts for location access when geolocation is unavailable", async ({
   });
 
   await page.goto("/");
-  await expect(page.getByTestId("location-required")).toContainText(
-    "Enable location to find the closest legal campfire spot near you."
-  );
-  await expect(page.getByTestId("nearest-empty")).toHaveCount(0);
+  await expect(page.getByTestId("location-panel")).toContainText("Showing for Sydney");
+  await expect(page.getByTestId("nearest-empty")).toBeVisible();
 
   await page.getByTestId("locate-btn").click();
   await expect(page.locator(".error")).toContainText(

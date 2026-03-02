@@ -1,7 +1,6 @@
 import {
   Button,
   Group,
-  Stack,
   Text,
   Title
 } from "@mantine/core";
@@ -21,15 +20,6 @@ const formatTimeSince = (isoTimestamp: string): string => {
   return `${days}d ago`;
 };
 
-const SnapshotFreshness = ({ fetchedAt }: { fetchedAt: string }) => {
-  const timeSince = formatTimeSince(fetchedAt);
-  return (
-    <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
-      Data updated: {timeSince}
-    </Text>
-  );
-};
-
 export type AppHeaderProps = {
   warningCount: number;
   onOpenSettings: () => void;
@@ -44,43 +34,54 @@ export const AppHeader = ({
   snapshotFetchedAt
 }: AppHeaderProps) => {
   return (
-    <header className="panel">
-      <Title order={1} size="h3">Campfire Allowed Near Me</Title>
-      <Text size="sm" c="dimmed" mt={6} mb={10}>
-        NSW forestry checker combining Solid Fuel Fire Ban data (Forestry Corporation NSW)
-        and Total Fire Ban data (NSW Rural Fire Service).
-      </Text>
-
-      <Group gap="sm" wrap="wrap">
-        <Button
-          variant="default"
-          size="xs"
-          leftSection={<IconSettings size={14} />}
-          data-testid="settings-btn"
-          onClick={onOpenSettings}
-          ml="auto"
-        >
-          Settings
-        </Button>
-        <Button
-          variant="outline"
-          size="xs"
-          color="warning.8"
-          data-testid="warnings-btn"
-          aria-label={`Warnings (${warningCount})`}
-          onClick={onOpenWarnings}
-          disabled={warningCount === 0}
-          leftSection={<IconAlertTriangle size={14} />}
-        >
-          {warningCount}
-        </Button>
+    <header className="panel app-header">
+      <Group justify="space-between" align="center" wrap="nowrap" gap="xs">
+        <Group gap="xs" align="center" wrap="nowrap">
+          <img
+            src="/favicon.svg"
+            alt=""
+            width={24}
+            height={24}
+            style={{ flexShrink: 0 }}
+          />
+          <div>
+            <Title order={1} size="h4" style={{ lineHeight: 1.2 }}>
+              Campfire Allowed Near Me
+            </Title>
+            <Text size="xs" c="dimmed" mt={2}>
+              Find NSW forests where campfires are currently allowed
+            </Text>
+          </div>
+        </Group>
+        <Group gap="xs" align="center" className="header-actions">
+          {snapshotFetchedAt ? (
+            <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
+              Updated {formatTimeSince(snapshotFetchedAt)}
+            </Text>
+          ) : null}
+          <Button
+            variant="default"
+            size="xs"
+            leftSection={<IconSettings size={14} />}
+            data-testid="settings-btn"
+            onClick={onOpenSettings}
+          >
+            Settings
+          </Button>
+          <Button
+            variant="outline"
+            size="compact-xs"
+            color="warning.8"
+            data-testid="warnings-btn"
+            aria-label={`Warnings (${warningCount})`}
+            onClick={onOpenWarnings}
+            disabled={warningCount === 0}
+            leftSection={<IconAlertTriangle size={14} />}
+          >
+            {warningCount}
+          </Button>
+        </Group>
       </Group>
-
-      <Stack gap={4} mt={8}>
-        {snapshotFetchedAt ? (
-          <SnapshotFreshness fetchedAt={snapshotFetchedAt} />
-        ) : null}
-      </Stack>
     </header>
   );
 };

@@ -129,10 +129,22 @@ export const ForestCardContent = memo(({
     ? `Google Maps estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}) for realistic distance/time.`
     : locationNotFoundTooltipLabel;
 
+  const solidFuelBadgeTooltip = forestBanStatus === "NOT_BANNED"
+    ? `No Solid Fuel Fire Ban from Forestry Corp NSW.${forestBanScope === "OUTSIDE_CAMPS" ? " (Outside camping areas only.)" : ""} Campfires are only legal when both this ban AND Total Fire Ban are absent.`
+    : forestBanStatus === "BANNED"
+      ? `Solid Fuel Fire Ban in effect from Forestry Corp NSW.${forestBanScope === "OUTSIDE_CAMPS" ? " Applies outside designated camping areas." : forestBanScope === "INCLUDING_CAMPS" ? " Applies including within designated camping areas." : ""} All campfires prohibited regardless of Total Fire Ban status.`
+      : "No data available from Forestry Corp NSW for this forest.";
+
+  const totalFireBanTooltip = forest.totalFireBanStatus === "NOT_BANNED"
+    ? "No Total Fire Ban from NSW RFS for this area. Campfires are only legal when both this ban AND the Solid Fuel Fire Ban are absent."
+    : forest.totalFireBanStatus === "BANNED"
+      ? "Total Fire Ban declared by NSW RFS — all outdoor fires are banned, including gas BBQs. This applies regardless of Solid Fuel Fire Ban status."
+      : "No data available from NSW RFS for this area.";
+
   return (
     <>
-      <div className="forest-main-row">
-        <div className="forest-title-block">
+      <div className="forest-header-rows">
+        <div className="forest-header-line">
           <div className="forest-title-row">
             {googleMapsDrivingNavigationUrl ? (
               <a
@@ -172,50 +184,53 @@ export const ForestCardContent = memo(({
               )}
             </strong>
           </div>
-          {resolvedAreas.map((area) => (
-            isHttpUrl(area.areaUrl) ? (
-              <a
-                key={area.areaName}
-                ref={createAreaHoverReference(area.areaName)}
-                href={buildTextHighlightUrl(area.areaUrl, forest.forestName)}
-                className="muted forest-region-link"
-                target="_blank"
-                rel="noreferrer"
-                data-testid="forest-area-link"
-                title={`Forest region (FCNSW management area): ${area.areaName}`}
-              >
-                {area.areaName}
-              </a>
-            ) : (
-              <div
-                key={area.areaName}
-                ref={createAreaHoverReference(area.areaName)}
-                className="muted forest-region-link"
-                data-testid="forest-area-link"
-                title={`Forest region (FCNSW management area): ${area.areaName}`}
-              >
-                {area.areaName}
-              </div>
-            )
-          ))}
+          <Tooltip label={solidFuelBadgeTooltip} withArrow multiline w={300} position="top">
+            <Badge
+              component="a"
+              href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
+              target="_blank"
+              rel="noreferrer"
+              color={forestBanStatus === "NOT_BANNED" ? "green" : forestBanStatus === "BANNED" && forestBanScope === "OUTSIDE_CAMPS" ? "yellow" : forestBanStatus === "BANNED" ? "red" : "gray"}
+              variant="light"
+              size="sm"
+              radius="xl"
+              style={{ cursor: "pointer", textDecoration: "none", flexShrink: 0 }}
+            >
+              {getSolidFuelStatusLabel(forestBanStatus, forestBanScope)}
+            </Badge>
+          </Tooltip>
         </div>
-        <div className="status-block">
-          <div className="status-pill-row">
-            <Tooltip label={forestBanStatusText} withArrow>
-              <Badge
-                component="a"
-                href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
-                target="_blank"
-                rel="noreferrer"
-                color={forestBanStatus === "NOT_BANNED" ? "green" : forestBanStatus === "BANNED" && forestBanScope === "OUTSIDE_CAMPS" ? "yellow" : forestBanStatus === "BANNED" ? "red" : "gray"}
-                variant="light"
-                size="sm"
-                radius="xl"
-                style={{ cursor: "pointer", textDecoration: "none" }}
-              >
-                {getSolidFuelStatusLabel(forestBanStatus, forestBanScope)}
-              </Badge>
-            </Tooltip>
+
+        <div className="forest-header-line">
+          <div className="forest-area-block">
+            {resolvedAreas.map((area) => (
+              isHttpUrl(area.areaUrl) ? (
+                <a
+                  key={area.areaName}
+                  ref={createAreaHoverReference(area.areaName)}
+                  href={buildTextHighlightUrl(area.areaUrl, forest.forestName)}
+                  className="muted forest-region-link"
+                  target="_blank"
+                  rel="noreferrer"
+                  data-testid="forest-area-link"
+                  title={`Forest region (FCNSW management area): ${area.areaName}`}
+                >
+                  {area.areaName}
+                </a>
+              ) : (
+                <div
+                  key={area.areaName}
+                  ref={createAreaHoverReference(area.areaName)}
+                  className="muted forest-region-link"
+                  data-testid="forest-area-link"
+                  title={`Forest region (FCNSW management area): ${area.areaName}`}
+                >
+                  {area.areaName}
+                </div>
+              )
+            ))}
+          </div>
+          <Tooltip label={totalFireBanTooltip} withArrow multiline w={300} position="top">
             <Badge
               component="a"
               href={buildTotalFireBanDetailsUrl(forest)}
@@ -225,63 +240,68 @@ export const ForestCardContent = memo(({
               variant="light"
               size="sm"
               radius="xl"
-              style={{ cursor: "pointer", textDecoration: "none" }}
+              style={{ cursor: "pointer", textDecoration: "none", flexShrink: 0 }}
             >
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
             </Badge>
-            {closureBadgeLabel ? (
-              <Tooltip
-                label={closureBadgeTooltip}
-                disabled={!closureBadgeTooltip}
-                position="top"
-                openDelay={0}
-                closeDelay={0}
-                multiline
-                w={300}
-                styles={{ tooltip: { whiteSpace: "pre-line" } }}
-              >
-                {closureBadgeUrl ? (
-                  <Badge
-                    component="a"
-                    href={closureBadgeUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
-                    variant="light"
-                    size="sm"
-                    radius="xl"
-                    style={{ cursor: "pointer", textDecoration: "none" }}
-                    data-testid="closure-badge"
-                  >
-                    {closureBadgeLabel}
-                  </Badge>
-                ) : (
-                  <Badge
-                    color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
-                    variant="light"
-                    size="sm"
-                    radius="xl"
-                    data-testid="closure-badge"
-                  >
-                    {closureBadgeLabel}
-                  </Badge>
-                )}
-              </Tooltip>
-            ) : null}
-          </div>
-          <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
-            <small className={hasCoordinates ? "muted" : "muted forest-location-warning"} data-testid="distance-text">
-              {hasCoordinates
-                ? (forest.distanceKm !== null
-                    ? formatDriveSummary(
-                        forest.distanceKm,
-                        forest.travelDurationMinutes
-                      )
-                    : "Drive distance unavailable")
-                : "Location not found"}
-            </small>
           </Tooltip>
         </div>
+
+        {closureBadgeLabel ? (
+          <div className="forest-header-line forest-header-line--end">
+            <Tooltip
+              label={closureBadgeTooltip}
+              disabled={!closureBadgeTooltip}
+              position="top"
+              openDelay={0}
+              closeDelay={0}
+              multiline
+              w={300}
+              styles={{ tooltip: { whiteSpace: "pre-line" } }}
+            >
+              {closureBadgeUrl ? (
+                <Badge
+                  component="a"
+                  href={closureBadgeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                  variant="light"
+                  size="sm"
+                  radius="xl"
+                  style={{ cursor: "pointer", textDecoration: "none" }}
+                  data-testid="closure-badge"
+                >
+                  {closureBadgeLabel}
+                </Badge>
+              ) : (
+                <Badge
+                  color={forestClosureStatus === "CLOSED" ? "red" : "orange"}
+                  variant="light"
+                  size="sm"
+                  radius="xl"
+                  data-testid="closure-badge"
+                >
+                  {closureBadgeLabel}
+                </Badge>
+              )}
+            </Tooltip>
+          </div>
+        ) : null}
+
+        {hasCoordinates && forest.distanceKm !== null ? (
+          <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+            <small className="muted forest-distance-text" data-testid="distance-text">
+              {formatDriveSummary(forest.distanceKm, forest.travelDurationMinutes)}
+            </small>
+          </Tooltip>
+        ) : !hasCoordinates ? (
+          <Tooltip label={locationNotFoundTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+            <small className="muted forest-location-warning forest-distance-text" data-testid="distance-text">
+              Location not found
+            </small>
+          </Tooltip>
+        ) : null}
       </div>
       {visibleClosureNotices.length > 0 ? (
         <div className="forest-notice-list-wrap" data-testid="forest-notice-list">

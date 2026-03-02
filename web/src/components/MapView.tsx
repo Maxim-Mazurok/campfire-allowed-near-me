@@ -1,12 +1,15 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CircleMarker,
   MapContainer,
+  Marker,
   Pane,
   Popup,
   TileLayer,
-  useMap
+  useMap,
+  useMapEvents
 } from "react-leaflet";
+import L from "leaflet";
 import { ForestCardContent } from "./ForestCardContent";
 import { PopupShadowContainer } from "./PopupShadowContainer";
 import type { FacilityDefinition, ForestPoint } from "../lib/api";
@@ -25,6 +28,7 @@ import {
   buildSelectedForestPopupPosition,
   isSelectedForestStillAvailable
 } from "../lib/forest-popup-behavior";
+import type { LocationSource } from "../lib/location-constants";
 
 const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
 const MAP_BOUNDS_PADDING_FACTOR = 0.2;
@@ -64,15 +68,32 @@ const areMapViewportSnapshotsEqual = (
 
 const FitToUser = ({
   latitude,
-  longitude
+  longitude,
+  locationSource
 }: {
   latitude: number;
   longitude: number;
+  locationSource: LocationSource;
 }) => {
   const map = useMap();
+  const previousSourceReference = useRef<LocationSource | null>(null);
+
   useEffect(() => {
-    map.setView([latitude, longitude], 8);
-  }, [latitude, longitude, map]);
+    const isFirstRender = previousSourceReference.current === null;
+    const sourceChanged = previousSourceReference.current !== locationSource;
+    previousSourceReference.current = locationSource;
+
+    // When the user places a map pin (including the first click), never
+    // change the zoom — they are interacting directly with the map.
+    if (locationSource === "MAP_PIN") {
+      return;
+    }
+
+    // For geolocation or default, only fly on source change (not coord-only changes).
+    if (sourceChanged && !isFirstRender) {
+      map.setView([latitude, longitude], 8);
+    }
+  }, [latitude, longitude, map, locationSource]);
 
   return null;
 };
@@ -91,6 +112,142 @@ const FitToForests = ({ forests }: { forests: ForestWithCoordinates[] }) => {
   }, [forests, map]);
 
   return null;
+};
+
+const LONG_TAP_DURATION_MILLISECONDS = 500;
+
+const userPinIcon = L.divIcon({
+  className: "user-pin-icon",
+  html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42" fill="none">
+    <path d="M16 0C7.163 0 0 7.163 0 16c0 12 16 26 16 26s16-14 16-26C32 7.163 24.837 0 16 0z" fill="#2b6cb0"/>
+    <circle cx="16" cy="16" r="6" fill="white"/>
+  </svg>`,
+  iconSize: [32, 42],
+  iconAnchor: [16, 42],
+  popupAnchor: [0, -42]
+});
+
+const MapPinHandler = ({
+  onPinLocation
+}: {
+  onPinLocation: (latitude: number, longitude: number) => void;
+}) => {
+  const longTapTimerReference = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTouchDeviceReference = useRef(false);
+
+  const cancelLongTap = useCallback(() => {
+    if (longTapTimerReference.current) {
+      clearTimeout(longTapTimerReference.current);
+      longTapTimerReference.current = null;
+    }
+  }, []);
+
+  useMapEvents({
+    click(event) {
+      if (isTouchDeviceReference.current) {
+        return;
+      }
+
+      onPinLocation(event.latlng.lat, event.latlng.lng);
+    }
+  });
+
+  const map = useMap();
+
+  useEffect(() => {
+    const mapContainer = map.getContainer();
+
+    const handleTouchStart = (event: TouchEvent) => {
+      isTouchDeviceReference.current = true;
+
+      if (event.touches.length !== 1) {
+        cancelLongTap();
+        return;
+      }
+
+      const touch = event.touches[0];
+      if (!touch) {
+        return;
+      }
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+
+      longTapTimerReference.current = setTimeout(() => {
+        const containerPoint = map.mouseEventToContainerPoint({
+          clientX: startX,
+          clientY: startY
+        } as MouseEvent);
+        const latitudeLongitude = map.containerPointToLatLng(containerPoint);
+        onPinLocation(latitudeLongitude.lat, latitudeLongitude.lng);
+        longTapTimerReference.current = null;
+      }, LONG_TAP_DURATION_MILLISECONDS);
+    };
+
+    const handleTouchMove = () => {
+      cancelLongTap();
+    };
+
+    const handleTouchEnd = () => {
+      cancelLongTap();
+    };
+
+    mapContainer.addEventListener("touchstart", handleTouchStart, { passive: true });
+    mapContainer.addEventListener("touchmove", handleTouchMove, { passive: true });
+    mapContainer.addEventListener("touchend", handleTouchEnd, { passive: true });
+    mapContainer.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+
+    return () => {
+      cancelLongTap();
+      mapContainer.removeEventListener("touchstart", handleTouchStart);
+      mapContainer.removeEventListener("touchmove", handleTouchMove);
+      mapContainer.removeEventListener("touchend", handleTouchEnd);
+      mapContainer.removeEventListener("touchcancel", handleTouchEnd);
+    };
+  }, [map, onPinLocation, cancelLongTap]);
+
+  return null;
+};
+
+const DraggableUserPin = ({
+  latitude,
+  longitude,
+  locationSource,
+  onPinDragEnd
+}: {
+  latitude: number;
+  longitude: number;
+  locationSource: LocationSource;
+  onPinDragEnd: (latitude: number, longitude: number) => void;
+}) => {
+  const markerReference = useRef<L.Marker | null>(null);
+
+  const handleDragEnd = useCallback(() => {
+    const marker = markerReference.current;
+    if (!marker) {
+      return;
+    }
+
+    const position = marker.getLatLng();
+    onPinDragEnd(position.lat, position.lng);
+  }, [onPinDragEnd]);
+
+  if (locationSource === "DEFAULT_SYDNEY") {
+    return null;
+  }
+
+  return (
+    <Marker
+      position={[latitude, longitude]}
+      icon={userPinIcon}
+      draggable
+      ref={markerReference}
+      eventHandlers={{ dragend: handleDragEnd }}
+    >
+      <Popup>
+        {locationSource === "GEOLOCATION" ? "Your location (drag to adjust)" : "Custom location (drag to adjust)"}
+      </Popup>
+    </Marker>
+  );
 };
 
 type MarkerSelectionTestWindow = Window & {
@@ -522,20 +679,24 @@ export const MapView = memo(({
   forests,
   matchedForestIds,
   userLocation,
+  locationSource,
   availableFacilities,
   avoidTolls,
   hoveredForestId,
   hoveredAreaName,
-  onHoveredAreaNameChange
+  onHoveredAreaNameChange,
+  onMapPinLocation
 }: {
   forests: ForestPoint[];
   matchedForestIds: Set<string>;
   userLocation: { latitude: number; longitude: number } | null;
+  locationSource: LocationSource;
   availableFacilities: FacilityDefinition[];
   avoidTolls: boolean;
   hoveredForestId: string | null;
   hoveredAreaName: string | null;
   onHoveredAreaNameChange?: (hoveredAreaName: string | null) => void;
+  onMapPinLocation: (latitude: number, longitude: number) => void;
 }) => {
   const { mappedForests, matchedForests, unmatchedForests } = useMemo(() => {
     const nextMappedForests: ForestWithCoordinates[] = [];
@@ -584,17 +745,19 @@ export const MapView = memo(({
       />
 
       <MapTestBridge />
+      <MapPinHandler onPinLocation={onMapPinLocation} />
 
-      {userLocation ? (
+      {locationSource === "DEFAULT_SYDNEY" ? (
+        <FitToForests forests={mappedForests} />
+      ) : userLocation ? (
         <>
-          <FitToUser latitude={userLocation.latitude} longitude={userLocation.longitude} />
-          <CircleMarker
-            center={[userLocation.latitude, userLocation.longitude]}
-            radius={8}
-            pathOptions={{ color: "#2b6cb0", fillColor: "#2b6cb0", fillOpacity: 0.7 }}
-          >
-            <Popup>Your location</Popup>
-          </CircleMarker>
+          <FitToUser latitude={userLocation.latitude} longitude={userLocation.longitude} locationSource={locationSource} />
+          <DraggableUserPin
+            latitude={userLocation.latitude}
+            longitude={userLocation.longitude}
+            locationSource={locationSource}
+            onPinDragEnd={onMapPinLocation}
+          />
         </>
       ) : <FitToForests forests={mappedForests} />}
 

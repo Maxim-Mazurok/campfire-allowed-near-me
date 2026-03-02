@@ -77,36 +77,36 @@ export const getSolidFuelStatusLabel = (
   scope?: SolidFuelBanScope
 ): string => {
   if (status === "NOT_BANNED") {
-    return "Solid fuel: not banned";
+    return "Campfire: allowed";
   }
 
   if (status === "BANNED") {
     if (scope === "OUTSIDE_CAMPS") {
-      return "Solid fuel: banned outside camps";
+      return "Campfire: camps only";
     }
 
     if (scope === "INCLUDING_CAMPS") {
-      return "Solid fuel: banned (incl. camps)";
+      return "Campfire: banned";
     }
 
-    return "Solid fuel: banned";
+    return "Campfire: banned";
   }
 
-  return "Solid fuel: unknown";
+  return "Campfire: unknown";
 };
 
 export const getTotalFireBanStatusLabel = (
   status: ForestApiResponse["forests"][number]["totalFireBanStatus"]
 ): string => {
   if (status === "NOT_BANNED") {
-    return "No Total Fire Ban";
+    return "Fire ban: none";
   }
 
   if (status === "BANNED") {
-    return "Total Fire Ban";
+    return "Fire ban: active";
   }
 
-  return "Total Fire Ban: unknown";
+  return "Fire ban: unknown";
 };
 
 export const getForestClosureStatus = (

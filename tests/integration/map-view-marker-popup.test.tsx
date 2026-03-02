@@ -37,8 +37,17 @@ const mockedMap = {
     pad: () => ({
       contains: () => true
     })
-  }))
+  })),
+  getContainer: vi.fn(() => document.createElement("div")),
+  mouseEventToContainerPoint: vi.fn(() => ({ x: 0, y: 0 })),
+  containerPointToLatLng: vi.fn(() => ({ lat: -33.8688, lng: 151.2093 }))
 };
+
+vi.mock("leaflet", () => ({
+  default: {
+    divIcon: () => ({})
+  }
+}));
 
 vi.mock("react-leaflet", () => ({
   MapContainer: ({ children }: { children: React.ReactNode }) => (
@@ -81,7 +90,9 @@ vi.mock("react-leaflet", () => ({
       />
     );
   },
-  useMap: () => mockedMap
+  Marker: () => null,
+  useMap: () => mockedMap,
+  useMapEvents: () => null
 }));
 
 afterEach(() => {
@@ -144,6 +155,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -172,6 +185,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -207,6 +222,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -223,6 +240,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId="forest-b"
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -256,6 +275,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -273,6 +294,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId="forest-a"
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -300,6 +323,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
         onHoveredAreaNameChange={onHoveredAreaNameChange}
       />
     );
@@ -341,6 +366,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
         onHoveredAreaNameChange={onHoveredAreaNameChange}
       />
     );
@@ -400,6 +427,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -418,6 +447,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName="Hunter Area"
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -439,6 +470,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -490,6 +523,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -506,6 +541,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName="Hunter Area"
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -522,6 +559,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName="South Coast Area"
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 
@@ -538,6 +577,8 @@ describe("MapView marker popup interactions", () => {
         avoidTolls={true}
         hoveredForestId={null}
         hoveredAreaName={null}
+        locationSource="DEFAULT_SYDNEY"
+        onMapPinLocation={() => {}}
       />
     );
 

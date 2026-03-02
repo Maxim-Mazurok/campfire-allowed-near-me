@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Button, Group, Text, Tooltip } from "@mantine/core";
+import { IconFlame, IconTent, IconFilter } from "@tabler/icons-react";
 import { AppHeader } from "./components/AppHeader";
+import { AppFooter } from "./components/AppFooter";
 import { FilterPanel } from "./components/FilterPanel";
+import type { FilterPreset } from "./components/FilterPanel";
 import { ForestListPanel } from "./components/ForestListPanel";
 import { LocationStatusPanels } from "./components/LocationStatusPanels";
 import { MapView } from "./components/MapView";
@@ -15,7 +19,8 @@ import {
   toLoadErrorMessage,
   type UserLocation
 } from "./lib/forests-query";
-import { findNearestLegalSpot } from "./lib/static-snapshot";
+import { findNearestLegalSpot, findNearestLegalCampfireWithCamping, computeForestsWithDistances } from "./lib/static-snapshot";
+import { SYDNEY_DEFAULT_LOCATION, type LocationSource } from "./lib/location-constants";
 import {
   type BanFilterMode,
   type BanScopeFilterMode,
@@ -103,37 +108,61 @@ export const App = () => {
     }
   );
   const [userLocation, setUserLocation] = useState<UserLocation | null>(
-    () => getInitialPreferences().userLocation ?? null
+    () => getInitialPreferences().userLocation ?? SYDNEY_DEFAULT_LOCATION
+  );
+  const [locationSource, setLocationSource] = useState<LocationSource>(
+    () => getInitialPreferences().userLocation ? "GEOLOCATION" : "DEFAULT_SYDNEY"
   );
   const [avoidTolls, setAvoidTolls] = useState<boolean>(
     () => getInitialPreferences().avoidTolls ?? true
   );
   const [hoveredForestId, setHoveredForestId] = useState<string | null>(null);
   const [hoveredAreaName, setHoveredAreaName] = useState<string | null>(null);
+  const [advancedFiltersExpanded, setAdvancedFiltersExpanded] = useState(false);
   const [forestListSortOption, setForestListSortOption] = useState<ForestListSortOption>(
     () => getInitialPreferences().forestListSortOption ?? "DIRECT_DISTANCE_ASC"
   );
   const forestsQueryKey = useMemo(
-    () => buildForestsQueryKey(userLocation),
-    [userLocation?.latitude, userLocation?.longitude]
+    () => buildForestsQueryKey(),
+    []
   );
   const forestsQuery = useQuery({
     queryKey: forestsQueryKey,
-    queryFn: forestsQueryFn(userLocation)
+    queryFn: forestsQueryFn()
   });
 
   const payload = forestsQuery.data ?? null;
   const loading = forestsQuery.isFetching;
+  const handleSetUserLocation = (location: UserLocation | null) => {
+    setUserLocation(location);
+    if (location) {
+      setLocationSource("GEOLOCATION");
+    } else {
+      setUserLocation(SYDNEY_DEFAULT_LOCATION);
+      setLocationSource("DEFAULT_SYDNEY");
+    }
+  };
+
+  const handleMapPinLocation = (location: UserLocation) => {
+    setUserLocation(location);
+    setLocationSource("MAP_PIN");
+  };
+
   const {
     locationError,
     requestLocation
   } = useLocation({
     userLocation,
-    setUserLocation
+    setUserLocation: handleSetUserLocation
   });
   const queryErrorMessage = toLoadErrorMessage(forestsQuery.error);
 
-  const rawForests = payload?.forests ?? [];
+  const rawSnapshotForests = payload?.forests ?? [];
+
+  const rawForests = useMemo(
+    () => computeForestsWithDistances(rawSnapshotForests, userLocation),
+    [rawSnapshotForests, userLocation]
+  );
 
   const { routesByForestId, routesLoading, routesError } = useDrivingRoutes({
     userLatitude: userLocation?.latitude ?? null,
@@ -147,24 +176,32 @@ export const App = () => {
     [rawForests, routesByForestId]
   );
 
-  const nearestLegalSpot = useMemo(
+  const nearestLegalCampfire = useMemo(
     () => {
       if (!userLocation) {
-        return payload?.nearestLegalSpot ?? null;
+        return null;
       }
 
-      if (Object.keys(routesByForestId).length > 0) {
-        return findNearestLegalSpot(forests, userLocation);
-      }
-
-      return payload?.nearestLegalSpot ?? null;
+      return findNearestLegalSpot(forests, userLocation);
     },
-    [forests, userLocation, routesByForestId, payload]
+    [forests, userLocation]
   );
 
-  const error = locationError ?? queryErrorMessage ?? routesError;
+  const error = locationError ?? queryErrorMessage;
   const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
   const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
+
+  const nearestLegalCampfireWithCamping = useMemo(
+    () => {
+      if (!userLocation) {
+        return null;
+      }
+
+      return findNearestLegalCampfireWithCamping(forests, userLocation, availableFacilities);
+    },
+    [forests, userLocation, availableFacilities]
+  );
+
   const facilitySignature = availableFacilities.map((facility) => facility.key).join("|");
   const closureTagSignature = availableClosureTags.map((tag) => tag.key).join("|");
 
@@ -270,6 +307,31 @@ export const App = () => {
         Object.keys(current).map((key) => [key, "ANY"])
       ) as Record<string, TriStateMode>
     );
+  };
+
+  const applyFilterPreset = (preset: FilterPreset) => {
+    setSolidFuelBanFilterMode("NOT_BANNED");
+    setTotalFireBanFilterMode("NOT_BANNED");
+    setHasNoticesFilterMode("ANY");
+    clearClosureTagModes();
+    clearFacilityModes();
+    setImpactAccess2wdFilterMode("EXCLUDE");
+    setImpactAccess4wdFilterMode("EXCLUDE");
+
+    if (preset === "LEGAL_CAMPFIRE_CAMPING") {
+      setSolidFuelBanScopeFilterMode("CAMPS");
+      setClosureStatusFilterMode("OPEN");
+      const campingFacilityKey = availableFacilities.find(
+        (facility) => facility.iconKey === "camping"
+      )?.key;
+      if (campingFacilityKey) {
+        setSingleFacilityMode(campingFacilityKey, "INCLUDE");
+      }
+    } else {
+      setSolidFuelBanScopeFilterMode("ANYWHERE");
+      setClosureStatusFilterMode("OPEN");
+      setImpactCampingFilterMode("ANY");
+    }
   };
 
   const matchingForests = useMemo(() => {
@@ -391,12 +453,12 @@ export const App = () => {
   const mappableMatchingForestCount = matchingForests.filter((forest) => forest.latitude !== null && forest.longitude !== null).length;
   const mappableForestCount = forests.filter((forest) => forest.latitude !== null && forest.longitude !== null).length;
   const {
-    warningCount,
+    warningCount: baseWarningCount,
     hasUnmappedForestWarning,
     unmappedForests,
     hasUnknownTotalFireBanWarning,
     forestsWithUnknownTotalFireBan,
-    generalWarnings,
+    generalWarnings: baseGeneralWarnings,
     hasFacilitiesMismatchWarning,
     matchDiagnostics,
     facilitiesMismatchWarningSummary,
@@ -413,6 +475,11 @@ export const App = () => {
     fireBanForestSortColumn,
     fireBanForestSortDirection
   });
+
+  const generalWarnings = routesError
+    ? [...baseGeneralWarnings, `Driving routes unavailable — showing straight-line distances instead. ${routesError}`]
+    : baseGeneralWarnings;
+  const warningCount = baseWarningCount + (routesError ? 1 : 0);
   const closeSettingsDialog = () => { setSettingsOpen(false); };
   const openSettingsDialog = () => {
     setSettingsOpen(true);
@@ -454,8 +521,12 @@ export const App = () => {
         loading={loading}
         payload={payload}
         userLocation={userLocation}
-        nearestLegalSpot={nearestLegalSpot}
+        locationSource={locationSource}
+        nearestLegalCampfire={nearestLegalCampfire}
+        nearestLegalCampfireWithCamping={nearestLegalCampfireWithCamping}
         onRequestLocation={requestLocation}
+        allForests={forests}
+        avoidTolls={avoidTolls}
       />
 
       <SettingsDialog
@@ -498,47 +569,104 @@ export const App = () => {
           toggleFireBanForestSort
         }}
       />
-      <section className="layout">
-        <FilterPanel
-          matchingForestsCount={matchingForests.length}
-          forestsCount={forests.length}
-          solidFuelBanFilterMode={solidFuelBanFilterMode}
-          setSolidFuelBanFilterMode={setSolidFuelBanFilterMode}
-          solidFuelBanScopeFilterMode={solidFuelBanScopeFilterMode}
-          setSolidFuelBanScopeFilterMode={setSolidFuelBanScopeFilterMode}
-          totalFireBanFilterMode={totalFireBanFilterMode}
-          setTotalFireBanFilterMode={setTotalFireBanFilterMode}
-          closureStatusFilterMode={closureStatusFilterMode}
-          setClosureStatusFilterMode={setClosureStatusFilterMode}
-          hasNoticesFilterMode={hasNoticesFilterMode}
-          setHasNoticesFilterMode={setHasNoticesFilterMode}
-          availableClosureTags={availableClosureTags}
-          closureTagFilterModes={closureTagFilterModes}
-          clearClosureTagModes={clearClosureTagModes}
-          toggleClosureTagMode={toggleClosureTagMode}
-          setSingleClosureTagMode={setSingleClosureTagMode}
-          impactCampingFilterMode={impactCampingFilterMode}
-          setImpactCampingFilterMode={setImpactCampingFilterMode}
-          impactAccess2wdFilterMode={impactAccess2wdFilterMode}
-          setImpactAccess2wdFilterMode={setImpactAccess2wdFilterMode}
-          impactAccess4wdFilterMode={impactAccess4wdFilterMode}
-          setImpactAccess4wdFilterMode={setImpactAccess4wdFilterMode}
-          availableFacilities={availableFacilities}
-          facilityFilterModes={facilityFilterModes}
-          clearFacilityModes={clearFacilityModes}
-          toggleFacilityMode={toggleFacilityMode}
-          setSingleFacilityMode={setSingleFacilityMode}
-        />
+      <section className={`layout${advancedFiltersExpanded ? "" : " layout--no-filters"}`}>
+        {advancedFiltersExpanded ? (
+          <FilterPanel
+            solidFuelBanFilterMode={solidFuelBanFilterMode}
+            setSolidFuelBanFilterMode={setSolidFuelBanFilterMode}
+            solidFuelBanScopeFilterMode={solidFuelBanScopeFilterMode}
+            setSolidFuelBanScopeFilterMode={setSolidFuelBanScopeFilterMode}
+            totalFireBanFilterMode={totalFireBanFilterMode}
+            setTotalFireBanFilterMode={setTotalFireBanFilterMode}
+            closureStatusFilterMode={closureStatusFilterMode}
+            setClosureStatusFilterMode={setClosureStatusFilterMode}
+            hasNoticesFilterMode={hasNoticesFilterMode}
+            setHasNoticesFilterMode={setHasNoticesFilterMode}
+            availableClosureTags={availableClosureTags}
+            closureTagFilterModes={closureTagFilterModes}
+            clearClosureTagModes={clearClosureTagModes}
+            toggleClosureTagMode={toggleClosureTagMode}
+            setSingleClosureTagMode={setSingleClosureTagMode}
+            impactCampingFilterMode={impactCampingFilterMode}
+            setImpactCampingFilterMode={setImpactCampingFilterMode}
+            impactAccess2wdFilterMode={impactAccess2wdFilterMode}
+            setImpactAccess2wdFilterMode={setImpactAccess2wdFilterMode}
+            impactAccess4wdFilterMode={impactAccess4wdFilterMode}
+            setImpactAccess4wdFilterMode={setImpactAccess4wdFilterMode}
+            availableFacilities={availableFacilities}
+            facilityFilterModes={facilityFilterModes}
+            clearFacilityModes={clearFacilityModes}
+            toggleFacilityMode={toggleFacilityMode}
+            setSingleFacilityMode={setSingleFacilityMode}
+          />
+        ) : null}
 
         <section
           className="panel map-panel"
           data-testid="map-panel"
           data-hovered-forest-id={hoveredForestId ?? ""}
         >
-          <p className="meta map-meta" data-testid="mapped-count">
-            Showing {mappableMatchingForestCount} matching mapped forests out of{" "}
-            {mappableForestCount} mapped forests.
-          </p>
+          <Group gap={6} wrap="wrap" mb={8} className="map-presets-row">
+            <Tooltip
+              label="Sets: campfire allowed + no Total Fire Ban + forest open + no 2WD/4WD access warnings. Shows forests where you can legally light a campfire right now."
+              multiline
+              w={320}
+              position="bottom"
+              withArrow
+            >
+              <Button
+                variant="outline"
+                color="orange.9"
+                size="xs"
+                leftSection={<IconFlame size={14} />}
+                onClick={() => applyFilterPreset("LEGAL_CAMPFIRE")}
+                data-testid="preset-legal-campfire"
+              >
+                Find legal campfire spot
+              </Button>
+            </Tooltip>
+            <Tooltip
+              label="Sets: campfire allowed in camps + no Total Fire Ban + forest open + camping facility present + no 2WD/4WD access or camping closure warnings. Finds forests where you can camp and have a campfire."
+              multiline
+              w={320}
+              position="bottom"
+              withArrow
+            >
+              <Button
+                variant="outline"
+                color="teal.9"
+                size="xs"
+                leftSection={<IconTent size={14} />}
+                onClick={() => applyFilterPreset("LEGAL_CAMPFIRE_CAMPING")}
+                data-testid="preset-legal-campfire-camping"
+              >
+                Legal campfire + camping
+              </Button>
+            </Tooltip>
+            <div className="map-presets-meta">
+              <Button
+                variant="subtle"
+                size="compact-sm"
+                leftSection={<IconFilter size={14} />}
+                onClick={() => setAdvancedFiltersExpanded(!advancedFiltersExpanded)}
+                data-testid="advanced-filters-toggle"
+                style={{ fontWeight: 600 }}
+              >
+                {advancedFiltersExpanded ? "Hide filters" : "Show filters"}
+              </Button>
+              <Tooltip
+                label={`Showing ${mappableMatchingForestCount} matching mapped forests out of ${mappableForestCount} mapped forests.`}
+                multiline
+                w={260}
+                position="bottom"
+                withArrow
+              >
+                <Text size="xs" c="dimmed" data-testid="mapped-count">
+                  {matchingForests.length} of {forests.length}
+                </Text>
+              </Tooltip>
+            </div>
+          </Group>
           {loading ? <p>Loading forests...</p> : null}
           {error ? <p className="error">{error}</p> : null}
           {!loading && !error && mappableMatchingForestCount === 0 ? (
@@ -551,11 +679,13 @@ export const App = () => {
               forests={forests}
               matchedForestIds={matchingForestIds}
               userLocation={userLocation}
+              locationSource={locationSource}
               availableFacilities={availableFacilities}
               avoidTolls={avoidTolls}
               hoveredForestId={hoveredForestId}
               hoveredAreaName={hoveredAreaName}
               onHoveredAreaNameChange={setHoveredAreaName}
+              onMapPinLocation={(latitude, longitude) => handleMapPinLocation({ latitude, longitude })}
             />
           ) : null}
         </section>
@@ -571,10 +701,10 @@ export const App = () => {
           onHoveredAreaNameChange={setHoveredAreaName}
           forestListSortOption={forestListSortOption}
           onForestListSortOptionChange={setForestListSortOption}
-          hasUserLocation={userLocation !== null}
           hasDrivingRoutes={Object.keys(routesByForestId).length > 0}
         />
       </section>
+      <AppFooter />
     </main>
   );
 };

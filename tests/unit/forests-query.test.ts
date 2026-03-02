@@ -2,12 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import type { ForestApiResponse } from "../../web/src/lib/api";
 import type { PersistedSnapshot } from "../../shared/contracts";
 import {
   buildForestsQueryKey,
   forestsQueryFn
 } from "../../web/src/lib/forests-query";
+import { computeForestsWithDistances, findNearestLegalSpot } from "../../web/src/lib/static-snapshot";
 
 const SNAPSHOT_URL = "http://localhost/forests-snapshot.json";
 
@@ -64,36 +64,17 @@ afterAll(() => {
 });
 
 describe("forests query options", () => {
-  it("fetches snapshot and computes haversine distances when location is provided", async () => {
+  it("fetches snapshot and returns forests with null distances", async () => {
     server.use(
       http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
     );
 
     const queryClient = createQueryClient();
-    const location = { latitude: -33.9, longitude: 151.1 };
-    const queryKey = buildForestsQueryKey(location);
+    const queryKey = buildForestsQueryKey();
 
     const response = await queryClient.fetchQuery({
       queryKey,
-      queryFn: forestsQueryFn(location)
-    });
-
-    expect(response.forests[0]?.forestName).toBe("Forest A");
-    expect(response.forests[0]?.distanceKm).toBeCloseTo(0, 0);
-    expect(response.forests[0]?.travelDurationMinutes).toBeNull();
-  });
-
-  it("returns null distances when no location is provided", async () => {
-    server.use(
-      http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
-    );
-
-    const queryClient = createQueryClient();
-    const queryKey = buildForestsQueryKey(null);
-
-    const response = await queryClient.fetchQuery({
-      queryKey,
-      queryFn: forestsQueryFn(null)
+      queryFn: forestsQueryFn()
     });
 
     expect(response.forests[0]?.forestName).toBe("Forest A");
@@ -101,38 +82,35 @@ describe("forests query options", () => {
     expect(response.forests[0]?.travelDurationMinutes).toBeNull();
   });
 
-  it("keeps location and non-location responses isolated in separate query keys", async () => {
+  it("computes distances via computeForestsWithDistances separately from the query", async () => {
     server.use(
       http.get(SNAPSHOT_URL, () => HttpResponse.json(buildSnapshot()))
     );
 
     const queryClient = createQueryClient();
+
+    const response = await queryClient.fetchQuery({
+      queryKey: buildForestsQueryKey(),
+      queryFn: forestsQueryFn()
+    });
+
     const location = { latitude: -33.9, longitude: 151.1 };
+    const forestsWithDistances = computeForestsWithDistances(response.forests, location);
 
-    const locationResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(location),
-      queryFn: forestsQueryFn(location)
-    });
-
-    const noLocationResponse = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(null),
-      queryFn: forestsQueryFn(null)
-    });
-
-    expect(locationResponse.forests[0]?.distanceKm).toBeCloseTo(0, 0);
-    expect(noLocationResponse.forests[0]?.distanceKm).toBeNull();
-
-    expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(location))
-        ?.forests[0]?.distanceKm
-    ).toBeCloseTo(0, 0);
-    expect(
-      queryClient.getQueryData<ForestApiResponse>(buildForestsQueryKey(null))
-        ?.forests[0]?.distanceKm
-    ).toBeNull();
+    expect(forestsWithDistances[0]?.forestName).toBe("Forest A");
+    expect(forestsWithDistances[0]?.distanceKm).toBeCloseTo(0, 0);
+    expect(forestsWithDistances[0]?.travelDurationMinutes).toBeNull();
   });
 
-  it("computes nearestLegalSpot from forests when location is provided", async () => {
+  it("returns stable query key regardless of location changes", () => {
+    const queryKey1 = buildForestsQueryKey();
+    const queryKey2 = buildForestsQueryKey();
+
+    expect(queryKey1).toEqual(queryKey2);
+    expect(queryKey1).toEqual(["forests"]);
+  });
+
+  it("returns null nearestLegalSpot from query (computed separately via useMemo)", async () => {
     server.use(
       http.get(SNAPSHOT_URL, () =>
         HttpResponse.json(
@@ -171,14 +149,20 @@ describe("forests query options", () => {
     );
 
     const queryClient = createQueryClient();
-    const location = { latitude: -33.9, longitude: 151.1 };
 
     const response = await queryClient.fetchQuery({
-      queryKey: buildForestsQueryKey(location),
-      queryFn: forestsQueryFn(location)
+      queryKey: buildForestsQueryKey(),
+      queryFn: forestsQueryFn()
     });
 
-    expect(response.nearestLegalSpot?.forestName).toBe("Legal Forest");
-    expect(response.nearestLegalSpot?.id).toBe("forest-legal");
+    // Query no longer computes nearestLegalSpot — it's computed in the app via useMemo
+    expect(response.nearestLegalSpot).toBeNull();
+
+    // Verify findNearestLegalSpot works when called directly
+    const location = { latitude: -33.9, longitude: 151.1 };
+    const forestsWithDistances = computeForestsWithDistances(response.forests, location);
+    const nearest = findNearestLegalSpot(forestsWithDistances, location);
+    expect(nearest?.forestName).toBe("Legal Forest");
+    expect(nearest?.id).toBe("forest-legal");
   });
 });
