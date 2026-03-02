@@ -4,6 +4,7 @@ import {
   IconMapPinOff,
   IconFlameOff,
   IconAlertTriangle,
+  IconPlugConnectedX,
   IconBuildingWarehouse,
   IconArrowsShuffle,
   IconFileAlert
@@ -32,6 +33,7 @@ export const WarningsSections = ({
   hasUnknownTotalFireBanWarning,
   forestsWithUnknownTotalFireBan,
   buildTotalFireBanDetailsUrl,
+  runtimeErrors,
   generalWarnings,
   hasFacilitiesMismatchWarning,
   matchDiagnostics,
@@ -57,12 +59,13 @@ export const WarningsSections = ({
     const values: string[] = [];
     if (hasUnmappedForestWarning) values.push("unmapped");
     if (hasUnknownTotalFireBanWarning) values.push("unknown-total-fire-ban");
+    if (runtimeErrors.length > 0) values.push("runtime-errors");
     if (generalWarnings.length > 0) values.push("general");
     if (showFacilitiesMismatch) values.push("facilities-mismatch");
     if (showFuzzyMatches) values.push("fuzzy-matches");
     if (showUnmatchedClosures) values.push("unmatched-closures");
     return values;
-  }, [hasUnmappedForestWarning, hasUnknownTotalFireBanWarning, generalWarnings.length, showFacilitiesMismatch, showFuzzyMatches, showUnmatchedClosures]);
+  }, [hasUnmappedForestWarning, hasUnknownTotalFireBanWarning, runtimeErrors.length, generalWarnings.length, showFacilitiesMismatch, showFuzzyMatches, showUnmatchedClosures]);
 
   const hasSections = defaultOpenValues.length > 0;
 
@@ -178,6 +181,24 @@ export const WarningsSections = ({
                   </li>
                 );
               })}
+            </ul>
+          </Accordion.Panel>
+        </Accordion.Item>
+      ) : null}
+
+      {runtimeErrors.length > 0 ? (
+        <Accordion.Item value="runtime-errors" data-testid="warnings-runtime-errors-section">
+          <Accordion.Control
+            aria-label={`Runtime Errors — ${runtimeErrors.length}`}
+            icon={<IconPlugConnectedX size={ICON_SIZE} stroke={ICON_STROKE} color="var(--mantine-color-red-7)" />}
+          >
+            <SectionHeader label="Runtime Errors" count={runtimeErrors.length} />
+          </Accordion.Control>
+          <Accordion.Panel>
+            <ul className="warning-list">
+              {runtimeErrors.map((runtimeError) => (
+                <li key={runtimeError}>{runtimeError}</li>
+              ))}
             </ul>
           </Accordion.Panel>
         </Accordion.Item>

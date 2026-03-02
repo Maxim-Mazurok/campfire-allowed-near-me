@@ -10,6 +10,7 @@ export interface WarningSectionProps {
   hasUnknownTotalFireBanWarning: boolean;
   forestsWithUnknownTotalFireBan: ForestApiResponse["forests"];
   buildTotalFireBanDetailsUrl: (forest: ForestApiResponse["forests"][number]) => string;
+  runtimeErrors: string[];
   generalWarnings: string[];
   hasFacilitiesMismatchWarning: boolean;
   matchDiagnostics: FacilityMatchDiagnostics;

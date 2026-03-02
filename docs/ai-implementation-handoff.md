@@ -1,6 +1,6 @@
 # AI Implementation Handoff Guide
 
-Last updated: 2026-02-25
+Last updated: 2026-02-28
 
 This guide is optimized for AI coding agents making iterative changes safely.
 
@@ -41,6 +41,11 @@ These are continuous standards (not a one-time phase plan):
 - `ForestListPanel` now skips clone/sort work when 0–1 forests are present.
 - `MapView` now uses a single selected-marker popup layer rather than embedding popups on every marker, reducing dense-marker detail rendering overhead while preserving click-to-view details.
 - High-impact map/list performance baseline is complete; future work can focus on optional scalability features (for example marker clustering) as dataset size grows.
+- Driving routes are fetched via `useDrivingRoutes` hook and merged into forest data; routing API errors are displayed gracefully as warnings rather than blocking the map.
+- `WarningsDialog` accordion now includes a dedicated "Runtime Errors" section (separate from "General") for routing API errors and similar runtime failures.
+- `ForestListPanel` sort dropdown includes both direct-distance and driving-distance/time options; driving options are disabled when routes are unavailable. The `useSortFallback` hook auto-switches to direct distance sort when a driving-based sort option is active but routes become unavailable.
+- `LocationStatusPanels` shows dual nearest-spot cards: nearest legal campfire overall and nearest with camping facilities, each with distance tooltip showing driving vs straight-line awareness.
+- Filter preset buttons (fire and camping) use outlined Mantine variant with semantic colors (orange.9 for fire, teal.9 for camping).
 
 ### Forest geometry source preference (implemented 2026-02-27)
 

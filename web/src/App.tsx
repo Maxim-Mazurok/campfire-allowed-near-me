@@ -13,6 +13,7 @@ import { SettingsDialog } from "./components/SettingsDialog";
 import { WarningsDialog } from "./components/WarningsDialog";
 import { useDrivingRoutes, mergeDrivingRoutes } from "./lib/hooks/use-driving-routes";
 import { useLocation } from "./lib/hooks/use-refresh-and-location";
+import { useSortFallback } from "./lib/hooks/use-sort-fallback";
 import {
   buildForestsQueryKey,
   forestsQueryFn,
@@ -175,6 +176,10 @@ export const App = () => {
     () => mergeDrivingRoutes(rawForests, routesByForestId),
     [rawForests, routesByForestId]
   );
+
+  const hasDrivingRoutes = Object.keys(routesByForestId).length > 0;
+
+  useSortFallback(hasDrivingRoutes, forestListSortOption, setForestListSortOption);
 
   const nearestLegalCampfire = useMemo(
     () => {
@@ -476,10 +481,11 @@ export const App = () => {
     fireBanForestSortDirection
   });
 
-  const generalWarnings = routesError
-    ? [...baseGeneralWarnings, `Driving routes unavailable — showing straight-line distances instead. ${routesError}`]
-    : baseGeneralWarnings;
-  const warningCount = baseWarningCount + (routesError ? 1 : 0);
+  const runtimeErrors = routesError
+    ? [`Driving routes unavailable — showing straight-line distances instead. ${routesError}`]
+    : [];
+  const generalWarnings = baseGeneralWarnings;
+  const warningCount = baseWarningCount + runtimeErrors.length;
   const closeSettingsDialog = () => { setSettingsOpen(false); };
   const openSettingsDialog = () => {
     setSettingsOpen(true);
@@ -547,6 +553,7 @@ export const App = () => {
           hasUnknownTotalFireBanWarning,
           forestsWithUnknownTotalFireBan,
           buildTotalFireBanDetailsUrl,
+          runtimeErrors,
           generalWarnings,
           hasFacilitiesMismatchWarning,
           matchDiagnostics,
@@ -701,7 +708,7 @@ export const App = () => {
           onHoveredAreaNameChange={setHoveredAreaName}
           forestListSortOption={forestListSortOption}
           onForestListSortOptionChange={setForestListSortOption}
-          hasDrivingRoutes={Object.keys(routesByForestId).length > 0}
+          hasDrivingRoutes={hasDrivingRoutes}
         />
       </section>
       <AppFooter />
