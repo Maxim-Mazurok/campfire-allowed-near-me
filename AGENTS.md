@@ -76,7 +76,7 @@ Before finishing any task that includes code changes, run **`npm test`** (which 
 - **Keep diagrams fresh**: when a bigger task changes the architecture (new container, new external dependency, renamed pipeline stage, changed data flow, etc.), update `workspace.dsl` and re-validate as part of the same task. Do not defer diagram updates to a separate follow-up.
 - **Inspect, don't just validate**: the `validate.sh` script runs both `structurizr validate` (syntax) and `structurizr inspect -severity error,warning` (architecture rules). Every relationship must have a technology string; every software system with containers must have `!docs` and `!adrs`.
 - **Interactive review**: run `./docs/architecture/render.sh` to launch Structurizr Lite at `http://localhost:8080` for visual inspection. Stop with `docker stop structurizr-lite`.
-- **ADRs**: significant architecture decisions are recorded in `docs/architecture/decisions/` using MADR format. Add a new ADR when introducing a new external system, changing the deployment topology, or altering a core data flow.
+- **ADRs**: significant architecture decisions are recorded in `docs/architecture/decisions/` using adr-tools format. When a user or AI agent makes a notable decision (new external system, changed deployment topology, altered data flow, new scraping strategy, caching policy change, etc.), add a new ADR in that directory. ADRs can reference each other via links in the `## Status` section — the format is `<description> [<display text>](<filename>.md)` on its own line (e.g. `Supersedes [1. Old Decision](0001-old-decision.md)`). Structurizr renders these as a navigable decision graph.
 
 ## Future AI instructions
 - Treat completed roadmap phases as ongoing standards, not tasks to reopen.
