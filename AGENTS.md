@@ -70,6 +70,14 @@ Before finishing any task that includes code changes, run **`npm test`** (which 
 - Keep README quick starts current for users and developers.
 - Mention any required external setup (for example `npx playwright install chromium`).
 
+## C4 architecture diagrams
+- The C4 model (Structurizr DSL) lives in `docs/architecture/workspace.dsl` with helper scripts, documentation, and ADRs alongside it. See `docs/architecture/README.md` for usage.
+- **Validate before handoff**: after any task that adds, removes, or renames containers, components, external systems, or relationships, run `./docs/architecture/validate.sh` (requires Docker). It checks both DSL syntax and Structurizr inspection rules (zero errors, zero warnings).
+- **Keep diagrams fresh**: when a bigger task changes the architecture (new container, new external dependency, renamed pipeline stage, changed data flow, etc.), update `workspace.dsl` and re-validate as part of the same task. Do not defer diagram updates to a separate follow-up.
+- **Inspect, don't just validate**: the `validate.sh` script runs both `structurizr validate` (syntax) and `structurizr inspect -severity error,warning` (architecture rules). Every relationship must have a technology string; every software system with containers must have `!docs` and `!adrs`.
+- **Interactive review**: run `./docs/architecture/render.sh` to launch Structurizr Lite at `http://localhost:8080` for visual inspection. Stop with `docker stop structurizr-lite`.
+- **ADRs**: significant architecture decisions are recorded in `docs/architecture/decisions/` using MADR format. Add a new ADR when introducing a new external system, changing the deployment topology, or altering a core data flow.
+
 ## Future AI instructions
 - Treat completed roadmap phases as ongoing standards, not tasks to reopen.
 - Convert one-off implementation plans into durable guidance in `docs/` after completion.

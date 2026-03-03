@@ -1,0 +1,8 @@
+# Generated exports — re-create with ./export.sh
+export/
+
+# Structurizr Lite runtime data (thumbnails, search index, lock files)
+.structurizr/
+
+# Auto-generated JSON from DSL — the .dsl file is the source of truth
+workspace.json
