@@ -28,9 +28,10 @@ import {
   buildSelectedForestPopupPosition,
   isSelectedForestStillAvailable
 } from "../lib/forest-popup-behavior";
-import type { LocationSource } from "../lib/location-constants";
+import { SYDNEY_DEFAULT_LOCATION, type LocationSource } from "../lib/location-constants";
 
-const DEFAULT_CENTER: [number, number] = [-32.1633, 147.0166];
+const DEFAULT_CENTER: [number, number] = [SYDNEY_DEFAULT_LOCATION.latitude, SYDNEY_DEFAULT_LOCATION.longitude];
+const DEFAULT_ZOOM = 9;
 const MAP_BOUNDS_PADDING_FACTOR = 0.2;
 type ForestWithCoordinates = ForestPoint & {
   latitude: number;
@@ -231,21 +232,22 @@ const DraggableUserPin = ({
     onPinDragEnd(position.lat, position.lng);
   }, [onPinDragEnd]);
 
-  if (locationSource === "DEFAULT_SYDNEY") {
-    return null;
-  }
+  const isDraggable = locationSource !== "DEFAULT_SYDNEY";
+  const popupLabel = locationSource === "DEFAULT_SYDNEY"
+    ? "Sydney (default — click map or share location to change)"
+    : locationSource === "GEOLOCATION"
+      ? "Your location (drag to adjust)"
+      : "Custom location (drag to adjust)";
 
   return (
     <Marker
       position={[latitude, longitude]}
       icon={userPinIcon}
-      draggable
+      draggable={isDraggable}
       ref={markerReference}
-      eventHandlers={{ dragend: handleDragEnd }}
+      eventHandlers={isDraggable ? { dragend: handleDragEnd } : undefined}
     >
-      <Popup>
-        {locationSource === "GEOLOCATION" ? "Your location (drag to adjust)" : "Custom location (drag to adjust)"}
-      </Popup>
+      <Popup>{popupLabel}</Popup>
     </Marker>
   );
 };
@@ -735,7 +737,7 @@ export const MapView = memo(({
   return (
     <MapContainer
       center={DEFAULT_CENTER}
-      zoom={6}
+      zoom={DEFAULT_ZOOM}
       scrollWheelZoom
       className="map"
       data-testid="map-container"
@@ -749,9 +751,7 @@ export const MapView = memo(({
       <MapTestBridge />
       <MapPinHandler onPinLocation={onMapPinLocation} />
 
-      {locationSource === "DEFAULT_SYDNEY" ? (
-        <FitToForests forests={mappedForests} />
-      ) : userLocation ? (
+      {userLocation ? (
         <>
           <FitToUser latitude={userLocation.latitude} longitude={userLocation.longitude} locationSource={locationSource} />
           <DraggableUserPin

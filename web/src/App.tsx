@@ -36,14 +36,7 @@ import {
   buildFacilitiesForestUrl,
   buildTotalFireBanDetailsUrl
 } from "./lib/app-domain-forest";
-import { getForestBanStatus, getForestBanScope } from "./lib/api";
-import {
-  getForestClosureStatus,
-  getForestImpactSummary,
-  isImpactWarning,
-  matchesBanFilter,
-  matchesSolidFuelBanFilter
-} from "./lib/app-domain-status";
+import { matchesForestFilters, type ForestFilterConfig } from "./lib/forest-filter";
 import {
   readUserPreferences,
   writeUserPreferences
@@ -165,10 +158,75 @@ export const App = () => {
     [rawSnapshotForests, userLocation]
   );
 
-  const { routesByForestId, routesLoading, routesError } = useDrivingRoutes({
+  const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
+  const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
+
+  const filterConfig = useMemo<ForestFilterConfig>(() => ({
+    solidFuelBanFilterMode,
+    solidFuelBanScopeFilterMode,
+    totalFireBanFilterMode,
+    closureStatusFilterMode,
+    hasNoticesFilterMode,
+    closureTagFilterModes,
+    facilityFilterModes,
+    impactCampingFilterMode,
+    impactAccess2wdFilterMode,
+    impactAccess4wdFilterMode,
+    availableClosureTags,
+    availableFacilities
+  }), [
+    solidFuelBanFilterMode,
+    solidFuelBanScopeFilterMode,
+    totalFireBanFilterMode,
+    closureStatusFilterMode,
+    hasNoticesFilterMode,
+    closureTagFilterModes,
+    facilityFilterModes,
+    impactCampingFilterMode,
+    impactAccess2wdFilterMode,
+    impactAccess4wdFilterMode,
+    availableClosureTags,
+    availableFacilities
+  ]);
+
+  const matchingForestIds = useMemo(
+    () => new Set(
+      rawForests
+        .filter((forest) => matchesForestFilters(forest, filterConfig))
+        .map((forest) => forest.id)
+    ),
+    [rawForests, filterConfig]
+  );
+
+  // Always include the haversine-nearest legal candidates so the
+  // top panel always shows driving time, regardless of user filters.
+  const topPanelPriorityForestIds = useMemo(() => {
+    if (!userLocation) {
+      return new Set<string>();
+    }
+
+    const ids = new Set<string>();
+    const nearestCampfire = findNearestLegalSpot(rawForests, userLocation);
+    if (nearestCampfire) {
+      ids.add(nearestCampfire.id);
+    }
+    const nearestCampfireWithCamping = findNearestLegalCampfireWithCamping(
+      rawForests,
+      userLocation,
+      availableFacilities
+    );
+    if (nearestCampfireWithCamping) {
+      ids.add(nearestCampfireWithCamping.id);
+    }
+    return ids;
+  }, [rawForests, userLocation, availableFacilities]);
+
+  const { routesByForestId, routesLoading, routesError, quotaExhausted } = useDrivingRoutes({
     userLatitude: userLocation?.latitude ?? null,
     userLongitude: userLocation?.longitude ?? null,
     forests: rawForests,
+    matchingForestIds,
+    priorityForestIds: topPanelPriorityForestIds,
     avoidTolls
   });
 
@@ -193,8 +251,6 @@ export const App = () => {
   );
 
   const error = locationError ?? queryErrorMessage;
-  const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
-  const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
 
   const nearestLegalCampfireWithCamping = useMemo(
     () => {
@@ -341,120 +397,9 @@ export const App = () => {
     }
   };
 
-  const matchingForests = useMemo(() => {
-    return forests.filter((forest) => {
-      const closureStatus = getForestClosureStatus(forest);
-      const impactSummary = getForestImpactSummary(forest);
-      const hasCampingImpactWarning = isImpactWarning(impactSummary.campingImpact);
-      const hasAccess2wdImpactWarning = isImpactWarning(impactSummary.access2wdImpact);
-      const hasAccess4wdImpactWarning = isImpactWarning(impactSummary.access4wdImpact);
-      const hasNotices = (forest.closureNotices ?? []).length > 0;
-
-      if (!matchesSolidFuelBanFilter(solidFuelBanFilterMode, solidFuelBanScopeFilterMode, getForestBanStatus(forest.areas), getForestBanScope(forest.areas))) {
-        return false;
-      }
-
-      if (!matchesBanFilter(totalFireBanFilterMode, forest.totalFireBanStatus)) {
-        return false;
-      }
-
-      if (closureStatusFilterMode === "OPEN" && closureStatus !== "NONE") {
-        return false;
-      }
-
-      if (closureStatusFilterMode === "PARTIAL" && closureStatus !== "PARTIAL" && closureStatus !== "NOTICE") {
-        return false;
-      }
-
-      if (closureStatusFilterMode === "CLOSED" && closureStatus !== "CLOSED") {
-        return false;
-      }
-
-      if (hasNoticesFilterMode === "INCLUDE" && !hasNotices) {
-        return false;
-      }
-
-      if (hasNoticesFilterMode === "EXCLUDE" && hasNotices) {
-        return false;
-      }
-
-      for (const closureTag of availableClosureTags) {
-        const mode = closureTagFilterModes[closureTag.key] ?? "ANY";
-        if (mode === "ANY") {
-          continue;
-        }
-
-        const value = forest.closureTags?.[closureTag.key] === true;
-        if (mode === "INCLUDE" && !value) {
-          return false;
-        }
-
-        if (mode === "EXCLUDE" && value) {
-          return false;
-        }
-      }
-
-      if (impactCampingFilterMode === "INCLUDE" && !hasCampingImpactWarning) {
-        return false;
-      }
-
-      if (impactCampingFilterMode === "EXCLUDE" && hasCampingImpactWarning) {
-        return false;
-      }
-
-      if (impactAccess2wdFilterMode === "INCLUDE" && !hasAccess2wdImpactWarning) {
-        return false;
-      }
-
-      if (impactAccess2wdFilterMode === "EXCLUDE" && hasAccess2wdImpactWarning) {
-        return false;
-      }
-
-      if (impactAccess4wdFilterMode === "INCLUDE" && !hasAccess4wdImpactWarning) {
-        return false;
-      }
-
-      if (impactAccess4wdFilterMode === "EXCLUDE" && hasAccess4wdImpactWarning) {
-        return false;
-      }
-
-      for (const facility of availableFacilities) {
-        const mode = facilityFilterModes[facility.key] ?? "ANY";
-        if (mode === "ANY") {
-          continue;
-        }
-
-        const value = forest.facilities[facility.key];
-        if (mode === "INCLUDE" && value !== true) {
-          return false;
-        }
-
-        if (mode === "EXCLUDE" && value !== false) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [
-    availableClosureTags,
-    availableFacilities,
-    closureStatusFilterMode,
-    hasNoticesFilterMode,
-    closureTagFilterModes,
-    facilityFilterModes,
-    forests,
-    impactAccess2wdFilterMode,
-    impactAccess4wdFilterMode,
-    impactCampingFilterMode,
-    solidFuelBanFilterMode,
-    solidFuelBanScopeFilterMode,
-    totalFireBanFilterMode
-  ]);
-
-  const matchingForestIds = useMemo(
-    () => new Set(matchingForests.map((forest) => forest.id)),
-    [matchingForests]
+  const matchingForests = useMemo(
+    () => forests.filter((forest) => matchingForestIds.has(forest.id)),
+    [forests, matchingForestIds]
   );
 
   const mappableMatchingForestCount = matchingForests.filter((forest) => forest.latitude !== null && forest.longitude !== null).length;
@@ -483,9 +428,14 @@ export const App = () => {
     fireBanForestSortDirection
   });
 
-  const runtimeErrors = routesError
-    ? [`Driving routes unavailable — showing straight-line distances instead. ${routesError}`]
-    : [];
+  const runtimeErrors = [
+    ...(routesError
+      ? [`Driving routes unavailable — showing straight-line distances instead. ${routesError}`]
+      : []),
+    ...(quotaExhausted
+      ? ["Daily driving route quota reached — some forests show straight-line distance estimates."]
+      : [])
+  ];
   const generalWarnings = baseGeneralWarnings;
   const warningCount = baseWarningCount + runtimeErrors.length;
   const closeSettingsDialog = () => { setSettingsOpen(false); };

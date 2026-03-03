@@ -194,8 +194,8 @@ test("opens popup when clicking green matched marker", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-green",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.1633,
-            longitude: 147.0166,
+            latitude: -33.9,
+            longitude: 151.1,
             geocodeName: "Forest Green",
             facilities: {}
           }
@@ -240,8 +240,8 @@ test("opens popup when clicking grey unmatched marker", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-grey",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.1633,
-            longitude: 147.0166,
+            latitude: -33.9,
+            longitude: 151.1,
             geocodeName: "Forest Grey",
             facilities: {}
           }
@@ -288,8 +288,8 @@ test("keeps map position after panning with popup open", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-pan",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.1633,
-            longitude: 147.0166,
+            latitude: -33.9,
+            longitude: 151.1,
             geocodeName: "Forest Pan",
             facilities: {}
           }
@@ -366,8 +366,8 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.1633,
-            longitude: 147.0166,
+            latitude: -33.9,
+            longitude: 151.1,
             geocodeName: "Forest A",
             facilities: {}
           },
@@ -379,8 +379,8 @@ test("keeps popup stable while hovering forest list", async ({ page }) => {
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.2633,
-            longitude: 147.1166,
+            latitude: -34.0,
+            longitude: 151.2,
             geocodeName: "Forest B",
             facilities: {}
           }
@@ -1572,8 +1572,8 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-a",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.8,
-            longitude: 151.7,
+            latitude: -33.7,
+            longitude: 151.3,
             geocodeName: "Forest A",
             facilities: {}
           },
@@ -1585,8 +1585,8 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-b",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -32.9,
-            longitude: 151.6,
+            latitude: -33.8,
+            longitude: 151.4,
             geocodeName: "Forest B",
             facilities: {}
           },
@@ -1598,8 +1598,8 @@ test("hovering area name in map popup highlights same-area markers orange", asyn
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/forest-c",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -35.2,
-            longitude: 150.5,
+            latitude: -34.1,
+            longitude: 151.0,
             geocodeName: "Forest C",
             facilities: {}
           }
@@ -1724,7 +1724,7 @@ test("hovering each area link in multi-area forest list row highlights correct m
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/multi-forest",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -33.0,
+            latitude: -33.8,
             longitude: 151.0,
             geocodeName: "Multi Forest",
             facilities: {},
@@ -1741,7 +1741,7 @@ test("hovering each area link in multi-area forest list row highlights correct m
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/alpha-only",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -33.1,
+            latitude: -33.9,
             longitude: 151.1,
             geocodeName: "Alpha Only Forest",
             facilities: {},
@@ -1758,7 +1758,7 @@ test("hovering each area link in multi-area forest list row highlights correct m
             forestUrl: "https://www.forestrycorporation.com.au/visit/forests/beta-only",
             totalFireBanStatus: "NOT_BANNED",
             totalFireBanStatusText: "No Total Fire Ban",
-            latitude: -33.2,
+            latitude: -34.0,
             longitude: 150.9,
             geocodeName: "Beta Only Forest",
             facilities: {},

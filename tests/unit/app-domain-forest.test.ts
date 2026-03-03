@@ -1,12 +1,20 @@
 import { describe, expect, it } from "vitest";
 import type { ForestApiResponse } from "../../web/src/lib/api";
-import { buildSolidFuelBanDetailsUrl, compareForestsByListSortOption, forestBelongsToArea } from "../../web/src/lib/app-domain-forest";
+import {
+  buildSolidFuelBanDetailsUrl,
+  compareForestsByListSortOption,
+  forestBelongsToArea,
+  forestHasDrivingRoute,
+  formatDirectDistanceSummary,
+  sortForestsByListOption
+} from "../../web/src/lib/app-domain-forest";
 
 const buildForest = (
   id: string,
   forestName: string,
   distanceKm: number | null,
-  travelDurationMinutes: number | null
+  travelDurationMinutes: number | null,
+  directDistanceKm: number | null = null
 ): ForestApiResponse["forests"][number] => ({
   id,
   source: "Forestry Corporation NSW",
@@ -20,14 +28,13 @@ const buildForest = (
   geocodeName: "Forest",
   facilities: {},
   distanceKm,
-  directDistanceKm: null,
+  directDistanceKm,
   travelDurationMinutes
 });
 
 describe("compareForestsByListSortOption", () => {
-  it("sorts by driving distance ascending with unknown distances last", () => {
+  it("sorts by driving distance ascending among routed forests", () => {
     const forests = [
-      buildForest("forest-c", "Forest C", null, null),
       buildForest("forest-b", "Forest B", 20, 30),
       buildForest("forest-a", "Forest A", 10, 15)
     ];
@@ -38,16 +45,14 @@ describe("compareForestsByListSortOption", () => {
 
     expect(sortedForests.map((forest) => forest.forestName)).toEqual([
       "Forest A",
-      "Forest B",
-      "Forest C"
+      "Forest B"
     ]);
   });
 
-  it("sorts by driving distance descending", () => {
+  it("sorts by driving distance descending among routed forests", () => {
     const forests = [
-      buildForest("forest-c", "Forest C", null, null),
-      buildForest("forest-b", "Forest B", 20, 30),
-      buildForest("forest-a", "Forest A", 10, 15)
+      buildForest("forest-a", "Forest A", 10, 15),
+      buildForest("forest-b", "Forest B", 20, 30)
     ];
 
     const sortedForests = [...forests].sort((leftForest, rightForest) =>
@@ -56,14 +61,12 @@ describe("compareForestsByListSortOption", () => {
 
     expect(sortedForests.map((forest) => forest.forestName)).toEqual([
       "Forest B",
-      "Forest A",
-      "Forest C"
+      "Forest A"
     ]);
   });
 
-  it("sorts by driving time ascending", () => {
+  it("sorts by driving time ascending among routed forests", () => {
     const forests = [
-      buildForest("forest-c", "Forest C", null, null),
       buildForest("forest-b", "Forest B", 20, 35),
       buildForest("forest-a", "Forest A", 10, 15)
     ];
@@ -74,16 +77,14 @@ describe("compareForestsByListSortOption", () => {
 
     expect(sortedForests.map((forest) => forest.forestName)).toEqual([
       "Forest A",
-      "Forest B",
-      "Forest C"
+      "Forest B"
     ]);
   });
 
-  it("sorts by driving time descending", () => {
+  it("sorts by driving time descending among routed forests", () => {
     const forests = [
-      buildForest("forest-c", "Forest C", null, null),
-      buildForest("forest-b", "Forest B", 20, 35),
-      buildForest("forest-a", "Forest A", 10, 15)
+      buildForest("forest-a", "Forest A", 10, 15),
+      buildForest("forest-b", "Forest B", 20, 35)
     ];
 
     const sortedForests = [...forests].sort((leftForest, rightForest) =>
@@ -92,9 +93,215 @@ describe("compareForestsByListSortOption", () => {
 
     expect(sortedForests.map((forest) => forest.forestName)).toEqual([
       "Forest B",
+      "Forest A"
+    ]);
+  });
+
+  it("sorts by direct distance ascending", () => {
+    const forests = [
+      buildForest("forest-b", "Forest B", 10, 8, 50),
+      buildForest("forest-a", "Forest A", 200, 120, 5),
+      buildForest("forest-c", "Forest C", null, null, 25)
+    ];
+
+    const sortedForests = [...forests].sort((leftForest, rightForest) =>
+      compareForestsByListSortOption(leftForest, rightForest, "DIRECT_DISTANCE_ASC")
+    );
+
+    expect(sortedForests.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest C",
+      "Forest B"
+    ]);
+  });
+
+  it("falls back to name when metrics are equal", () => {
+    const forests = [
+      buildForest("forest-b", "Forest B", 10, 15, 5),
+      buildForest("forest-a", "Forest A", 10, 15, 5)
+    ];
+
+    const sortedForests = [...forests].sort((leftForest, rightForest) =>
+      compareForestsByListSortOption(leftForest, rightForest, "DRIVING_DISTANCE_ASC")
+    );
+
+    expect(sortedForests.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest B"
+    ]);
+  });
+});
+
+describe("sortForestsByListOption", () => {
+  it("partitions routed forests before unrouted for driving distance ascending", () => {
+    const forests = [
+      buildForest("forest-d", "Forest D", null, null, 50),
+      buildForest("forest-c", "Forest C", null, null, 30),
+      buildForest("forest-b", "Forest B", 20, 30, 25),
+      buildForest("forest-a", "Forest A", 10, 15, 8)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_ASC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest B",
+      "Forest C",
+      "Forest D"
+    ]);
+  });
+
+  it("partitions routed forests before unrouted for driving distance descending", () => {
+    const forests = [
+      buildForest("forest-d", "Forest D", null, null, 30),
+      buildForest("forest-c", "Forest C", null, null, 50),
+      buildForest("forest-b", "Forest B", 10, 15, 8),
+      buildForest("forest-a", "Forest A", 20, 30, 25)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_DESC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest B",
+      "Forest C",
+      "Forest D"
+    ]);
+  });
+
+  it("partitions routed forests before unrouted for driving time ascending", () => {
+    const forests = [
+      buildForest("forest-d", "Forest D", null, null, 50),
+      buildForest("forest-c", "Forest C", null, null, 30),
+      buildForest("forest-b", "Forest B", 20, 35, 25),
+      buildForest("forest-a", "Forest A", 10, 15, 8)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_TIME_ASC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest B",
+      "Forest C",
+      "Forest D"
+    ]);
+  });
+
+  it("partitions routed forests before unrouted for driving time descending", () => {
+    const forests = [
+      buildForest("forest-d", "Forest D", null, null, 30),
+      buildForest("forest-c", "Forest C", null, null, 50),
+      buildForest("forest-b", "Forest B", 10, 15, 8),
+      buildForest("forest-a", "Forest A", 20, 35, 25)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_TIME_DESC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest B",
+      "Forest C",
+      "Forest D"
+    ]);
+  });
+
+  it("keeps routed forests before unrouted even when unrouted is closer by direct distance", () => {
+    const forests = [
+      buildForest("close-unrouted", "Close Unrouted", null, null, 5),
+      buildForest("far-routed", "Far Routed", 100, 60, 90)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_ASC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Far Routed",
+      "Close Unrouted"
+    ]);
+  });
+
+  it("sorts unrouted partition by direct distance descending for driving desc", () => {
+    const forests = [
+      buildForest("routed-short", "Routed Short", 20, 15, 18),
+      buildForest("unrouted-near", "Unrouted Near", null, null, 10),
+      buildForest("unrouted-far", "Unrouted Far", null, null, 200)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_DESC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Routed Short",
+      "Unrouted Far",
+      "Unrouted Near"
+    ]);
+  });
+
+  it("sorts unrouted forests by name when direct distance is also null", () => {
+    const forests = [
+      buildForest("forest-c", "Forest C", null, null, null),
+      buildForest("forest-a", "Forest A", null, null, null),
+      buildForest("forest-b", "Forest B", 20, 30, 25)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_ASC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest B",
       "Forest A",
       "Forest C"
     ]);
+  });
+
+  it("does not partition for direct distance sort", () => {
+    const forests = [
+      buildForest("forest-b", "Forest B", 10, 8, 50),
+      buildForest("forest-a", "Forest A", 200, 120, 5),
+      buildForest("forest-c", "Forest C", null, null, 25)
+    ];
+
+    const sorted = sortForestsByListOption(forests, "DIRECT_DISTANCE_ASC");
+
+    expect(sorted.map((forest) => forest.forestName)).toEqual([
+      "Forest A",
+      "Forest C",
+      "Forest B"
+    ]);
+  });
+
+  it("returns a copy for single-element input", () => {
+    const forests = [buildForest("only", "Only Forest", 10, 5, 8)];
+    const sorted = sortForestsByListOption(forests, "DRIVING_DISTANCE_ASC");
+
+    expect(sorted).toEqual(forests);
+    expect(sorted).not.toBe(forests);
+  });
+
+  it("returns empty array for empty input", () => {
+    expect(sortForestsByListOption([], "DRIVING_DISTANCE_ASC")).toEqual([]);
+  });
+});
+
+describe("forestHasDrivingRoute", () => {
+  it("returns true when distanceKm is a number", () => {
+    expect(forestHasDrivingRoute({ distanceKm: 10 })).toBe(true);
+  });
+
+  it("returns false when distanceKm is null", () => {
+    expect(forestHasDrivingRoute({ distanceKm: null })).toBe(false);
+  });
+});
+
+describe("formatDirectDistanceSummary", () => {
+  it("formats a valid distance with tilde prefix and straight-line suffix", () => {
+    expect(formatDirectDistanceSummary(42.567)).toBe("~42.6 km straight-line");
+  });
+
+  it("returns unavailable message for null", () => {
+    expect(formatDirectDistanceSummary(null)).toBe("Distance unavailable");
+  });
+
+  it("returns unavailable message for non-finite values", () => {
+    expect(formatDirectDistanceSummary(Infinity)).toBe("Distance unavailable");
+    expect(formatDirectDistanceSummary(NaN)).toBe("Distance unavailable");
   });
 });
 

@@ -7,6 +7,7 @@ import {
   type RouteResult,
   type RoutesApiResponse
 } from "../routes-api-client";
+import { selectForestIdsForRouting } from "../route-selection-heuristic";
 
 const MAX_FORESTS_PER_REQUEST = 25;
 
@@ -14,6 +15,15 @@ interface DrivingRoutesInput {
   userLatitude: number | null;
   userLongitude: number | null;
   forests: ForestApiResponse["forests"];
+  /** IDs of forests that pass current user filters. Routes are only
+   *  calculated for matching forests (further narrowed by the haversine
+   *  heuristic). */
+  matchingForestIds: ReadonlySet<string>;
+  /** IDs of forests that must always receive driving routes regardless
+   *  of user filters. Used for the top-panel "nearest legal campfire"
+   *  and "nearest legal campfire with camping" spots so they always
+   *  display driving time. */
+  priorityForestIds: ReadonlySet<string>;
   avoidTolls: boolean;
 }
 
@@ -26,54 +36,87 @@ const buildRoutesQueryKey = (
   ["driving-routes", userLatitude, userLongitude, avoidTolls, forestIds] as const;
 
 /**
- * Fetches driving routes from the routes proxy worker and returns a
- * map of forestId → RouteResult. Automatically batches requests when
- * there are more than 25 geocoded forests.
+ * Fetches driving routes from the routes proxy worker for the closest
+ * matching forests (selected via haversine heuristic). Returns a map
+ * of forestId → RouteResult. Automatically batches requests when there
+ * are more than 25 selected forests.
  */
 export const useDrivingRoutes = ({
   userLatitude,
   userLongitude,
   forests,
+  matchingForestIds,
+  priorityForestIds,
   avoidTolls
 }: DrivingRoutesInput): {
   routesByForestId: Record<string, RouteResult>;
   routesLoading: boolean;
   routesError: string | null;
+  quotaExhausted: boolean;
 } => {
-  const geocodedDestinations = useMemo(
+  // 1. Filter to matching forests only (user-applied filters)
+  const matchingForests = useMemo(
+    () => forests.filter((forest) => matchingForestIds.has(forest.id)),
+    [forests, matchingForestIds]
+  );
+
+  // 2. Apply haversine heuristic to select the closest N forests
+  const heuristicForestIds = useMemo(
+    () => new Set(selectForestIdsForRouting(matchingForests)),
+    [matchingForests]
+  );
+
+  // 3. Merge priority forest IDs (nearest-legal candidates for top panel)
+  //    so they always receive driving routes regardless of user filters.
+  const selectedForestIdSet = useMemo(() => {
+    if (priorityForestIds.size === 0) {
+      return heuristicForestIds;
+    }
+
+    const merged = new Set(heuristicForestIds);
+    for (const id of priorityForestIds) {
+      merged.add(id);
+    }
+    return merged;
+  }, [heuristicForestIds, priorityForestIds]);
+
+  // 4. Build destinations list for selected forests only
+  const selectedDestinations = useMemo(
     () =>
       forests
         .filter(
           (forest): forest is typeof forest & { latitude: number; longitude: number } =>
-            forest.latitude !== null && forest.longitude !== null
+            selectedForestIdSet.has(forest.id) &&
+            forest.latitude !== null &&
+            forest.longitude !== null
         )
         .map((forest) => ({
           id: forest.id,
           latitude: forest.latitude,
           longitude: forest.longitude
         })),
-    [forests]
+    [forests, selectedForestIdSet]
   );
 
-  const geocodedForestIds = useMemo(
-    () => geocodedDestinations.map((destination) => destination.id),
-    [geocodedDestinations]
+  const selectedDestinationIds = useMemo(
+    () => selectedDestinations.map((destination) => destination.id),
+    [selectedDestinations]
   );
 
   const enabled =
     userLatitude !== null &&
     userLongitude !== null &&
-    geocodedForestIds.length > 0;
+    selectedDestinationIds.length > 0;
 
   const queryKey = useMemo(
     () =>
       buildRoutesQueryKey(
         userLatitude,
         userLongitude,
-        geocodedForestIds,
+        selectedDestinationIds,
         avoidTolls
       ),
-    [userLatitude, userLongitude, geocodedForestIds, avoidTolls]
+    [userLatitude, userLongitude, selectedDestinationIds, avoidTolls]
   );
 
   const query = useQuery<RoutesApiResponse>({
@@ -84,14 +127,14 @@ export const useDrivingRoutes = ({
     retry: 1,
     queryFn: async ({ signal }) => {
       if (userLatitude === null || userLongitude === null) {
-        return { routes: {}, warnings: [] };
+        return { routes: {}, warnings: [], quotaExhausted: false };
       }
 
       const origin = { latitude: userLatitude, longitude: userLongitude };
 
-      if (geocodedDestinations.length <= MAX_FORESTS_PER_REQUEST) {
+      if (selectedDestinations.length <= MAX_FORESTS_PER_REQUEST) {
         return fetchDrivingRoutes(
-          { origin, destinations: geocodedDestinations, avoidTolls },
+          { origin, destinations: selectedDestinations, avoidTolls },
           signal
         );
       }
@@ -99,11 +142,11 @@ export const useDrivingRoutes = ({
       const batches: RouteDestination[][] = [];
       for (
         let offset = 0;
-        offset < geocodedDestinations.length;
+        offset < selectedDestinations.length;
         offset += MAX_FORESTS_PER_REQUEST
       ) {
         batches.push(
-          geocodedDestinations.slice(offset, offset + MAX_FORESTS_PER_REQUEST)
+          selectedDestinations.slice(offset, offset + MAX_FORESTS_PER_REQUEST)
         );
       }
 
@@ -118,17 +161,26 @@ export const useDrivingRoutes = ({
 
       const mergedRoutes: Record<string, RouteResult> = {};
       const mergedWarnings: string[] = [];
+      let anyQuotaExhausted = false;
 
       for (const batchResult of batchResults) {
         Object.assign(mergedRoutes, batchResult.routes);
         mergedWarnings.push(...batchResult.warnings);
+        if (batchResult.quotaExhausted) {
+          anyQuotaExhausted = true;
+        }
       }
 
-      return { routes: mergedRoutes, warnings: mergedWarnings };
+      return {
+        routes: mergedRoutes,
+        warnings: mergedWarnings,
+        quotaExhausted: anyQuotaExhausted
+      };
     }
   });
 
   const routesByForestId = query.data?.routes ?? {};
+  const quotaExhausted = query.data?.quotaExhausted ?? false;
   const routesLoading = query.isFetching;
   const routesError = query.error
     ? query.error instanceof Error
@@ -136,7 +188,7 @@ export const useDrivingRoutes = ({
       : "Failed to fetch driving routes"
     : null;
 
-  return { routesByForestId, routesLoading, routesError };
+  return { routesByForestId, routesLoading, routesError, quotaExhausted };
 };
 
 /**

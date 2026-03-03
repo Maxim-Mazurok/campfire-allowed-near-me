@@ -65,65 +65,111 @@ const sortWithNullableMetric = (
   return sortDirection === "asc" ? metricDifference : -metricDifference;
 };
 
+/**
+ * Whether the forest has a driving route estimate (distanceKm populated by the Routes API).
+ */
+export const forestHasDrivingRoute = (
+  forest: Pick<ForestApiResponse["forests"][number], "distanceKm">
+): boolean => forest.distanceKm !== null;
+
+/**
+ * Comparator for a single metric + direction, falling back to forest name.
+ */
+const compareByMetricThenName = (
+  left: ForestApiResponse["forests"][number],
+  right: ForestApiResponse["forests"][number],
+  leftValue: number | null,
+  rightValue: number | null,
+  sortDirection: "asc" | "desc"
+): number => {
+  const metricComparison = sortWithNullableMetric(leftValue, rightValue, sortDirection);
+  if (metricComparison !== 0) {
+    return metricComparison;
+  }
+  return left.forestName.localeCompare(right.forestName);
+};
+
 export const compareForestsByListSortOption = (
   left: ForestApiResponse["forests"][number],
   right: ForestApiResponse["forests"][number],
   forestListSortOption: ForestListSortOption
 ): number => {
-  const compareByForestName = left.forestName.localeCompare(right.forestName);
-
   switch (forestListSortOption) {
-    case "DIRECT_DISTANCE_ASC": {
-      const distanceComparison = sortWithNullableMetric(
-        left.directDistanceKm,
-        right.directDistanceKm,
-        "asc"
-      );
-      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
-    }
-    case "DIRECT_DISTANCE_DESC": {
-      const distanceComparison = sortWithNullableMetric(
-        left.directDistanceKm,
-        right.directDistanceKm,
-        "desc"
-      );
-      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
-    }
-    case "DRIVING_DISTANCE_ASC": {
-      const distanceComparison = sortWithNullableMetric(
-        left.distanceKm,
-        right.distanceKm,
-        "asc"
-      );
-      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
-    }
-    case "DRIVING_DISTANCE_DESC": {
-      const distanceComparison = sortWithNullableMetric(
-        left.distanceKm,
-        right.distanceKm,
-        "desc"
-      );
-      return distanceComparison !== 0 ? distanceComparison : compareByForestName;
-    }
-    case "DRIVING_TIME_ASC": {
-      const durationComparison = sortWithNullableMetric(
-        left.travelDurationMinutes,
-        right.travelDurationMinutes,
-        "asc"
-      );
-      return durationComparison !== 0 ? durationComparison : compareByForestName;
-    }
-    case "DRIVING_TIME_DESC": {
-      const durationComparison = sortWithNullableMetric(
-        left.travelDurationMinutes,
-        right.travelDurationMinutes,
-        "desc"
-      );
-      return durationComparison !== 0 ? durationComparison : compareByForestName;
-    }
+    case "DIRECT_DISTANCE_ASC":
+      return compareByMetricThenName(left, right, left.directDistanceKm, right.directDistanceKm, "asc");
+    case "DIRECT_DISTANCE_DESC":
+      return compareByMetricThenName(left, right, left.directDistanceKm, right.directDistanceKm, "desc");
+    case "DRIVING_DISTANCE_ASC":
+      return compareByMetricThenName(left, right, left.distanceKm, right.distanceKm, "asc");
+    case "DRIVING_DISTANCE_DESC":
+      return compareByMetricThenName(left, right, left.distanceKm, right.distanceKm, "desc");
+    case "DRIVING_TIME_ASC":
+      return compareByMetricThenName(left, right, left.travelDurationMinutes, right.travelDurationMinutes, "asc");
+    case "DRIVING_TIME_DESC":
+      return compareByMetricThenName(left, right, left.travelDurationMinutes, right.travelDurationMinutes, "desc");
     default:
-      return compareByForestName;
+      return left.forestName.localeCompare(right.forestName);
   }
+};
+
+/**
+ * Returns the sort direction extracted from a driving sort option.
+ */
+const drivingSortDirection = (option: ForestListSortOption): "asc" | "desc" =>
+  option.endsWith("_DESC") ? "desc" : "asc";
+
+/**
+ * Whether the sort option is a driving-based sort (distance or time).
+ */
+const isDrivingSortOption = (option: ForestListSortOption): boolean =>
+  option.startsWith("DRIVING_");
+
+/**
+ * Sorts forests with an explicit routed-first partition for driving sort options.
+ *
+ * For driving sorts:
+ * 1. Partition forests into routed (have distanceKm) and unrouted (no distanceKm).
+ * 2. Sort routed forests by the driving metric.
+ * 3. Sort unrouted forests by directDistanceKm in the same direction.
+ * 4. Concatenate: routed first, then unrouted.
+ *
+ * For direct-distance sorts, no partition is needed — just sort by the metric.
+ */
+export const sortForestsByListOption = (
+  forests: readonly ForestApiResponse["forests"][number][],
+  forestListSortOption: ForestListSortOption
+): ForestApiResponse["forests"][number][] => {
+  if (forests.length <= 1) {
+    return [...forests];
+  }
+
+  if (!isDrivingSortOption(forestListSortOption)) {
+    return [...forests].sort((left, right) =>
+      compareForestsByListSortOption(left, right, forestListSortOption)
+    );
+  }
+
+  const direction = drivingSortDirection(forestListSortOption);
+  const routedForests: ForestApiResponse["forests"][number][] = [];
+  const unroutedForests: ForestApiResponse["forests"][number][] = [];
+
+  for (const forest of forests) {
+    if (forestHasDrivingRoute(forest)) {
+      routedForests.push(forest);
+    } else {
+      unroutedForests.push(forest);
+    }
+  }
+
+  routedForests.sort((left, right) =>
+    compareForestsByListSortOption(left, right, forestListSortOption)
+  );
+
+  unroutedForests.sort((left, right) =>
+    compareByMetricThenName(left, right, left.directDistanceKm, right.directDistanceKm, direction)
+  );
+
+  return [...routedForests, ...unroutedForests];
 };
 
 const formatDriveDuration = (durationMinutes: number | null): string => {
@@ -159,6 +205,16 @@ export const formatDriveSummary = (
   }
 
   return `${distanceKm.toFixed(1)} km, ${formatDriveDuration(durationMinutes)}`;
+};
+
+export const formatDirectDistanceSummary = (
+  directDistanceKm: number | null
+): string => {
+  if (directDistanceKm === null || !Number.isFinite(directDistanceKm)) {
+    return "Distance unavailable";
+  }
+
+  return `~${directDistanceKm.toFixed(1)} km straight-line`;
 };
 
 const slugifyPathSegment = (value: string): string =>

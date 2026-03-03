@@ -6,6 +6,7 @@ export interface RouteResult {
 export interface RoutesApiResponse {
   routes: Record<string, RouteResult>;
   warnings: string[];
+  quotaExhausted?: boolean;
 }
 
 export interface RouteDestination {

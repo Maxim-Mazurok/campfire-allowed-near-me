@@ -2,3 +2,7 @@ name = "campfire-routes-proxy"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "ROUTES_CACHE"
+id = "c6e5158b24014a608917ae9610e59a66"

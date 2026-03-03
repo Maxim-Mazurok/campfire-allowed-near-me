@@ -85,7 +85,7 @@ describe("routes-proxy Worker handler", () => {
     it("includes CORS headers in success responses", async () => {
       mockFetch.mockResolvedValueOnce(
         new Response(JSON.stringify([
-          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, duration: "3600s" }
+          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, staticDuration: "3600s" }
         ]))
       );
 
@@ -234,7 +234,7 @@ describe("routes-proxy Worker handler", () => {
         originIndex: 0,
         destinationIndex: index,
         distanceMeters: 10_000 * (index + 1),
-        duration: `${600 * (index + 1)}s`
+        staticDuration: `${600 * (index + 1)}s`
       }));
 
       mockFetch.mockResolvedValueOnce(
@@ -259,13 +259,13 @@ describe("routes-proxy Worker handler", () => {
             originIndex: 0,
             destinationIndex: 0,
             distanceMeters: 65_000,
-            duration: "3600s"
+            staticDuration: "3600s"
           },
           {
             originIndex: 0,
             destinationIndex: 1,
             distanceMeters: 120_000,
-            duration: "5400.5s"
+            staticDuration: "5400.5s"
           }
         ]))
       );
@@ -280,6 +280,7 @@ describe("routes-proxy Worker handler", () => {
       const body = await parseJsonResponse(response) as {
         routes: Record<string, { distanceKm: number; durationMinutes: number }>;
         warnings: string[];
+        quotaExhausted: boolean;
       };
 
       expect(body.routes["forest-1"]).toEqual({
@@ -291,12 +292,13 @@ describe("routes-proxy Worker handler", () => {
         durationMinutes: 90.00833333333334
       });
       expect(body.warnings).toEqual([]);
+      expect(body.quotaExhausted).toBe(false);
     });
 
     it("defaults avoidTolls to true", async () => {
       mockFetch.mockResolvedValueOnce(
         new Response(JSON.stringify([
-          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, duration: "3000s" }
+          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, staticDuration: "3000s" }
         ]))
       );
 
@@ -314,7 +316,7 @@ describe("routes-proxy Worker handler", () => {
     it("passes avoidTolls=false when specified", async () => {
       mockFetch.mockResolvedValueOnce(
         new Response(JSON.stringify([
-          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, duration: "3000s" }
+          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, staticDuration: "3000s" }
         ]))
       );
 
@@ -333,7 +335,7 @@ describe("routes-proxy Worker handler", () => {
     it("sends correct destination coordinates to Google Routes API", async () => {
       mockFetch.mockResolvedValueOnce(
         new Response(JSON.stringify([
-          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, duration: "3000s" }
+          { originIndex: 0, destinationIndex: 0, distanceMeters: 50_000, staticDuration: "3000s" }
         ]))
       );
 
@@ -384,7 +386,7 @@ describe("routes-proxy Worker handler", () => {
           {
             originIndex: 0,
             destinationIndex: 0,
-            duration: "3000s"
+            staticDuration: "3000s"
             // no distanceMeters
           }
         ]))
@@ -407,9 +409,49 @@ describe("routes-proxy Worker handler", () => {
   });
 
   describe("Google Routes API error handling", () => {
-    it("returns 500 when Google API returns an error", async () => {
+    it("returns 200 with quotaExhausted when Google returns 429", async () => {
       mockFetch.mockResolvedValueOnce(
         new Response("API quota exceeded", { status: 429 })
+      );
+
+      const request = makeRequest("POST", "/api/routes", {
+        origin: VALID_ORIGIN,
+        destinations: [VALID_DESTINATIONS[0]]
+      });
+      const response = await worker.fetch(request, TEST_ENVIRONMENT);
+
+      expect(response.status).toBe(200);
+      const body = await parseJsonResponse(response) as {
+        routes: Record<string, unknown>;
+        warnings: string[];
+        quotaExhausted: boolean;
+      };
+      expect(body.quotaExhausted).toBe(true);
+      expect(body.warnings[0]).toContain("quota exhausted");
+    });
+
+    it("returns 200 with quotaExhausted when body contains RESOURCE_EXHAUSTED", async () => {
+      mockFetch.mockResolvedValueOnce(
+        new Response('{"error":{"status":"RESOURCE_EXHAUSTED"}}', { status: 403 })
+      );
+
+      const request = makeRequest("POST", "/api/routes", {
+        origin: VALID_ORIGIN,
+        destinations: [VALID_DESTINATIONS[0]]
+      });
+      const response = await worker.fetch(request, TEST_ENVIRONMENT);
+
+      expect(response.status).toBe(200);
+      const body = await parseJsonResponse(response) as {
+        quotaExhausted: boolean;
+        warnings: string[];
+      };
+      expect(body.quotaExhausted).toBe(true);
+    });
+
+    it("returns 500 for non-quota Google API errors", async () => {
+      mockFetch.mockResolvedValueOnce(
+        new Response("Internal server error", { status: 500 })
       );
 
       const request = makeRequest("POST", "/api/routes", {
@@ -421,7 +463,99 @@ describe("routes-proxy Worker handler", () => {
       expect(response.status).toBe(500);
       const body = await parseJsonResponse(response) as { error: string };
       expect(body.error).toContain("Google Routes API error");
-      expect(body.error).toContain("429");
+      expect(body.error).toContain("500");
+    });
+  });
+
+  describe("KV cache integration", () => {
+    const createMockKVNamespace = () => {
+      const store = new Map<string, string>();
+      return {
+        get: vi.fn(async (key: string, type?: string) => {
+          const value = store.get(key);
+          if (!value) return null;
+          if (type === "json") return JSON.parse(value);
+          return value;
+        }),
+        put: vi.fn(async (key: string, value: string) => {
+          store.set(key, value);
+        }),
+        delete: vi.fn(),
+        list: vi.fn(),
+        getWithMetadata: vi.fn()
+      };
+    };
+
+    it("serves routes from cache without calling Google API", async () => {
+      const mockKV = createMockKVNamespace();
+      const cachedData = {
+        routes: {
+          "forest-1": { distanceKm: 65, durationMinutes: 60 }
+        },
+        updatedAt: Date.now()
+      };
+      // Pre-populate cache (key is bucketed to nearest 0.04 degrees)
+      mockKV.get.mockResolvedValueOnce(cachedData);
+
+      const environmentWithCache = {
+        ...TEST_ENVIRONMENT,
+        ROUTES_CACHE: mockKV as unknown
+      };
+
+      const request = makeRequest("POST", "/api/routes", {
+        origin: VALID_ORIGIN,
+        destinations: [VALID_DESTINATIONS[0]]
+      });
+      const response = await worker.fetch(
+        request,
+        environmentWithCache as typeof TEST_ENVIRONMENT
+      );
+
+      expect(response.status).toBe(200);
+      const body = await parseJsonResponse(response) as {
+        routes: Record<string, { distanceKm: number; durationMinutes: number }>;
+        quotaExhausted: boolean;
+      };
+      expect(body.routes["forest-1"]).toEqual({ distanceKm: 65, durationMinutes: 60 });
+      expect(body.quotaExhausted).toBe(false);
+      // Google API should NOT have been called
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it("fetches uncached destinations from Google and writes to cache", async () => {
+      const mockKV = createMockKVNamespace();
+      // Cache miss — no cache data
+      mockKV.get.mockResolvedValueOnce(null);
+
+      mockFetch.mockResolvedValueOnce(
+        new Response(JSON.stringify([
+          { originIndex: 0, destinationIndex: 0, distanceMeters: 65_000, staticDuration: "3600s" }
+        ]))
+      );
+
+      const environmentWithCache = {
+        ...TEST_ENVIRONMENT,
+        ROUTES_CACHE: mockKV as unknown
+      };
+
+      const request = makeRequest("POST", "/api/routes", {
+        origin: VALID_ORIGIN,
+        destinations: [VALID_DESTINATIONS[0]]
+      });
+      const response = await worker.fetch(
+        request,
+        environmentWithCache as typeof TEST_ENVIRONMENT
+      );
+
+      expect(response.status).toBe(200);
+      const body = await parseJsonResponse(response) as {
+        routes: Record<string, { distanceKm: number; durationMinutes: number }>;
+      };
+      expect(body.routes["forest-1"]).toEqual({ distanceKm: 65, durationMinutes: 60 });
+      // Google API should have been called
+      expect(mockFetch).toHaveBeenCalledOnce();
+      // Cache should have been written
+      expect(mockKV.put).toHaveBeenCalledOnce();
     });
   });
 });

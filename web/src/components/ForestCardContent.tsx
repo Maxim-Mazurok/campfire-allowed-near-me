@@ -10,6 +10,8 @@ import {
   buildTextHighlightUrl,
   buildTotalFireBanDetailsUrl,
   forestHasCoordinates,
+  forestHasDrivingRoute,
+  formatDirectDistanceSummary,
   formatDriveSummary,
   isHttpUrl
 } from "../lib/app-domain-forest";
@@ -125,9 +127,13 @@ export const ForestCardContent = memo(({
       Hover over the area name below the forest name to highlight other forests in the same area.
     </>
   );
+  const hasDrivingRoute = hasCoordinates && forestHasDrivingRoute(forest);
   const driveMetricTooltipLabel = hasCoordinates
-    ? `Google Maps estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}) for realistic distance/time.`
+    ? `Google Maps driving estimate (Sat 10am, tolls: ${avoidTolls ? "avoid" : "allow"}).`
     : locationNotFoundTooltipLabel;
+  const straightLineTooltipLabel =
+    "Straight-line distance — driving route not calculated for this forest. " +
+    "Routes are only estimated for the closest forests to limit Google Maps API costs.";
 
   const solidFuelBadgeTooltip = forestBanStatus === "NOT_BANNED"
     ? `No Solid Fuel Fire Ban from Forestry Corp NSW.${forestBanScope === "OUTSIDE_CAMPS" ? " (Outside camping areas only.)" : ""} Campfires are only legal when both this ban AND Total Fire Ban are absent.`
@@ -289,10 +295,16 @@ export const ForestCardContent = memo(({
           </div>
         ) : null}
 
-        {hasCoordinates && forest.distanceKm !== null ? (
+        {hasDrivingRoute ? (
           <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
             <small className="muted forest-distance-text" data-testid="distance-text">
               {formatDriveSummary(forest.distanceKm, forest.travelDurationMinutes)}
+            </small>
+          </Tooltip>
+        ) : hasCoordinates && forest.directDistanceKm !== null ? (
+          <Tooltip label={straightLineTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={300}>
+            <small className="muted forest-distance-text" data-testid="distance-text">
+              {formatDirectDistanceSummary(forest.directDistanceKm)}
             </small>
           </Tooltip>
         ) : !hasCoordinates ? (

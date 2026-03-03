@@ -6,7 +6,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { ForestCardContent } from "./ForestCardContent";
 import type { ForestApiResponse, FacilityDefinition } from "../lib/api";
 import {
-  compareForestsByListSortOption
+  sortForestsByListOption
 } from "../lib/app-domain-forest";
 import type { ForestListSortOption } from "../lib/app-domain-types";
 
@@ -209,9 +209,7 @@ export const ForestListPanel = memo(({
       return matchingForests;
     }
 
-    return [...matchingForests].sort((leftForest, rightForest) =>
-      compareForestsByListSortOption(leftForest, rightForest, forestListSortOption)
-    );
+    return sortForestsByListOption(matchingForests, forestListSortOption);
   }, [forestListSortOption, matchingForests]);
 
   const normalizedForestSearchText = forestSearchText.trim().toLowerCase();

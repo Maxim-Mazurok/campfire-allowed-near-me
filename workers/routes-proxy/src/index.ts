@@ -14,6 +14,7 @@ interface LatLng {
 
 interface Environment {
   GOOGLE_MAPS_API_KEY: string;
+  ROUTES_CACHE?: KVNamespace;
 }
 
 interface Destination {
@@ -32,6 +33,35 @@ interface RouteResult {
   distanceKm: number;
   durationMinutes: number;
 }
+
+interface CachedRouteData {
+  routes: Record<string, RouteResult>;
+  updatedAt: number;
+}
+
+// ---------------------------------------------------------------------------
+// Origin bucketing — rounds coordinates to ~4.4 km grid cells so nearby
+// users share the same cache entry.
+// ---------------------------------------------------------------------------
+
+/** Approximate grid size in degrees (~4.4 km at mid-latitudes). */
+const BUCKET_DEGREES = 0.04;
+
+const bucketCoordinate = (value: number): number =>
+  Math.round(value / BUCKET_DEGREES) * BUCKET_DEGREES;
+
+const buildCacheKey = (
+  latitude: number,
+  longitude: number,
+  avoidTolls: boolean
+): string => {
+  const bucketedLatitude = bucketCoordinate(latitude).toFixed(4);
+  const bucketedLongitude = bucketCoordinate(longitude).toFixed(4);
+  return `routes:${bucketedLatitude}:${bucketedLongitude}:${avoidTolls ? "no-tolls" : "tolls"}`;
+};
+
+/** Cache entries expire after 7 days. */
+const CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -93,26 +123,69 @@ const computeRouteMatrix = async (
       }
     })),
     travelMode: "DRIVE",
-    routingPreference: "TRAFFIC_AWARE"
+    routingPreference: "TRAFFIC_UNAWARE"
   };
 
   const response = await fetch(ROUTES_API_URL, {
     method: "POST",
     headers: buildRoutesApiHeaders(
       apiKey,
-      "originIndex,destinationIndex,condition,distanceMeters,duration"
+      "originIndex,destinationIndex,condition,distanceMeters,staticDuration"
     ),
     body: JSON.stringify(requestBody)
   });
 
   if (!response.ok) {
     const body = await response.text();
+    if (response.status === 429 || body.includes("RESOURCE_EXHAUSTED")) {
+      throw new QuotaExhaustedError(
+        `Google Routes API quota exhausted (HTTP ${response.status})`
+      );
+    }
     throw new Error(
       `Google Routes API error (HTTP ${response.status}): ${body}`
     );
   }
 
   return (await response.json()) as RouteMatrixElement[];
+};
+
+class QuotaExhaustedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "QuotaExhaustedError";
+  }
+}
+
+const readCachedRoutes = async (
+  kvNamespace: KVNamespace | undefined,
+  cacheKey: string
+): Promise<CachedRouteData | null> => {
+  if (!kvNamespace) {
+    return null;
+  }
+  try {
+    return await kvNamespace.get<CachedRouteData>(cacheKey, "json");
+  } catch {
+    return null;
+  }
+};
+
+const writeCachedRoutes = async (
+  kvNamespace: KVNamespace | undefined,
+  cacheKey: string,
+  data: CachedRouteData
+): Promise<void> => {
+  if (!kvNamespace) {
+    return;
+  }
+  try {
+    await kvNamespace.put(cacheKey, JSON.stringify(data), {
+      expirationTtl: CACHE_TTL_SECONDS
+    });
+  } catch {
+    // Non-critical — cache write failures are silently ignored.
+  }
 };
 
 const handleRouteRequest = async (
@@ -158,40 +231,101 @@ const handleRouteRequest = async (
   const avoidTolls = body.avoidTolls ?? true;
   const destinations = body.destinations;
 
-  const matrixResults = await computeRouteMatrix(
-    environment.GOOGLE_MAPS_API_KEY,
-    body.origin,
-    destinations,
+  // --- Cache lookup ---
+  const cacheKey = buildCacheKey(
+    body.origin.latitude,
+    body.origin.longitude,
     avoidTolls
   );
+  const cachedData = await readCachedRoutes(
+    environment.ROUTES_CACHE,
+    cacheKey
+  );
+  const cachedRoutes = cachedData?.routes ?? {};
 
+  // Separate cached vs uncached destinations
+  const uncachedDestinations = destinations.filter(
+    (destination) => !cachedRoutes[destination.id]
+  );
+
+  // Collect cached results for the requested destinations
   const routes: Record<string, RouteResult> = {};
-  const warnings: string[] = [];
-
-  for (const element of matrixResults) {
-    const destinationIndex = element.destinationIndex ?? 0;
-    const destination = destinations[destinationIndex];
-    if (!destination) continue;
-
-    if (
-      element.condition === "ROUTE_NOT_FOUND" ||
-      !element.distanceMeters
-    ) {
-      warnings.push(
-        `No route found for forest ${destination.id}`
-      );
-      continue;
+  let cachedCount = 0;
+  for (const destination of destinations) {
+    const cached = cachedRoutes[destination.id];
+    if (cached) {
+      routes[destination.id] = cached;
+      cachedCount++;
     }
-
-    const durationSeconds = parseDurationSeconds(element.duration);
-
-    routes[destination.id] = {
-      distanceKm: element.distanceMeters / 1000,
-      durationMinutes: durationSeconds !== null ? durationSeconds / 60 : 0
-    };
   }
 
-  return jsonResponse({ routes, warnings });
+  console.log(
+    `[routes] key=${cacheKey} requested=${destinations.length} cached=${cachedCount} uncached=${uncachedDestinations.length}`
+  );
+
+  const warnings: string[] = [];
+  let quotaExhausted = false;
+
+  // --- Fetch uncached routes from Google ---
+  if (uncachedDestinations.length > 0) {
+    try {
+      const matrixResults = await computeRouteMatrix(
+        environment.GOOGLE_MAPS_API_KEY,
+        body.origin,
+        uncachedDestinations,
+        avoidTolls
+      );
+
+      const newRoutes: Record<string, RouteResult> = {};
+
+      for (const element of matrixResults) {
+        const destinationIndex = element.destinationIndex ?? 0;
+        const destination = uncachedDestinations[destinationIndex];
+        if (!destination) continue;
+
+        if (
+          element.condition === "ROUTE_NOT_FOUND" ||
+          !element.distanceMeters
+        ) {
+          console.log(`[routes] no route found for ${destination.id}`);
+          warnings.push(
+            `No route found for forest ${destination.id}`
+          );
+          continue;
+        }
+
+        const durationSeconds = parseDurationSeconds(element.staticDuration);
+
+        const routeResult: RouteResult = {
+          distanceKm: element.distanceMeters / 1_000,
+          durationMinutes:
+            durationSeconds !== null ? durationSeconds / 60 : 0
+        };
+
+        newRoutes[destination.id] = routeResult;
+        routes[destination.id] = routeResult;
+      }
+
+      // Merge new routes into cache and persist
+      console.log(
+        `[routes] fetched ${Object.keys(newRoutes).length} new routes from Google`
+      );
+      await writeCachedRoutes(environment.ROUTES_CACHE, cacheKey, {
+        routes: { ...cachedRoutes, ...newRoutes },
+        updatedAt: Date.now()
+      });
+    } catch (error) {
+      if (error instanceof QuotaExhaustedError) {
+        quotaExhausted = true;
+        console.warn(`[routes] ${error.message}`);
+        warnings.push(error.message);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  return jsonResponse({ routes, warnings, quotaExhausted });
 };
 
 export default {
