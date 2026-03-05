@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-05T06:42:01.734Z",
+  "fetchedAt": "2026-03-05T19:12:09.690Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -823,7 +823,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
+            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
           }
         }
       ],
@@ -2054,10 +2054,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "NONE",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping at Blowering Dam is open but some plantation sections and minor roads are closed or inaccessible."
           }
         }
       ],
@@ -2068,7 +2068,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -3086,7 +3086,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road with access only via Penrose Forest Way; hazardous road conditions have caused partial closure restricting vehicle access."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
           }
         }
       ],
@@ -9489,7 +9489,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Public access to the specified area is not allowed without permission, restricting camping and vehicle access."
+            "rationale": "Public access to the exclusive use area is not allowed without permission, restricting camping and vehicle access."
           }
         }
       ],
@@ -15406,7 +15406,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Three Falls Road is closed, so vehicle access is closed; camping impact is not specified."
+            "rationale": "Three Falls Road is closed, restricting vehicle access; camping impact is not specified."
           }
         }
       ],
@@ -17508,7 +17508,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access details."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -18236,10 +18236,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The notice states closures remain in place due to a landslip, advising users to avoid the forest, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "The notice advises avoiding the forest and states closures remain in place due to a landslip."
           }
         }
       ],
@@ -19704,10 +19704,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -19718,9 +19718,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19787,7 +19787,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping sites remain open; some roads are closed or have load limits restricting vehicle access."
+            "rationale": "Camping sites remain open; some roads are closed or have load limits affecting vehicle access."
           }
         }
       ],
@@ -20161,7 +20161,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes are open with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -21329,10 +21329,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -21343,9 +21343,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21842,7 +21842,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -21863,10 +21863,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
+            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed, Upsalls Creek Road open."
           }
         }
       ],
@@ -21877,7 +21877,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22149,10 +22149,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -22163,7 +22163,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22710,7 +22710,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Boonabilla Road and Basin Road are closed to all vehicle traffic due to unsafe bridges."
+            "rationale": "The notice states roads are closed to all vehicle traffic due to unsafe bridges, but does not mention camping."
           }
         }
       ],
@@ -23718,11 +23718,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access details."
+            "confidence": "MEDIUM",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -23733,9 +23733,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -24500,7 +24500,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -26980,7 +26980,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, limiting camping and vehicle access, while pine forest areas remain open."
+            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
           }
         }
       ],
