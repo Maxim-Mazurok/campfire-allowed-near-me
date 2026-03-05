@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-04T18:38:16.253Z",
+  "fetchedAt": "2026-03-05T06:42:01.734Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -819,11 +819,11 @@
           "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
+            "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice mentions closure of mountain bike trails and access points but does not specify camping or vehicle access impacts."
+            "rationale": "The notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
           }
         }
       ],
@@ -1657,7 +1657,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -1735,7 +1735,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -2054,10 +2054,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping areas at Blowering Dam are open; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2068,7 +2068,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -2203,7 +2203,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access but no camping information provided."
+            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -3086,7 +3086,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road with access only via Penrose Forest Way; hazardous road conditions have caused partial closure restricting vehicle access."
           }
         }
       ],
@@ -9489,7 +9489,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Public access to the exclusive use area is not allowed without permission, restricting camping and vehicle access."
+            "rationale": "Public access to the specified area is not allowed without permission, restricting camping and vehicle access."
           }
         }
       ],
@@ -17508,7 +17508,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access details."
           }
         }
       ],
@@ -17923,43 +17923,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "3664",
-          "title": "Avon River State Forest closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3664",
-          "listedAt": "2025-05-06T23:10:00.000Z",
-          "listedAtText": "2025-05-06T23:10:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Avon River State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "ROAD_ACCESS",
-            "OPERATIONS"
-          ],
-          "detailText": "Recent flooding and sever weather impacts have resulted in\ntemporary closures of several State forests in the Hunter and Central Coast Areas. This includes Avon River State Forest.\nForestry Corporation staff are continuing to undertake work\nand assessments to clear roads and make areas safe for visitors. Forests will\nprogressively reopen once they are made safe and accessible.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
-        "ROAD_ACCESS": true,
+        "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -18260,11 +18235,11 @@
           "detailText": "State forest users and motorists are advised to avoid Barrington Tops State Forest following a landslip on Barrington Tops Road.\nDamage assessments are being carried out on State forest roads and closures will remain in place until further notice.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "ADVISORY",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The notice advises avoiding the forest and mentions road closures due to a landslip, indicating closed vehicle access and advisory camping impact."
+            "rationale": "The notice states closures remain in place due to a landslip, advising users to avoid the forest, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -19729,10 +19704,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -19743,9 +19718,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -19792,7 +19767,7 @@
       "closureNotices": [
         {
           "id": "3994",
-          "title": "Chichester State Forest: Partial closures and vehicle load limits due to severe weather impacts",
+          "title": "Chichester State Forest: Partial closures and vehicle load limits",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3994",
           "listedAt": "2025-10-01T06:52:00.000Z",
           "listedAtText": "2025-10-01T06:52:00.0000000Z",
@@ -19802,27 +19777,28 @@
           "status": "PARTIAL",
           "tags": [
             "ROAD_ACCESS",
+            "CAMPING",
             "OPERATIONS"
           ],
-          "detailText": "Chichester State Forest: Partial closures and vehicle\nload limits due to severe weather impacts\nParts of Chichester State Forest are inaccessible and closed\nfor all visitors until further notice due to damage and various hazards\nincluding landslips following extreme weather events.\nRoad Closures and Vehicle Load Limits at Allyn River Visitor\nSites:\nMount\nAllyn Forest Road – Closed – due to bridge damage. No\naccess to Mount Allyn or Shellbrook Road\nAllyn\nRiver Forest Road – Load Limits – several bridges on\nAllyn River Forest Road have load and speed limit restrictions. A bridge\nnorth of Ladies Well has a max load limit of 5 Tonnes. Please\nfollow any signage and directions in place when travelling this area.\nForestry Corporation staff are continuing to undertake work\nto make areas safe for visitation and thank everyone for their patience.",
+          "detailText": "Parts of Chichester State Forest are inaccessible and closed\nfor all visitors until further notice due to damage and various hazards\nincluding landslips, following extreme weather events.\nRoad closures and vehicle load limits at Allyn River visitor sites:\nMount\nAllyn Forest Road – Closed (at Shellbrook Road) – No\naccess to Mount Allyn Lookout\nAllyn\nRiver Forest Road – Load Limits – several bridges on\nAllyn River Forest Road have load and speed limit restrictions. A bridge\nnorth of Ladies Well has a max load limit of 5 Tonnes. Please\nfollow any signage and directions in place when travelling this area.\nPlease note: All camping and picnic/day-use sites are\nopen unless mentioned above.\nForestry Corporation staff are continuing to undertake work\nto make areas safe for visitation and thank everyone for their patience.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "CLOSED",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed due to hazards; some roads are closed and others have load limits affecting vehicle access."
+            "rationale": "Camping sites remain open; some roads are closed or have load limits restricting vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": true,
-        "CAMPING": false,
+        "CAMPING": true,
         "EVENT": false,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
+        "campingImpact": "NONE",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -21353,10 +21329,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -21367,9 +21343,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -21866,7 +21842,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
           }
         },
         {
@@ -21887,10 +21863,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "NONE",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed but Upsalls Creek Road remains open."
+            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
           }
         }
       ],
@@ -21901,7 +21877,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22155,7 +22131,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact not specified."
+            "rationale": "Road closures due to severe weather damage imply vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -22173,10 +22149,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -22187,7 +22163,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22252,8 +22228,8 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
             "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not mentioned."
           }
         }
@@ -22266,8 +22242,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -22691,30 +22667,6 @@
       "closureStatus": "CLOSED",
       "closureNotices": [
         {
-          "id": "4027",
-          "title": "Masseys Creek State Forest campgrounds closed due to bushfire impact",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4027",
-          "listedAt": "2025-10-06T00:21:00.000Z",
-          "listedAtText": "2025-10-06T00:21:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Masseys Creek State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "OPERATIONS",
-            "CAMPING"
-          ],
-          "detailText": "Bushfires are currently burning in the Upper Allyn area and are affecting some State forests. Campgrounds in the following State forests are closed while fire operations are underway:\nChichester State Forest (Allyn River) – north-west of Dungog. Includes Old Camp Campground, Ladies Well, Dobbie Rim Campground, Pademelon Campground, Allyn River Forest Rest Area/Campground, White Rock Campground, Peach Tree Picnic Area.\nMasseys Creek State Forest – north-west of Dungog\nAlternative campgrounds remain open at Chichester State Forest (Telegherry River) – North of Dungog.\nYou can stay up to date on bushfires by visiting the NSW Rural Fire Service website or using the NSW Hazards Near Me app.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice explicitly states campgrounds in Masseys Creek State Forest are closed due to bushfire impact, but does not mention vehicle access restrictions."
-          }
-        },
-        {
           "id": "3665",
           "title": "Masseys Creek State Forest closed",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3665",
@@ -22758,13 +22710,13 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges."
+            "rationale": "Boonabilla Road and Basin Road are closed to all vehicle traffic due to unsafe bridges."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": true,
-        "CAMPING": true,
+        "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": true
       },
@@ -23155,10 +23107,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so camping and vehicle access are advised to be cautious and follow signage."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23169,9 +23121,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -23770,7 +23722,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access details."
           }
         }
       ],
@@ -26098,43 +26050,18 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "2287",
-          "title": "Wang Wauk State Forests: Wootton historic railway walk closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2287",
-          "listedAt": "2024-12-09T00:59:00.000Z",
-          "listedAtText": "2024-12-09T00:59:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Wang Wauk State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "CAMPING",
-            "OPERATIONS"
-          ],
-          "detailText": "Please note that the Wootton Historic Railway Walk and Sam's Camp will be closed for public use from Monday 9 December until further notice.\nThis is to ensure public safety while Forestry Corporation staff undertake routine maintenance activities.\nThe walk will be re-opened upon completion of the maintenance work. Thank you for your patience while this work takes place.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping closure language detected. Partial closure status implies at least some access restrictions."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
-        "CAMPING": true,
+        "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -27053,7 +26980,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, pine forest areas remain open, indicating partial restrictions."
+            "rationale": "Native forest areas are closed, limiting camping and vehicle access, while pine forest areas remain open."
           }
         }
       ],
@@ -28733,7 +28660,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closures with no specific details on camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -29424,12 +29351,12 @@
           ],
           "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "Only the Lowden Forest Rest Area is closed; the rest of the forest remains open."
           }
         }
       ],
@@ -29440,7 +29367,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "CLOSED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -29502,7 +29429,7 @@
   ],
   "warnings": [
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 12 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 10 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
