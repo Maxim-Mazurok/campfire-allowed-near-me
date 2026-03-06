@@ -71,7 +71,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update forest data snapshot [skip ci]"
+            git commit -m "chore: update forest data snapshot"
             git fetch origin "$GITHUB_REF"
             git rebase "origin/${GITHUB_REF#refs/heads/}"
             git push origin "HEAD:$GITHUB_REF"

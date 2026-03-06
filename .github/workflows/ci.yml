@@ -3,6 +3,9 @@ name: CI
 on:
   push:
     branches: ["**"]
+    paths-ignore:
+      - "web/public/forests-snapshot.json"
+      - "web/public/forests-snapshot.meta.json"
   pull_request:
 
 jobs:
