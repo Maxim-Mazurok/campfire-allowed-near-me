@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-11T18:44:53.933Z",
+  "fetchedAt": "2026-03-12T06:45:57.605Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -1636,7 +1636,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -1714,7 +1714,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -1979,8 +1979,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2066,8 +2066,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2127,8 +2127,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2182,7 +2182,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access but no camping information provided."
+            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -2212,8 +2212,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2273,8 +2273,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2334,8 +2334,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2385,7 +2385,7 @@
           "detailText": "Parts of Green Hills State Forest remains closed around Adelong Creek due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
+            "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
@@ -2419,8 +2419,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2480,8 +2480,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2541,8 +2541,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2602,8 +2602,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2663,8 +2663,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2724,8 +2724,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2785,8 +2785,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2846,8 +2846,8 @@
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-around-tumbarumba-and-tumut",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3090,7 +3090,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure and restricted vehicle access."
           }
         }
       ],
@@ -17509,10 +17509,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -17523,9 +17523,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19660,10 +19660,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -19674,9 +19674,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -19743,7 +19743,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads are closed and load limits apply, but camping sites remain open."
+            "rationale": "Camping sites remain open; some roads are closed or have load limits restricting vehicle access."
           }
         }
       ],
@@ -20117,7 +20117,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes remain open with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes are used by haulage trucks."
           }
         }
       ],
@@ -21288,7 +21288,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed with no specific details on camping or vehicle access."
           }
         }
       ],
@@ -21798,7 +21798,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
           }
         },
         {
@@ -21819,10 +21819,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, limiting vehicle access."
+            "rationale": "Camping area remains open; Kerewong Road closed but alternate access available."
           }
         }
       ],
@@ -21833,7 +21833,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22087,7 +22087,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact not specified."
+            "rationale": "Roads are temporarily closed due to severe weather damage, indicating vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -22105,10 +22105,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -22119,7 +22119,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -23063,10 +23063,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -23077,9 +23077,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -23674,11 +23674,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, implying restricted camping and vehicle access."
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23689,9 +23689,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24456,7 +24456,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with restricted entry to closed areas but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -25580,10 +25580,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -25594,9 +25594,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -28616,7 +28616,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states partial closure of parts of the forest but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -29385,7 +29385,7 @@
   ],
   "warnings": [
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 8 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 13 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
