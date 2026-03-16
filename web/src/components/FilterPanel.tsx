@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { Anchor, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title, Tooltip } from "@mantine/core";
+import { Anchor, Chip, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title, Tooltip } from "@mantine/core";
 import { InfoTooltip } from "./InfoTooltip";
 import { FacilityIcon } from "./FacilityIcon";
 import { TriStateToggle } from "./TriStateToggle";
@@ -17,10 +17,15 @@ import {
   TOTAL_FIRE_BAN_RULES_URL,
   TOTAL_FIRE_BAN_SOURCE_URL
 } from "../lib/app-domain-constants";
+import type { AustralianState } from "../../../shared/contracts.js";
+
+export const ALL_STATES: AustralianState[] = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"];
 
 export type FilterPreset = "LEGAL_CAMPFIRE" | "LEGAL_CAMPFIRE_CAMPING";
 
 export type FilterPanelProps = {
+  stateFilter: AustralianState[];
+  setStateFilter: Dispatch<SetStateAction<AustralianState[]>>;
   solidFuelBanFilterMode: BanFilterMode;
   setSolidFuelBanFilterMode: Dispatch<SetStateAction<BanFilterMode>>;
   solidFuelBanScopeFilterMode: BanScopeFilterMode;
@@ -50,6 +55,8 @@ export type FilterPanelProps = {
 };
 
 export const FilterPanel = ({
+  stateFilter,
+  setStateFilter,
   solidFuelBanFilterMode,
   setSolidFuelBanFilterMode,
   solidFuelBanScopeFilterMode,
@@ -101,6 +108,26 @@ export const FilterPanel = ({
     <aside className="panel filter-panel">
       <ScrollArea style={{ flex: 1 }} offsetScrollbars>
         <Stack gap="md">
+          <div>
+            <Group gap={4} mb={8}>
+              <Title order={3} size="sm">State / Territory</Title>
+              <InfoTooltip label="Filter campgrounds by Australian state or territory. Deselecting all states shows nothing — keep at least one selected." position="right" />
+            </Group>
+            <Chip.Group
+              multiple
+              value={stateFilter}
+              onChange={(values) => setStateFilter(values as AustralianState[])}
+            >
+              <Group gap={4} wrap="wrap">
+                {ALL_STATES.map((s) => (
+                  <Chip key={s} value={s} size="xs" variant="outline">
+                    {s}
+                  </Chip>
+                ))}
+              </Group>
+            </Chip.Group>
+          </div>
+          <Divider />
           <div>
             <Group gap={4} mb={8}>
               <Title order={3} size="sm">
