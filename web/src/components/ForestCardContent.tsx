@@ -191,6 +191,18 @@ export const ForestCardContent = memo(({
                 shortenForestName(forest.forestName)
               )}
             </strong>
+            {forest.state && forest.state !== "NSW" && (
+              <Badge
+                size="xs"
+                variant="outline"
+                color="blue"
+                radius="sm"
+                style={{ marginLeft: 4, flexShrink: 0, verticalAlign: "middle" }}
+                title={`State: ${forest.state}`}
+              >
+                {forest.state}
+              </Badge>
+            )}
           </div>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
             <Badge
