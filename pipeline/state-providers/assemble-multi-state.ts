@@ -19,6 +19,7 @@ import { StubStateProvider } from "./state-provider.js";
 import { TasmaniaStateProvider } from "./tas/index.js";
 import { VictoriaStateProvider } from "./vic/index.js";
 import { QueenslandStateProvider } from "./qld/index.js";
+import { SouthAustraliaStateProvider } from "./sa/index.js";
 import { SNAPSHOT_OUTPUT_PATH } from "../scripts/pipeline-config.js";
 
 // ---------------------------------------------------------------------------
@@ -29,6 +30,7 @@ import { SNAPSHOT_OUTPUT_PATH } from "../scripts/pipeline-config.js";
 const buildProviders = (): IStateProvider[] => [
   new VictoriaStateProvider(),
   new QueenslandStateProvider(),
+  new SouthAustraliaStateProvider(),
   new StubStateProvider("SA", "South Australia"),
   new StubStateProvider("WA", "Western Australia"),
   new TasmaniaStateProvider(),
