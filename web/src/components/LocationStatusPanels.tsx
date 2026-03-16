@@ -1,5 +1,6 @@
 import { IconCurrentLocation, IconCar } from "@tabler/icons-react";
-import { Button, Group, Text, Tooltip } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
+import { InfoTooltip } from "./InfoTooltip";
 import type { ForestApiResponse, NearestForest } from "../lib/api";
 import {
   buildGoogleMapsDrivingNavigationUrl,
@@ -75,11 +76,10 @@ const NearestSpotCard = ({
             forest.forestName
           )}
         </strong>{" "}
-        <Tooltip label={distanceTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
-          <span className="muted" style={{ cursor: "help" }}>
+        <span className="muted" style={{ cursor: "help" }}>
             ({formatDriveSummary(forest.distanceKm, forest.travelDurationMinutes)})
           </span>
-        </Tooltip>
+        <InfoTooltip label={distanceTooltipLabel} width={250} iconSize={12} />
       </Text>
     </Group>
   );

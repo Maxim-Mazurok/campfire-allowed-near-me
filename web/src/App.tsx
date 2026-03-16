@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Group, Text, Tooltip } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 import { IconFlame, IconTent, IconFilter } from "@tabler/icons-react";
 import { AppHeader } from "./components/AppHeader";
 import { AppFooter } from "./components/AppFooter";
@@ -11,6 +11,7 @@ import { LocationStatusPanels } from "./components/LocationStatusPanels";
 import { MapView } from "./components/MapView";
 import { SettingsDialog } from "./components/SettingsDialog";
 import { WarningsDialog } from "./components/WarningsDialog";
+import { InfoTooltip } from "./components/InfoTooltip";
 import { useDrivingRoutes, mergeDrivingRoutes } from "./lib/hooks/use-driving-routes";
 import { useLocation } from "./lib/hooks/use-refresh-and-location";
 import { useSortFallback } from "./lib/hooks/use-sort-fallback";
@@ -566,13 +567,7 @@ export const App = () => {
           data-hovered-forest-id={hoveredForestId ?? ""}
         >
           <Group gap={6} wrap="wrap" mb={8} className="map-presets-row">
-            <Tooltip
-              label="Sets: campfire allowed + no Total Fire Ban + forest open + no 2WD/4WD access warnings. Shows forests where you can legally light a campfire right now."
-              multiline
-              w={320}
-              position="bottom"
-              withArrow
-            >
+            <Group gap={4} align="center" wrap="nowrap">
               <Button
                 variant="outline"
                 color="orange.9"
@@ -583,14 +578,14 @@ export const App = () => {
               >
                 Find legal campfire spot
               </Button>
-            </Tooltip>
-            <Tooltip
-              label="Sets: campfire allowed in camps + no Total Fire Ban + forest open + camping facility present + no 2WD/4WD access or camping closure warnings. Finds forests where you can camp and have a campfire."
-              multiline
-              w={320}
-              position="bottom"
-              withArrow
-            >
+              <InfoTooltip
+                label="Sets: campfire allowed + no Total Fire Ban + forest open + no 2WD/4WD access warnings. Shows forests where you can legally light a campfire right now."
+                width={320}
+                position="bottom"
+                iconSize={12}
+              />
+            </Group>
+            <Group gap={4} align="center" wrap="nowrap">
               <Button
                 variant="outline"
                 color="teal.9"
@@ -601,7 +596,13 @@ export const App = () => {
               >
                 Legal campfire + camping
               </Button>
-            </Tooltip>
+              <InfoTooltip
+                label="Sets: campfire allowed in camps + no Total Fire Ban + forest open + camping facility present + no 2WD/4WD access or camping closure warnings. Finds forests where you can camp and have a campfire."
+                width={320}
+                position="bottom"
+                iconSize={12}
+              />
+            </Group>
             <div className="map-presets-meta">
               <Button
                 variant="subtle"
@@ -613,17 +614,17 @@ export const App = () => {
               >
                 {advancedFiltersExpanded ? "Hide filters" : "Show filters"}
               </Button>
-              <Tooltip
-                label={`Showing ${mappableMatchingForestCount} matching mapped forests out of ${mappableForestCount} mapped forests.`}
-                multiline
-                w={260}
-                position="bottom"
-                withArrow
-              >
+              <Group gap={4} align="center" wrap="nowrap">
                 <Text size="xs" c="dimmed" data-testid="mapped-count">
                   {matchingForests.length} of {forests.length}
                 </Text>
-              </Tooltip>
+                <InfoTooltip
+                  label={`Showing ${mappableMatchingForestCount} matching mapped forests out of ${mappableForestCount} mapped forests.`}
+                  width={260}
+                  position="bottom"
+                  iconSize={12}
+                />
+              </Group>
             </div>
           </Group>
           {loading ? <p>Loading forests...</p> : null}

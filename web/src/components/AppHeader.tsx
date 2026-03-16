@@ -3,10 +3,10 @@ import {
   Group,
   Text,
   Title,
-  Tooltip
 } from "@mantine/core";
 import { IconSettings, IconAlertTriangle } from "@tabler/icons-react";
 import { formatDistanceToNowStrict } from "date-fns";
+import { InfoTooltip } from "./InfoTooltip";
 
 export const SNAPSHOT_UPDATE_SCHEDULE_TOOLTIP =
   "Data updates twice daily, around 4\u20135 AM and 4\u20135 PM Sydney time";
@@ -46,18 +46,15 @@ export const AppHeader = ({
         </Group>
         <Group gap="xs" align="center" className="header-actions">
           {snapshotFetchedAt ? (
-            <Tooltip
-              label={SNAPSHOT_UPDATE_SCHEDULE_TOOLTIP}
-              multiline
-              withArrow
-            >
+            <Group gap={4} align="center" wrap="nowrap">
               <Text size="xs" c="dimmed" data-testid="snapshot-freshness">
                 Updated{" "}
                 {formatDistanceToNowStrict(new Date(snapshotFetchedAt), {
                   addSuffix: true
                 })}
               </Text>
-            </Tooltip>
+              <InfoTooltip label={SNAPSHOT_UPDATE_SCHEDULE_TOOLTIP} iconSize={12} />
+            </Group>
           ) : null}
           <Button
             variant="default"

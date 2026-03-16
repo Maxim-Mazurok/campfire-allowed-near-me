@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Anchor, Divider, Group, ScrollArea, SegmentedControl, Stack, Text, Title, Tooltip } from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { InfoTooltip } from "./InfoTooltip";
 import { FacilityIcon } from "./FacilityIcon";
 import { TriStateToggle } from "./TriStateToggle";
 import type { ClosureTagDefinition, FacilityDefinition } from "../lib/api";
@@ -82,11 +82,7 @@ export const FilterPanel = ({
 
   const showCampingOpenFilter = closureStatusFilterMode === "PARTIAL";
 
-  const HelpIcon = ({ label }: { label: string }) => (
-    <Tooltip label={label} multiline w={260} position="right" withArrow>
-      <IconInfoCircle size={14} style={{ opacity: 0.5, cursor: "help", flexShrink: 0 }} />
-    </Tooltip>
-  );
+
 
   const shortenFacilityLabel = (label: string): string =>
     label.replace(/^Designated\s+/i, "").replace(/\s+Available$/i, "");
@@ -112,7 +108,7 @@ export const FilterPanel = ({
                   Solid Fuel Fire Ban
                 </Anchor>
               </Title>
-              <HelpIcon label="Forestry Corp NSW seasonal ban on solid fuel fires (wood, charcoal) in state forests. 'Solid fuel' means any fire that burns wood, charcoal, or similar material — i.e. a campfire. Checked daily." />
+              <InfoTooltip label="Forestry Corp NSW seasonal ban on solid fuel fires (wood, charcoal) in state forests. 'Solid fuel' means any fire that burns wood, charcoal, or similar material — i.e. a campfire. Checked daily." position="right" />
             </Group>
             <SegmentedControl
               aria-label="Solid fuel fire ban filter"
@@ -131,7 +127,7 @@ export const FilterPanel = ({
               <>
                 <Group gap={4} mt={6} mb={4}>
                   <Text size="xs" c="dimmed">Where?</Text>
-                  <HelpIcon label="'Anywhere' = the ban/allow applies everywhere in the forest. 'Camps' = only within designated camping areas. 'Not camps' = outside camping areas only." />
+                  <InfoTooltip label="'Anywhere' = the ban/allow applies everywhere in the forest. 'Camps' = only within designated camping areas. 'Not camps' = outside camping areas only." position="right" />
                 </Group>
                 <SegmentedControl
                   aria-label="Solid fuel ban scope filter"
@@ -157,7 +153,7 @@ export const FilterPanel = ({
                   Total Fire Ban
                 </Anchor>
               </Title>
-              <HelpIcon label="NSW RFS Total Fire Ban — declared when weather conditions are extreme. Bans ALL outdoor fires including gas/electric BBQs in some cases. This is separate from the solid fuel ban." />
+              <InfoTooltip label="NSW RFS Total Fire Ban — declared when weather conditions are extreme. Bans ALL outdoor fires including gas/electric BBQs in some cases. This is separate from the solid fuel ban." position="right" />
             </Group>
             <Text size="xs" c="dimmed" mb={8}>
               <Anchor href={TOTAL_FIRE_BAN_RULES_URL} target="_blank" rel="noreferrer" size="xs">
@@ -188,7 +184,7 @@ export const FilterPanel = ({
                   Closures & Notices
                 </Anchor>
               </Title>
-              <HelpIcon label="FCNSW forest closures and notices — road closures, event closures, camping restrictions, etc. A forest can be fully open, partly closed, or fully closed." />
+              <InfoTooltip label="FCNSW forest closures and notices — road closures, event closures, camping restrictions, etc. A forest can be fully open, partly closed, or fully closed." position="right" />
             </Group>
             <SegmentedControl
               aria-label="Closure status filter"
@@ -207,7 +203,7 @@ export const FilterPanel = ({
               <Group justify="space-between" gap="xs">
                 <Group gap={4}>
                   <Text size="xs">Has notices</Text>
-                  <HelpIcon label="Filter forests that have active closure notices (road blocks, restrictions, events, etc.)." />
+                  <InfoTooltip label="Filter forests that have active closure notices (road blocks, restrictions, events, etc.)." position="right" />
                 </Group>
                 <TriStateToggle
                   mode={hasNoticesFilterMode}
@@ -227,7 +223,7 @@ export const FilterPanel = ({
                 <Group justify="space-between" gap="xs">
                   <Group gap={4}>
                     <Text size="xs">Camping open</Text>
-                    <HelpIcon label="Filter partly-closed forests by whether their camping areas are still open. 'Yes' = show forests where camping is still available despite partial closures. 'No' = show forests where camping is affected." />
+                    <InfoTooltip label="Filter partly-closed forests by whether their camping areas are still open. 'Yes' = show forests where camping is still available despite partial closures. 'No' = show forests where camping is affected." position="right" />
                   </Group>
                   <TriStateToggle
                     mode={impactCampingFilterMode}
@@ -245,9 +241,9 @@ export const FilterPanel = ({
                 </Group>
               ) : null}
               <Group justify="space-between" gap="xs">
-                <Group gap={4}>
-                  <Text size="xs" mt={4}>2WD access</Text>
-                  <HelpIcon label="Filter by 2WD vehicle access warnings from closure notices. 'No warning' hides forests where 2WD access may be restricted." />
+                <Group gap={4} mt={4}>
+                  <Text size="xs">2WD access</Text>
+                  <InfoTooltip label="Filter by 2WD vehicle access warnings from closure notices. 'No warning' hides forests where 2WD access may be restricted." position="right" />
                 </Group>
               </Group>
               <SegmentedControl
@@ -262,9 +258,9 @@ export const FilterPanel = ({
                 ]}
               />
               <Group justify="space-between" gap="xs">
-                <Group gap={4}>
-                  <Text size="xs" mt={4}>4WD access</Text>
-                  <HelpIcon label="Filter by 4WD vehicle access warnings from closure notices. 'No warning' hides forests where 4WD access may be restricted." />
+                <Group gap={4} mt={4}>
+                  <Text size="xs">4WD access</Text>
+                  <InfoTooltip label="Filter by 4WD vehicle access warnings from closure notices. 'No warning' hides forests where 4WD access may be restricted." position="right" />
                 </Group>
               </Group>
               <SegmentedControl
@@ -288,7 +284,7 @@ export const FilterPanel = ({
                 <Group justify="space-between" mb={8}>
                   <Group gap={4}>
                     <Title order={3} size="sm">Closure tags</Title>
-                    <HelpIcon label="Filter by type of closure notice — road access, camping impact, event closure, or operational. Each tag describes what kind of restriction is in place." />
+                    <InfoTooltip label="Filter by type of closure notice — road access, camping impact, event closure, or operational. Each tag describes what kind of restriction is in place." position="right" />
                   </Group>
                   <Text
                     size="xs"
@@ -308,7 +304,7 @@ export const FilterPanel = ({
                         <Group gap={4} style={{ minWidth: 0 }}>
                           <Text size="xs" style={{ minWidth: 0 }}>{closureTag.label}</Text>
                           {tagTooltip ? (
-                            <HelpIcon label={tagTooltip} />
+                            <InfoTooltip label={tagTooltip} position="right" />
                           ) : null}
                         </Group>
                         <TriStateToggle
@@ -337,7 +333,7 @@ export const FilterPanel = ({
                     Facilities
                   </Anchor>
                 </Title>
-                <HelpIcon label="Filter forests by available facilities like BBQs, toilets, walking tracks, camping areas, etc. Data from the Forestry Corp NSW facilities pages." />
+                <InfoTooltip label="Filter forests by available facilities like BBQs, toilets, walking tracks, camping areas, etc. Data from the Forestry Corp NSW facilities pages." position="right" />
               </Group>
               <Text
                 size="xs"
@@ -363,6 +359,7 @@ export const FilterPanel = ({
                       openDelay={400}
                       multiline
                       w={240}
+                      events={{ hover: true, focus: true, touch: true }}
                     >
                       <Group justify="space-between" gap="xs">
                         <Group gap={6} style={{ minWidth: 0 }} wrap="nowrap">

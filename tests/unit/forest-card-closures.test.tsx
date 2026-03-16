@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
 import React from "react";
-import { cleanup, screen, waitFor } from "@testing-library/react";
+import { cleanup, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderToStaticMarkupWithMantine, renderWithMantine } from "../test-utils";
 import { ForestCardContent } from "../../web/src/components/ForestCardContent";
@@ -253,7 +253,7 @@ describe("ForestCardContent closures", () => {
     expect(html).not.toContain('data-testid="forest-notice-list"');
   });
 
-  it("shows detailText in tooltip when hovering closure badge", async () => {
+  it("shows detailText in tooltip when clicking closure info icon", async () => {
     const forest = buildForestCardFixture({
       closureStatus: "CLOSED",
       closureNotices: [
@@ -278,12 +278,13 @@ describe("ForestCardContent closures", () => {
     );
 
     const badge = screen.getByTestId("closure-badge");
-    await userEvent.hover(badge);
+    const closureWrapper = badge.parentElement!;
+    const infoButton = within(closureWrapper).getByRole("button", { name: "More information" });
+    await userEvent.click(infoButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("tooltip").textContent).toContain(
-        "This forest is closed until further notice due to hazard reduction burning."
-      );
+      expect(screen.getByText(/This forest is closed until further notice due to hazard reduction burning\./))
+        .toBeTruthy();
     });
   });
 
@@ -311,12 +312,13 @@ describe("ForestCardContent closures", () => {
     );
 
     const badge = screen.getByTestId("closure-badge");
-    await userEvent.hover(badge);
+    const closureWrapper = badge.parentElement!;
+    const infoButton = within(closureWrapper).getByRole("button", { name: "More information" });
+    await userEvent.click(infoButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("tooltip").textContent).toContain(
-        "Test Forest: Partial road closure"
-      );
+      expect(screen.getByText(/Test Forest: Partial road closure/))
+        .toBeTruthy();
     });
   });
 });

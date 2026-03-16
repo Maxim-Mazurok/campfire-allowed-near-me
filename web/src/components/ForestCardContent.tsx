@@ -2,6 +2,7 @@ import { IconCar, IconMapPinOff } from "@tabler/icons-react";
 import { Badge, Tooltip } from "@mantine/core";
 import { memo, useCallback, useMemo, useRef } from "react";
 import { FacilityIcon } from "./FacilityIcon";
+import { InfoTooltip } from "./InfoTooltip";
 import type { FacilityDefinition, ForestApiResponse } from "../lib/api";
 import { getForestBanStatus, getForestBanScope, getForestBanStatusText } from "../lib/api";
 import {
@@ -165,7 +166,7 @@ export const ForestCardContent = memo(({
                 <IconCar size={14} stroke={1.5} />
               </a>
             ) : (
-              <Tooltip label={locationNotFoundTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+              <>
                 <span
                   className="forest-navigation-link forest-navigation-link--disabled"
                   aria-label={`Location not found for ${forest.forestName}`}
@@ -173,7 +174,8 @@ export const ForestCardContent = memo(({
                 >
                   <IconMapPinOff size={14} stroke={1.5} />
                 </span>
-              </Tooltip>
+                <InfoTooltip label={locationNotFoundTooltipLabel} width={250} iconSize={12} />
+              </>
             )}
             <strong title={forest.forestName}>
               {isHttpUrl(forest.forestUrl) ? (
@@ -190,7 +192,7 @@ export const ForestCardContent = memo(({
               )}
             </strong>
           </div>
-          <Tooltip label={solidFuelBadgeTooltip} withArrow multiline w={300} position="top">
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
             <Badge
               component="a"
               href={buildSolidFuelBanDetailsUrl(forest) ?? undefined}
@@ -204,7 +206,8 @@ export const ForestCardContent = memo(({
             >
               {getSolidFuelStatusLabel(forestBanStatus, forestBanScope)}
             </Badge>
-          </Tooltip>
+            <InfoTooltip label={solidFuelBadgeTooltip} width={300} iconSize={12} />
+          </span>
         </div>
 
         <div className="forest-header-line">
@@ -236,7 +239,7 @@ export const ForestCardContent = memo(({
               )
             ))}
           </div>
-          <Tooltip label={totalFireBanTooltip} withArrow multiline w={300} position="top">
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
             <Badge
               component="a"
               href={buildTotalFireBanDetailsUrl(forest)}
@@ -250,22 +253,14 @@ export const ForestCardContent = memo(({
             >
               {getTotalFireBanStatusLabel(forest.totalFireBanStatus)}
             </Badge>
-          </Tooltip>
+            <InfoTooltip label={totalFireBanTooltip} width={300} iconSize={12} />
+          </span>
         </div>
 
         {closureBadgeLabel ? (
           <div className="forest-header-line forest-header-line--end">
-            <Tooltip
-              label={closureBadgeTooltip}
-              disabled={!closureBadgeTooltip}
-              position="top"
-              openDelay={0}
-              closeDelay={0}
-              multiline
-              w={300}
-              styles={{ tooltip: { whiteSpace: "pre-line" } }}
-            >
-              {closureBadgeUrl ? (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            {closureBadgeUrl ? (
                 <Badge
                   component="a"
                   href={closureBadgeUrl}
@@ -291,28 +286,34 @@ export const ForestCardContent = memo(({
                   {closureBadgeLabel}
                 </Badge>
               )}
-            </Tooltip>
+              {closureBadgeTooltip ? (
+                <InfoTooltip label={closureBadgeTooltip} width={300} iconSize={12} />
+              ) : null}
+            </span>
           </div>
         ) : null}
 
         {hasDrivingRoute ? (
-          <Tooltip label={driveMetricTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             <small className="muted forest-distance-text" data-testid="distance-text">
               {formatDriveSummary(forest.distanceKm, forest.travelDurationMinutes)}
             </small>
-          </Tooltip>
+            <InfoTooltip label={driveMetricTooltipLabel} width={250} iconSize={12} />
+          </span>
         ) : hasCoordinates && forest.directDistanceKm !== null ? (
-          <Tooltip label={straightLineTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={300}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             <small className="muted forest-distance-text" data-testid="distance-text">
               {formatDirectDistanceSummary(forest.directDistanceKm)}
             </small>
-          </Tooltip>
+            <InfoTooltip label={straightLineTooltipLabel} width={300} iconSize={12} />
+          </span>
         ) : !hasCoordinates ? (
-          <Tooltip label={locationNotFoundTooltipLabel} position="top" openDelay={0} closeDelay={0} multiline w={250}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             <small className="muted forest-location-warning forest-distance-text" data-testid="distance-text">
               Location not found
             </small>
-          </Tooltip>
+            <InfoTooltip label={locationNotFoundTooltipLabel} width={250} iconSize={12} />
+          </span>
         ) : null}
       </div>
       {visibleClosureNotices.length > 0 ? (
@@ -364,6 +365,7 @@ export const ForestCardContent = memo(({
                 openDelay={0}
                 closeDelay={0}
                 position="top"
+                events={{ hover: true, focus: true, touch: true }}
               >
                 <span
                   className={`facility-indicator ${stateClass}`}

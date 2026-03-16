@@ -1879,3 +1879,410 @@ test("hovering each area link in multi-area forest list row highlights correct m
   }, greenFill);
   expect(betaHoverMatchedFills).toEqual([greenFill]);
 });
+
+test("info tooltip opens on click, shows active state, and dismisses on outside click", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-tooltip",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Tooltip Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/tooltip",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Tooltip Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  const forestRow = page.getByTestId("forest-row").first();
+  await expect(forestRow).toBeVisible();
+
+  // Find the first info tooltip trigger inside the forest card
+  const infoTrigger = forestRow.locator(".info-tooltip-trigger").first();
+  await expect(infoTrigger).toBeVisible();
+
+  // Verify default state: no active class, popover not visible
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+  await expect(popoverDropdown).not.toBeVisible();
+
+  // Click the info icon — popover should open and icon should become active
+  await infoTrigger.click();
+  await expect(popoverDropdown).toBeVisible();
+  await expect(infoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Click outside (on the map panel, far from the popover) — popover should dismiss and active state should clear
+  await page.getByTestId("map-panel").click({ position: { x: 10, y: 10 } });
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+});
+
+test("info tooltip toggles off when clicking the info icon a second time", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-toggle",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Toggle Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/toggle",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Toggle Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  const forestRow = page.getByTestId("forest-row").first();
+  await expect(forestRow).toBeVisible();
+
+  const infoTrigger = forestRow.locator(".info-tooltip-trigger").first();
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+
+  // First click: open
+  await infoTrigger.click();
+  await expect(popoverDropdown).toBeVisible();
+  await expect(infoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Second click: close — active state should be removed
+  await infoTrigger.click();
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+});
+
+test("info tooltip active state clears when clicking header outside forest list", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-header-dismiss",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Header Dismiss Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/header-dismiss",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Header Dismiss Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  const forestRow = page.getByTestId("forest-row").first();
+  await expect(forestRow).toBeVisible();
+
+  const infoTrigger = forestRow.locator(".info-tooltip-trigger").first();
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+
+  // Click info icon — popover opens, icon becomes active
+  await infoTrigger.click();
+  await expect(popoverDropdown).toBeVisible();
+  await expect(infoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Move mouse to the header first (simulating real user behavior), then click
+  const headerElement = page.locator(".app-header");
+  await headerElement.hover();
+  // Small wait to let mouse events propagate
+  await page.waitForTimeout(100);
+  await headerElement.click();
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--hovered/);
+});
+
+test("forest list info tooltip active state clears via explicit mouse events (reactivity check)", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-reactivity",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Reactivity Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/reactivity",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Reactivity Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  const forestRow = page.getByTestId("forest-row").first();
+  await expect(forestRow).toBeVisible();
+
+  const infoTrigger = forestRow.locator(".info-tooltip-trigger").first();
+  await expect(infoTrigger).toBeVisible();
+
+  // Verify initial state
+  await expect(infoTrigger).not.toHaveAttribute("data-pinned");
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+
+  // Click info icon using explicit mouse events (closer to real user behavior)
+  const triggerBox = await infoTrigger.boundingBox();
+  expect(triggerBox).not.toBeNull();
+  const triggerCenterX = triggerBox!.x + triggerBox!.width / 2;
+  const triggerCenterY = triggerBox!.y + triggerBox!.height / 2;
+
+  await page.mouse.click(triggerCenterX, triggerCenterY);
+
+  // Verify pinned state
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+  await expect(popoverDropdown).toBeVisible();
+  await expect(infoTrigger).toHaveAttribute("data-pinned", "true");
+  await expect(infoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Move mouse to the header (away from trigger)
+  const headerElement = page.locator(".app-header");
+  const headerBox = await headerElement.boundingBox();
+  expect(headerBox).not.toBeNull();
+  const headerCenterX = headerBox!.x + headerBox!.width / 2;
+  const headerCenterY = headerBox!.y + headerBox!.height / 2;
+
+  await page.mouse.move(headerCenterX, headerCenterY);
+  await page.waitForTimeout(50);
+
+  // Click on header using mouse.click (fires mousedown then mouseup then click)
+  await page.mouse.click(headerCenterX, headerCenterY);
+  await page.waitForTimeout(50);
+
+  // Verify active state is FULLY cleared — both React state and CSS class
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(infoTrigger).not.toHaveAttribute("data-pinned");
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+  await expect(infoTrigger).not.toHaveClass(/info-tooltip-trigger--hovered/);
+});
+
+test("filter panel info tooltip active state clears on outside click", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-filter-test",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Filter Test Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/filter-test",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Filter Test Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  // Open the advanced filters panel
+  await page.getByTestId("advanced-filters-toggle").click();
+
+  // Find the first info tooltip inside the filter panel (e.g. Solid Fuel Fire Ban info)
+  const filterInfoTrigger = page.locator(".filter-panel .info-tooltip-trigger").first();
+  await expect(filterInfoTrigger).toBeVisible();
+
+  // Verify initial state
+  await expect(filterInfoTrigger).not.toHaveAttribute("data-pinned");
+  await expect(filterInfoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+
+  // Click info icon in filter panel
+  await filterInfoTrigger.click();
+
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+  await expect(popoverDropdown).toBeVisible();
+  await expect(filterInfoTrigger).toHaveAttribute("data-pinned", "true");
+  await expect(filterInfoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Click on the header to dismiss
+  const headerElement = page.locator(".app-header");
+  await headerElement.hover();
+  await page.waitForTimeout(50);
+  await headerElement.click();
+
+  // Verify active state is FULLY cleared
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(filterInfoTrigger).not.toHaveAttribute("data-pinned");
+  await expect(filterInfoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+  await expect(filterInfoTrigger).not.toHaveClass(/info-tooltip-trigger--hovered/);
+});
+
+test("filter panel info tooltip active state clears when clicking empty space inside filter panel", async ({ page }) => {
+  await page.route("**/forests-snapshot.json", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        fetchedAt: "2026-02-21T10:00:00.000Z",
+        stale: false,
+        sourceName: "Forestry Corporation NSW",
+        availableFacilities: [],
+        availableClosureTags: [
+          { key: "ROAD_ACCESS", label: "Road/trail access" },
+          { key: "CAMPING", label: "Camping impact" },
+        ],
+        matchDiagnostics: {
+          unmatchedFacilitiesForests: [],
+          fuzzyMatches: []
+        },
+        warnings: [],
+        forests: [
+          {
+            id: "forest-filter-empty-space",
+            source: "Forestry Corporation NSW",
+            areas: [{ areaName: "Area 1", areaUrl: "https://example.com/a", banStatus: "NOT_BANNED", banStatusText: "No Solid Fuel Fire Ban", banScope: "ALL" }],
+            forestName: "Filter Empty Space Forest",
+            forestUrl: "https://www.forestrycorporation.com.au/visit/forests/filter-empty",
+            totalFireBanStatus: "NOT_BANNED",
+            totalFireBanStatusText: "No Total Fire Ban",
+            latitude: -33.9,
+            longitude: 151.1,
+            geocodeName: "Filter Empty Space Forest",
+            facilities: {}
+          }
+        ]
+      })
+    });
+  });
+
+  await page.goto("/");
+
+  // Open the advanced filters panel
+  await page.getByTestId("advanced-filters-toggle").click();
+
+  const filterPanel = page.locator(".filter-panel");
+  await expect(filterPanel).toBeVisible();
+
+  // Click the first info tooltip in the filter panel
+  const filterInfoTrigger = filterPanel.locator(".info-tooltip-trigger").first();
+  await expect(filterInfoTrigger).toBeVisible();
+
+  // Hover, then click (simulating real desktop interaction)
+  await filterInfoTrigger.hover();
+  await page.waitForTimeout(50);
+  await filterInfoTrigger.click();
+
+  const popoverDropdown = page.locator(".mantine-Popover-dropdown");
+  await expect(popoverDropdown).toBeVisible();
+  await expect(filterInfoTrigger).toHaveClass(/info-tooltip-trigger--active/);
+
+  // Move mouse away from the trigger to a blank area within the filter panel
+  const filterPanelBox = await filterPanel.boundingBox();
+  expect(filterPanelBox).not.toBeNull();
+
+  // Move to the bottom-left of the filter panel (away from any trigger)
+  const dismissX = filterPanelBox!.x + 20;
+  const dismissY = filterPanelBox!.y + filterPanelBox!.height - 20;
+  await page.mouse.move(dismissX, dismissY);
+  await page.waitForTimeout(50);
+  await page.mouse.click(dismissX, dismissY);
+
+  // The popover should be dismissed AND the active state + hover state should be fully cleared
+  await expect(popoverDropdown).not.toBeVisible();
+  await expect(filterInfoTrigger).not.toHaveAttribute("data-pinned");
+  await expect(filterInfoTrigger).not.toHaveClass(/info-tooltip-trigger--active/);
+  await expect(filterInfoTrigger).not.toHaveClass(/info-tooltip-trigger--hovered/);
+
+  // Also verify the trigger's computed opacity is back to the default (0.5)
+  const opacity = await filterInfoTrigger.evaluate(
+    (element) => getComputedStyle(element).opacity
+  );
+  expect(opacity).toBe("0.5");
+});
