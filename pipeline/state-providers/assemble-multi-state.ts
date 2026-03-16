@@ -16,6 +16,7 @@ import "dotenv/config";
 import type { PersistedSnapshot, PersistedForestPoint } from "../../shared/contracts.js";
 import type { IStateProvider } from "./state-provider.js";
 import { StubStateProvider } from "./state-provider.js";
+import { TasmaniaStateProvider } from "./tas/index.js";
 import { SNAPSHOT_OUTPUT_PATH } from "../scripts/pipeline-config.js";
 
 // ---------------------------------------------------------------------------
@@ -28,7 +29,7 @@ const buildProviders = (): IStateProvider[] => [
   new StubStateProvider("QLD", "Queensland"),
   new StubStateProvider("SA", "South Australia"),
   new StubStateProvider("WA", "Western Australia"),
-  new StubStateProvider("TAS", "Tasmania"),
+  new TasmaniaStateProvider(),
   new StubStateProvider("NT", "Northern Territory"),
   new StubStateProvider("ACT", "Australian Capital Territory"),
 ];
