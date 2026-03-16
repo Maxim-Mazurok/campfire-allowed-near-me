@@ -15,11 +15,13 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import "dotenv/config";
 import type { PersistedSnapshot, PersistedForestPoint } from "../../shared/contracts.js";
 import type { IStateProvider } from "./state-provider.js";
-import { StubStateProvider } from "./state-provider.js";
 import { TasmaniaStateProvider } from "./tas/index.js";
 import { VictoriaStateProvider } from "./vic/index.js";
 import { QueenslandStateProvider } from "./qld/index.js";
 import { SouthAustraliaStateProvider } from "./sa/index.js";
+import { WesternAustraliaStateProvider } from "./wa/index.js";
+import { NorthernTerritoryStateProvider } from "./nt/index.js";
+import { AustralianCapitalTerritoryStateProvider } from "./act/index.js";
 import { SNAPSHOT_OUTPUT_PATH } from "../scripts/pipeline-config.js";
 
 // ---------------------------------------------------------------------------
@@ -31,11 +33,10 @@ const buildProviders = (): IStateProvider[] => [
   new VictoriaStateProvider(),
   new QueenslandStateProvider(),
   new SouthAustraliaStateProvider(),
-  new StubStateProvider("SA", "South Australia"),
-  new StubStateProvider("WA", "Western Australia"),
+  new WesternAustraliaStateProvider(),
   new TasmaniaStateProvider(),
-  new StubStateProvider("NT", "Northern Territory"),
-  new StubStateProvider("ACT", "Australian Capital Territory"),
+  new NorthernTerritoryStateProvider(),
+  new AustralianCapitalTerritoryStateProvider(),
 ];
 
 // ---------------------------------------------------------------------------
