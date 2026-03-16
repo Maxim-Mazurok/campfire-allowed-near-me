@@ -53,6 +53,7 @@ Then set `NOMINATIM_BASE_URL=http://localhost:8080` in `.env`. First startup imp
 | `npm run dev` | Start Vite dev server (auto-starts local Nominatim if available) |
 | `npm run dev:web` | Frontend only (Vite auto-increments to next free port if needed) |
 | `npm run generate:snapshot` | Run the full pipeline and generate `forests-snapshot.json` |
+| `npm run warm:coordinates` | Force refresh and populate coordinate/boundary cache |
 | `npm run cache:reset` | Clear local geocoding/snapshot caches |
 | `npm run typecheck` | TypeScript type checks across all sub-projects |
 | `npm test` | Full suite: typecheck + unit + integration + e2e |

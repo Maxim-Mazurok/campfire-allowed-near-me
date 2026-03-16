@@ -483,7 +483,7 @@ notifications.show({
 
 | Do NOT | Do Instead |
 |---|---|
-| Write a custom tooltip component | Use `<Tooltip>` |
+| Write a custom tooltip component | Use `<InfoTooltip>` for click/hover help text (see §8a below), `<Tooltip>` only for dense icon grids with `events={{ hover: true, focus: true, touch: true }}` |
 | Write a custom modal wrapper | Use `<Modal>` |
 | Use `div` + CSS for flex row | Use `<Group>` |
 | Use `div` + CSS for flex column | Use `<Stack>` |
@@ -504,6 +504,41 @@ notifications.show({
 | Use `<h1>`–`<h6>` HTML elements | Use `<Title order={1}>` |
 | Use `<p>` for styled text | Use `<Text>` |
 | Use `<a>` for links | Use `<Anchor>` |
+
+---
+
+## 8a. InfoTooltip Pattern
+
+The project uses a custom `<InfoTooltip>` component (`web/src/components/InfoTooltip.tsx`) instead of Mantine's `<Tooltip>` for help text. This gives mobile-friendly click/tap behavior that `<Tooltip>` (hover-only) cannot provide.
+
+### When to use which
+
+| Component | Use for | Interaction |
+|---|---|---|
+| `<InfoTooltip>` | Badges, filter labels, status text — anything with a visible ℹ️ icon | Hover previews, click/tap pins open, click elsewhere closes |
+| `<Tooltip>` with `events` | Dense icon grids (facility icons) where an extra icon would clutter | Set `events={{ hover: true, focus: true, touch: true }}` so tap works on mobile |
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | — | Explanation text (required) |
+| `width` | `number` | `260` | Popover width |
+| `position` | `"top" \| "bottom" \| "left" \| "right"` | `"top"` | Placement relative to trigger |
+| `iconSize` | `number` | `14` | Info icon size in px |
+
+### Testing InfoTooltip
+
+`<InfoTooltip>` renders a Mantine `<Popover>`, **not** a `<Tooltip>`. In tests:
+1. Find the trigger: `screen.getByRole("button", { name: "More information" })`.
+2. Click it to open: `await userEvent.click(trigger)`.
+3. Assert content: look for text inside the Popover dropdown, not `role="tooltip"`.
+
+```tsx
+const infoButton = screen.getByRole("button", { name: "More information" });
+await userEvent.click(infoButton);
+expect(screen.getByText(/expected text/i)).toBeInTheDocument();
+```
 
 ---
 
