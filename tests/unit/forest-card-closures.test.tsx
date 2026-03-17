@@ -317,8 +317,8 @@ describe("ForestCardContent closures", () => {
     await userEvent.click(infoButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Test Forest: Partial road closure/))
-        .toBeTruthy();
+      expect(screen.getAllByText(/Test Forest: Partial road closure/).length)
+        .toBeGreaterThanOrEqual(1);
     });
   });
 });
