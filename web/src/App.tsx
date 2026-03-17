@@ -6,6 +6,8 @@ import { AppHeader } from "./components/AppHeader";
 import { AppFooter } from "./components/AppFooter";
 import { FilterPanel } from "./components/FilterPanel";
 import type { FilterPreset } from "./components/FilterPanel";
+import { ALL_STATES } from "./components/FilterPanel";
+import type { AustralianState } from "../../shared/contracts.js";
 import { ForestListPanel } from "./components/ForestListPanel";
 import { LocationStatusPanels } from "./components/LocationStatusPanels";
 import { MapView } from "./components/MapView";
@@ -117,6 +119,7 @@ export const App = () => {
   const [forestListSortOption, setForestListSortOption] = useState<ForestListSortOption>(
     () => getInitialPreferences().forestListSortOption ?? "DIRECT_DISTANCE_ASC"
   );
+  const [stateFilter, setStateFilter] = useState<AustralianState[]>(ALL_STATES);
   const forestsQueryKey = useMemo(
     () => buildForestsQueryKey(),
     []
@@ -162,6 +165,14 @@ export const App = () => {
   const availableFacilities = useMemo(() => payload?.availableFacilities ?? [], [payload]);
   const availableClosureTags = useMemo(() => payload?.availableClosureTags ?? [], [payload]);
 
+  // Filter forests by selected states first
+  const stateFilteredForests = useMemo(
+    () => stateFilter.length === ALL_STATES.length
+      ? rawForests
+      : rawForests.filter((forest) => stateFilter.includes((forest.state ?? "NSW") as AustralianState)),
+    [rawForests, stateFilter]
+  );
+
   const filterConfig = useMemo<ForestFilterConfig>(() => ({
     solidFuelBanFilterMode,
     solidFuelBanScopeFilterMode,
@@ -192,11 +203,11 @@ export const App = () => {
 
   const matchingForestIds = useMemo(
     () => new Set(
-      rawForests
+      stateFilteredForests
         .filter((forest) => matchesForestFilters(forest, filterConfig))
         .map((forest) => forest.id)
     ),
-    [rawForests, filterConfig]
+    [stateFilteredForests, filterConfig]
   );
 
   // Always include the haversine-nearest legal candidates so the
@@ -232,8 +243,8 @@ export const App = () => {
   });
 
   const forests = useMemo(
-    () => mergeDrivingRoutes(rawForests, routesByForestId),
-    [rawForests, routesByForestId]
+    () => mergeDrivingRoutes(stateFilteredForests, routesByForestId),
+    [stateFilteredForests, routesByForestId]
   );
 
   const hasDrivingRoutes = Object.keys(routesByForestId).length > 0;
@@ -532,6 +543,8 @@ export const App = () => {
       <section className={`layout${advancedFiltersExpanded ? "" : " layout--no-filters"}`}>
         {advancedFiltersExpanded ? (
           <FilterPanel
+            stateFilter={stateFilter}
+            setStateFilter={setStateFilter}
             solidFuelBanFilterMode={solidFuelBanFilterMode}
             setSolidFuelBanFilterMode={setSolidFuelBanFilterMode}
             solidFuelBanScopeFilterMode={solidFuelBanScopeFilterMode}
