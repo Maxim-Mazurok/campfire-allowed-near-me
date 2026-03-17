@@ -194,9 +194,11 @@ const isContainerRunning = async (containerName: string): Promise<boolean> => {
 };
 
 const ensureNominatimContainerRunning = async (): Promise<void> => {
-  if (process.env.NOMINATIM_AUTO_START === "0") {
+  if (process.env.NOMINATIM_AUTO_START !== "1") {
     // eslint-disable-next-line no-console
-    console.log("[dev] Nominatim auto-start disabled via NOMINATIM_AUTO_START=0.");
+    console.log("[dev] Nominatim auto-start is off by default (container removed to save space; reimport is resource-intensive).");
+    // eslint-disable-next-line no-console
+    console.log("[dev] Set NOMINATIM_AUTO_START=1 to enable local Nominatim Docker container.");
     return;
   }
 
