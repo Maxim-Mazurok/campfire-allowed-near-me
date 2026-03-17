@@ -308,10 +308,10 @@ test.describe("Mobile InfoTooltip accessibility", () => {
     const filterPanel = page.locator(".filter-panel");
     await expect(filterPanel).toBeVisible();
 
-    // Tap the first info tooltip in the filter panel (Solid Fuel Fire Ban help)
-    const filterTrigger = filterPanel
-      .locator(".info-tooltip-trigger")
-      .first();
+    // Tap the Solid Fuel Fire Ban info tooltip
+    // Find the section wrapper that directly contains the Solid fuel ban SegmentedControl
+    const solidFuelSection = filterPanel.locator('div:has(> [aria-label="Solid fuel fire ban filter"])');
+    const filterTrigger = solidFuelSection.locator(".info-tooltip-trigger").first();
     await expect(filterTrigger).toBeVisible();
     await filterTrigger.tap();
 
