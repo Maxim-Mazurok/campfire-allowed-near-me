@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-17T18:51:14.170Z",
+  "fetchedAt": "2026-03-18T06:54:04.878Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -802,7 +802,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
+            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access."
           }
         }
       ],
@@ -1738,7 +1738,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -3064,7 +3064,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closures."
+            "rationale": "Forest is closed except for limited camping off Paddys River Road and access via Penrose Forest Way; hazardous road conditions restrict vehicle access."
           }
         }
       ],
@@ -3142,7 +3142,7 @@
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -3196,7 +3196,7 @@
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -3250,7 +3250,7 @@
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -3304,7 +3304,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3358,7 +3358,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3412,7 +3412,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3466,7 +3466,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3520,7 +3520,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3574,7 +3574,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3628,7 +3628,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3682,7 +3682,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3736,7 +3736,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3790,7 +3790,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3844,7 +3844,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3898,7 +3898,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -3952,7 +3952,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4006,7 +4006,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4060,7 +4060,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4114,7 +4114,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4168,7 +4168,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4222,7 +4222,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4276,7 +4276,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4330,7 +4330,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4384,7 +4384,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4438,7 +4438,7 @@
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
           "banScope": "ALL"
         }
       ],
@@ -4492,7 +4492,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4546,7 +4546,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4600,7 +4600,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4654,7 +4654,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4708,7 +4708,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4762,7 +4762,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4816,7 +4816,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4870,7 +4870,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4924,7 +4924,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -4978,7 +4978,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5032,7 +5032,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5086,7 +5086,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5140,7 +5140,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5194,7 +5194,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5248,7 +5248,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5302,7 +5302,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5356,7 +5356,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5410,7 +5410,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5464,7 +5464,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5518,7 +5518,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5572,7 +5572,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5626,7 +5626,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5680,7 +5680,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5734,7 +5734,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5788,7 +5788,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5842,7 +5842,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5896,7 +5896,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -5950,7 +5950,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6004,7 +6004,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6058,7 +6058,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6112,7 +6112,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6166,7 +6166,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6220,7 +6220,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6274,7 +6274,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6328,7 +6328,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6382,7 +6382,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6436,7 +6436,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6490,7 +6490,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6544,7 +6544,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6598,7 +6598,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6652,7 +6652,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6706,7 +6706,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6760,7 +6760,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6814,7 +6814,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6868,7 +6868,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         },
         {
@@ -6929,7 +6929,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -6983,7 +6983,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7037,7 +7037,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7091,7 +7091,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7145,7 +7145,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7199,7 +7199,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7253,7 +7253,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7307,7 +7307,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7361,7 +7361,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7415,7 +7415,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7469,7 +7469,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7523,7 +7523,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7577,7 +7577,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7631,7 +7631,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7685,7 +7685,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7739,7 +7739,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7793,7 +7793,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7847,7 +7847,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7901,7 +7901,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -7955,7 +7955,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8009,7 +8009,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8063,7 +8063,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8117,7 +8117,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8171,7 +8171,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8225,7 +8225,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8279,7 +8279,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8333,7 +8333,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8387,7 +8387,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8441,7 +8441,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8495,7 +8495,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8549,7 +8549,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8603,7 +8603,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8657,7 +8657,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8711,7 +8711,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8765,7 +8765,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8819,7 +8819,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8873,7 +8873,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8927,7 +8927,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -8981,7 +8981,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9035,7 +9035,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9089,7 +9089,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9143,7 +9143,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9197,7 +9197,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9251,7 +9251,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9305,7 +9305,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9359,7 +9359,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9413,7 +9413,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9491,7 +9491,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9545,7 +9545,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9599,7 +9599,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9653,7 +9653,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9707,7 +9707,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9761,7 +9761,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9815,7 +9815,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9869,7 +9869,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9923,7 +9923,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -9977,7 +9977,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10031,7 +10031,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10085,7 +10085,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10139,7 +10139,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10193,7 +10193,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10247,7 +10247,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10301,7 +10301,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10355,7 +10355,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         },
         {
@@ -10416,7 +10416,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10470,7 +10470,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10524,7 +10524,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10578,7 +10578,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10632,7 +10632,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10686,7 +10686,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10740,7 +10740,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10794,7 +10794,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10848,7 +10848,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10902,7 +10902,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -10956,7 +10956,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11010,7 +11010,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11064,7 +11064,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11118,7 +11118,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11172,7 +11172,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11226,7 +11226,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11280,7 +11280,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11334,7 +11334,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11388,7 +11388,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11442,7 +11442,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11496,7 +11496,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11550,7 +11550,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11604,7 +11604,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11658,7 +11658,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11712,7 +11712,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11766,7 +11766,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11820,7 +11820,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11874,7 +11874,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11928,7 +11928,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -11982,7 +11982,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12036,7 +12036,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12090,7 +12090,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12144,7 +12144,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12198,7 +12198,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12252,7 +12252,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12306,7 +12306,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12360,7 +12360,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12414,7 +12414,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12468,7 +12468,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12522,7 +12522,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12576,7 +12576,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12630,7 +12630,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12684,7 +12684,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12738,7 +12738,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12792,7 +12792,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12846,7 +12846,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12900,7 +12900,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -12954,7 +12954,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13008,7 +13008,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13062,7 +13062,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13116,7 +13116,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13170,7 +13170,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13224,7 +13224,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13278,7 +13278,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13332,7 +13332,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13386,7 +13386,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13440,7 +13440,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13494,7 +13494,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13548,7 +13548,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13602,7 +13602,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13656,7 +13656,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13710,7 +13710,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13764,7 +13764,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13818,7 +13818,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13872,7 +13872,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13926,7 +13926,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -13980,7 +13980,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -14034,7 +14034,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -14088,7 +14088,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -14142,7 +14142,7 @@
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
           "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned",
+          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
           "banScope": "ALL"
         }
       ],
@@ -17459,10 +17459,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed with signage and staff directions, but does not specify camping or vehicle access impacts."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -17473,9 +17473,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -19537,7 +19537,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -19693,7 +19693,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
+            "rationale": "Parts of the forest are closed and some roads have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20067,7 +20067,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes remain open with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -20247,11 +20247,11 @@
           "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20262,9 +20262,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -20867,7 +20867,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -21235,10 +21235,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -21249,9 +21249,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -21748,7 +21748,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -22055,10 +22055,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -22069,7 +22069,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22136,7 +22136,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not mentioned."
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not specified."
           }
         }
       ],
@@ -22616,7 +22616,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, affecting both 2WD and 4WD access; camping impact is not mentioned."
+            "rationale": "The notice states that Boonabilla Road and Basin Road are closed to all vehicle traffic due to unsafe bridges."
           }
         }
       ],
@@ -23013,10 +23013,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -23027,9 +23027,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -23624,11 +23624,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "confidence": "MEDIUM",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -23639,9 +23639,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -24406,7 +24406,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -25533,7 +25533,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed with entry prohibited, but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -28566,7 +28566,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
