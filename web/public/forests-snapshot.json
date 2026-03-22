@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-21T18:25:33.949Z",
+  "fetchedAt": "2026-03-22T06:43:09.673Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -798,11 +798,11 @@
           "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
+            "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice mentions closure of mountain bike trails and access points but does not specify camping or vehicle access impacts."
+            "rationale": "The notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
           }
         }
       ],
@@ -1787,12 +1787,12 @@
           ],
           "detailText": "Please note that Mary's Park in Sunny Corner State Forest is closed for restoration.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Mary's Park is explicitly closed for restoration, but no information on vehicle access."
           }
         }
       ],
@@ -1803,9 +1803,9 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -2011,7 +2011,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping at Blowering Dam is open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2360,7 +2360,7 @@
           "detailText": "Parts of Green Hills State Forest remains closed around Adelong Creek due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
+            "confidence": "MEDIUM",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
@@ -2932,7 +2932,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Vehicles are closed from most forest roads but campground remains open with limited access; non-motorised activities allowed."
+            "rationale": "Campground remains open with limited vehicle access; all other forest roads closed to motorised vehicles."
           }
         }
       ],
@@ -19767,7 +19767,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest and certain roads are closed or have load limits, but camping sites remain open."
+            "rationale": "Camping sites remain open; some roads are closed or have load limits restricting vehicle access."
           }
         }
       ],
@@ -19892,14 +19892,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": "Please note that Waitui Road is closed as a result of landslips. Waitui Falls is no longer accessible via Waitui Road.\nPlease follow all road closure signs and do not attempt to access 4WD trails and fire trails to detour around as these are also not trafficable.",
+          "detailText": null,
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Road/access closure language detected."
           }
         }
       ],
@@ -19911,8 +19911,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -20325,7 +20325,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, implying restricted camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -21312,7 +21312,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed with signage and staff directions, but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -21822,7 +21822,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
           }
         },
         {
@@ -22111,7 +22111,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact not specified."
+            "rationale": "Road closures prevent vehicle access but camping impact is not specified."
           }
         },
         {
@@ -22132,7 +22132,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -22690,7 +22690,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping."
+            "rationale": "The notice states roads are closed to all vehicle traffic due to unsafe bridges, but does not mention camping."
           }
         }
       ],
@@ -23698,11 +23698,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Partial closure with restricted entry to some areas; signage and staff directions must be followed."
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23713,9 +23713,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24480,7 +24480,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with restricted entry to closed areas but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -28640,7 +28640,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states partial closures with no specific details on camping or vehicle access impacts."
           }
         }
       ],
@@ -29408,8 +29408,9 @@
     }
   ],
   "warnings": [
+    "1 closure detail page(s) were not found in the raw archive.",
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 17 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 16 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
