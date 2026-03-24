@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-23T18:44:34.954Z",
+  "fetchedAt": "2026-03-24T06:59:09.479Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -207,8 +207,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -261,8 +261,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -315,8 +315,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -369,8 +369,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -423,8 +423,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -477,8 +477,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -531,8 +531,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -585,8 +585,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -639,8 +639,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -693,8 +693,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -747,8 +747,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -798,11 +798,11 @@
           "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
+            "confidence": "MEDIUM",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
+            "rationale": "The notice mentions closure of mountain bike trails and access points but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -825,8 +825,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -879,8 +879,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -933,8 +933,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -987,8 +987,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1041,8 +1041,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1095,8 +1095,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1149,8 +1149,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1203,8 +1203,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1257,8 +1257,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1311,8 +1311,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1365,8 +1365,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1419,8 +1419,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1473,8 +1473,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1527,8 +1527,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1581,8 +1581,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1659,8 +1659,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1737,8 +1737,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1815,8 +1815,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -1869,8 +1869,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned",
+          "banStatus": "UNKNOWN",
+          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
           "banScope": "ALL"
         }
       ],
@@ -2932,7 +2932,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Campground remains open with limited vehicle access; most forest roads closed to motorised vehicles."
+            "rationale": "Vehicles are closed except access to Dalys Clearing campground; walking, cycling, and horseriding allowed."
           }
         }
       ],
@@ -3066,7 +3066,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure."
           }
         }
       ],
@@ -4196,7 +4196,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not close or restrict camping or vehicle access."
+            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -5247,7 +5247,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
+            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -11620,7 +11620,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
+            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
           }
         }
       ],
@@ -12023,7 +12023,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and following signs due to baiting but does not mention closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not close or restrict camping or vehicle access."
           }
         }
       ],
@@ -12210,7 +12210,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and attention to warning signs but does not indicate closures."
+            "rationale": "Notice advises caution around baited areas but does not close or restrict access or camping."
           }
         }
       ],
@@ -19970,7 +19970,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads are closed and load limits apply, but camping sites remain open."
+            "rationale": "Some roads and bridges are closed or have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20344,7 +20344,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes are open but with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -21070,8 +21070,30 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "5479",
+          "title": "Enfield State Forest: Partial closure",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5479",
+          "listedAt": "2025-12-21T13:01:00.000Z",
+          "listedAtText": "2025-12-21T13:01:00.0000000Z",
+          "untilAt": "2026-06-29T13:59:00.000Z",
+          "untilText": "2026-06-29T13:59:00.0000000Z",
+          "forestNameHint": "Enfield State Forest",
+          "status": "PARTIAL",
+          "tags": [],
+          "detailText": "Please note that parts of Enfield State Forest will be closed from 7:00 am Monday 22 December 2025 to 7:00 am Monday 29 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -21079,9 +21101,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -22025,7 +22047,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
           }
         },
         {
@@ -22046,10 +22068,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "NONE",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed, Upsalls Creek Road open."
+            "rationale": "Camping area remains open but road closure affects vehicle access on Kerewong Road."
           }
         }
       ],
@@ -22060,7 +22082,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22314,7 +22336,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact not specified."
+            "rationale": "Road closures prevent vehicle access but camping impact is not specified."
           }
         },
         {
@@ -22411,9 +22433,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not mentioned."
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but no camping information provided."
           }
         }
       ],
@@ -22425,8 +22447,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -22893,7 +22915,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Boonabilla Road and Basin Road are closed to all vehicle traffic due to unsafe bridges."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, indicating no vehicle access."
           }
         }
       ],
@@ -23290,10 +23312,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so camping and vehicle access are advised to be cautious and follow signage."
           }
         }
       ],
@@ -23304,9 +23326,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -23901,11 +23923,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "confidence": "MEDIUM",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, implying restricted camping and vehicle access."
           }
         }
       ],
@@ -23916,9 +23938,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -24683,7 +24705,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states partial closure with restricted entry to closed areas but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -24816,7 +24838,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Most roads and tracks in the Forestry Corporation area are closed, limiting vehicle access and camping."
+            "rationale": "Most roads, tracks, and fire trails in the Forestry Corporation area are closed, limiting vehicle access and camping."
           }
         }
       ],
@@ -27103,7 +27125,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not close or restrict access or camping."
+            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -27188,7 +27210,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, pine forest areas remain open, indicating partial restrictions."
+            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
           }
         }
       ],
@@ -27713,7 +27735,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -27792,7 +27814,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution and attention to baited areas but does not restrict access or camping."
           }
         }
       ],
@@ -28759,7 +28781,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not indicate closures."
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -28938,12 +28960,12 @@
           "tags": [],
           "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest with no specific details on camping or vehicle access impacts."
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Partial closure status implies at least some access restrictions."
           }
         }
       ],
@@ -28955,8 +28977,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -29712,7 +29734,7 @@
   ],
   "warnings": [
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 16 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 17 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
