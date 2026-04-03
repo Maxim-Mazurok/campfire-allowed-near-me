@@ -1,57 +1,53 @@
 import type { BrowserContext } from "playwright";
 
 /**
- * Resource types that are never needed for HTML content scraping.
- * Blocking these saves significant proxy bandwidth.
+ * Allowlisted domains for proxy-routed browser scraping.
+ *
+ * Only requests to these domains are allowed through. Everything else
+ * is aborted to minimise residential proxy bandwidth. This is much
+ * safer than a blocklist: new third-party inclusions on the target
+ * site are blocked by default instead of silently consuming proxy data.
+ *
+ * Required domains:
+ *   - forestrycorporation.com.au — the scraping target
+ *   - challenges.cloudflare.com  — Cloudflare Turnstile challenge JS
+ */
+const ALLOWED_DOMAINS = [
+  "forestrycorporation.com.au",
+  "challenges.cloudflare.com",
+];
+
+/**
+ * Resource types that are never needed for HTML content scraping,
+ * even from allowed domains. Blocking these saves additional bandwidth.
  */
 const BLOCKED_RESOURCE_TYPES = new Set(["image", "stylesheet", "font", "media"]);
 
 /**
- * Third-party domains that serve analytics, map tiles, fonts, and other
- * assets irrelevant to the HTML content we scrape. Requests to these
- * domains are aborted to reduce proxy traffic.
+ * Install route-level filters on a Playwright BrowserContext to allowlist
+ * only essential domains and block non-essential resource types.
  *
- * NOT blocked (required for anti-bot challenges):
- *   - challenges.cloudflare.com
- *   - www.google.com (potential reCAPTCHA)
- */
-const BLOCKED_DOMAINS = [
-  "googletagmanager.com",
-  "google-analytics.com",
-  "maps.googleapis.com",
-  "maps.gstatic.com",
-  "fonts.gstatic.com",
-  "fonts.googleapis.com",
-  "tile.opentopomap.org",
-  "mapservices.fcnsw.net",
-  "cdn.fcnsw.net",
-  "connectivitycheck.gstatic.com",
-];
-
-/**
- * Install route-level filters on a Playwright BrowserContext to block
- * non-essential resources (images, CSS, fonts, analytics, map tiles).
- *
- * Only HTML documents and essential JavaScript (including Cloudflare
- * challenge scripts) are allowed through. This typically saves 300+ MB
- * of proxy bandwidth per full scrape run.
+ * Only HTML documents and JavaScript from the target site and Cloudflare
+ * challenge domain are allowed through. All other domains and non-essential
+ * resource types (images, CSS, fonts, media) are aborted.
  */
 export const installResourceBlockingRoutes = async (
   context: BrowserContext,
   log?: (message: string) => void,
 ): Promise<void> => {
-  log?.("[resource-blocking] Installing route filters (images, CSS, fonts, analytics, map tiles)");
+  log?.("[resource-blocking] Installing allowlist route filters (only target site + Cloudflare challenges)");
 
   await context.route("**/*", (route) => {
     const request = route.request();
-    const resourceType = request.resourceType();
+    const url = request.url();
 
-    if (BLOCKED_RESOURCE_TYPES.has(resourceType)) {
+    const isAllowedDomain = ALLOWED_DOMAINS.some((domain) => url.includes(domain));
+    if (!isAllowedDomain) {
       return route.abort();
     }
 
-    const url = request.url();
-    if (BLOCKED_DOMAINS.some((domain) => url.includes(domain))) {
+    const resourceType = request.resourceType();
+    if (BLOCKED_RESOURCE_TYPES.has(resourceType)) {
       return route.abort();
     }
 

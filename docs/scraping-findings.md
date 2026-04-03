@@ -109,6 +109,14 @@ Evaluated several residential proxy providers:
 - **Pay-As-You-Go**: Pre-pay $3.50 for 1 GB = ~645 runs = ~10 months of coverage
 - **Traffic expiry**: 12 months from purchase (sufficient for annual top-up)
 
+> **2026-04 update — actual usage was ~12 MB/day (6 MB per run), far exceeding the
+> 1.55 MB estimate.** The overshoot was caused by third-party resources loaded in
+> the browser (map tiles, analytics, fonts, Google services) that were not fully
+> blocked by the original domain blocklist. Switched to an allowlist approach in
+> `resource-blocking.ts` — only `forestrycorporation.com.au` and
+> `challenges.cloudflare.com` are permitted; everything else is aborted at the
+> Playwright route level. Projected per-run bandwidth after allowlist: ~1.5–2 MB.
+
 ---
 
 ## Technical Stack
@@ -158,7 +166,9 @@ Reuses existing `isCloudflareChallengeHtml()` from `pipeline/services/forestry-p
 
 4. **Proxy is not needed for RFS**: The RFS endpoints have no bot protection. Using the proxy for these would waste bandwidth.
 
-5. **Bandwidth is minimal**: ~1.55 MB per run through the proxy. At 2x/day, annual proxy cost is under $4.
+5. **Browser resource allowlist**: Use an allowlist (not blocklist) for browser route filtering. Only the target domain and `challenges.cloudflare.com` should be allowed — all other domains are blocked by default. This prevents bandwidth surprises from new third-party inclusions on the target site.
+
+6. **Bandwidth is minimal**: ~1.55 MB per run through the proxy. At 2x/day, annual proxy cost is under $4.
 
 6. **No API key rotation needed**: Decodo credentials are static username/password. No token refresh or OAuth flow to manage.
 
