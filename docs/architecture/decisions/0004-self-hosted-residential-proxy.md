@@ -86,6 +86,16 @@ Target websites see Australian residential IP
 | GHA ephemeral node churn in Tailscale | Ephemeral keys auto-expire; Tailscale free tier allows up to 100 devices |
 | Tailscale free tier limits | Free for personal use, up to 100 devices and 3 users — well within our needs |
 
+### Why tinyproxy instead of Tailscale exit node?
+
+Tailscale's exit node feature can route all traffic from the GHA runner through the MacBook, eliminating the need for a forward proxy daemon. However, this was rejected because:
+
+- A typical GHA run downloads 200+ MB (Playwright browser, npm packages, apt dependencies, GitHub API calls). Routing all of that through the MacBook's home upload link would significantly slow down the pipeline.
+- Only ~2 MB of scrape traffic per run actually needs the residential IP.
+- The existing codebase already has proxy support via `undici.ProxyAgent` and Playwright's `proxy` config — swapping the endpoint URL is trivial.
+
+With tinyproxy, only the targeted scrape requests exit through the home connection. Everything else (package installs, browser downloads, API calls) uses the GHA runner's fast datacenter network directly.
+
 ### Exit node is NOT required
 
-Tailscale's exit node feature routes all traffic from a device through another device. This is not needed here. The GHA runner only needs to reach the tinyproxy port — its own internet traffic (apt, npm, GitHub API, etc.) uses normal networking. The proxy is invoked explicitly via `ProxyAgent` or Playwright's proxy config.
+Tailscale's exit node checkbox on the MacBook should remain **unchecked**. The GHA runner only needs to reach tinyproxy on port 8888 — its own internet traffic uses normal networking. The proxy is invoked explicitly via `ProxyAgent` or Playwright's proxy config.
