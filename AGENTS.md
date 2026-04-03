@@ -59,11 +59,12 @@ Before finishing any task that includes code changes, run **`npm test`** (which 
 
 ## Scraping and proxy
 - Production scraping uses three methods depending on target (see `docs/scraping-findings.md`):
-	- Forestry Corp (Cloudflare): `playwright-extra` + stealth + Decodo AU residential proxy + headed mode.
-	- FCNSW closures (AWS API Gateway): `fetch()` + Decodo proxy via `undici.ProxyAgent`.
+	- Forestry Corp (Cloudflare): `playwright-extra` + stealth + self-hosted tinyproxy via Tailscale + headed mode.
+	- FCNSW closures (AWS API Gateway): `fetch()` + tinyproxy via `undici.ProxyAgent`.
 	- RFS (public): plain `fetch()`, no proxy needed.
 - Always use a shared `BrowserContext` for multiple pages on the same Cloudflare-protected domain.
-- Proxy credentials are in GitHub Secrets (`DECODO_PROXY_USERNAME`, `DECODO_PROXY_PASSWORD`). Never hardcode them.
+- Proxy runs on a personal MacBook (tinyproxy on port 8888), accessible to GHA runners via Tailscale mesh VPN. See ADR `0004-self-hosted-residential-proxy.md`.
+- Proxy credentials are in GitHub Secrets (`PROXY_USERNAME`, `PROXY_PASSWORD`, `TS_OAUTH_CLIENT_ID`, `TS_OAUTH_SECRET`, `TAILSCALE_PROXY_IP`). Never hardcode them.
 - Do not route RFS requests through the proxy — it wastes bandwidth unnecessarily.
 
 ## Documentation

@@ -27,9 +27,9 @@ chromium.use(StealthPlugin());
 
 export const PROXY_USERNAME = process.env.PROXY_USERNAME ?? "";
 export const PROXY_PASSWORD = process.env.PROXY_PASSWORD ?? "";
-export const PROXY_HOST = process.env.PROXY_HOST ?? "au.decodo.com";
+export const PROXY_HOST = process.env.PROXY_HOST ?? "";
 export const PROXY_PORTS = (
-  process.env.PROXY_PORTS ?? "30001,30002,30003,30004,30005,30006,30007,30008,30009,30010"
+  process.env.PROXY_PORTS ?? "8888"
 )
   .split(",")
   .map((port) => port.trim())

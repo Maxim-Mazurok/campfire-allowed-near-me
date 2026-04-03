@@ -44,19 +44,25 @@ Target websites see Australian residential IP
 
 ### Components
 
-1. **tinyproxy** on the MacBook — lightweight HTTP forward proxy supporting CONNECT (for HTTPS). Listens on the Tailscale interface only. Managed as a macOS LaunchAgent for auto-start on login.
+1. **tinyproxy** on the MacBook — lightweight HTTP forward proxy supporting CONNECT (for HTTPS). Listens on `0.0.0.0:8888` with IP-based ACLs restricting to Tailscale CGNAT range (`100.64.0.0/10`) and localhost. BasicAuth is enabled as defense-in-depth. `Via` header is disabled for stealth. Managed as a macOS LaunchAgent (`com.tinyproxy`) for auto-start on login with `KeepAlive`.
 
-2. **Tailscale** on both ends — the MacBook is already enrolled. The GHA runner joins the same tailnet using the official `tailscale/github-action` with an OAuth client credential. Ephemeral keys are used so nodes auto-expire after the run.
+2. **Tailscale** on both ends — the MacBook is already enrolled. The GHA runner joins the same tailnet using the official `tailscale/github-action@v4` with an OAuth client credential (`auth_keys` scope, `tag:ci`). Ephemeral keys are used so nodes auto-expire after the run.
 
-3. **Tailscale ACLs** — restrict access so only `tag:ci`-tagged nodes can reach the MacBook's proxy port (8888). No other traffic is permitted.
+3. **Tailscale ACLs** — restrict access so only `tag:ci`-tagged nodes can reach the MacBook's Tailscale IP on TCP port 8888. No other traffic is permitted from CI nodes. Members retain full access to all resources.
+
+### Security layers
+
+1. **Tailscale authentication** — only authenticated tailnet members/tagged nodes can establish a connection.
+2. **Tailscale ACLs** — `tag:ci` is restricted to TCP port 8888 on the MacBook only.
+3. **tinyproxy IP ACL** — only Tailscale CGNAT range and localhost are allowed.
+4. **tinyproxy BasicAuth** — username/password required even after passing network-level checks.
 
 ### What changes in the codebase
 
-- `buildProxyUrl()` returns `http://100.x.y.z:8888` (static Tailscale IP) instead of `http://user:pass@au.decodo.com:port`.
-- Port rotation logic (10-port shuffle) is removed — single proxy endpoint.
-- Retry logic is preserved but simplified (no port cycling).
-- GitHub Secrets change from `DECODO_PROXY_USERNAME`/`DECODO_PROXY_PASSWORD` to `TS_OAUTH_CLIENT_ID`/`TS_OAUTH_SECRET` plus `HOME_PROXY_IP`.
-- GHA workflow adds a Tailscale connection step before scrape stages.
+- `pipeline-config.ts`: `PROXY_HOST` default changed from `au.decodo.com` to empty (env-driven via `TAILSCALE_PROXY_IP` secret). `PROXY_PORTS` default changed from 10 Decodo ports to `"8888"`.
+- Retry logic is preserved — retries on the same port for transient network failures.
+- GitHub Secrets: `DECODO_PROXY_USERNAME`/`DECODO_PROXY_PASSWORD` replaced by `PROXY_USERNAME`/`PROXY_PASSWORD` (tinyproxy BasicAuth), `TS_OAUTH_CLIENT_ID`/`TS_OAUTH_SECRET` (Tailscale OAuth), and `TAILSCALE_PROXY_IP` (MacBook's Tailscale IP).
+- GHA workflow adds a Tailscale connection step and a proxy reachability verification step before the generate-snapshot stage.
 
 ### What does NOT change
 

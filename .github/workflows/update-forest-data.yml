@@ -47,11 +47,30 @@ jobs:
             browser-profile-${{ runner.os }}-v1-
           save-always: true
 
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.TAILSCALE_PROXY_IP }}
+
+      - name: Verify proxy reachability from container
+        run: |
+          curl -sf -o /dev/null -w 'Proxy responded HTTP %{http_code}\n' \
+            -x "http://$PROXY_USERNAME:$PROXY_PASSWORD@$PROXY_HOST:8888" \
+            https://httpbin.org/ip
+        env:
+          PROXY_USERNAME: ${{ secrets.PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+          PROXY_HOST: ${{ secrets.TAILSCALE_PROXY_IP }}
+
       - name: Generate snapshot
         run: xvfb-run --auto-servernum -- npx -y tsx pipeline/scripts/generate-snapshot.ts
         env:
-          PROXY_USERNAME: ${{ secrets.DECODO_PROXY_USERNAME }}
-          PROXY_PASSWORD: ${{ secrets.DECODO_PROXY_PASSWORD }}
+          PROXY_USERNAME: ${{ secrets.PROXY_USERNAME }}
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+          PROXY_HOST: ${{ secrets.TAILSCALE_PROXY_IP }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           NOMINATIM_BASE_URL: https://nominatim.openstreetmap.org
           SCRAPE_DEBUG_ARTIFACT_DIR: scrape-debug-artifacts
