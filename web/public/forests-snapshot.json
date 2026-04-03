@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-03-24T18:53:29.772Z",
+  "fetchedAt": "2026-04-03T06:23:18.723Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -153,8 +153,10 @@
         "untilText": "further notice",
         "forestNameHint": "Broadwater State Forest",
         "status": "CLOSED",
-        "tags": [],
-        "detailText": null,
+        "tags": [
+          "OPERATIONS"
+        ],
+        "detailText": "Please note that Broadwater State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
         "structuredImpact": {
           "source": "RULES",
           "confidence": "HIGH",
@@ -174,8 +176,10 @@
         "untilText": "further notice",
         "forestNameHint": "Gundar State Forest",
         "status": "CLOSED",
-        "tags": [],
-        "detailText": null,
+        "tags": [
+          "OPERATIONS"
+        ],
+        "detailText": "Please note that Gundar State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
         "structuredImpact": {
           "source": "RULES",
           "confidence": "HIGH",
@@ -791,14 +795,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
           }
         }
       ],
@@ -810,8 +814,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -1625,14 +1629,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -1644,8 +1648,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -1703,7 +1707,7 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "LOW",
@@ -1781,7 +1785,7 @@
           "tags": [
             "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Mary's Park in Sunny Corner State Forest is closed for restoration.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -1913,7 +1917,7 @@
           "tags": [
             "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted.\nWe encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation.\nPlease note that all quarries are always closed to the public.\nFurther information on fossicking within State forests is available here.\nContact: Statewide Information Centre 1300 655 687",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -1943,9 +1947,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2007,7 +2011,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed."
+            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2030,9 +2034,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2091,9 +2095,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2146,14 +2150,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Due to the structural damage of a log bridge over Oaks Creek, Nottingham Road will remain closed between Brindabella Road and Ridge Road until further notice.\nRoad closure signs will be in place for the affected section of road and traffic will be detoured via Nottingham Road, Ridge Road and Brindabella Road.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -2176,9 +2180,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2237,9 +2241,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2298,9 +2302,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2350,15 +2354,17 @@
           "untilText": "further notice",
           "forestNameHint": "Green Hills State Forest",
           "status": "PARTIAL",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Parts of Green Hills State Forest remains closed around Adelong Creek due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -2366,12 +2372,12 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -2381,9 +2387,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2442,9 +2448,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2503,9 +2509,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2564,9 +2570,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2625,9 +2631,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2686,9 +2692,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2747,9 +2753,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2808,9 +2814,9 @@
         {
           "areaName": "Pine forests around Tumut, Batlow and Tumbarumba (note this also includes selected native forests)",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-tumut,-batlow-and-tumbarumba",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid Fuel Fires banned in all plantation areas, including camping areas on the western foreshore of Blowering dam, Bago State Forest.",
-          "banScope": "INCLUDING_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
         },
         {
           "areaName": "Native forest areas in Bago and Bondo State Forests, including Paddy River Dam and Paling Yards camping areas",
@@ -2869,9 +2875,9 @@
         {
           "areaName": "Southern Highlands around Moss Vale",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/southern-highlands-around-moss-vale",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires are banned outside designated campgrounds. Solid fuel fires are permitted inside designated campgrounds.",
-          "banScope": "OUTSIDE_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban. No camping or solid fuel fires within pine plantations.",
+          "banScope": "ALL"
         }
       ],
       "forestName": "Belanglo State Forest",
@@ -2902,44 +2908,42 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "CLOSED",
+      "closureStatus": "NOTICE",
       "closureNotices": [
         {
-          "id": "4390",
-          "title": "Belanglo State Forest closed to vehicles",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4390",
-          "listedAt": "2026-03-19T13:01:00.000Z",
-          "listedAtText": "2026-03-19T13:01:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
+          "id": "5117",
+          "title": "Belanglo State Forest: Large community event",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5117",
+          "listedAt": "2026-03-26T13:01:00.000Z",
+          "listedAtText": "2026-03-26T13:01:00.0000000Z",
+          "untilAt": "2026-04-06T13:59:00.000Z",
+          "untilText": "2026-04-06T13:59:00.0000000Z",
           "forestNameHint": "Belanglo State Forest",
-          "status": "CLOSED",
+          "status": "NOTICE",
           "tags": [
-            "ROAD_ACCESS",
-            "CAMPING",
-            "OPERATIONS"
+            "EVENT"
           ],
-          "detailText": "Belanglo State Forest is currently closed to motorised vehicles due to weather conditions.\nDalys Clearing campground will remain open with access via\nBelanglo Road and Dalys Road only. All other forest roads are closed until\nfurther notice.\nWalking, cycling and horseriding are permitted.",
+          "detailText": "A large community event will be held in Belanglo State Forest from 27 March to 6 April 2026.\nThe forest will remain open; however, it is expected to be extremely busy. Visitors are encouraged to plan ahead and consider alternative locations during this period.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Campground remains open with limited access; all other forest roads closed to vehicles."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Forest remains open but will be extremely busy due to a large event."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": true,
-        "CAMPING": true,
-        "EVENT": false,
-        "OPERATIONS": true
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": true,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -2949,9 +2953,9 @@
         {
           "areaName": "Southern Highlands around Moss Vale",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/southern-highlands-around-moss-vale",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires are banned outside designated campgrounds. Solid fuel fires are permitted inside designated campgrounds.",
-          "banScope": "OUTSIDE_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban. No camping or solid fuel fires within pine plantations.",
+          "banScope": "ALL"
         }
       ],
       "forestName": "Meryla State Forest (pine plantations)",
@@ -3003,9 +3007,9 @@
         {
           "areaName": "Southern Highlands around Moss Vale",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/southern-highlands-around-moss-vale",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires are banned outside designated campgrounds. Solid fuel fires are permitted inside designated campgrounds.",
-          "banScope": "OUTSIDE_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban. No camping or solid fuel fires within pine plantations.",
+          "banScope": "ALL"
         }
       ],
       "forestName": "Penrose State Forest",
@@ -3050,16 +3054,17 @@
           "status": "PARTIAL",
           "tags": [
             "ROAD_ACCESS",
-            "CAMPING"
+            "CAMPING",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Penrose State Forests has been closed due to serious concerns for visitor safety.\nHazardous road conditions, created by vehicles using roads during wet weather, forced this closure.\nFind out more about visiting sustainably.\nRestoration work has commenced however it is extensive and weather-dependent. Visitors can access the designated camp areas via the advised routes.\nLow impact recreational activities (non-vehicle) are permitted in the closed forest. Locally Wingello State Forest has partially reopened and is an option for vehicle recreational activities. Observe all signage and please visit sustainably.\nA 400m area off Paddys River Road will remain open for camping.\nAccess only via Penrose Forest Way. Nearest facilities are located at Kingsbury VC rest area.\nVisitors may park safety off Penrose Forest Way.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
           }
         }
       ],
@@ -3067,10 +3072,10 @@
         "ROAD_ACCESS": true,
         "CAMPING": true,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -3082,9 +3087,9 @@
         {
           "areaName": "Southern Highlands around Moss Vale",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/southern-highlands-around-moss-vale",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires are banned outside designated campgrounds. Solid fuel fires are permitted inside designated campgrounds.",
-          "banScope": "OUTSIDE_CAMPS"
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban. No camping or solid fuel fires within pine plantations.",
+          "banScope": "ALL"
         }
       ],
       "forestName": "Wingello State Forest",
@@ -3136,8 +3141,8 @@
         {
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -3147,7 +3152,7 @@
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -35.548204,
-      "longitude": 144.04399,
+      "longitude": 144.043991,
       "geocodeName": "CAMPBELLS ISLAND State Forest (SF615)",
       "geocodeDiagnostics": null,
       "facilities": {
@@ -3190,8 +3195,8 @@
         {
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -3223,8 +3228,30 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "5578",
+          "title": "Koondrook State Forest partly closed: Little Forest area (see detailed map in notice)",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5578",
+          "listedAt": "2026-03-30T13:01:00.000Z",
+          "listedAtText": "2026-03-30T13:01:00.0000000Z",
+          "untilAt": "2026-04-09T13:59:00.000Z",
+          "untilText": "2026-04-09T13:59:00.0000000Z",
+          "forestNameHint": "Koondrook State Forest",
+          "status": "PARTIAL",
+          "tags": [],
+          "detailText": "Please note that part of Koondrook State Forest will be closed from 9:00 am Tuesday 31 March 2026 and 9:00 am Thursday 9 April 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states part of the forest is closed with no specific details on camping or vehicle access impacts."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -3244,8 +3271,8 @@
         {
           "areaName": "Native forests of the Riverina",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-riverina",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -3452,29 +3479,30 @@
           "forestNameHint": "Bibblewindi State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Bibblewindi State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -3602,8 +3630,8 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -30.748579,
-      "longitude": 149.077789,
+      "latitude": -30.778,
+      "longitude": 149.115091,
       "geocodeName": "CUMBIL State Forest (SF812)",
       "geocodeDiagnostics": null,
       "facilities": {
@@ -3764,8 +3792,8 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -30.677203,
-      "longitude": 149.127644,
+      "latitude": -30.67717,
+      "longitude": 149.127648,
       "geocodeName": "EULIGAL State Forest (SF810)",
       "geocodeDiagnostics": null,
       "facilities": {
@@ -3980,8 +4008,8 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -30.876845,
-      "longitude": 149.028473,
+      "latitude": -30.868272,
+      "longitude": 149.023871,
       "geocodeName": "MERRIWINDI State Forest (SF839)",
       "geocodeDiagnostics": null,
       "facilities": {
@@ -4142,8 +4170,8 @@
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
-      "latitude": -30.660733,
-      "longitude": 149.433771,
+      "latitude": -30.660738,
+      "longitude": 149.433772,
       "geocodeName": "PILLIGA EAST State Forest (SF266)",
       "geocodeDiagnostics": null,
       "facilities": {
@@ -4178,29 +4206,30 @@
           "forestNameHint": "Pilliga East State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Pilliga East State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -4534,8 +4563,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4588,8 +4617,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4642,8 +4671,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4696,8 +4725,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4750,8 +4779,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4804,8 +4833,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4858,8 +4887,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4912,8 +4941,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -4966,8 +4995,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5020,8 +5049,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5074,8 +5103,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5128,8 +5157,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5182,8 +5211,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5228,29 +5257,30 @@
           "forestNameHint": "Benbraggie State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Benbraggie State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -5260,8 +5290,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5314,8 +5344,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5368,8 +5398,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5422,8 +5452,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5468,29 +5498,30 @@
           "forestNameHint": "Bingara State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Bingara State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -5500,8 +5531,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5554,8 +5585,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5608,8 +5639,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5662,8 +5693,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5716,8 +5747,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5770,8 +5801,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5824,8 +5855,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5878,8 +5909,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5932,8 +5963,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -5986,8 +6017,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6040,8 +6071,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6094,8 +6125,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6148,8 +6179,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6202,8 +6233,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6256,8 +6287,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6310,8 +6341,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6364,8 +6395,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6418,8 +6449,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6472,8 +6503,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6526,8 +6557,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6580,8 +6611,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6634,8 +6665,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6688,8 +6719,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6742,8 +6773,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6796,8 +6827,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6850,8 +6881,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6904,8 +6935,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -6958,8 +6989,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         },
         {
@@ -7019,8 +7050,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7073,8 +7104,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7127,8 +7158,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7181,8 +7212,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7235,8 +7266,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7289,8 +7320,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7343,8 +7374,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7397,8 +7428,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7451,8 +7482,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7505,8 +7536,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7559,8 +7590,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7613,8 +7644,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7667,8 +7698,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7721,8 +7752,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7775,8 +7806,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7829,8 +7860,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7883,8 +7914,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7937,8 +7968,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -7991,8 +8022,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8045,8 +8076,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8099,8 +8130,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8153,8 +8184,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8207,8 +8238,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8261,8 +8292,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8315,8 +8346,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8369,8 +8400,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8423,8 +8454,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8477,8 +8508,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8531,8 +8562,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8564,42 +8595,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "5250",
-          "title": "Gap Dam State Forest: Closed for pest control operations",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5250",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-03-27T12:59:00.000Z",
-          "untilText": "2026-03-27T12:59:00.0000000Z",
-          "forestNameHint": "Gap Dam State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": null,
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -8609,8 +8616,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8663,8 +8670,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8717,8 +8724,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8771,8 +8778,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8825,8 +8832,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8879,8 +8886,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8933,8 +8940,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -8987,8 +8994,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9041,8 +9048,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9095,8 +9102,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9149,8 +9156,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9203,8 +9210,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9257,8 +9264,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9311,8 +9318,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9365,8 +9372,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9419,8 +9426,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9473,8 +9480,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9527,8 +9534,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9572,26 +9579,28 @@
           "untilText": "2033-12-30T21:47:00.0000000Z",
           "forestNameHint": "Leard State Forest",
           "status": "PARTIAL",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "ROAD_ACCESS"
+          ],
+          "detailText": "From 4 May 2021 – 31 December 2033, public access to those areas shown as the Boggabri Coal Mine Exclusive Use Area (map here) is not permissible without the written permission of Forestry Corporation of NSW.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Public access to the exclusive use area is not allowed without permission, restricting camping and vehicle access."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -9603,8 +9612,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9657,8 +9666,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9711,8 +9720,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9765,8 +9774,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9819,8 +9828,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9873,8 +9882,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9927,8 +9936,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -9981,8 +9990,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10035,8 +10044,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10089,8 +10098,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10122,42 +10131,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "5249",
-          "title": "Melbergen State Forest: Closed for pest control operations",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5249",
-          "listedAt": "2026-03-23T12:59:00.000Z",
-          "listedAtText": "2026-03-23T12:59:00.0000000Z",
-          "untilAt": "2026-03-27T12:59:00.000Z",
-          "untilText": "2026-03-27T12:59:00.0000000Z",
-          "forestNameHint": "Melbergen State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": null,
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -10167,8 +10152,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10221,8 +10206,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10254,42 +10239,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "5248",
-          "title": "Melougel State Forest: Closed for pest control operations",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5248",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-03-27T12:59:00.000Z",
-          "untilText": "2026-03-27T12:59:00.0000000Z",
-          "forestNameHint": "Melougel State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": null,
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -10299,8 +10260,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10353,8 +10314,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10407,8 +10368,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10461,8 +10422,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10515,8 +10476,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         },
         {
@@ -10576,8 +10537,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10630,8 +10591,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10684,8 +10645,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10738,8 +10699,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10792,8 +10753,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10846,8 +10807,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10900,8 +10861,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -10954,8 +10915,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11008,8 +10969,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11062,8 +11023,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11116,8 +11077,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11170,8 +11131,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11224,8 +11185,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11278,8 +11239,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11332,8 +11293,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11386,8 +11347,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11440,8 +11401,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11494,8 +11455,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11548,8 +11509,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11594,29 +11555,30 @@
           "forestNameHint": "Parkhurst State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Parkhurst State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution due to baiting but does not mention closures or restrictions."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -11626,8 +11588,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11680,8 +11642,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11734,8 +11696,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11788,8 +11750,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11842,8 +11804,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11896,8 +11858,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11950,8 +11912,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -11996,9 +11958,10 @@
           "forestNameHint": "Severn State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Severn State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "LOW",
@@ -12012,7 +11975,7 @@
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
@@ -12028,8 +11991,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12082,8 +12045,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12136,8 +12099,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12182,9 +12145,10 @@
           "forestNameHint": "Strathmore State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Strathmore State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "LOW",
@@ -12198,7 +12162,7 @@
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
@@ -12214,8 +12178,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12268,8 +12232,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12322,8 +12286,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12376,8 +12340,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12430,8 +12394,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12484,8 +12448,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12538,8 +12502,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12592,8 +12556,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12646,8 +12610,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12700,8 +12664,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12754,8 +12718,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12808,8 +12772,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12862,8 +12826,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12916,8 +12880,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -12970,8 +12934,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13024,8 +12988,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13078,8 +13042,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13132,8 +13096,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13186,8 +13150,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13240,8 +13204,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13294,8 +13258,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13348,8 +13312,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13402,8 +13366,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13456,8 +13420,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13510,8 +13474,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13564,8 +13528,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13618,8 +13582,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13672,8 +13636,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13726,8 +13690,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13780,8 +13744,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13834,8 +13798,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13888,8 +13852,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13942,8 +13906,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -13996,8 +13960,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14050,8 +14014,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14104,8 +14068,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14158,8 +14122,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14212,8 +14176,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14266,8 +14230,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14320,8 +14284,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14374,8 +14338,8 @@
         {
           "areaName": "Cypress pine forests",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/cypress-pine-forests",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 31/3/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban.",
           "banScope": "ALL"
         }
       ],
@@ -14420,9 +14384,10 @@
           "forestNameHint": "Yetman State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Yetman State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "LOW",
@@ -14436,7 +14401,7 @@
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
@@ -15634,14 +15599,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Three Falls Road in Flat Rock State Forest is currently closed until further notice.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Three Falls Road is closed, restricting vehicle access; camping impact is not specified."
           }
         }
       ],
@@ -15653,8 +15618,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -16831,42 +16796,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "2311",
-          "title": "Wandera State Forest: Wandera Trig Road Closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2311",
-          "listedAt": "2025-01-15T13:05:00.000Z",
-          "listedAtText": "2025-01-15T13:05:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Wandera State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "ROAD_ACCESS"
-          ],
-          "detailText": null,
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
-        "ROAD_ACCESS": true,
+        "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -17388,8 +17329,10 @@
           "untilText": "further notice",
           "forestNameHint": "Clouds Creek State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Clouds Creek State Forest remains closed to the public over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -17404,7 +17347,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -17709,14 +17652,14 @@
           "forestNameHint": "Mount Pikapene State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Mount Pikapene State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -17728,8 +17671,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -18468,29 +18411,31 @@
           "forestNameHint": "Bellangry State Forest",
           "status": "PARTIAL",
           "tags": [
-            "CAMPING"
+            "CAMPING",
+            "ROAD_ACCESS",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Number 1 Tower Picnic Area has been closed due to rehabilitation works taking place.\nThere is no access to Number 1 Tower as this work was scheduled, but has had to take place earlier than expected due to the grassed areas being extensively damaged over the Easter Weekend.\nVisitors are asked to adhere to signage, barricades and any direction given from any Forestry Corporation Staff and to avoid the area at all times.\nContact: Statewide Information Centre 1300 655 687",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "The Number 1 Tower Picnic Area is closed with no access allowed due to rehabilitation works."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": true,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -18653,8 +18598,10 @@
           "untilText": "further notice",
           "forestNameHint": "Boonanghi State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that Boonanghi State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -18669,7 +18616,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -19593,8 +19540,10 @@
           "untilText": "further notice",
           "forestNameHint": "Carrai State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that timber harvesting is taking place in parts of Carrai State Forest from 7:00 am Monday 13 October 2025.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).\nPlease note that Carrai State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -19609,7 +19558,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -19778,14 +19727,14 @@
           "forestNameHint": "Cherry Tree State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Cherry Tree State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states partial closure with restricted entry to closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -19797,8 +19746,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19854,14 +19803,14 @@
           "forestNameHint": "Cherry Tree West State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Cherry Tree West State Forest will be closed from 9:00 am Monday 10th November 2025 to 6:00 pm Tuesday 30th June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -19873,8 +19822,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19930,24 +19879,26 @@
           "forestNameHint": "Chichester State Forest",
           "status": "PARTIAL",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "CAMPING",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Parts of Chichester State Forest are inaccessible and closed\nfor all visitors until further notice due to damage and various hazards\nincluding landslips, following extreme weather events.\nRoad closures and vehicle load limits at Allyn River visitor sites:\nMount\nAllyn Forest Road – Closed (at Shellbrook Road) – No\naccess to Mount Allyn Lookout\nAllyn\nRiver Forest Road – Load Limits – several bridges on\nAllyn River Forest Road have load and speed limit restrictions. A bridge\nnorth of Ladies Well has a max load limit of 5 Tonnes. Please\nfollow any signage and directions in place when travelling this area.\nPlease note: All camping and picnic/day-use sites are\nopen unless mentioned above.\nForestry Corporation staff are continuing to undertake work\nto make areas safe for visitation and thank everyone for their patience.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
+            "source": "LLM",
+            "confidence": "HIGH",
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Some roads are closed and load limits apply, but camping sites remain open."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": true,
-        "CAMPING": false,
+        "CAMPING": true,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -20064,14 +20015,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Waitui Road is closed as a result of landslips. Waitui Falls is no longer accessible via Waitui Road.\nPlease follow all road closure signs and do not attempt to access 4WD trails and fire trails to detour around as these are also not trafficable.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
           }
         }
       ],
@@ -20083,8 +20034,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -20302,29 +20253,31 @@
           "forestNameHint": "Coopernook State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "ROAD_ACCESS",
+            "CAMPING"
           ],
-          "detailText": null,
+          "detailText": "Timber harvesting will commence in Coopernook State Forest from 3 February until further notice.\nParts of this operation will take place in close proximity to Coopernook HQ Camping Ground. However, access to the popular camping area will remain open.\nThere will be an increase in traffic due to harvesting activities, with haulage trucks using visitor access routes, including Juhles Mountain Road, Langley Vale Way, Bangalow Road, and particularly Forest Road, which runs parallel to the camping area.\nView a map of the affected roads PDF, 370.04 KB\nVisitors are asked to:\nbe vigilant with children and animals\nfollow all signage, barricades and directions from Forestry Corporation staff\navoid the harvesting operation area at all times.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
+            "source": "LLM",
+            "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Advisory travel/crowding language detected."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow signage."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
+        "ROAD_ACCESS": true,
+        "CAMPING": true,
         "EVENT": false,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -20488,14 +20441,14 @@
           "forestNameHint": "Dalmorton State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20507,8 +20460,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21050,14 +21003,14 @@
           "forestNameHint": "Enfield State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Enfield State Forest will be closed from 7:00 am Monday 22 December 2025 to 7:00 am Monday 29 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -21068,7 +21021,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -21126,14 +21079,14 @@
           "forestNameHint": "Ewingar State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Ewingar State Forest will be closed from 9:00 am Tuesday 25 November 2025 to Tuesday 6:00 pm 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -21145,8 +21098,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21313,14 +21266,14 @@
             "ROAD_ACCESS",
             "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "State forest users and motorists are advised to avoid Baxter's Ridge Road in Giro State Forest, near Nowendoc, following a landslip.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises avoiding Baxter's Ridge Road due to a landslip, indicating advisory impact on vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -21332,8 +21285,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -21497,14 +21450,14 @@
           "forestNameHint": "Grange State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Wednesday 18 February 2026 to 6:00 pm Tuesday 30 June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed with no specific details on camping or vehicle access impacts."
           }
         }
       ],
@@ -21516,8 +21469,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -22007,14 +21960,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Blackbutt Road in Kerewong State Forest is closed at the 22km marker.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
           }
         },
         {
@@ -22028,29 +21981,30 @@
           "forestNameHint": "Kerewong State Forest",
           "status": "PARTIAL",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "CAMPING"
           ],
-          "detailText": null,
+          "detailText": "Harvesting will commence in Kerewong State Forest northwest of Swans Crossing Camping area from 17 March until further notice. This may impact tourists and members of the public.\nThe Swans Crossing Camping area will remain open, as will Upsalls Creek Road access, however the alternate route of Kerewong Road heading south from Comboyne Tower will be closed for the duration of this harvesting operation.\nPlease observe all signs and any direction given by Forestry staff. These measures are for the safety of road users, contractors, pedestrians and forest users.\nThank you for your patience.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": true,
-        "CAMPING": false,
+        "CAMPING": true,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -22213,8 +22167,10 @@
           "untilText": "further notice",
           "forestNameHint": "Kippara State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that Kippara State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -22229,7 +22185,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -22290,16 +22246,17 @@
           "forestNameHint": "Kiwarrak State Forest",
           "status": "PARTIAL",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Break Neck Road, Deans Creek Road and Peters Road in Kiwarrak State Forest are temporarily closed due to severe weather damage.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Road closures indicate vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -22313,14 +22270,14 @@
           "forestNameHint": "Kiwarrak State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Kiwarrakk State Forest will be closed from 7:00 am 20 November 2025 to 7:00 am Thursday 30 April 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -22328,12 +22285,12 @@
         "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -22391,14 +22348,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Knodingbul Road in Knorrit State Forest is closed at the Mount George end.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but camping impact is not specified."
           }
         }
       ],
@@ -22844,8 +22801,11 @@
           "untilText": "further notice",
           "forestNameHint": "Masseys Creek State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "ROAD_ACCESS",
+            "OPERATIONS"
+          ],
+          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of several State forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest.\nForestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitors. Forests will progressively reopen once they are made safe and accessible.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -22868,14 +22828,14 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Boonabilla Road (particularly the section within the State Forest and north of the bridge over Paterson River) and the entire Basin Road in Masseys Creek State Forest are closed to all vehicle traffic due to unsafe bridges.\nThe roads will remain closed until further notice.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -22883,7 +22843,7 @@
         "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -23268,14 +23228,14 @@
           "forestNameHint": "Mount Belmore State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23287,8 +23247,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -23344,16 +23304,17 @@
           "forestNameHint": "Mount Boss State Forest",
           "status": "PARTIAL",
           "tags": [
-            "CAMPING"
+            "CAMPING",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Fire Tower No.1 Picnic Area in Mount Boss State Forest is closed until further notice due to severe weather damage.\nPlease note the marked area is indicative only. Please follow local signage and instruction from forestry staff.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Only the Fire Tower No.1 Picnic Area is closed; no specific information on camping or vehicle access impacts."
           }
         }
       ],
@@ -23361,12 +23322,12 @@
         "ROAD_ACCESS": false,
         "CAMPING": true,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -23745,8 +23706,11 @@
           "untilText": "further notice",
           "forestNameHint": "Nerong State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "ROAD_ACCESS",
+            "OPERATIONS"
+          ],
+          "detailText": "Recent flooding and sever weather impacts have resulted in\ntemporary closures of State Forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest.\nForestry Corporation staff are continuing to undertake work\nand assessments to clear roads and make areas safe for visitation. Forests will\nprogressively reopen once they are made safe and accessible.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -23758,10 +23722,10 @@
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -23876,14 +23840,14 @@
           "forestNameHint": "Newfoundland State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23895,8 +23859,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24654,14 +24618,14 @@
           "forestNameHint": "Pine Creek State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that Pine Creek State Forest will be partly closed between 9:00 am Monday 3rd November 2025 and 6:00 pm Tuesday 30th June 2026.\nDownload the detailed closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200).",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states a partial closure with prohibited entry to closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -24673,8 +24637,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24783,28 +24747,31 @@
           "untilText": "further notice",
           "forestNameHint": "Putty State Forest",
           "status": "PARTIAL",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "ROAD_ACCESS",
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that areas pf Putty State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.\nPutty State Forest consists of two areas. One is managed by Forestry Corporation, the other, a Flora Reserve, managed by the National Parks and Wildlife Service.\nThis advisory refers only to the area managed by Forestry Corporation - a defined area generally the eastern part of Putty State Forest.\nCommission Road and a section of Main Hunter Trail are currently opened. All other roads, tracks and fire trails including their parts within the defined area remain closed.\nFor information on roads outside the definite area, within Flora Reserve, please contact the National Parks and Wildlife Service.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Most roads, tracks, and fire trails in the Forestry Corporation area are closed, limiting vehicle access and camping."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -25778,7 +25745,7 @@
           "forestNameHint": "Tuckers Nob State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Tuckers Nob State Forest will be closed from 9:00 am Tuesday 3 March 2026 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -26016,7 +25983,7 @@
           "forestNameHint": "Viewmont State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Viewmont State Forest will be closed from 9:00 am Tuesday 3 March 2026 to 6:00 pm Tuesday 30th June 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -26037,7 +26004,7 @@
           "forestNameHint": "Viewmont State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Viewmont State Forest will be closed from 9:00 am Tuesday 3 March 2026 to 6:00 pm Tuesday 30th June 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -26599,7 +26566,7 @@
           "forestNameHint": "Yarratt State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Yarratt State Forest will be closed from 7:00 am Monday 23 February 2026 to 7:00 pm Sunday 20 August 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -26674,8 +26641,10 @@
           "untilText": "further notice",
           "forestNameHint": "Yessabah State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Yessabah State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -26690,7 +26659,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -26865,8 +26834,10 @@
           "untilText": "further notice",
           "forestNameHint": "Copeton State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that Copeton State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -26881,7 +26852,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -27064,29 +27035,30 @@
           "forestNameHint": "Mount Mitchell State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Mount Mitchell State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -27148,15 +27120,17 @@
           "untilText": "further notice",
           "forestNameHint": "Nowendoc State Forest",
           "status": "PARTIAL",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that the native forests areas in Nowendoc State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The pine forests areas are open.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
           }
         }
       ],
@@ -27164,10 +27138,10 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -27671,29 +27645,30 @@
           "forestNameHint": "Brother State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Brother State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -27749,29 +27724,30 @@
           "forestNameHint": "Butterleaf State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Butterleaf State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -28528,8 +28504,10 @@
           "untilText": "further notice",
           "forestNameHint": "Lower Creek State Forest",
           "status": "CLOSED",
-          "tags": [],
-          "detailText": null,
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that Lower Creek State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "HIGH",
@@ -28544,7 +28522,7 @@
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "CLOSED",
@@ -28713,29 +28691,30 @@
           "forestNameHint": "Oakwood State Forest",
           "status": "NOTICE",
           "tags": [
-            "OPERATIONS"
+            "OPERATIONS",
+            "EVENT"
           ],
-          "detailText": null,
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Oakwood State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -28899,7 +28878,7 @@
           "forestNameHint": "Styx River State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": null,
+          "detailText": "Please note that parts of Styx River State Forest will be closed between Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -29571,7 +29550,7 @@
           "tags": [
             "ROAD_ACCESS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Palerang road in Tallaganda State Forest is closed between Lowden Road and Mulloon Road, due to dangerous trees across the road.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -29592,9 +29571,10 @@
           "forestNameHint": "Tallanganda State Forest",
           "status": "PARTIAL",
           "tags": [
-            "CAMPING"
+            "CAMPING",
+            "OPERATIONS"
           ],
-          "detailText": null,
+          "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
           "structuredImpact": {
             "source": "RULES",
             "confidence": "MEDIUM",
@@ -29609,7 +29589,7 @@
         "ROAD_ACCESS": true,
         "CAMPING": true,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -29673,8 +29653,8 @@
     }
   ],
   "warnings": [
-    "82 closure detail page(s) were not found in the raw archive.",
-    "AI structured 5 closure notice(s) to extract camping and 2WD/4WD access impacts.",
+    "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
+    "AI structuring skipped 19 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
