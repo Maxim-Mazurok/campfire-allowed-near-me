@@ -49,10 +49,7 @@ export const InfoTooltip = ({
       if (triggerReference.current?.contains(target)) {
         return;
       }
-      // Click inside any Mantine Popover dropdown (ours or another's) — ignore
-      if (target.closest?.(".mantine-Popover-dropdown")) {
-        return;
-      }
+      // Any other click (including inside the popover content) dismisses
       setPinned(false);
       setHovered(false);
     };
