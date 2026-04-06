@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-04-05T18:31:24.633Z",
+  "fetchedAt": "2026-04-06T18:45:07.209Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -127,11 +127,8 @@
   ],
   "matchDiagnostics": {
     "unmatchedFacilitiesForests": [
-      "Coolangubra State Forest",
       "Cumberland State Forest",
-      "Micalong State Forest",
-      "Tallaganda State Forest",
-      "Yambulla State Forest"
+      "Micalong State Forest"
     ],
     "fuzzyMatches": [
       {
@@ -802,7 +799,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
+            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
           }
         }
       ],
@@ -1636,7 +1633,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -1709,12 +1706,12 @@
           ],
           "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -1726,8 +1723,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -2011,7 +2008,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping at Blowering Dam is open but some plantation sections and minor roads are closed or inaccessible."
           }
         }
       ],
@@ -2157,7 +2154,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access; camping impact is not mentioned."
+            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, causing partial road closure and detours."
           }
         }
       ],
@@ -2908,42 +2905,18 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5117",
-          "title": "Belanglo State Forest: Large community event",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5117",
-          "listedAt": "2026-03-26T13:01:00.000Z",
-          "listedAtText": "2026-03-26T13:01:00.0000000Z",
-          "untilAt": "2026-04-06T13:59:00.000Z",
-          "untilText": "2026-04-06T13:59:00.0000000Z",
-          "forestNameHint": "Belanglo State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "EVENT"
-          ],
-          "detailText": "A large community event will be held in Belanglo State Forest from 27 March to 6 April 2026.\nThe forest will remain open; however, it is expected to be extremely busy. Visitors are encouraged to plan ahead and consider alternative locations during this period.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Forest remains open but will be extremely busy due to a large event."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
+        "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -3245,10 +3218,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states part of the forest is closed with no specific details on camping or vehicle access impacts."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Part of the forest is closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -3259,9 +3232,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -4216,7 +4189,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
+            "rationale": "The notice advises caution around baited areas but does not indicate closures or restrictions."
           }
         }
       ],
@@ -5267,7 +5240,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
+            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -11565,7 +11538,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and attention to signposted baited areas but does not indicate closures."
+            "rationale": "Notice advises caution due to baiting but does not mention closures or restrictions."
           }
         }
       ],
@@ -14465,6 +14438,60 @@
       }
     },
     {
+      "id": "bombala-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Bombala State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.963923,
+      "longitude": 149.389965,
+      "geocodeName": "BOMBALA State Forest (SF130)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "bondi-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -14500,6 +14527,114 @@
         "2wd_access": true,
         "picnic_area": true,
         "toilets": true,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": true
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "cathcart-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Cathcart State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.857782,
+      "longitude": 149.478731,
+      "geocodeName": "CATHCART State Forest (SF607)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "coolangubra-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Coolangubra State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/coolangubra-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.949891,
+      "longitude": 149.372212,
+      "geocodeName": "COOLANGUBRA State Forest (SF547)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": false,
+        "walking_track": false,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": false,
+        "caravan_site": false,
+        "2wd_access": true,
+        "picnic_area": false,
+        "toilets": false,
         "wheelchair_access": false,
         "lookouts": false,
         "hunting": true
@@ -14592,6 +14727,60 @@
       "latitude": -36.710719,
       "longitude": 149.354239,
       "geocodeName": "GLEN ALLEN State Forest (SF1031)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "glenbog-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Glenbog State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -36.611723,
+      "longitude": 149.36582,
+      "geocodeName": "GLENBOG State Forest (SF149)",
       "geocodeDiagnostics": null,
       "facilities": {
         "camping_and_picnics": null,
@@ -14789,6 +14978,108 @@
       }
     },
     {
+      "id": "tallaganda-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Tallaganda State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/tallaganda-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -35.684654,
+      "longitude": 149.557537,
+      "geocodeName": "TALLAGANDA State Forest (SF577)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": true,
+        "walking_track": true,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": true,
+        "caravan_site": true,
+        "2wd_access": true,
+        "picnic_area": true,
+        "toilets": true,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": true
+      },
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "2410",
+          "title": "Tallaganda State Forest: Palerang road is closed",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2410",
+          "listedAt": "2024-06-04T14:01:00.000Z",
+          "listedAtText": "2024-06-04T14:01:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Tallaganda State Forest",
+          "status": "PARTIAL",
+          "tags": [
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Please note that Palerang road in Tallaganda State Forest is closed between Lowden Road and Mulloon Road, due to dangerous trees across the road.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Road/access closure language detected."
+          }
+        },
+        {
+          "id": "1692",
+          "title": "Tallanganda State Forest: Lowden Forest Rest Area remains closed",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1692",
+          "listedAt": "2020-01-14T06:30:00.000Z",
+          "listedAtText": "2020-01-14T06:30:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Tallanganda State Forest",
+          "status": "PARTIAL",
+          "tags": [
+            "CAMPING",
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Partial closure status implies at least some access restrictions."
+          }
+        }
+      ],
+      "closureTags": {
+        "ROAD_ACCESS": true,
+        "CAMPING": true,
+        "EVENT": false,
+        "OPERATIONS": true
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
+      }
+    },
+    {
       "id": "tantawangalo-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -14808,6 +15099,60 @@
       "latitude": -36.808353,
       "longitude": 149.450325,
       "geocodeName": "TANTAWANGALO State Forest (SF134)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
+      "id": "towamba-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests around Bombala",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/pine-forests-around-bombala",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Towamba State Forest",
+      "forestUrl": null,
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -37.101112,
+      "longitude": 149.572558,
+      "geocodeName": "TOWAMBA State Forest (SF908)",
       "geocodeDiagnostics": null,
       "facilities": {
         "camping_and_picnics": null,
@@ -16919,6 +17264,60 @@
       }
     },
     {
+      "id": "yambulla-state-forest",
+      "source": "Forestry Corporation NSW",
+      "areas": [
+        {
+          "areaName": "State forests of the South Coast",
+          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-south-coast",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
+          "banScope": "ALL"
+        }
+      ],
+      "forestName": "Yambulla State Forest",
+      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/yambulla-state-forest",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
+      "totalFireBanDiagnostics": null,
+      "latitude": -37.115902,
+      "longitude": 149.508102,
+      "geocodeName": "YAMBULLA State Forest (SF126)",
+      "geocodeDiagnostics": null,
+      "facilities": {
+        "camping_and_picnics": true,
+        "walking_track": false,
+        "4wd_tracks": true,
+        "designated_mountain_bike_track": false,
+        "designated_horse_riding_track": false,
+        "canoeingkayaking": false,
+        "waterways": false,
+        "fishing": false,
+        "cabins_or_huts_available": false,
+        "fireplace": true,
+        "caravan_site": true,
+        "2wd_access": true,
+        "picnic_area": true,
+        "toilets": true,
+        "wheelchair_access": false,
+        "lookouts": false,
+        "hunting": true
+      },
+      "closureStatus": "NONE",
+      "closureNotices": [],
+      "closureTags": {
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
+        "EVENT": false,
+        "OPERATIONS": false
+      },
+      "closureImpactSummary": {
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
+      }
+    },
+    {
       "id": "yerriyong-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -18422,7 +18821,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The Number 1 Tower Picnic Area is closed with no access allowed due to rehabilitation works."
+            "rationale": "Number 1 Tower Picnic Area is closed with no access allowed due to rehabilitation works."
           }
         }
       ],
@@ -19807,10 +20206,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -19821,9 +20220,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -19890,7 +20289,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping sites remain open; some roads are closed or have load limits affecting vehicle access."
+            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20022,7 +20421,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
+            "rationale": "Waitui Road and 4WD/fire trails are closed due to landslips, making access impossible; camping impact is not mentioned."
           }
         }
       ],
@@ -20264,7 +20663,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow all safety instructions."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -20444,11 +20843,11 @@
           "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20459,9 +20858,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -21010,7 +21409,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -21457,7 +21856,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed with no specific details on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -21988,10 +22387,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "NONE",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed, Upsalls Creek Road open."
+            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
           }
         }
       ],
@@ -22002,7 +22401,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22835,7 +23234,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The notice states roads are closed to all vehicle traffic due to unsafe bridges, but does not mention camping."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, indicating vehicle access is closed; camping impact is not mentioned."
           }
         }
       ],
@@ -23231,11 +23630,11 @@
           "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so some restrictions apply but full closure is not stated."
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23246,9 +23645,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24755,10 +25154,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
+            "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Most roads and tracks in the Forestry Corporation area are closed, limiting vehicle access and camping."
+            "rationale": "Most roads, tracks, and fire trails in the Forestry Corporation area are closed except Commission Road and part of Main Hunter Trail."
           }
         }
       ],
@@ -24769,7 +25168,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -27043,8 +27442,8 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
             "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
@@ -27057,8 +27456,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -27130,7 +27529,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, pine forest areas remain open, indicating partial restrictions."
+            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
           }
         }
       ],
@@ -27655,7 +28054,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
           }
         }
       ],
@@ -27734,7 +28133,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not indicate closures."
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -28701,7 +29100,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
+            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not mention closures."
           }
         }
       ],
@@ -29334,60 +29733,6 @@
       }
     },
     {
-      "id": "coolangubra-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)",
-          "banScope": "ALL"
-        }
-      ],
-      "forestName": "Coolangubra State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/coolangubra-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -36.949891,
-      "longitude": 149.372212,
-      "geocodeName": "COOLANGUBRA State Forest (SF547)",
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": false,
-        "walking_track": false,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": false,
-        "caravan_site": false,
-        "2wd_access": true,
-        "picnic_area": false,
-        "toilets": false,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": true
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
-    },
-    {
       "id": "cumberland-state-forest",
       "source": "Forestry Corporation NSW",
       "areas": [
@@ -29494,170 +29839,14 @@
         "access2wdImpact": "NONE",
         "access4wdImpact": "NONE"
       }
-    },
-    {
-      "id": "tallaganda-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)",
-          "banScope": "ALL"
-        }
-      ],
-      "forestName": "Tallaganda State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/tallaganda-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -35.684654,
-      "longitude": 149.557537,
-      "geocodeName": "TALLAGANDA State Forest (SF577)",
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": true,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": true,
-        "caravan_site": true,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": true
-      },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "2410",
-          "title": "Tallaganda State Forest: Palerang road is closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=2410",
-          "listedAt": "2024-06-04T14:01:00.000Z",
-          "listedAtText": "2024-06-04T14:01:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Tallaganda State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "ROAD_ACCESS"
-          ],
-          "detailText": "Please note that Palerang road in Tallaganda State Forest is closed between Lowden Road and Mulloon Road, due to dangerous trees across the road.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
-          }
-        },
-        {
-          "id": "1692",
-          "title": "Tallanganda State Forest: Lowden Forest Rest Area remains closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1692",
-          "listedAt": "2020-01-14T06:30:00.000Z",
-          "listedAtText": "2020-01-14T06:30:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Tallanganda State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "CAMPING",
-            "OPERATIONS"
-          ],
-          "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
-          }
-        }
-      ],
-      "closureTags": {
-        "ROAD_ACCESS": true,
-        "CAMPING": true,
-        "EVENT": false,
-        "OPERATIONS": true
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
-      }
-    },
-    {
-      "id": "yambulla-state-forest",
-      "source": "Forestry Corporation NSW",
-      "areas": [
-        {
-          "areaName": "Not listed on Solid Fuel Fire Ban pages",
-          "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Unknown (not listed on Solid Fuel Fire Ban pages)",
-          "banScope": "ALL"
-        }
-      ],
-      "forestName": "Yambulla State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/yambulla-state-forest",
-      "totalFireBanStatus": "NOT_BANNED",
-      "totalFireBanStatusText": "No Total Fire Ban",
-      "totalFireBanDiagnostics": null,
-      "latitude": -37.115902,
-      "longitude": 149.508102,
-      "geocodeName": "YAMBULLA State Forest (SF126)",
-      "geocodeDiagnostics": null,
-      "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": false,
-        "4wd_tracks": true,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": true,
-        "caravan_site": true,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": true
-      },
-      "closureStatus": "NONE",
-      "closureNotices": [],
-      "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
-      },
-      "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
-      }
     }
   ],
   "warnings": [
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 19 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 18 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
-    "Facilities page includes 5 forest(s) not present on the Solid Fuel Fire Ban pages: Coolangubra State Forest, Cumberland State Forest, Micalong State Forest, Tallaganda State Forest, Yambulla State Forest.",
+    "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
     "Could not match 2 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed.",
     "Applied fuzzy closure notice matching for 1 notice(s) with minor naming differences."
