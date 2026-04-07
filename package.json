@@ -17,7 +17,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "cache:reset": "tsx pipeline/scripts/reset-caches.ts",
-    "generate:snapshot": "tsx pipeline/scripts/generate-snapshot.ts"
+    "generate:snapshot": "tsx pipeline/scripts/generate-snapshot.ts",
+    "generate:snapshot:multi-state": "npm run generate:snapshot && tsx pipeline/state-providers/assemble-multi-state.ts"
   },
   "keywords": [],
   "author": "",

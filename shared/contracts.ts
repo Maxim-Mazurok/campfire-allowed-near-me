@@ -1,5 +1,8 @@
 export type BanStatus = "BANNED" | "NOT_BANNED" | "UNKNOWN";
 
+/** ISO 3166-2:AU state/territory codes. */
+export type AustralianState = "NSW" | "VIC" | "QLD" | "SA" | "WA" | "TAS" | "NT" | "ACT";
+
 /**
  * Where the solid-fuel fire ban applies.
  * - ALL: the ban (or absence thereof) applies everywhere – no camp-specific distinction.
@@ -123,6 +126,8 @@ export interface ForestAreaReference {
 
 export interface ForestPoint {
   id: string;
+  /** ISO 3166-2:AU state/territory code. Defaults to "NSW" for backward compatibility. */
+  state?: AustralianState;
   source: string;
   areas: ForestAreaReference[];
   forestName: string;
