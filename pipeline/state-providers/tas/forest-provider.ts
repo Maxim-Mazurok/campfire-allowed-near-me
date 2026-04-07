@@ -302,8 +302,19 @@ export class TasmaniaStateProvider implements IStateProvider {
           debug: [],
         },
         facilities: {
-          campfireAllowed: totalFireBanStatus === "NOT_BANNED",
-          campfireRules: null,
+          campfireAllowed:
+            totalFireBanStatus === "NOT_BANNED"
+              ? true
+              : totalFireBanStatus === "BANNED"
+                ? false
+                : null,
+          toilets: null,
+          water: null,
+          tables: null,
+          bbqGas: null,
+          bbqWood: null,
+          bbqPit: null,
+          bbqElec: null,
         },
         closureStatus: "NONE",
         closureNotices: [],

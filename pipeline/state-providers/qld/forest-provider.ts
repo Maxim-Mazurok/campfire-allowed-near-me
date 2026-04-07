@@ -142,9 +142,10 @@ export class QueenslandStateProvider implements IStateProvider {
 
     // 1. Fetch BOM fire districts for QLD
     const bomService = new BomFireDistrictService({ fetchImpl: this.fetchImpl });
+    let bomSnapshot: Awaited<ReturnType<BomFireDistrictService["fetchSnapshot"]>> | null = null;
     let qldFireSnapshot: ReturnType<typeof buildQldFireSnapshot> | null = null;
     try {
-      const bomSnapshot = await bomService.fetchSnapshot();
+      bomSnapshot = await bomService.fetchSnapshot();
       warnings.push(...bomSnapshot.warnings);
       qldFireSnapshot = buildQldFireSnapshot(bomSnapshot);
       warnings.push(...qldFireSnapshot.warnings);
@@ -186,21 +187,13 @@ export class QueenslandStateProvider implements IStateProvider {
     });
 
     // 4. Do proper point-in-polygon BOM district lookup for each campground
-    // (Re-fetch snapshot for geometry access)
-    let bomSnapshotForLookup;
-    try {
-      bomSnapshotForLookup = await bomService.fetchSnapshot();
-    } catch {
-      bomSnapshotForLookup = null;
-    }
-
-    if (bomSnapshotForLookup && qldFireSnapshot) {
+    if (bomSnapshot && qldFireSnapshot) {
       for (let i = 0; i < points.length; i++) {
         const campground = campgrounds[i]!;
         if (campground.latitude === null || campground.longitude === null) continue;
 
         const bomDistrict = bomService.lookupDistrict(
-          bomSnapshotForLookup,
+          bomSnapshot,
           campground.latitude,
           campground.longitude,
           "QLD"
