@@ -16,7 +16,7 @@ Three independent scrape sub-stages that fetch raw pages and save them as archiv
 |---|---|---|---|---|
 | Forestry pages | `pipeline/scripts/scrape-forestry.ts` | `data/pipeline/raw-forestry-pages.json` | Yes (Cloudflare) | Yes (CI only) |
 | Closure notices | `pipeline/scripts/scrape-closures.ts` | `data/pipeline/raw-closure-pages.json` | No | Yes (CI only) |
-| Total Fire Ban | `pipeline/scripts/scrape-total-fire-ban.ts` | `data/pipeline/raw-total-fire-ban.json` | No | No |
+| Total Fire Ban | `pipeline/scripts/scrape-total-fire-ban.ts` | `data/pipeline/raw-total-fire-ban.json` | No | Yes (CI only, when proxy is configured) |
 
 Scrape stages save **raw HTML/JSON** (not parsed data). All HTTP requests happen here; no subsequent stage makes network calls to the scraped sources.
 
