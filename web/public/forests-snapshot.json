@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-04-07T18:49:09.688Z",
+  "fetchedAt": "2026-05-11T03:13:32.771Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -141,26 +141,24 @@
   "closureDiagnostics": {
     "unmatchedNotices": [
       {
-        "id": "1658",
-        "title": "Broadwater State Forest: Closed",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1658",
-        "listedAt": "2020-12-14T03:57:00.000Z",
-        "listedAtText": "2020-12-14T03:57:00.0000000Z",
-        "untilAt": null,
-        "untilText": "further notice",
-        "forestNameHint": "Broadwater State Forest",
-        "status": "CLOSED",
-        "tags": [
-          "OPERATIONS"
-        ],
-        "detailText": "Please note that Broadwater State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.",
+        "id": "5844",
+        "title": "Ewingar and Billimbra State Forests: Partial closure",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5844",
+        "listedAt": "2026-04-21T14:01:00.000Z",
+        "listedAtText": "2026-04-21T14:01:00.0000000Z",
+        "untilAt": "2027-01-01T12:59:00.000Z",
+        "untilText": "2027-01-01T12:59:00.0000000Z",
+        "forestNameHint": "Ewingar and Billimbra State Forest",
+        "status": "PARTIAL",
+        "tags": [],
+        "detailText": "Please note that parts of Ewingar and Billimbra State Forests will be closed from 9:00 am Wednesday 22 April 2026 to 6:00 pm Friday 1 January 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
         "structuredImpact": {
-          "source": "RULES",
+          "source": "LLM",
           "confidence": "HIGH",
-          "campingImpact": "CLOSED",
-          "access2wdImpact": "CLOSED",
-          "access4wdImpact": "CLOSED",
-          "rationale": "Notice is marked closed with no partial/open exception wording."
+          "campingImpact": "RESTRICTED",
+          "access2wdImpact": "RESTRICTED",
+          "access4wdImpact": "RESTRICTED",
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
         }
       },
       {
@@ -185,6 +183,30 @@
           "access4wdImpact": "CLOSED",
           "rationale": "Notice is marked closed with no partial/open exception wording."
         }
+      },
+      {
+        "id": "5743",
+        "title": "Turon State Forest: 1080 baiting for pest animal control",
+        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5743",
+        "listedAt": "2026-05-03T14:01:00.000Z",
+        "listedAtText": "2026-05-03T14:01:00.0000000Z",
+        "untilAt": "2026-06-15T13:59:00.000Z",
+        "untilText": "2026-06-15T13:59:00.0000000Z",
+        "forestNameHint": "Turon State Forest",
+        "status": "NOTICE",
+        "tags": [
+          "OPERATIONS",
+          "EVENT"
+        ],
+        "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Turon State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+        "structuredImpact": {
+          "source": "RULES",
+          "confidence": "LOW",
+          "campingImpact": "NONE",
+          "access2wdImpact": "NONE",
+          "access4wdImpact": "NONE",
+          "rationale": "No specific impact language detected."
+        }
       }
     ],
     "fuzzyMatches": [
@@ -204,8 +226,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -258,8 +280,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -312,8 +334,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -366,8 +388,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -420,8 +442,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -453,18 +475,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5611",
+          "title": "Clandulla State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5611",
+          "listedAt": "2026-04-26T14:01:00.000Z",
+          "listedAtText": "2026-04-26T14:01:00.0000000Z",
+          "untilAt": "2026-06-06T13:59:00.000Z",
+          "untilText": "2026-06-06T13:59:00.0000000Z",
+          "forestNameHint": "Clandulla State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Clandulla, Coricudgy, Nullo Mountain and Dungeree State Forests from 27 April – 6 June 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution and restraint around baited areas but does not close or restrict access or camping."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -474,8 +521,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -507,18 +554,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5644",
+          "title": "Coricudgy State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5644",
+          "listedAt": "2026-04-26T14:01:00.000Z",
+          "listedAtText": "2026-04-26T14:01:00.0000000Z",
+          "untilAt": "2026-06-06T13:59:00.000Z",
+          "untilText": "2026-06-06T13:59:00.0000000Z",
+          "forestNameHint": "Coricudgy State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Clandulla, Coricudgy, Nullo Mountain and Dungeree State Forests from 27 April – 6 June 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution around baited areas but does not indicate closures or restrictions."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -528,8 +600,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -582,8 +654,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -615,18 +687,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5646",
+          "title": "Dungeree State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5646",
+          "listedAt": "2026-04-26T14:01:00.000Z",
+          "listedAtText": "2026-04-26T14:01:00.0000000Z",
+          "untilAt": "2026-06-06T13:59:00.000Z",
+          "untilText": "2026-06-06T13:59:00.0000000Z",
+          "forestNameHint": "Dungeree State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Clandulla, Coricudgy, Nullo Mountain and Dungeree State Forests from 27 April – 6 June 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution and attention to signs due to baiting but does not close or restrict access or camping."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -636,8 +733,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -690,8 +787,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -744,8 +841,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -777,34 +874,10 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "4986",
-          "title": "Glenwood State Forest: Closure of Mountain Bike Trails due to harvesting",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4986",
-          "listedAt": "2026-01-27T13:01:00.000Z",
-          "listedAtText": "2026-01-27T13:01:00.0000000Z",
-          "untilAt": "2026-04-30T13:59:00.000Z",
-          "untilText": "2026-04-30T13:59:00.0000000Z",
-          "forestNameHint": "Glenwood State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "ROAD_ACCESS"
-          ],
-          "detailText": "Please note that sections of Glenwood State Forest mountain bike trails and access points are currently closed until further notice due to harvesting operations.\nThank you to all our visitors and riders for your patience.\nPlease download the map below for more details.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "Notice specifies closure of mountain bike trails and access points but does not mention camping or vehicle access impacts."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
-        "ROAD_ACCESS": true,
+        "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": false
@@ -822,8 +895,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -876,8 +949,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -909,18 +982,43 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5710",
+          "title": "Hampton State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5710",
+          "listedAt": "2026-05-03T14:01:00.000Z",
+          "listedAtText": "2026-05-03T14:01:00.0000000Z",
+          "untilAt": "2026-06-15T06:09:00.000Z",
+          "untilText": "2026-06-15T06:09:00.0000000Z",
+          "forestNameHint": "Hampton State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Hampton State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution and restraint of dogs but does not indicate any closures or restrictions on camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -930,8 +1028,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -963,18 +1061,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5711",
+          "title": "Jenolan State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5711",
+          "listedAt": "2026-05-03T14:01:00.000Z",
+          "listedAtText": "2026-05-03T14:01:00.0000000Z",
+          "untilAt": "2026-06-15T13:59:00.000Z",
+          "untilText": "2026-06-15T13:59:00.0000000Z",
+          "forestNameHint": "Jenolan State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Jenolan State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution and restraint of dogs but does not indicate any closures or restrictions on camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -984,8 +1107,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1038,8 +1161,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1092,8 +1215,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1146,8 +1269,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1200,8 +1323,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1254,8 +1377,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1308,8 +1431,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1341,18 +1464,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5712",
+          "title": "Mullions Range State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5712",
+          "listedAt": "2026-05-03T14:01:00.000Z",
+          "listedAtText": "2026-05-03T14:01:00.0000000Z",
+          "untilAt": "2026-06-15T13:59:00.000Z",
+          "untilText": "2026-06-15T13:59:00.0000000Z",
+          "forestNameHint": "Mullions Range State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Mullions Range State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution and restrictions related to dogs but does not mention closures or restrictions on camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -1362,8 +1510,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1416,8 +1564,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1470,8 +1618,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1524,8 +1672,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1557,18 +1705,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5645",
+          "title": "Nullo Mountain State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5645",
+          "listedAt": "2026-04-26T14:01:00.000Z",
+          "listedAtText": "2026-04-26T14:01:00.0000000Z",
+          "untilAt": "2026-06-06T13:59:00.000Z",
+          "untilText": "2026-06-06T13:59:00.0000000Z",
+          "forestNameHint": "Nullo Mountain State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Clandulla, Coricudgy, Nullo Mountain and Dungeree State Forests from 27 April – 6 June 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution and following signs due to baiting but does not indicate closures or restrictions."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -1578,8 +1751,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1617,23 +1790,24 @@
           "id": "3367",
           "title": "Pennsylvania State Forest: Road closures (see notice for details)",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3367",
-          "listedAt": "2025-07-25T04:35:00.000Z",
-          "listedAtText": "2025-07-25T04:35:00.0000000Z",
+          "listedAt": "2026-05-07T14:01:00.000Z",
+          "listedAtText": "2026-05-07T14:01:00.0000000Z",
           "untilAt": null,
           "untilText": "further notice",
           "forestNameHint": "Pennsylvania State Forest",
           "status": "NOTICE",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "OPERATIONS"
           ],
-          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nTea Tree road into Roseberg State Forest is closed. It will remain closed till approximately the end of May 2026.\nAll other forest roads within Pennsylvania State Forest will remain open until future harvest operation start. Caution is advised as we still have active haulage in the area, running through to Roseburg State Forest along Colo and Carrollina Roads.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -1641,12 +1815,12 @@
         "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -1656,8 +1830,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1695,23 +1869,24 @@
           "id": "3368",
           "title": "Roseberg State Forest: Road closures (see notice for details)",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3368",
-          "listedAt": "2025-07-25T04:36:00.000Z",
-          "listedAtText": "2025-07-25T04:36:00.0000000Z",
+          "listedAt": "2026-05-07T14:01:00.000Z",
+          "listedAtText": "2026-05-07T14:01:00.0000000Z",
           "untilAt": null,
           "untilText": "further notice",
           "forestNameHint": "Roseberg State Forest",
           "status": "NOTICE",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "OPERATIONS"
           ],
-          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nColo road is closed where it enters Pennsylvania from Trunkey Ck side – at this point it becomes Carrollina road. The reason for closure is due to haulage operations.\nCarrollina road is closed to public access throughout Pennsylvania and Roseberg (so the entire east-west road) again due to haulage from operations within Pennsylvania and haulage from Roseberg which heads east to Colo road. This includes crossing Carrollina Rd to access areas to the south.\nRocky Bridge crossing is open; however the road is not open to the public.\nKentucky road from Neville is open, however Carrollina is not.\nTea Tree road into Roseberg is also closed. It will remain closed for the foreseeable future; however we hope to be able to push the road closure at the start of Pennsylvania (where it becomes Carrollina) further west in the near future.",
+          "detailText": "Please note the following updates to road closures and openings in Pennsylvania and Roseberg State Forests:\nTea Tree road into Roseberg State Forest is closed. It will remain closed till approximately the end of May 2026.\nAll other forest roads within Pennsylvania State Forest will remain open until future harvest operation start. Caution is advised as we still have active haulage in the area, running through to Roseburg State Forest along Colo and Carrollina Roads.",
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Multiple roads including Carrollina and Tea Tree roads are closed to public access due to haulage operations, indicating vehicle access is closed; camping impact is not specified."
+            "source": "RULES",
+            "confidence": "LOW",
+            "campingImpact": "NONE",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "No specific impact language detected."
           }
         }
       ],
@@ -1719,12 +1894,12 @@
         "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -1734,8 +1909,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1770,6 +1945,30 @@
       "closureStatus": "PARTIAL",
       "closureNotices": [
         {
+          "id": "5713",
+          "title": "Sunny Corner State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5713",
+          "listedAt": "2026-05-03T14:01:00.000Z",
+          "listedAtText": "2026-05-03T14:01:00.0000000Z",
+          "untilAt": "2026-06-15T13:59:00.000Z",
+          "untilText": "2026-06-15T13:59:00.0000000Z",
+          "forestNameHint": "Sunny Corner State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Sunny Corner State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "LOW",
+            "campingImpact": "NONE",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "No specific impact language detected."
+          }
+        },
+        {
           "id": "1654",
           "title": "Sunny Corner State Forest: Mary’s Park closed for restoration",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1654",
@@ -1796,7 +1995,7 @@
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
+        "EVENT": true,
         "OPERATIONS": true
       },
       "closureImpactSummary": {
@@ -1812,8 +2011,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -1845,13 +2044,38 @@
         "lookouts": true,
         "hunting": true
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5744",
+          "title": "Vittoria State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5744",
+          "listedAt": "2026-05-03T14:01:00.000Z",
+          "listedAtText": "2026-05-03T14:01:00.0000000Z",
+          "untilAt": "2026-06-15T13:59:00.000Z",
+          "untilText": "2026-06-15T13:59:00.0000000Z",
+          "forestNameHint": "Vittoria State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Vittoria State Forest from 4-8 May 2026.\nThere is a six-week timeframe during which the 1080 will be effective (4 May - 15 June). All entrances to these areas will be signposted.\nCaution should be exercised with domestic animals within the baited areas.\nWe strongly advise that if you intend to bring a companion dog, you:\npay attention to warning signs marking baited areas\nrestrain your dogs to ensure they do not enter the signposted areas, or\nmuzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "LOW",
+            "campingImpact": "NONE",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "No specific impact language detected."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -1866,8 +2090,8 @@
         {
           "areaName": "State forests of the Central West around Bathurst, Orange, Oberon, Rylstone, Kandos and Gulgong",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/state-forests-of-the-central-west",
-          "banStatus": "UNKNOWN",
-          "banStatusText": "Solid fuel fires allowed for Bathurst/Central Tablelands from Thursday 26 March 2026",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -2008,7 +2232,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping at Blowering Dam is open but some plantation sections are closed; main roads are open but minor roads are closed."
+            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -3201,30 +3425,8 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "5578",
-          "title": "Koondrook State Forest partly closed: Little Forest area (see detailed map in notice)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5578",
-          "listedAt": "2026-03-30T13:01:00.000Z",
-          "listedAtText": "2026-03-30T13:01:00.0000000Z",
-          "untilAt": "2026-04-09T13:59:00.000Z",
-          "untilText": "2026-04-09T13:59:00.0000000Z",
-          "forestNameHint": "Koondrook State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that part of Koondrook State Forest will be closed from 9:00 am Tuesday 31 March 2026 and 9:00 am Thursday 9 April 2026\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Part of the forest is closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -3232,9 +3434,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -3298,8 +3500,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3352,8 +3554,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3406,8 +3608,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3439,43 +3641,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5282",
-          "title": "Bibblewindi State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5282",
-          "listedAt": "2026-03-22T13:04:00.000Z",
-          "listedAtText": "2026-03-22T13:04:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Bibblewindi State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Bibblewindi State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -3485,8 +3662,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3539,8 +3716,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3593,8 +3770,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3647,8 +3824,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3701,8 +3878,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3755,8 +3932,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3809,8 +3986,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3863,8 +4040,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3917,8 +4094,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -3971,8 +4148,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4025,8 +4202,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4079,8 +4256,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4133,8 +4310,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4166,43 +4343,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5281",
-          "title": "Pilliga East State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5281",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Pilliga East State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Pilliga East State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -4212,8 +4364,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4266,8 +4418,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4320,8 +4472,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4374,8 +4526,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4428,8 +4580,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -4482,8 +4634,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "BANNED",
-          "banStatusText": "Solid fuel fires banned. Ban will be lifted from midnight on 30/4/26",
+          "banStatus": "NOT_BANNED",
+          "banStatusText": "No ban",
           "banScope": "ALL"
         }
       ],
@@ -5217,43 +5369,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5289",
-          "title": "Benbraggie State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5289",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Benbraggie State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Benbraggie State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution and following signs due to baiting but does not close or restrict access or camping."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -5458,43 +5585,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5290",
-          "title": "Bingara State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5290",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Bingara State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Bingara State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -7758,18 +7860,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "CLOSED",
+      "closureNotices": [
+        {
+          "id": "5811",
+          "title": "Daffeys Creek State Forest: Closed for pest control operations",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5811",
+          "listedAt": "2026-05-10T14:01:00.000Z",
+          "listedAtText": "2026-05-10T14:01:00.0000000Z",
+          "untilAt": "2026-05-15T13:59:00.000Z",
+          "untilText": "2026-05-15T13:59:00.0000000Z",
+          "forestNameHint": "Daffeys Creek State Forest",
+          "status": "CLOSED",
+          "tags": [
+            "OPERATIONS",
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Daffeys Creek State Forest will be closed for pest control operations on 11 — 15 May 2026. No public access to these forests will be permitted during this time.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Notice is marked closed with no partial/open exception wording."
+          }
+        }
+      ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -8730,16 +8857,41 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5283",
+          "title": "Gillenbah State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5283",
+          "listedAt": "2026-04-12T14:01:00.000Z",
+          "listedAtText": "2026-04-12T14:01:00.0000000Z",
+          "untilAt": "2026-06-12T13:59:00.000Z",
+          "untilText": "2026-06-12T13:59:00.0000000Z",
+          "forestNameHint": "Gillenbah State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "EVENT"
+          ],
+          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Gillenbah State Forest from 13 April to 12 June 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "NONE",
         "access4wdImpact": "NONE"
       }
@@ -10543,18 +10695,43 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "CLOSED",
+      "closureNotices": [
+        {
+          "id": "5810",
+          "title": "Munro State Forest: Closed for pest control operations",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5810",
+          "listedAt": "2026-05-10T14:01:00.000Z",
+          "listedAtText": "2026-05-10T14:01:00.0000000Z",
+          "untilAt": "2026-05-15T13:59:00.000Z",
+          "untilText": "2026-05-15T13:59:00.0000000Z",
+          "forestNameHint": "Munro State Forest",
+          "status": "CLOSED",
+          "tags": [
+            "OPERATIONS",
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Munro State Forest will be closed for pest control operations on 11 — 15 May 2026. No public access to these forests will be permitted during this time.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Notice is marked closed with no partial/open exception wording."
+          }
+        }
+      ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -11515,43 +11692,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5291",
-          "title": "Parkhurst State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5291",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Parkhurst State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Parkhurst State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -11918,38 +12070,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5292",
-          "title": "Severn State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5292",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Severn State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Severn State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -12105,38 +12232,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5293",
-          "title": "Strathmore State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5293",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Strathmore State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Strathmore State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -14344,38 +14446,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5294",
-          "title": "Yetman State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5294",
-          "listedAt": "2026-03-22T13:01:00.000Z",
-          "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-05-03T13:59:00.000Z",
-          "untilText": "2026-05-03T13:59:00.0000000Z",
-          "forestNameHint": "Yetman State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Forestry Corporation will be deploying ground application of 1080 baits targeting wild dogs and foxes in Yetman State Forest from 23 March – 3 May 2026.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -18058,7 +18135,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed with entry prohibited without permission, but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -19063,18 +19140,42 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "5778",
+          "title": "Boorabee State Forest: Partial closure",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5778",
+          "listedAt": "2026-04-19T14:01:00.000Z",
+          "listedAtText": "2026-04-19T14:01:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Boorabee State Forest",
+          "status": "PARTIAL",
+          "tags": [
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Please note that parts of Boorabee State Forest will be closed from 9:00 am Monday 20 April 2026 for roading and harvesting activity.\nThe Kyogle MTB Club tracks in the area will be closed while these operations are active.\nPlease follow signage on the site and any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest and MTB tracks are closed for roading and harvesting, restricting access and advising caution for camping."
+          }
+        }
+      ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -20289,7 +20390,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads and bridges are closed or have load limits, but camping sites remain open."
+            "rationale": "Camping sites remain open; some roads are closed or have load limits restricting vehicle access."
           }
         }
       ],
@@ -20663,7 +20764,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow all signage and directions."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -20827,30 +20928,8 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "3006",
-          "title": "Dalmorton State Forest partially closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3006",
-          "listedAt": "2025-12-07T13:01:00.000Z",
-          "listedAtText": "2025-12-07T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T08:00:00.000Z",
-          "untilText": "2026-06-30T08:00:00.0000000Z",
-          "forestNameHint": "Dalmorton State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00am Monday 8 December 2025 and 6:00pm Tuesday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -21465,30 +21544,8 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "4557",
-          "title": "Ewingar State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4557",
-          "listedAt": "2025-05-24T14:01:00.000Z",
-          "listedAtText": "2025-05-24T14:01:00.0000000Z",
-          "untilAt": "2026-06-30T13:59:00.000Z",
-          "untilText": "2026-06-30T13:59:00.0000000Z",
-          "forestNameHint": "Ewingar State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Ewingar State Forest will be closed from 9:00 am Tuesday 25 November 2025 to Tuesday 6:00 pm 30 June 2026.\nDownload the closure map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -22387,10 +22444,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
+            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed but Upsalls Creek Road remains open."
           }
         }
       ],
@@ -22401,7 +22458,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22655,28 +22712,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are temporarily closed due to severe weather damage, indicating vehicle access is closed; camping impact is not specified."
-          }
-        },
-        {
-          "id": "5356",
-          "title": "Kiwarrak State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5356",
-          "listedAt": "2025-11-19T13:01:00.000Z",
-          "listedAtText": "2025-11-19T13:01:00.0000000Z",
-          "untilAt": "2026-04-30T13:59:00.000Z",
-          "untilText": "2026-04-30T13:59:00.0000000Z",
-          "forestNameHint": "Kiwarrak State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Kiwarrakk State Forest will be closed from 7:00 am 20 November 2025 to 7:00 am Thursday 30 April 2026.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Road closures prevent vehicle access but camping impact is not specified."
           }
         }
       ],
@@ -22687,7 +22723,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -23188,53 +23224,30 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "CLOSED",
+      "closureStatus": "PARTIAL",
       "closureNotices": [
         {
-          "id": "3665",
-          "title": "Masseys Creek State Forest closed",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3665",
-          "listedAt": "2025-05-06T23:12:00.000Z",
-          "listedAtText": "2025-05-06T23:12:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Masseys Creek State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "ROAD_ACCESS",
-            "OPERATIONS"
-          ],
-          "detailText": "Recent flooding and sever weather impacts have resulted in temporary closures of several State forests in the Hunter and Central Coast Areas. This includes Masseys Creek State Forest.\nForestry Corporation staff are continuing to undertake work and assessments to clear roads and make areas safe for visitors. Forests will progressively reopen once they are made safe and accessible.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Notice is marked closed with no partial/open exception wording."
-          }
-        },
-        {
           "id": "1653",
-          "title": "Masseys Creek State Forest: Boonabilla Road and Basin Road closed to vehicle traffic",
+          "title": "Masseys Creek State Forest: Basin Road and Cabre Bald Road closed to vehicle traffic",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1653",
-          "listedAt": "2021-12-31T03:40:00.000Z",
-          "listedAtText": "2021-12-31T03:40:00.0000000Z",
+          "listedAt": "2026-04-23T14:01:00.000Z",
+          "listedAtText": "2026-04-23T14:01:00.0000000Z",
           "untilAt": null,
           "untilText": "further notice",
           "forestNameHint": "Masseys Creek State Forest",
           "status": "PARTIAL",
           "tags": [
-            "ROAD_ACCESS"
+            "ROAD_ACCESS",
+            "OPERATIONS"
           ],
-          "detailText": "Please note that Boonabilla Road (particularly the section within the State Forest and north of the bridge over Paterson River) and the entire Basin Road in Masseys Creek State Forest are closed to all vehicle traffic due to unsafe bridges.\nThe roads will remain closed until further notice.",
+          "detailText": "Please note that Basin Road and Cabre Bald Road in Masseys Creek State Forest is closed to all vehicle traffic due to unsafe bridges. Works are being undertaken to remediate and repair roads and damaged infrastructure.\nThe roads will remain closed until further notice.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, affecting both 2WD and 4WD access; camping impact is not mentioned."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, so vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -23245,7 +23258,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -23622,19 +23635,19 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4918",
           "listedAt": "2026-01-18T13:01:00.000Z",
           "listedAtText": "2026-01-18T13:01:00.0000000Z",
-          "untilAt": "2026-06-30T13:59:00.000Z",
-          "untilText": "2026-06-30T13:59:00.0000000Z",
+          "untilAt": "2027-01-01T12:59:00.000Z",
+          "untilText": "2027-01-01T12:59:00.0000000Z",
           "forestNameHint": "Mount Belmore State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Thursday 30 June 2026.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so camping and vehicle access are advised to be cautious and follow signage."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -23645,9 +23658,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -24626,18 +24639,43 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "5908",
+          "title": "Olney State Forest: The Basin Campground and Great North Walk detour",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5908",
+          "listedAt": "2026-04-27T14:01:00.000Z",
+          "listedAtText": "2026-04-27T14:01:00.0000000Z",
+          "untilAt": null,
+          "untilText": "further notice",
+          "forestNameHint": "Olney State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "CAMPING",
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Forestry Corporation is undertaking hazard reduction burning in Olney State Forest beginning Tuesday 28th April 2026. Sections of the forest including The Basin Campground will be closed for public access during this time.\nThe burn will also affect a section of the Great North Walk from Warrawalong Road to King Tree Road. A detour will be in place along Walkers Ridge Road until further notice. Signage will be installed to direct hikers/walkers to the detour route between Warrawalong Road and King Tree/Walkers Ridge Road.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "The Basin Campground is closed and a detour is in place affecting access routes."
+          }
+        }
+      ],
       "closureTags": {
-        "ROAD_ACCESS": false,
-        "CAMPING": false,
+        "ROAD_ACCESS": true,
+        "CAMPING": true,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -25024,7 +25062,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure with entry prohibited in closed areas but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -25152,12 +25190,12 @@
           ],
           "detailText": "Please note that areas pf Putty State Forest remains closed over the longer term due to significant impact from severe weather and bushfires.\nPutty State Forest consists of two areas. One is managed by Forestry Corporation, the other, a Flora Reserve, managed by the National Parks and Wildlife Service.\nThis advisory refers only to the area managed by Forestry Corporation - a defined area generally the eastern part of Putty State Forest.\nCommission Road and a section of Main Hunter Trail are currently opened. All other roads, tracks and fire trails including their parts within the defined area remain closed.\nFor information on roads outside the definite area, within Flora Reserve, please contact the National Parks and Wildlife Service.",
           "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Most roads and tracks in the Forestry Corporation area are closed, limiting vehicle access and camping."
+            "source": "RULES",
+            "confidence": "MEDIUM",
+            "campingImpact": "NONE",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Road/access closure language detected."
           }
         }
       ],
@@ -25168,9 +25206,9 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -27245,10 +27283,34 @@
             "access4wdImpact": "CLOSED",
             "rationale": "Notice is marked closed with no partial/open exception wording."
           }
+        },
+        {
+          "id": "5809",
+          "title": "Copeton State Forest: Closed for pest control operations",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5809",
+          "listedAt": "2026-05-10T14:01:00.000Z",
+          "listedAtText": "2026-05-10T14:01:00.0000000Z",
+          "untilAt": "2026-05-15T13:59:00.000Z",
+          "untilText": "2026-05-15T13:59:00.0000000Z",
+          "forestNameHint": "Copeton State Forest",
+          "status": "CLOSED",
+          "tags": [
+            "OPERATIONS",
+            "ROAD_ACCESS"
+          ],
+          "detailText": "Copeton State Forest will be closed for pest control operations on 11 — 15 May 2026. No public access to these forests will be permitted during this time.",
+          "structuredImpact": {
+            "source": "RULES",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Notice is marked closed with no partial/open exception wording."
+          }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": true
@@ -27529,7 +27591,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
+            "rationale": "Native forest areas are closed, pine forest areas remain open, indicating partial restrictions."
           }
         }
       ],
@@ -28133,7 +28195,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
+            "rationale": "Warning signs and advice to avoid baited areas indicate advisory impacts on camping and vehicle access."
           }
         }
       ],
@@ -29843,12 +29905,12 @@
   ],
   "warnings": [
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 18 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 23 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
-    "Could not match 2 closure notice(s) to Solid Fuel Fire Ban forest names: Broadwater State Forest: Closed, Gundar State Forest: Closed.",
+    "Could not match 3 closure notice(s) to Solid Fuel Fire Ban forest names: Ewingar and Billimbra State Forests: Partial closure, Gundar State Forest: Closed, Turon State Forest: 1080 baiting for pest animal control.",
     "Applied fuzzy closure notice matching for 1 notice(s) with minor naming differences."
   ]
 }
