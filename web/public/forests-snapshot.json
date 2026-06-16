@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-06-16T11:01:30.131Z",
+  "fetchedAt": "2026-06-16T20:38:56.461Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -205,7 +205,7 @@
           "campingImpact": "ADVISORY",
           "access2wdImpact": "ADVISORY",
           "access4wdImpact": "ADVISORY",
-          "rationale": "Notice advises caution and restraint of dogs in baited areas but does not close or restrict camping or vehicle access."
+          "rationale": "Notice advises caution and attention to baited areas but does not restrict camping or vehicle access."
         }
       }
     ],
@@ -1632,7 +1632,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -1711,7 +1711,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road into Roseberg State Forest is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not specified."
+            "rationale": "Tea Tree road into Roseberg State Forest is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -2008,7 +2008,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed."
+            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2361,7 +2361,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -3037,7 +3037,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused partial closure."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of most forest areas."
           }
         }
       ],
@@ -5901,37 +5901,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5876",
-          "title": "Boyben State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5876",
-          "listedAt": "2026-05-31T14:01:00.000Z",
-          "listedAtText": "2026-05-31T14:01:00.0000000Z",
-          "untilAt": "2026-06-16T13:59:00.000Z",
-          "untilText": "2026-06-16T13:59:00.0000000Z",
-          "forestNameHint": "Boyben State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": "Manufactured 1080 dog baits will be laid within Boyben State Forest between 1 June 2026 and 16 June 2026.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion does occur, please seek immediate veterinary assistance.\nFor further information regarding this program, please call 0429 413 669.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Notice only mentions baiting and pet safety, no access or camping restrictions stated."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -12767,37 +12743,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "5875",
-          "title": "Tuckland State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5875",
-          "listedAt": "2026-05-31T14:01:00.000Z",
-          "listedAtText": "2026-05-31T14:01:00.0000000Z",
-          "untilAt": "2026-06-16T13:59:00.000Z",
-          "untilText": "2026-06-16T13:59:00.0000000Z",
-          "forestNameHint": "Tuckland State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS"
-          ],
-          "detailText": "Manufactured 1080 dog baits will be laid within Tuckland State Forest between 1 June 2026 and 16 June 2026.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion does occur, please seek immediate veterinary assistance.\nFor further information regarding this program, please call 0429 413 669.",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -19984,7 +19936,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states partial closure of parts of the forest but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -20137,10 +20089,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads and areas are closed or have load limits, but camping sites remain open unless specified."
+            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20151,7 +20103,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -20514,7 +20466,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes remain open with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes are open with caution advised."
           }
         }
       ],
@@ -21257,10 +21209,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -21271,9 +21223,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -22484,7 +22436,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures prevent vehicle access but camping impact is not specified."
+            "rationale": "Road closures due to severe weather damage imply no vehicle access; camping impact is not specified."
           }
         }
       ],
@@ -23019,7 +22971,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, so vehicle access is closed; camping impact is not specified."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping."
           }
         }
       ],
@@ -23416,10 +23368,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -23430,9 +23382,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -24027,11 +23979,11 @@
           "detailText": "Please note that parts of Newfoundland State Forest will be closed from Monday 8 December 2025 and 6:00 pm Tuesday 30 June 2026.\nDownload the closure notice and map below for further detail.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
+            "confidence": "MEDIUM",
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, restricting camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry into closed areas is prohibited, implying restricted camping and vehicle access."
           }
         }
       ],
@@ -24830,7 +24782,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states a partial closure with restricted entry to closed areas but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states a partial closure with entry prohibited in closed areas but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -24960,10 +24912,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Most roads, tracks, and fire trails in the Forestry Corporation area are closed except Commission Road and part of Main Hunter Trail."
+            "rationale": "Most roads and tracks in the Forestry Corporation area are closed, limiting vehicle access and camping."
           }
         }
       ],
@@ -24974,7 +24926,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -27335,7 +27287,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Native forest areas are closed, pine forest areas are open, indicating partial restrictions."
+            "rationale": "Native forest areas are closed, pine forest areas remain open, indicating partial restrictions."
           }
         }
       ],
@@ -27860,7 +27812,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
+            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
           }
         }
       ],
