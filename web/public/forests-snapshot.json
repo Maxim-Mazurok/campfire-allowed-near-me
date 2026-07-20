@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-07-19T18:49:52.454Z",
+  "fetchedAt": "2026-07-20T19:25:03.491Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -1608,7 +1608,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting access, other roads remain open with caution advised due to active haulage; camping impact is not specified."
+            "rationale": "Tea Tree road is closed, other roads open but active haulage advises caution."
           }
         }
       ],
@@ -1687,7 +1687,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not specified."
+            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -1920,7 +1920,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Riverview Road is closed due to harvesting, restricting vehicle access but no camping information is provided."
+            "rationale": "Riverview Road is closed due to harvesting, restricting vehicle access; no camping information provided."
           }
         }
       ],
@@ -2007,7 +2007,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping areas at Blowering Dam are open but some plantation sections and minor roads are closed or inaccessible."
           }
         }
       ],
@@ -2153,7 +2153,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, causing restricted vehicle access; camping impact is not mentioned."
+            "rationale": "Nottingham Road is closed between Brindabella Road and Ridge Road due to bridge damage, restricting vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -2356,7 +2356,7 @@
           "detailText": "Parts of Green Hills State Forest remains closed around Adelong Creek due to significant impact from severe weather and bushfires.",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "MEDIUM",
+            "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
@@ -2904,44 +2904,18 @@
         "lookouts": false,
         "hunting": false
       },
-      "closureStatus": "CLOSED",
-      "closureNotices": [
-        {
-          "id": "1630",
-          "title": "Belanglo State Forest: Closed to motor vehicles, Dalys Campground remains open",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1630",
-          "listedAt": "2026-07-06T06:18:00.000Z",
-          "listedAtText": "2026-07-06T06:18:00.0000000Z",
-          "untilAt": null,
-          "untilText": "further notice",
-          "forestNameHint": "Belanglo State Forest",
-          "status": "CLOSED",
-          "tags": [
-            "CAMPING",
-            "ROAD_ACCESS",
-            "OPERATIONS"
-          ],
-          "detailText": "Belanglo State Forest is closed to motorised vehicles due to current or predicted weather conditions.\nDalys Clearing campground will remain open with access via Belanglo Road and Dalys Road only. All other forest roads are closed to motor vehicles until further notice.\nWalking, cycling and horse riding is permitted.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Motor vehicles are closed except for access to Dalys Campground which remains open; walking, cycling, and horse riding allowed."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
-        "ROAD_ACCESS": true,
-        "CAMPING": true,
+        "ROAD_ACCESS": false,
+        "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": true
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -18889,7 +18863,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access and MTB tracks closure, but camping impact is not specified."
+            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; no specific mention of camping impact."
           }
         }
       ],
@@ -20495,7 +20469,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
+            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow signage."
           }
         }
       ],
@@ -20679,7 +20653,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed with entry prohibited without permission, indicating restricted camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited."
           }
         }
       ],
@@ -22132,7 +22106,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
           }
         },
         {
@@ -22153,10 +22127,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open but Kerewong Road is closed, restricting vehicle access."
+            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed but Upsalls Creek Road remains open."
           }
         }
       ],
@@ -22167,7 +22141,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -22421,7 +22395,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact is not specified."
+            "rationale": "Road closures prevent vehicle access but camping impact is not specified."
           }
         }
       ],
@@ -22499,7 +22473,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not mentioned."
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but no camping information provided."
           }
         }
       ],
@@ -22956,7 +22930,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, so vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping."
           }
         }
       ],
@@ -27064,22 +27038,22 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5446",
           "listedAt": "2026-03-22T13:01:00.000Z",
           "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-07-31T13:59:00.000Z",
-          "untilText": "2026-07-31T13:59:00.0000000Z",
+          "untilAt": "2026-08-31T13:59:00.000Z",
+          "untilText": "2026-08-31T13:59:00.0000000Z",
           "forestNameHint": "Mount Mitchell State Forest",
           "status": "NOTICE",
           "tags": [
             "OPERATIONS",
             "EVENT"
           ],
-          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Mount Mitchell State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Mount Mitchell State Forest from 23/3/26 to 31/8/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
+            "rationale": "The notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -27674,22 +27648,22 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5449",
           "listedAt": "2026-03-22T13:01:00.000Z",
           "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-07-31T13:59:00.000Z",
-          "untilText": "2026-07-31T13:59:00.0000000Z",
+          "untilAt": "2026-08-31T13:59:00.000Z",
+          "untilText": "2026-08-31T13:59:00.0000000Z",
           "forestNameHint": "Brother State Forest",
           "status": "NOTICE",
           "tags": [
             "OPERATIONS",
             "EVENT"
           ],
-          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Brother State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Brother State Forest from 23/3/26 to 31/8/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -27753,15 +27727,15 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5447",
           "listedAt": "2026-03-22T13:01:00.000Z",
           "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-07-31T13:59:00.000Z",
-          "untilText": "2026-07-31T13:59:00.0000000Z",
+          "untilAt": "2026-08-31T13:59:00.000Z",
+          "untilText": "2026-08-31T13:59:00.0000000Z",
           "forestNameHint": "Butterleaf State Forest",
           "status": "NOTICE",
           "tags": [
             "OPERATIONS",
             "EVENT"
           ],
-          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Butterleaf State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Butterleaf State Forest from 23/3/26 to 31/8/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -28764,22 +28738,22 @@
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5448",
           "listedAt": "2026-03-22T13:01:00.000Z",
           "listedAtText": "2026-03-22T13:01:00.0000000Z",
-          "untilAt": "2026-07-31T13:59:00.000Z",
-          "untilText": "2026-07-31T13:59:00.0000000Z",
+          "untilAt": "2026-08-31T13:59:00.000Z",
+          "untilText": "2026-08-31T13:59:00.0000000Z",
           "forestNameHint": "Oakwood State Forest",
           "status": "NOTICE",
           "tags": [
             "OPERATIONS",
             "EVENT"
           ],
-          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Oakwood State Forest from 23/3/26 to 31/7/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
+          "detailText": "Forestry Corporation will be applying 1080 baits targeting wild dogs and foxes in Oakwood State Forest from 23/3/26 to 31/8/26.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not indicate closures."
+            "rationale": "The notice advises caution around baited areas but does not indicate any closures or restrictions."
           }
         }
       ],
@@ -28963,7 +28937,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -29521,7 +29495,7 @@
     }
   ],
   "warnings": [
-    "AI structured 47 closure notice(s) to extract camping and 2WD/4WD access impacts.",
+    "AI structured 46 closure notice(s) to extract camping and 2WD/4WD access impacts.",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
