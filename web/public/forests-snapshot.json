@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-08-01T18:52:57.962Z",
+  "fetchedAt": "2026-08-02T18:54:14.544Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -158,7 +158,7 @@
           "campingImpact": "RESTRICTED",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
         }
       },
       {
@@ -397,13 +397,37 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "7163",
+          "title": "Canobolas State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7163",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Canobolas State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Canobolas State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice only mentions baiting operations and safety advice, no explicit closure or access restrictions."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -559,13 +583,37 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "7196",
+          "title": "Dog Rocks State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7196",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Dog Rocks State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Dog Rocks State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice mentions baiting operations and safety advice but does not specify any closures or restrictions on camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -667,18 +715,42 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "7229",
+          "title": "Essington State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7229",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Essington State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Essington State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "1080 baiting is occurring with signage and warnings, advising caution but not closure or restriction."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -937,13 +1009,37 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "7233",
+          "title": "Jenolan State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7233",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Jenolan State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Jenolan State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "NONE",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "The notice only mentions baiting and pet safety, no closures or access restrictions."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -1207,13 +1303,37 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "7235",
+          "title": "Mount David State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7235",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Mount David State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Mount David State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice only mentions baiting operations and safety advice, no explicit closure or access restrictions."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
-        "OPERATIONS": false
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -1608,7 +1728,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, other roads open but caution advised due to active haulage."
           }
         }
       ],
@@ -1878,6 +1998,29 @@
       "closureStatus": "PARTIAL",
       "closureNotices": [
         {
+          "id": "7231",
+          "title": "Vulcan State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7231",
+          "listedAt": "2026-08-02T14:01:00.000Z",
+          "listedAtText": "2026-08-02T14:01:00.0000000Z",
+          "untilAt": "2026-09-30T13:59:00.000Z",
+          "untilText": "2026-09-30T13:59:00.0000000Z",
+          "forestNameHint": "Vulcan State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS"
+          ],
+          "detailText": "Please note that 1080 feral pig baiting operations will take place in Vulcan State Forest from 3 August to 30 September 2026.\nThis baiting operation is in an area of the forest permanently excluded for recreational hunting. All entrances will be signposted.\nPets and working dogs should be restrained or muzzled to avoid poisoning. If accidental ingestion occurs, please seek immediate veterinary assistance.",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice only mentions baiting operations and safety advice, no explicit closure or access restrictions."
+          }
+        },
+        {
           "id": "1982",
           "title": "Vulcan State Forest: Blue Hill quarry area closed to fossicking",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=1982",
@@ -2004,10 +2147,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping at Blowering Dam is open but some plantation sections are closed; main roads are open but minor roads are closed."
+            "rationale": "Camping areas at Blowering Dam are open; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2018,7 +2161,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -3032,10 +3175,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Vehicle access to Penrose State Forest and Paddys River Camping Area is closed due to Penrose Forest Way closure."
+            "rationale": "Vehicle access to Penrose State Forest and Paddys River Camping Area is closed due to Penrose Forest Way closure, but camping area status is not explicitly closed."
           }
         }
       ],
@@ -3046,7 +3189,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "CLOSED",
         "access4wdImpact": "CLOSED"
       }
@@ -18863,7 +19006,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; no specific camping information provided."
+            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access and MTB tracks closure, but camping impact is not specified."
           }
         }
       ],
@@ -19986,10 +20129,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, so camping and vehicle access are advised to follow signage and staff directions."
           }
         }
       ],
@@ -20000,9 +20143,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -20443,7 +20586,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; vehicle access routes are open with caution advised."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place; access routes are open with caution advised."
           }
         }
       ],
@@ -21408,7 +21551,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises avoiding Baxter's Ridge Road due to a landslip, indicating advisory impact on vehicle access; camping impact is not mentioned."
+            "rationale": "The notice advises avoiding Baxter's Ridge Road due to a landslip, indicating advisory access impact but no specific camping restrictions."
           }
         }
       ],
@@ -22104,7 +22247,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Swans Crossing Camping area remains open; Kerewong Road closed but Upsalls Creek Road remains open."
+            "rationale": "Camping area remains open; Kerewong Road closed but alternate routes open, restricting vehicle access."
           }
         }
       ],
@@ -22447,7 +22590,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not specified."
+            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -22904,7 +23047,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, so vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping."
           }
         }
       ],
@@ -24249,43 +24392,18 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "7130",
-          "title": "Olney State Forest: Awaba MTB Park - Jenkins road closed temporarily",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7130",
-          "listedAt": "2026-07-31T14:01:00.000Z",
-          "listedAtText": "2026-07-31T14:01:00.0000000Z",
-          "untilAt": "2026-08-02T13:59:00.000Z",
-          "untilText": "2026-08-02T13:59:00.0000000Z",
-          "forestNameHint": "Olney State Forest",
-          "status": "PARTIAL",
-          "tags": [
-            "ROAD_ACCESS",
-            "EVENT"
-          ],
-          "detailText": "The Hunter Mountain Bike Association (HMBA) is hosting the State XC Series on Saturday 1 and Sunday 2 August 2026.\nFor the duration of this event, Jenkins Road will be temporarily closed for public vehicle access. Any access required must be authorised by HMBA.\nThe temporary closure will be lifted from Monday 3rd August.",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Jenkins Road is temporarily closed to public vehicle access during the event, requiring authorization for access; camping impact is not mentioned."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
-        "ROAD_ACCESS": true,
+        "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
+        "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24672,7 +24790,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited."
           }
         }
       ],
@@ -27024,9 +27142,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not restrict camping or vehicle access."
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "The notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -27038,8 +27156,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -27715,7 +27833,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures or restrictions."
+            "rationale": "Warning signs and advice to restrain or muzzle dogs indicate advisory impacts on camping and vehicle access."
           }
         }
       ],
@@ -28726,7 +28844,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
+            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -28907,10 +29025,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "The notice states parts of the forest are closed with entry prohibited without permission."
           }
         }
       ],
@@ -28921,9 +29039,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -29468,7 +29586,7 @@
     }
   ],
   "warnings": [
-    "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
+    "AI structured 49 closure notice(s) to extract camping and 2WD/4WD access impacts.",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
