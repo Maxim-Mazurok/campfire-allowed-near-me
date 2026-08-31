@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-08-30T20:14:39.560Z",
+  "fetchedAt": "2026-08-31T12:03:03.819Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -160,7 +160,7 @@
           "campingImpact": "UNKNOWN",
           "access2wdImpact": "ADVISORY",
           "access4wdImpact": "ADVISORY",
-          "rationale": "Intermittent night closures and reduced speed limits affect vehicle access but camping impact is not mentioned."
+          "rationale": "Intermittent 20-minute night closures and reduced speed limits advise caution but do not fully restrict access or camping."
         }
       },
       {
@@ -181,7 +181,7 @@
           "campingImpact": "RESTRICTED",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited."
         }
       },
       {
@@ -439,10 +439,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice only mentions baiting operations and safety advice, no explicit closure or access restrictions."
+            "campingImpact": "NONE",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "The notice only mentions baiting and pet restrictions, no closures or access restrictions."
           }
         }
       ],
@@ -1348,7 +1348,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice only mentions baiting operations and safety advice, no specific closure or access restrictions are stated."
+            "rationale": "The notice only mentions baiting operations and safety advice, no explicit closure or access restrictions."
           }
         }
       ],
@@ -1751,7 +1751,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact not specified."
+            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not specified."
           }
         }
       ],
@@ -1830,7 +1830,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not specified."
           }
         }
       ],
@@ -1908,7 +1908,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "Mary's Park is explicitly closed for restoration, but no vehicle access details are provided."
+            "rationale": "Mary's Park is explicitly closed for restoration, but no information on vehicle access."
           }
         }
       ],
@@ -2063,7 +2063,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice only mentions closure to fossicking and quarries are always closed to the public, no information on camping or vehicle access."
+            "rationale": "The notice only mentions closure to fossicking and quarries being closed to the public, no information on camping or vehicle access."
           }
         },
         {
@@ -2086,7 +2086,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Riverview Road is closed due to harvesting, restricting vehicle access but no camping information is provided."
+            "rationale": "Riverview Road is closed due to harvesting, restricting vehicle access; no camping information provided."
           }
         }
       ],
@@ -2502,7 +2502,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -3070,7 +3070,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Campground remains open with limited vehicle access; most forest roads closed to motor vehicles."
+            "rationale": "Camping at Dalys Clearing campground remains open but vehicle access is restricted to certain roads; all other forest roads are closed to motor vehicles."
           }
         }
       ],
@@ -3204,7 +3204,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of most forest areas."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
           }
         }
       ],
@@ -3443,8 +3443,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3497,8 +3497,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3551,8 +3551,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3605,8 +3605,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3659,8 +3659,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3713,8 +3713,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3767,8 +3767,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3821,8 +3821,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3875,8 +3875,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3929,8 +3929,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -3983,8 +3983,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4037,8 +4037,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4091,8 +4091,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4145,8 +4145,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4199,8 +4199,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4253,8 +4253,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4307,8 +4307,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4361,8 +4361,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4415,8 +4415,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4469,8 +4469,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4523,8 +4523,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -4577,8 +4577,8 @@
         {
           "areaName": "Native forests of the Pilliga",
           "areaUrl": "https://www.forestrycorporation.com.au/visit/solid-fuel-fire-bans/native-forests-of-the-pilliga",
-          "banStatus": "NOT_BANNED",
-          "banStatusText": "No ban",
+          "banStatus": "BANNED",
+          "banStatusText": "Solid Fuel fires banned",
           "banScope": "ALL"
         }
       ],
@@ -18742,7 +18742,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The Number 1 Tower Picnic Area is closed with no access allowed due to rehabilitation works."
+            "rationale": "The picnic area is closed with no access allowed due to rehabilitation works."
           }
         }
       ],
@@ -19006,7 +19006,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; camping impact is not specified."
+            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; no specific mention of camping impact."
           }
         }
       ],
@@ -19970,7 +19970,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The entire forest and surrounding areas are closed with entry prohibited without permission."
+            "rationale": "The entire forest is closed with entry prohibited, indicating no camping or vehicle access allowed."
           }
         }
       ],
@@ -20234,7 +20234,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads and bridges are closed or have load limits, but camping sites remain open."
+            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20608,7 +20608,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
+            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow all signage and directions."
           }
         }
       ],
@@ -20792,7 +20792,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -21573,7 +21573,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises avoiding Baxter's Ridge Road due to a landslip, indicating advisory access impact but no specific camping restrictions."
+            "rationale": "The notice advises avoiding Baxter's Ridge Road due to a landslip, indicating advisory impact on vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -21757,7 +21757,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -22556,7 +22556,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures imply vehicle access is closed; camping impact is not specified."
+            "rationale": "Road closures due to severe weather damage imply vehicle access is closed; camping impact is not specified."
           }
         }
       ],
@@ -22632,9 +22632,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not mentioned."
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but camping impact is not mentioned."
           }
         }
       ],
@@ -22646,8 +22646,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -23491,7 +23491,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -27166,7 +27166,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not close or restrict access or camping."
+            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -27776,7 +27776,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -27855,7 +27855,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting and signposted treated areas but does not close or restrict access or camping."
+            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
           }
         }
       ],
@@ -28201,7 +28201,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -28382,10 +28382,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed with entry prohibited without permission, indicating restricted camping and vehicle access."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -28396,9 +28396,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -28864,9 +28864,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Notice advises caution with dogs due to baiting but does not restrict camping or vehicle access."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -28878,8 +28878,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -29047,10 +29047,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited."
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "The notice states parts of the forest are closed with entry prohibited without permission."
           }
         }
       ],
@@ -29061,9 +29061,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
