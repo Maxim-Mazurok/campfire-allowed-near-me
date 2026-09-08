@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-09-07T20:56:19.221Z",
+  "fetchedAt": "2026-09-08T10:15:40.548Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -157,10 +157,10 @@
         "structuredImpact": {
           "source": "LLM",
           "confidence": "HIGH",
-          "campingImpact": "UNKNOWN",
+          "campingImpact": "NONE",
           "access2wdImpact": "ADVISORY",
           "access4wdImpact": "ADVISORY",
-          "rationale": "Intermittent night closures and reduced speed limits on Brindabella Road advise caution but do not fully restrict access or camping."
+          "rationale": "The notice describes intermittent night closures and reduced speed limits on a road section, advising caution but not restricting camping or vehicle access."
         }
       },
       {
@@ -225,7 +225,7 @@
           "campingImpact": "RESTRICTED",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
         }
       }
     ],
@@ -1075,7 +1075,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "NONE",
             "access4wdImpact": "NONE",
-            "rationale": "The notice only mentions baiting operations and pet safety, no closures or access restrictions."
+            "rationale": "The notice only mentions baiting and pet restrictions, no closures or access restrictions."
           }
         }
       ],
@@ -1772,7 +1772,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, limiting access, but other roads remain open with caution advised due to active haulage."
           }
         }
       ],
@@ -2084,7 +2084,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice only mentions closure to fossicking in the quarry area, with no information on camping or vehicle access."
+            "rationale": "The notice only mentions closure to fossicking in a specific quarry area, with no information on camping or vehicle access."
           }
         },
         {
@@ -2191,10 +2191,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
+            "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping areas at Blowering Dam are open; main roads are open but minor roads are closed and inaccessible."
           }
         }
       ],
@@ -2205,7 +2205,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
+        "campingImpact": "NONE",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -3199,7 +3199,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused partial closure."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
           }
         }
       ],
@@ -17971,10 +17971,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -17985,9 +17985,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -19001,7 +19001,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access and MTB tracks closure, but camping impact is not specified."
+            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; no specific mention of camping impact."
           }
         }
       ],
@@ -19678,7 +19678,7 @@
         }
       ],
       "forestName": "Burrawan State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/burrawan-state-forest",
+      "forestUrl": null,
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
@@ -19687,23 +19687,23 @@
       "geocodeName": "BURRAWAN State Forest (SF181)",
       "geocodeDiagnostics": null,
       "facilities": {
-        "camping_and_picnics": false,
-        "walking_track": true,
-        "4wd_tracks": false,
-        "designated_mountain_bike_track": true,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": false,
-        "caravan_site": false,
-        "2wd_access": false,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": false
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
       },
       "closureStatus": "NONE",
       "closureNotices": [],
@@ -19965,7 +19965,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The entire forest is closed and entry without permission is prohibited."
+            "rationale": "The entire forest and surrounding areas are closed with entry prohibited without permission."
           }
         }
       ],
@@ -20603,7 +20603,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Camping remains open but visitors are advised to be vigilant due to increased truck traffic and follow all signage."
+            "rationale": "Camping remains open but increased truck traffic and safety advisories are in place."
           }
         }
       ],
@@ -20686,7 +20686,7 @@
         }
       ],
       "forestName": "Cowarra State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/cowarra-state-forest",
+      "forestUrl": null,
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
@@ -20695,23 +20695,23 @@
       "geocodeName": "COWARRA State Forest (SF59)",
       "geocodeDiagnostics": null,
       "facilities": {
-        "camping_and_picnics": false,
-        "walking_track": true,
-        "4wd_tracks": false,
-        "designated_mountain_bike_track": false,
-        "designated_horse_riding_track": false,
-        "canoeingkayaking": false,
-        "waterways": false,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": false,
-        "caravan_site": false,
-        "2wd_access": true,
-        "picnic_area": true,
-        "toilets": true,
-        "wheelchair_access": true,
-        "lookouts": false,
-        "hunting": false
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
       },
       "closureStatus": "NONE",
       "closureNotices": [],
@@ -21748,11 +21748,11 @@
           "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Thursday 7 May 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "confidence": "MEDIUM",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted access and camping."
           }
         }
       ],
@@ -21763,9 +21763,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -22629,7 +22629,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not mentioned."
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not specified."
           }
         }
       ],
@@ -23483,10 +23483,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -23497,9 +23497,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -24782,7 +24782,7 @@
         }
       ],
       "forestName": "Pine Creek State Forest",
-      "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/pine-creek-state-forest",
+      "forestUrl": null,
       "totalFireBanStatus": "NOT_BANNED",
       "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
@@ -24791,23 +24791,23 @@
       "geocodeName": "PINE CREEK State Forest (SF537)",
       "geocodeDiagnostics": null,
       "facilities": {
-        "camping_and_picnics": true,
-        "walking_track": false,
-        "4wd_tracks": false,
-        "designated_mountain_bike_track": true,
-        "designated_horse_riding_track": true,
-        "canoeingkayaking": false,
-        "waterways": true,
-        "fishing": false,
-        "cabins_or_huts_available": false,
-        "fireplace": false,
-        "caravan_site": false,
-        "2wd_access": false,
-        "picnic_area": false,
-        "toilets": false,
-        "wheelchair_access": false,
-        "lookouts": false,
-        "hunting": false
+        "camping_and_picnics": null,
+        "walking_track": null,
+        "4wd_tracks": null,
+        "designated_mountain_bike_track": null,
+        "designated_horse_riding_track": null,
+        "canoeingkayaking": null,
+        "waterways": null,
+        "fishing": null,
+        "cabins_or_huts_available": null,
+        "fireplace": null,
+        "caravan_site": null,
+        "2wd_access": null,
+        "picnic_area": null,
+        "toilets": null,
+        "wheelchair_access": null,
+        "lookouts": null,
+        "hunting": null
       },
       "closureStatus": "PARTIAL",
       "closureNotices": [
@@ -24829,7 +24829,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -28327,10 +28327,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -28341,9 +28341,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -28967,10 +28967,10 @@
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "The notice states parts of the forest are closed with entry prohibited without permission."
           }
         }
       ],
@@ -28981,9 +28981,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "CLOSED",
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
