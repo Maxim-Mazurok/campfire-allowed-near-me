@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-22T10:50:48.290Z",
+  "generatedAt": "2026-10-22T20:59:29.981Z",
   "forestCount": 516,
   "mappedForestCount": 516,
   "allowedCount": 261,
   "bannedCount": 253,
-  "warningCount": 9,
-  "elapsedSeconds": 0.1
+  "warningCount": 8,
+  "elapsedSeconds": 0.2
 }
