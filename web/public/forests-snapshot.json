@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-11-07T12:04:36.995Z",
+  "fetchedAt": "2026-11-10T22:46:42.543Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -160,7 +160,7 @@
           "campingImpact": "UNKNOWN",
           "access2wdImpact": "ADVISORY",
           "access4wdImpact": "ADVISORY",
-          "rationale": "Intermittent night closures and reduced speed limits affect vehicle access but camping impact is not mentioned."
+          "rationale": "Intermittent night closures and reduced speed limits affect vehicle access but camping is not mentioned."
         }
       },
       {
@@ -174,14 +174,14 @@
         "forestNameHint": "Ewingar and Billimbra State Forest",
         "status": "PARTIAL",
         "tags": [],
-        "detailText": "Please note that parts of Ewingar and Billimbra State Forests will be closed from 9:00 am Wednesday 22 April 2026 to 6:00 pm Friday 1 January 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+        "detailText": null,
         "structuredImpact": {
-          "source": "LLM",
-          "confidence": "HIGH",
-          "campingImpact": "RESTRICTED",
+          "source": "RULES",
+          "confidence": "MEDIUM",
+          "campingImpact": "NONE",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
+          "rationale": "Partial closure status implies at least some access restrictions."
         }
       },
       {
@@ -202,10 +202,10 @@
         "structuredImpact": {
           "source": "LLM",
           "confidence": "HIGH",
-          "campingImpact": "NONE",
+          "campingImpact": "UNKNOWN",
           "access2wdImpact": "CLOSED",
           "access4wdImpact": "CLOSED",
-          "rationale": "The road is closed to all traffic for bridge replacement with a detour provided."
+          "rationale": "The road is closed to all traffic during the bridge replacement, with a detour provided."
         }
       },
       {
@@ -1080,7 +1080,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "NONE",
             "access4wdImpact": "NONE",
-            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
+            "rationale": "Notice advises pet control due to poison baiting but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -1482,7 +1482,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "1080 baiting is occurring with warnings about pets, but no closures or access restrictions are mentioned."
+            "rationale": "The notice advises caution due to 1080 baiting but does not close or restrict access or camping."
           }
         }
       ],
@@ -1777,7 +1777,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with active haulage caution; camping impact not specified."
           }
         }
       ],
@@ -1934,7 +1934,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "NONE",
             "access4wdImpact": "NONE",
-            "rationale": "Notice advises pet control due to baiting but does not restrict camping or vehicle access."
+            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
           }
         },
         {
@@ -3249,7 +3249,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Forest is closed except for limited camping off Paddys River Road and access via Penrose Forest Way; hazardous road conditions restrict vehicle access."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure and restricted vehicle access."
           }
         }
       ],
@@ -3381,7 +3381,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Flooding may impact access and visitors are advised to exercise caution."
+            "rationale": "Flooding may impact access and visitors are advised to exercise caution; no closures stated."
           }
         }
       ],
@@ -3537,7 +3537,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Flooding may impact access and visitors are advised to exercise caution; no closures stated."
+            "rationale": "Flooding may impact access and visitors are advised to exercise caution."
           }
         }
       ],
@@ -4079,18 +4079,44 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "NOTICE",
+      "closureNotices": [
+        {
+          "id": "8252",
+          "title": "Jacks Creek State Forest and Pilliga East State Forest: 1080 baiting for pest animal control",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8252",
+          "listedAt": "2026-11-08T23:20:00.000Z",
+          "listedAtText": "2026-11-08T23:20:00.0000000Z",
+          "untilAt": "2026-12-05T23:21:00.000Z",
+          "untilText": "2026-12-05T23:21:00.0000000Z",
+          "forestNameHint": "Jacks Creek State Forest",
+          "status": "NOTICE",
+          "tags": [
+            "OPERATIONS",
+            "ROAD_ACCESS",
+            "EVENT"
+          ],
+          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in Jacks Creek State Forest and parts of Pilliga East State\nForest (east of Bibblewindi Creek and north of Beehive Road) from 9 November to\n6 December.\nTreated areas will be\nsignposted. We strongly advise that if you intend to bring a companion dog with\nyou, that you pay attention to warning signs marking baited areas, restrain\nyour dogs to ensure they do not enter the signposted areas, or muzzle your dogs\nif entering these areas. In the event of accidental poisoning, seek immediate\nveterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution and attention to warning signs but does not indicate closures or restrictions."
+          }
+        }
+      ],
       "closureTags": {
-        "ROAD_ACCESS": false,
+        "ROAD_ACCESS": true,
         "CAMPING": false,
-        "EVENT": false,
-        "OPERATIONS": false
+        "EVENT": true,
+        "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "ADVISORY",
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -5452,7 +5478,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
+            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -5693,7 +5719,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting but does not indicate closures or restrictions."
+            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
           }
         }
       ],
@@ -11750,7 +11776,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not restrict camping or vehicle access."
+            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
           }
         }
       ],
@@ -11834,8 +11860,8 @@
       ],
       "forestName": "Pine Ridge State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.575093,
       "longitude": 150.425142,
@@ -12340,7 +12366,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
+            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
           }
         }
       ],
@@ -15270,12 +15296,12 @@
           ],
           "detailText": "Please note that Lowden Forest Rest Area in Tallanganda State Forest remains closed over the longer term due to significant impact from severe weather and bushfires. The forest is open otherwise.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "CLOSED",
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "Only the Lowden Forest Rest Area is closed; the rest of the forest remains open."
           }
         }
       ],
@@ -15286,7 +15312,7 @@
         "OPERATIONS": true
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "CLOSED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -18581,8 +18607,8 @@
       ],
       "forestName": "Aberdare State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.851263,
       "longitude": 151.439654,
@@ -18635,8 +18661,8 @@
       ],
       "forestName": "Avon River State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.127714,
       "longitude": 151.811314,
@@ -18689,8 +18715,8 @@
       ],
       "forestName": "Awaba State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/awaba-state-forest",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -33.011609,
       "longitude": 151.479704,
@@ -18905,8 +18931,8 @@
       ],
       "forestName": "Barrington Tops State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/barrington-tops-state-forest",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.861117,
       "longitude": 151.513109,
@@ -19247,7 +19273,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access; camping impact is not specified."
+            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access and MTB tracks closure; camping impact is not specified."
           }
         }
       ],
@@ -19331,8 +19357,8 @@
       ],
       "forestName": "Bowman State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.885408,
       "longitude": 151.741397,
@@ -20211,7 +20237,7 @@
             "campingImpact": "CLOSED",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "The entire forest is closed with entry prohibited without permission."
+            "rationale": "The entire forest and surrounding areas are closed with entry prohibited without permission."
           }
         }
       ],
@@ -20425,8 +20451,8 @@
       ],
       "forestName": "Chichester State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/chichester-state-forest-allyn-river",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.140484,
       "longitude": 151.442277,
@@ -20475,7 +20501,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads and bridges are closed or have load limits, but camping sites remain open."
+            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20607,7 +20633,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Waitui Road and 4WD/fire trails are closed due to landslips, making vehicle access impossible; camping impact is not mentioned."
+            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
           }
         }
       ],
@@ -20691,8 +20717,8 @@
       ],
       "forestName": "Coneac State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.895047,
       "longitude": 151.814263,
@@ -20853,8 +20879,8 @@
       ],
       "forestName": "Corrabare State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.936437,
       "longitude": 151.208182,
@@ -21123,8 +21149,8 @@
       ],
       "forestName": "Dingo State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.705497,
       "longitude": 152.09247,
@@ -21609,8 +21635,8 @@
       ],
       "forestName": "Fosterton State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.282221,
       "longitude": 151.757036,
@@ -21717,8 +21743,8 @@
       ],
       "forestName": "Giro State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.709412,
       "longitude": 151.856037,
@@ -21842,7 +21868,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -21968,11 +21994,11 @@
           "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Thursday 7 May 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
-            "confidence": "HIGH",
+            "confidence": "MEDIUM",
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted access and camping."
           }
         }
       ],
@@ -22002,8 +22028,8 @@
       ],
       "forestName": "Heaton State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/heaton-state-forest",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.972739,
       "longitude": 151.441142,
@@ -22482,7 +22508,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not mentioned."
+            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
           }
         },
         {
@@ -22771,7 +22797,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact is not specified."
+            "rationale": "Road closures due to severe weather damage restrict vehicle access; camping impact not specified."
           }
         }
       ],
@@ -22801,8 +22827,8 @@
       ],
       "forestName": "Knorrit State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.790773,
       "longitude": 152.130789,
@@ -22847,9 +22873,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access; camping impact is not mentioned."
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but camping impact is not specified."
           }
         }
       ],
@@ -22861,8 +22887,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -23257,8 +23283,8 @@
       ],
       "forestName": "Masseys Creek State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.225812,
       "longitude": 151.409124,
@@ -23306,7 +23332,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping."
+            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping provided."
           }
         }
       ],
@@ -23390,8 +23416,8 @@
       ],
       "forestName": "Medowie State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.679413,
       "longitude": 151.929273,
@@ -23444,8 +23470,8 @@
       ],
       "forestName": "Mernot State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.67829,
       "longitude": 151.562864,
@@ -23898,8 +23924,8 @@
       ],
       "forestName": "Myall River State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.417657,
       "longitude": 152.039725,
@@ -24114,8 +24140,8 @@
       ],
       "forestName": "Nerong State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.530552,
       "longitude": 152.145331,
@@ -24600,8 +24626,8 @@
       ],
       "forestName": "Olney State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/olney-state-forest",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -33.194572,
       "longitude": 151.246147,
@@ -25054,8 +25080,8 @@
       ],
       "forestName": "Pokolbin State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.857483,
       "longitude": 151.120077,
@@ -25270,8 +25296,8 @@
       ],
       "forestName": "Ravensworth State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.385996,
       "longitude": 151.113584,
@@ -25756,8 +25782,8 @@
       ],
       "forestName": "Stewarts Brook State Forest",
       "forestUrl": "https://www.forestrycorporation.com.au/visit/forests/stewarts-brook-state-forest",
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.913904,
       "longitude": 151.379669,
@@ -26156,8 +26182,8 @@
       ],
       "forestName": "Uffington State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.573066,
       "longitude": 151.754128,
@@ -26372,8 +26398,8 @@
       ],
       "forestName": "Wallaroo State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -32.656894,
       "longitude": 151.818067,
@@ -26588,8 +26614,8 @@
       ],
       "forestName": "Watagan State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -33.004068,
       "longitude": 151.251691,
@@ -27390,8 +27416,8 @@
       ],
       "forestName": "Nowendoc State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.575727,
       "longitude": 151.767726,
@@ -27644,8 +27670,8 @@
       ],
       "forestName": "Ben Halls Gap State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.587323,
       "longitude": 151.175289,
@@ -28338,7 +28364,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed with entry prohibited, but does not specify camping or vehicle access impacts."
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
           }
         }
       ],
@@ -29353,8 +29379,8 @@
       ],
       "forestName": "Tuggolo State Forest",
       "forestUrl": null,
-      "totalFireBanStatus": "BANNED",
-      "totalFireBanStatusText": "Total Fire Ban",
+      "totalFireBanStatus": "NOT_BANNED",
+      "totalFireBanStatusText": "No Total Fire Ban",
       "totalFireBanDiagnostics": null,
       "latitude": -31.615883,
       "longitude": 151.504571,
@@ -29719,8 +29745,9 @@
     }
   ],
   "warnings": [
+    "1 closure detail page(s) were not found in the raw archive.",
     "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 9 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structuring skipped 8 closure notice(s) due to per-refresh budget limit (50).",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
