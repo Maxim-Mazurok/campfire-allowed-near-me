@@ -1,6 +1,6 @@
 {
   "schemaVersion": 7,
-  "fetchedAt": "2026-11-10T22:46:42.543Z",
+  "fetchedAt": "2026-11-21T22:35:13.948Z",
   "stale": false,
   "sourceName": "Forestry Corporation NSW",
   "availableFacilities": [
@@ -141,47 +141,24 @@
   "closureDiagnostics": {
     "unmatchedNotices": [
       {
-        "id": "7328",
-        "title": "Buccleuch State Forest: Intermittent night closure of Brindabella Road",
-        "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7328",
-        "listedAt": "2026-08-07T03:33:00.000Z",
-        "listedAtText": "2026-08-07T03:33:00.0000000Z",
-        "untilAt": null,
-        "untilText": "further notice",
-        "forestNameHint": "Buccleuch State Forest",
-        "status": "PARTIAL",
-        "tags": [
-          "ROAD_ACCESS"
-        ],
-        "detailText": "Intermittent night closures will occur along Brindabella Road between Tumut and Canberra throughout August and September.\nNight forest operations in Buccleuch State Forest will require intermittent 20-minute closures of a 3km section of Brindabella Road between Barnetts Road and Ridge Road, approximately 78km west of Canberra.\nA reduced speed limit will be implemented through the work area for the duration of the project (both day and night) until further notice.\nPlease observe all road signs and any direction given by Forestry staff.\nThese measures are for the safety of road users, contractors and forest users.",
-        "structuredImpact": {
-          "source": "LLM",
-          "confidence": "HIGH",
-          "campingImpact": "UNKNOWN",
-          "access2wdImpact": "ADVISORY",
-          "access4wdImpact": "ADVISORY",
-          "rationale": "Intermittent night closures and reduced speed limits affect vehicle access but camping is not mentioned."
-        }
-      },
-      {
         "id": "5844",
         "title": "Ewingar and Billimbra State Forests: Partial closure",
         "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5844",
-        "listedAt": "2026-04-21T14:01:00.000Z",
-        "listedAtText": "2026-04-21T14:01:00.0000000Z",
-        "untilAt": "2027-01-01T12:59:00.000Z",
-        "untilText": "2027-01-01T12:59:00.0000000Z",
+        "listedAt": "2026-11-17T13:01:00.000Z",
+        "listedAtText": "2026-11-17T13:01:00.0000000Z",
+        "untilAt": "2027-06-30T13:59:00.000Z",
+        "untilText": "2027-06-30T13:59:00.0000000Z",
         "forestNameHint": "Ewingar and Billimbra State Forest",
         "status": "PARTIAL",
         "tags": [],
-        "detailText": null,
+        "detailText": "Please note that parts of Ewingar and Billimbra State Forests will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30th June 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
         "structuredImpact": {
-          "source": "RULES",
-          "confidence": "MEDIUM",
-          "campingImpact": "NONE",
+          "source": "LLM",
+          "confidence": "HIGH",
+          "campingImpact": "RESTRICTED",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Partial closure status implies at least some access restrictions."
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited."
         }
       },
       {
@@ -202,10 +179,10 @@
         "structuredImpact": {
           "source": "LLM",
           "confidence": "HIGH",
-          "campingImpact": "UNKNOWN",
+          "campingImpact": "NONE",
           "access2wdImpact": "CLOSED",
           "access4wdImpact": "CLOSED",
-          "rationale": "The road is closed to all traffic during the bridge replacement, with a detour provided."
+          "rationale": "The road is closed to all traffic during bridge replacement with a detour provided."
         }
       },
       {
@@ -235,21 +212,21 @@
         "id": "7659",
         "title": "Oakwood Forest: Partial closure",
         "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7659",
-        "listedAt": "2026-08-30T14:01:00.000Z",
-        "listedAtText": "2026-08-30T14:01:00.0000000Z",
-        "untilAt": "2027-01-01T12:59:00.000Z",
-        "untilText": "2027-01-01T12:59:00.0000000Z",
+        "listedAt": "2026-11-17T13:01:00.000Z",
+        "listedAtText": "2026-11-17T13:01:00.0000000Z",
+        "untilAt": "2027-06-30T13:59:00.000Z",
+        "untilText": "2027-06-30T13:59:00.0000000Z",
         "forestNameHint": null,
         "status": "PARTIAL",
         "tags": [],
-        "detailText": "Please note that parts of Oakwood State Forest will be closed between 9:00 am Monday 31 August 2026 and 6:00 pm Friday 1 January 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+        "detailText": "Please note that parts of Oakwood State Forest will be closed between 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
         "structuredImpact": {
           "source": "LLM",
           "confidence": "HIGH",
           "campingImpact": "RESTRICTED",
           "access2wdImpact": "RESTRICTED",
           "access4wdImpact": "RESTRICTED",
-          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+          "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
         }
       },
       {
@@ -267,12 +244,12 @@
         ],
         "detailText": "Forestry Corporation will be conducting wild dog 1080 baiting program, which will include the placement of pre-made ground baits containing 1080 (sodium fluoroacetate) poison.\nThe program will commence on 19 October and run until 30 November 2026 in the following Forests:\nHampton\nJenolan\nSunny Corner\nVittoria\nMullions Range.\nAll entries and gates will be sign posted.\nNote:\nDomestic pets are required to be always kept under your control.\nPets and working dogs from adjacent properties may be affected by 1080 (1080 is lethal to cats and dogs).\nPets and working dogs must be restrained or muzzled while in identified State forests for the duration of the baiting program.\nIn the event of suspected poisoning, seek immediate veterinary assistance.\nFor further information please contact the Bathurst office on 02 6331 2044.",
         "structuredImpact": {
-          "source": "RULES",
-          "confidence": "LOW",
-          "campingImpact": "NONE",
-          "access2wdImpact": "NONE",
-          "access4wdImpact": "NONE",
-          "rationale": "No specific impact language detected."
+          "source": "LLM",
+          "confidence": "HIGH",
+          "campingImpact": "ADVISORY",
+          "access2wdImpact": "ADVISORY",
+          "access4wdImpact": "ADVISORY",
+          "rationale": "1080 baiting program advises pet control but does not close or restrict camping or vehicle access."
         }
       }
     ],
@@ -1000,9 +977,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "The notice advises caution due to 1080 baiting but does not close or restrict camping or vehicle access."
           }
         }
       ],
@@ -1014,8 +991,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -1078,9 +1055,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "Notice advises pet control due to poison baiting but does not restrict camping or vehicle access."
+            "access2wdImpact": "ADVISORY",
+            "access4wdImpact": "ADVISORY",
+            "rationale": "1080 baiting is occurring with warnings about pets, but no closures or access restrictions are mentioned."
           }
         }
       ],
@@ -1092,8 +1069,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "access2wdImpact": "ADVISORY",
+        "access4wdImpact": "ADVISORY"
       }
     },
     {
@@ -1480,9 +1457,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to 1080 baiting but does not close or restrict access or camping."
+            "access2wdImpact": "NONE",
+            "access4wdImpact": "NONE",
+            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -1494,8 +1471,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -1777,7 +1754,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with active haulage caution; camping impact not specified."
+            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -1856,7 +1833,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Tea Tree road is closed, restricting vehicle access, but other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
+            "rationale": "Tea Tree road is closed, restricting vehicle access; other roads remain open with caution advised due to active haulage; camping impact is not mentioned."
           }
         }
       ],
@@ -1934,7 +1911,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "NONE",
             "access4wdImpact": "NONE",
-            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
+            "rationale": "Notice advises pet control due to baiting but does not restrict camping or vehicle access."
           }
         },
         {
@@ -2030,12 +2007,12 @@
           ],
           "detailText": "Forestry Corporation will be conducting wild dog 1080 baiting program, which will include the placement of pre-made ground baits containing 1080 (sodium fluoroacetate) poison.\nThe program will commence on 19 October and run until 30 November 2026 in the following Forests:\nHampton\nJenolan\nSunny Corner\nVittoria\nMullions Range.\nAll entries and gates will be sign posted.\nNote:\nDomestic pets are required to be always kept under your control.\nPets and working dogs from adjacent properties may be affected by 1080 (1080 is lethal to cats and dogs).\nPets and working dogs must be restrained or muzzled while in identified State forests for the duration of the baiting program.\nIn the event of suspected poisoning, seek immediate veterinary assistance.\nFor further information please contact the Bathurst office on 02 6331 2044.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "ADVISORY",
             "access2wdImpact": "NONE",
             "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
+            "rationale": "Notice warns about 1080 baiting and pet safety but does not restrict camping or vehicle access."
           }
         }
       ],
@@ -2046,7 +2023,7 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "ADVISORY",
         "access2wdImpact": "NONE",
         "access4wdImpact": "NONE"
       }
@@ -2108,12 +2085,12 @@
           ],
           "detailText": "Please note Blue Hill Quarry and the area surrounding it within Vulcan State Forest is currently closed to fossicking while a safety assessment is conducted.\nWe encourage all fossickers to understand and adhere to the conditions of their permit and relevant legislation.\nPlease note that all quarries are always closed to the public.\nFurther information on fossicking within State forests is available here.\nContact: Statewide Information Centre 1300 655 687",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice only mentions closure to fossicking in a specific quarry area, with no information on camping or vehicle access."
           }
         },
         {
@@ -2131,12 +2108,12 @@
           ],
           "detailText": "Riverview Road in Vulcan State Forest from Abercrombie Road to Sapphire Bend Road is closed due to harvesting and roading activities.\nAny fossickers wanting to access the free fossicking site must use Shooters Hill Road then Riverview Road. Please follow all posted signage.\nPlease note that all quarries are off limits for fossicking and digging is not allowed within 2 metres of any trees. These conditions form part of the authorisation required for fossicking.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Road/access closure language detected."
+            "rationale": "Riverview Road is closed due to harvesting, restricting vehicle access but no camping information is provided."
           }
         },
         {
@@ -2152,12 +2129,12 @@
           "tags": [],
           "detailText": "The free fossicking site in Compartment 89 of Vulcan State\nForest is closed for approximately 12 months due to forestry operations.",
           "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "Only the fossicking site in one compartment is closed; no information on camping or vehicle access impacts."
           }
         }
       ],
@@ -2244,7 +2221,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping areas at Blowering Dam are open but some plantation sections are closed; main roads are open but minor roads are closed and inaccessible."
+            "rationale": "Camping at Blowering Dam is open but some plantation sections and minor roads are closed or inaccessible."
           }
         }
       ],
@@ -3249,7 +3226,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure and restricted vehicle access."
+            "rationale": "Camping is limited to a 400m area off Paddys River Road and access is only via Penrose Forest Way; hazardous road conditions have caused closure of other areas."
           }
         }
       ],
@@ -3537,7 +3514,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "Flooding may impact access and visitors are advised to exercise caution."
+            "rationale": "Flooding may impact access and visitors are advised to exercise caution; no closures stated."
           }
         }
       ],
@@ -4103,7 +4080,7 @@
             "campingImpact": "ADVISORY",
             "access2wdImpact": "ADVISORY",
             "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution and attention to warning signs but does not indicate closures or restrictions."
+            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
           }
         }
       ],
@@ -5455,43 +5432,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8120",
-          "title": "Benbraggie State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8120",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Benbraggie State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not restrict camping or vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -5696,43 +5648,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8122",
-          "title": "Bingara State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8122",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Bingara State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution due to baiting but does not indicate closures or restrictions."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -11753,43 +11680,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8124",
-          "title": "Parkhurst State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8124",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Parkhurst State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not indicate closures or restrictions."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -12156,43 +12058,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8126",
-          "title": "Severn State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8126",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Severn State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "Notice advises caution around baited areas but does not close or restrict access or camping."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -12343,43 +12220,18 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8128",
-          "title": "Strathmore State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8128",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Strathmore State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "ADVISORY",
-            "access2wdImpact": "ADVISORY",
-            "access4wdImpact": "ADVISORY",
-            "rationale": "The notice advises caution due to baiting and signposted treated areas but does not indicate closures."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "ADVISORY",
-        "access2wdImpact": "ADVISORY",
-        "access4wdImpact": "ADVISORY"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -14582,38 +14434,13 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NOTICE",
-      "closureNotices": [
-        {
-          "id": "8130",
-          "title": "Yetman State Forest: 1080 baiting for pest animal control",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8130",
-          "listedAt": "2026-10-18T13:01:00.000Z",
-          "listedAtText": "2026-10-18T13:01:00.0000000Z",
-          "untilAt": "2026-11-20T12:59:00.000Z",
-          "untilText": "2026-11-20T12:59:00.0000000Z",
-          "forestNameHint": "Yetman State Forest",
-          "status": "NOTICE",
-          "tags": [
-            "OPERATIONS",
-            "EVENT"
-          ],
-          "detailText": "Ground application of 1080 baits targeting wild dogs and foxes will be deployed in this forest by Forestry Corporation.\nTreated areas will be signposted. We strongly advise that if you intend to bring a companion dog with you, that you pay attention to warning signs marking baited areas, restrain your dogs to ensure they do not enter the signposted areas, or muzzle your dogs if entering these areas.\nIn the event of accidental poisoning, seek immediate veterinary assistance.\nFor more information, contact westernlandaccess@fcnsw.com.au",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "LOW",
-            "campingImpact": "NONE",
-            "access2wdImpact": "NONE",
-            "access4wdImpact": "NONE",
-            "rationale": "No specific impact language detected."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
-        "EVENT": true,
-        "OPERATIONS": true
+        "EVENT": false,
+        "OPERATIONS": false
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
@@ -18258,21 +18085,21 @@
           "id": "4264",
           "title": "Mount Pikapene State Forest: Partial closure",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4264",
-          "listedAt": "2026-05-06T14:01:00.000Z",
-          "listedAtText": "2026-05-06T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
           "forestNameHint": "Mount Pikapene State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Mount Pikapene State Forest will be closed from 9:00 am Thursday 7 May 2026 to 6:00 pm Friday 1 January 2027\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Mount Pikapene State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "UNKNOWN",
             "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "rationale": "The notice states parts of the forest are closed with prohibited entry, but does not specify camping or vehicle access impacts."
           }
         }
       ],
@@ -19257,34 +19084,32 @@
           "id": "5778",
           "title": "Boorabee State Forest: Partial closure",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=5778",
-          "listedAt": "2026-04-19T14:01:00.000Z",
-          "listedAtText": "2026-04-19T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T13:59:00.000Z",
-          "untilText": "2027-01-01T13:59:00.0000000Z",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
           "forestNameHint": "Boorabee State Forest",
           "status": "PARTIAL",
-          "tags": [
-            "ROAD_ACCESS"
-          ],
-          "detailText": "Please note that parts of Boorabee State Forest will be closed from 9:00 am Monday 20 April 2026 to 6:00 pm Friday 1 January 2027 for roading and harvesting activity.\nThe Kyogle MTB Club tracks in the area will be closed while these operations are active.\nPlease follow signage on the site and any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "tags": [],
+          "detailText": "Please note that parts of Boorabee State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nPlease follow signage on the site and any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
+            "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed for roading and harvesting, restricting access and MTB tracks closure; camping impact is not specified."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
       "closureTags": {
-        "ROAD_ACCESS": true,
+        "ROAD_ACCESS": false,
         "CAMPING": false,
         "EVENT": false,
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
+        "campingImpact": "RESTRICTED",
         "access2wdImpact": "RESTRICTED",
         "access4wdImpact": "RESTRICTED"
       }
@@ -20223,14 +20048,14 @@
           "id": "7469",
           "title": "Carwong State Forest: Closure",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7469",
-          "listedAt": "2026-08-12T14:01:00.000Z",
-          "listedAtText": "2026-08-12T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
           "forestNameHint": "Carwong State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that the whole of Carwong State Forest, including surrounding areas of privately owned land will be closed from 9:00 am Thursday 13 August 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that the whole of Carwong State Forest, including surrounding areas of privately owned land will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
@@ -20347,8 +20172,30 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "8395",
+          "title": "Cherry Tree State Forest: Partial closure",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8395",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
+          "forestNameHint": "Cherry Tree State Forest",
+          "status": "PARTIAL",
+          "tags": [],
+          "detailText": "Please note that parts of Cherry Tree State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30th June 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -20356,9 +20203,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -20407,21 +20254,21 @@
           "id": "4260",
           "title": "Cherry Tree West State Forest: Partial closure",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4260",
-          "listedAt": "2026-05-06T14:01:00.000Z",
-          "listedAtText": "2026-05-06T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
           "forestNameHint": "Cherry Tree West State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Cherry Tree West State Forest will be closed from 9:00 am Thursday 7 May 2026 to 6:00 pm Friday 1 January 2027\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Cherry Tree West State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30th June 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
           }
         }
       ],
@@ -20432,9 +20279,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -20501,7 +20348,7 @@
             "campingImpact": "NONE",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Some roads are closed and have load limits, but camping sites remain open."
+            "rationale": "Parts of the forest are closed and some roads have load limits, but camping sites remain open."
           }
         }
       ],
@@ -20633,7 +20480,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Waitui Road and 4WD/fire trails are closed and not trafficable due to landslips."
+            "rationale": "Waitui Road and 4WD/fire trails are closed due to landslips, making vehicle access impossible; camping impact is not mentioned."
           }
         }
       ],
@@ -21013,8 +20860,30 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "NONE",
-      "closureNotices": [],
+      "closureStatus": "PARTIAL",
+      "closureNotices": [
+        {
+          "id": "3006",
+          "title": "Dalmorton State Forest partially closed",
+          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=3006",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
+          "forestNameHint": "Dalmorton State Forest",
+          "status": "PARTIAL",
+          "tags": [],
+          "detailText": "Please note that parts of Darlmorton East State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nDownload the closure notice and map below.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "structuredImpact": {
+            "source": "LLM",
+            "confidence": "HIGH",
+            "campingImpact": "UNKNOWN",
+            "access2wdImpact": "UNKNOWN",
+            "access4wdImpact": "UNKNOWN",
+            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+          }
+        }
+      ],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -21868,7 +21737,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -21978,30 +21847,8 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "7465",
-          "title": "Grange State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7465",
-          "listedAt": "2026-05-06T14:01:00.000Z",
-          "listedAtText": "2026-05-06T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
-          "forestNameHint": "Grange State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Grange State Forest will be closed from 9:00 am Thursday 7 May 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "MEDIUM",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted access and camping."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -22009,9 +21856,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "RESTRICTED",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -22508,7 +22355,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Blackbutt Road is closed at the 22km marker, blocking vehicle access; camping impact is not specified."
+            "rationale": "Blackbutt Road is closed at the 22km marker, indicating vehicle access is closed; camping impact is not specified."
           }
         },
         {
@@ -22873,9 +22720,9 @@
             "source": "LLM",
             "confidence": "HIGH",
             "campingImpact": "UNKNOWN",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Knodingbul Road is closed at one end, restricting vehicle access but camping impact is not specified."
+            "access2wdImpact": "CLOSED",
+            "access4wdImpact": "CLOSED",
+            "rationale": "Knodingbul Road is closed at one end, blocking vehicle access; camping impact is not mentioned."
           }
         }
       ],
@@ -22887,8 +22734,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "CLOSED",
+        "access4wdImpact": "CLOSED"
       }
     },
     {
@@ -23332,7 +23179,7 @@
             "campingImpact": "UNKNOWN",
             "access2wdImpact": "CLOSED",
             "access4wdImpact": "CLOSED",
-            "rationale": "Roads are closed to all vehicle traffic due to unsafe bridges, no information on camping provided."
+            "rationale": "Roads are closed to all vehicle traffic, but camping impact is not mentioned."
           }
         }
       ],
@@ -23718,21 +23565,21 @@
           "id": "4918",
           "title": "Mount Belmore State Forest: Partial closure",
           "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=4918",
-          "listedAt": "2026-01-18T13:01:00.000Z",
-          "listedAtText": "2026-01-18T13:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
+          "listedAt": "2026-11-17T13:01:00.000Z",
+          "listedAtText": "2026-11-17T13:01:00.0000000Z",
+          "untilAt": "2027-06-30T13:59:00.000Z",
+          "untilText": "2027-06-30T13:59:00.0000000Z",
           "forestNameHint": "Mount Belmore State Forest",
           "status": "PARTIAL",
           "tags": [],
-          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 7:00 am Monday 19 January 2026 to 6:00 pm Friday 1 January 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
+          "detailText": "Please note that parts of Mount Belmore State Forest will be closed from 9:00 am Wednesday 18 November 2026 until 6:00 pm Wednesday 30 June 2027.\nDownload the closure notice below for a detailed map of the closed area.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
           "structuredImpact": {
             "source": "LLM",
             "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
+            "campingImpact": "RESTRICTED",
+            "access2wdImpact": "RESTRICTED",
+            "access4wdImpact": "RESTRICTED",
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
           }
         }
       ],
@@ -23743,9 +23590,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "NONE",
-        "access2wdImpact": "NONE",
-        "access4wdImpact": "NONE"
+        "campingImpact": "RESTRICTED",
+        "access2wdImpact": "RESTRICTED",
+        "access4wdImpact": "RESTRICTED"
       }
     },
     {
@@ -25050,7 +24897,7 @@
             "campingImpact": "RESTRICTED",
             "access2wdImpact": "RESTRICTED",
             "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access."
+            "rationale": "Parts of the forest are closed and entry without permission is prohibited, indicating restricted camping and vehicle access."
           }
         }
       ],
@@ -26132,30 +25979,8 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "8090",
-          "title": "Tuckers Nob State Forest: Partial closure",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=8090",
-          "listedAt": "2026-10-08T13:01:00.000Z",
-          "listedAtText": "2026-10-08T13:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
-          "forestNameHint": "Tuckers Nob State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Tuckers Nob State Forest will be closed from 9:00 am Friday 9 October 2026 to 6:00 pm Friday 1 January 2027 for harvesting operations.\nPlease follow signage on the site and any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "RULES",
-            "confidence": "MEDIUM",
-            "campingImpact": "NONE",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Partial closure status implies at least some access restrictions."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -26164,8 +25989,8 @@
       },
       "closureImpactSummary": {
         "campingImpact": "NONE",
-        "access2wdImpact": "RESTRICTED",
-        "access4wdImpact": "RESTRICTED"
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -28344,30 +28169,8 @@
         "lookouts": null,
         "hunting": null
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "6407",
-          "title": "Enmore State Forest: Partial closure (compartment 1)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=6407",
-          "listedAt": "2026-05-26T23:00:00.000Z",
-          "listedAtText": "2026-05-26T23:00:00.0000000Z",
-          "untilAt": "2027-01-01T07:00:00.000Z",
-          "untilText": "2027-01-01T07:00:00.0000000Z",
-          "forestNameHint": "Enmore State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Enmore State Forest will be closed from 9:00 am Wednesday 27 May 2026 to 6:00 pm Friday 1 January 2027.\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nDownload the document below for a detailed map of the closed area.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "UNKNOWN",
-            "access2wdImpact": "UNKNOWN",
-            "access4wdImpact": "UNKNOWN",
-            "rationale": "The notice states parts of the forest are closed but does not specify impacts on camping or vehicle access."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -29146,51 +28949,8 @@
         "lookouts": false,
         "hunting": true
       },
-      "closureStatus": "PARTIAL",
-      "closureNotices": [
-        {
-          "id": "6376",
-          "title": "Styx River State Forest: Partial closure (compartments 43-48)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=6376",
-          "listedAt": "2026-05-06T14:01:00.000Z",
-          "listedAtText": "2026-05-06T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
-          "forestNameHint": "Styx River State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Styx River State Forest will be closed between 9:00 am Thursday 7 May 2026 and 6:00 pm Friday 1 January 2027.\nDownload the closure map below for further detail (compartments 43-48).\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "CLOSED",
-            "access2wdImpact": "CLOSED",
-            "access4wdImpact": "CLOSED",
-            "rationale": "The notice states parts of the forest are closed with entry prohibited without permission."
-          }
-        },
-        {
-          "id": "7929",
-          "title": "Styx River State Forest: Partial closure (compartments 52-55)",
-          "detailUrl": "https://forestclosure.fcnsw.net/ClosureDetailsFrame?id=7929",
-          "listedAt": "2026-09-27T14:01:00.000Z",
-          "listedAtText": "2026-09-27T14:01:00.0000000Z",
-          "untilAt": "2027-01-01T12:59:00.000Z",
-          "untilText": "2027-01-01T12:59:00.0000000Z",
-          "forestNameHint": "Styx River State Forest",
-          "status": "PARTIAL",
-          "tags": [],
-          "detailText": "Please note that parts of Styx River State Forest will be closed between 9:00 am Monday 28 September 2026 and 6:00 pm Friday 1 January 2027.\nDownload the closure map below for further detail (compartments 52-55).\nPlease follow signage on the site and follow any direction from Forestry Corporation staff.\nEntry into closed areas without the permission of Forestry Corporation is prohibited and can lead to prosecution (maximum penalty $2,200 per offence).",
-          "structuredImpact": {
-            "source": "LLM",
-            "confidence": "HIGH",
-            "campingImpact": "RESTRICTED",
-            "access2wdImpact": "RESTRICTED",
-            "access4wdImpact": "RESTRICTED",
-            "rationale": "Parts of the forest are closed and entry without permission is prohibited, restricting camping and vehicle access in those areas."
-          }
-        }
-      ],
+      "closureStatus": "NONE",
+      "closureNotices": [],
       "closureTags": {
         "ROAD_ACCESS": false,
         "CAMPING": false,
@@ -29198,9 +28958,9 @@
         "OPERATIONS": false
       },
       "closureImpactSummary": {
-        "campingImpact": "CLOSED",
-        "access2wdImpact": "CLOSED",
-        "access4wdImpact": "CLOSED"
+        "campingImpact": "NONE",
+        "access2wdImpact": "NONE",
+        "access4wdImpact": "NONE"
       }
     },
     {
@@ -29745,14 +29505,12 @@
     }
   ],
   "warnings": [
-    "1 closure detail page(s) were not found in the raw archive.",
-    "AI structured 50 closure notice(s) to extract camping and 2WD/4WD access impacts.",
-    "AI structuring skipped 8 closure notice(s) due to per-refresh budget limit (50).",
+    "AI structured 47 closure notice(s) to extract camping and 2WD/4WD access impacts.",
     "Rejected implausible result \"Telegherry River, New South Wales 2415, Australia\" for forest \"Chichester State Forest (Telegherry River)\"",
     "Rejected implausible result \"New South Wales, Australia\" for forest \"Double Duke State Forest\"",
     "Facilities page includes 2 forest(s) not present on the Solid Fuel Fire Ban pages: Cumberland State Forest, Micalong State Forest.",
     "Applied fuzzy facilities matching for 1 forest name(s) with minor naming differences.",
-    "Could not match 6 closure notice(s) to Solid Fuel Fire Ban forest names: Buccleuch State Forest: Intermittent night closure of Brindabella Road, Ewingar and Billimbra State Forests: Partial closure, Green Cape Lighthouse Road closure, Gundar State Forest: Closed, Oakwood Forest: Partial closure, Turon State Forest: 1080 baiting.",
+    "Could not match 5 closure notice(s) to Solid Fuel Fire Ban forest names: Ewingar and Billimbra State Forests: Partial closure, Green Cape Lighthouse Road closure, Gundar State Forest: Closed, Oakwood Forest: Partial closure, Turon State Forest: 1080 baiting.",
     "Applied fuzzy closure notice matching for 2 notice(s) with minor naming differences."
   ]
 }
